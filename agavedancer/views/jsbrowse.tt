@@ -1,0 +1,86 @@
+<div id="page">
+
+	[% INCLUDE sidebar.tt %]
+
+	<div id="content">
+<!--
+		<div>Listing contents for path <strong>[% path %]</strong>:</div> 
+-->
+
+		<div id="fsmain"></div>
+		<div id="fselected" class="x-toolbar x-toolbar-layout-ct x-panel-body" style="display:none;">
+			<div id="ok_bt"></div>
+		</div>
+	</div>
+
+<!-- Pull in extjs resources -->
+<link rel="stylesheet" type="text/css" href="/css/extjs/resources/css/ext-all.css">
+<link rel="stylesheet" type="text/css" href="/css/jsfb/resources/css/jsfb.css">
+
+<script type="text/javascript" src="/css/extjs/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="/css/extjs/ext-all.js"></script>
+<script type="text/javascript" src="/css/extjs/examples/ux/CenterLayout.js"></script>
+
+<script type="text/javascript" src="/css/jsfb/jsfb.js"></script>
+
+<script type="text/javascript" src="/css/jsfb/data/ApiRestAdapter.js"></script>
+<script type="text/javascript" src="/css/jsfb/widgets/Browser.js"></script>
+<!--
+<script type="text/javascript" src="/css/jsfb/data/DataFormatter.js"></script>
+<script type="text/javascript" src="/css/jsfb/widgets/FileDetailPanel.js"></script>
+<script type="text/javascript" src="/css/jsfb/widgets/FileGrid.js"></script>
+-->
+
+<script type="text/javascript">
+	//var browser;
+	Ext.onReady(function() {
+		var browser = new jsfb.widgets.Browser({
+				renderTo: 'fsmain',
+				user: '[% username %]',
+				width: 540,
+				//url: 'https://foundation.iplantc.org',
+				url: 'http://143.48.90.149:3000',
+				//path: '[% path %]',
+				path: '/',
+				//selectable: 'file',
+				resource_prefix: '/css/jsfb/resources/',
+				callback: function(data) {
+					console.log('item selected: ', data);
+					console.log('this: ', this);
+
+					var tbl = Ext.get('fselected').child('table');
+					if (tbl) {
+						tbl.remove();
+					}					
+					var browser = this;
+					if (this.selectable && this.selectable != data.type)
+						return;
+					
+					//browser.fileGrid.getBottomToolbar().removeAll()
+					Ext.get('fselected').show();
+
+					var buttonHandler = function(button,event) {
+						alert(data.name);
+						//browser.destroy();
+						Ext.get('fselected').hide();
+					};
+					var label = 'Select ' + (data.type === 'dir' ? 'folder' : 'file');
+					var sbtn = new Ext.Button({applyTo:'ok_bt',text: label, handler:buttonHandler});
+				}
+			}, jsfb.app);
+	});
+	
+	/*
+	var show_select_btn = function(file) {
+		//browser.fileGrid.getBottomToolbar().removeAll()
+		Ext.get('fselected').show();
+		//Ext.get('fselected').update('');
+		var buttonHandler = function(button,event) {
+			//alert('You clicked the button!');
+			browser.destroy();
+			Ext.get('fselected').hide();
+		};
+		var label = 'Select ' + (file.type === 'dir' ? 'folder' : 'file');
+		var sbtn = new Ext.Button({applyTo:'ok_bt',text: label, handler:buttonHandler});
+	};*/
+</script>

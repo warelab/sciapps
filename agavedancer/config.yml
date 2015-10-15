@@ -1,0 +1,57 @@
+# This is the main configuration file of your Dancer app
+# env-related settings should go to environments/$env.yml
+# all the settings in this file will be loaded at Dancer's startup.
+
+# Your application's name
+appname: "Agave Dancer"
+#port: 3721
+
+agave_config: ".agave"
+host_url: "http://agave.maizecode.org"
+archive_system: 'brie.cshl.edu'
+archive_path: 'results'
+archive_home: '/agave_data'
+input_system: 'brie.cshl.edu'
+input_path: 'inputs'
+input_home: '/agave_data'
+output_url: 'http://www.maizecode.org'
+email: 'Maizecode Agave Notification" <noreply@maizecode.org>'
+upload_suffix: ".upload"
+
+#environment: "production"
+
+# The default layout to use for your application (located in
+# views/layouts/main.tt)
+layout: "main"
+
+# when the charset is set to UTF-8 Dancer will handle for you
+# all the magic of encoding and decoding. You should not care
+# about unicode within your app when this setting is set (recommended).
+charset: "UTF-8"
+
+# template engine
+# simple: default and very basic template engine
+# template_toolkit: TT
+
+#session: 'YAML'
+session: 'cookie'
+session_cookie_key: '1{(b)a}sdf07234hjf0sdkflj12*&(@*az'
+
+#template: "simple"
+template: "template_toolkit"
+engines:
+  template_toolkit:
+    encoding:  'utf8'
+    start_tag: '[%'
+    end_tag:   '%]'
+    EVAL_PERL: 1
+  JSON:
+    convert_blessed: '1'
+    allow_blessed: '1'
+
+#plugins:
+#  MemcachedFast:
+#    servers:
+#      - "127.0.0.1:11211"
+#    default_timeout: 1800
+#    namespace: "agaveapidemo:"

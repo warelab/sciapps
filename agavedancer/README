@@ -1,0 +1,30 @@
+Demo for Agave Client DEMO https://bitbucket.org/cghiban/agavedancer
+
+
+Get Dancer: 
+	curl -L http://cpanmin.us | perl - --sudo Dancer
+	# or cpanm Dancer
+
+	# add cookie/session support
+	cpanm Dancer::Session::Cookie
+
+get Agave Client (Perl)
+	cd /tmp
+	git clone https://github.com/cghiban/Agave-Client.git
+
+get Agave Demo code
+	cd /tmp
+	git clone https://bitbucket.org/cghiban/agavedancer.git
+
+# add Agave lib (a bit hackish
+	cd /tmp/agavedancer/lib
+	ln -s /tmp/Agave-Client/lib/Agave
+
+Run the code:
+	cd /tmp/agavedancer
+	perl bin/app.pl
+	# or plackup -r bin/app.pl -p 3000
+
+Open browser at http://localhost:3000 and login using your iPC credentials.
+
+

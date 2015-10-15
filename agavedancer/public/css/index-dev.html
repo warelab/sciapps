@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    
+    <!-- Pull in extjs resources -->
+    <link rel="stylesheet" type="text/css" href="extjs/resources/css/ext-all.css">
+    <!--<link rel="stylesheet" type="text/css" href="extjs/examples/ux/fileuploadfield/css/fileuploadfield.css">-->
+
+    <script type="text/javascript" src="extjs/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="extjs/ext-all-debug.js"></script>
+    <script type="text/javascript" src="extjs/examples/ux/CenterLayout.js"></script> 
+    <!--<script type="text/javascript" src="extjs/examples/ux/fileuploadfield/FileUploadField.js"></script>-->
+    
+    <!-- Load and init our application -->
+    <link rel="stylesheet" type="text/css" href="jsfb/resources/css/jsfb.css">
+    <script type="text/javascript" src="jsfb/jsfb.js"></script>
+	<!--
+    <script type="text/javascript" src="jsfb/util/base64.js"></script>
+		<script type="text/javascript" src="jsfb/data/TestAdapter.js"></script>
+		<script type="text/javascript" src="jsfb/data/RestAdapter.js"></script>
+		<script type="text/javascript" src="jsfb/widgets/Login.js"></script>
+	-->
+
+    <script type="text/javascript" src="jsfb/data/ApiRestAdapter.js"></script>    
+    <script type="text/javascript" src="jsfb/data/DataFormatter.js"></script>
+    <script type="text/javascript" src="jsfb/widgets/FileDetailPanel.js"></script>
+    <script type="text/javascript" src="jsfb/widgets/FileGrid.js"></script>
+    
+    <script type="text/javascript" src="jsfb/widgets/Browser.js"></script>
+    
+    <script type="text/javascript">
+        Ext.onReady(function() {
+            var browser = new jsfb.widgets.Browser({
+                    renderTo: 'main',
+                    user: 'ghiban',
+                    password: '',
+                    //url: 'https://foundation.iplantc.org',
+                    url: 'http://143.48.90.149:3000',
+					path: '/ghiban',
+					resource_prefix: 'jsfb/resources/',
+                    callback: function(data) {
+                        console.log('item selected', data);
+                    }
+                }, jsfb.app);
+        });
+    </script>
+    
+    <title>JS File Browser</title>
+</head>
+<body>
+    <ul>
+      <li>This JS widget can be included on any page to browse and select iRods resources.</li>
+      <li>The widget is pre-pre-alpha quality, and some features are not implemented.</li>
+
+      <li>The code is <a href="https://github.com/limscoder/js-file-browser">available on Github</a>.</li>
+    </ul>
+
+    <br />
+    <br />
+
+    <div id="main"></div>
+</body>
+</html>

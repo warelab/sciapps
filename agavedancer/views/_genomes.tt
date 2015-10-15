@@ -1,0 +1,12 @@
+
+<select id="[% name || "genome" %]" name="[% name %]">
+[% FOREACH o in options.keys.sort; 
+	lbl = o.replace('_', ' ');
+	sel = "";
+	x = [o, options.$o.versions.0];
+	val = x.join("/");
+%]
+	[% IF val == value; sel = 'selected="selected"'; END %]
+	<option value="[% val %]" [%sel%]>[% lbl |ucfirst %] [% options.$o.versions.0 %]</option>
+[% END %]
+</select>

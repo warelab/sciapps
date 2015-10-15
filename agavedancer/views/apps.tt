@@ -1,0 +1,18 @@
+<div id="page">
+	[%# INCLUDE sidebar.tt %]
+
+	<div id="content">
+<div>Listing available applications:</div>
+
+[% IF list.size %]
+	<div>size: [% list.size %]
+	<p>
+	[% FOREACH app IN list.sort %]
+		<div><a href="/app/[% app |url%]">[% app %]</a></div>
+	[% END %]
+	</p>
+[% END %]
+
+	</div>
+</div>
+

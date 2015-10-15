@@ -1,0 +1,18 @@
+<div id="page">
+	[% INCLUDE sidebar.tt %]
+
+	<div id="content">
+
+[% IF list.size %]
+	<div>Submitted jobs:</div>
+	<div>size: [% list.size %]
+	<p>
+	[% FOREACH j IN list %]
+		<div><a href="/job/[% j.id |url%]">[% j.name %]</a> - [% j.status %]</div>
+	[% END %]
+	</p>
+[% END %]
+
+	</div>
+</div>
+

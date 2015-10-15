@@ -1,0 +1,26 @@
+[% USE date %]
+<div id="page">
+	[%# INCLUDE 'sidebar.tt' %]
+
+	<div id="content">
+[% IF job %]
+<div>Details on job <strong>[% job.id %]</strong>:</div>
+	<p>
+		<dl>
+			<dt>Name: </dt><dd>[% job.name %]</dd>
+			<dt>Status: </dt><dd>[% job.status %]</dd>
+			<dt>Message: </dt><dd>[% job.message %]</dd>
+			<dt>Submitted on: </dt><dd>[% date.format(job.submitTime) %]</dd>
+			<dt>Started on: </dt><dd>[% date.format(job.startTime) %]</dd>
+			<dt>Finished on: </dt><dd>[% date.format(job.endTime) %]</dd>
+			[%- output_link=settings.output_url _ "/" _ job.archivePath -%]
+			<dt>Results: </dt><dd>[% IF ('FINISHED' == job.status || 'FAILED' == job.status) %]<a href="[% output_link | url %]">[% output_link %]</a>[% END %]</dd>
+		</dl>
+	</p>
+[% ELSE %]
+	<p>No job found for id: '[% job_id |html %]'.</p>
+[% END %]
+
+	</div>
+</div>
+

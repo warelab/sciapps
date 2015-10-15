@@ -1,0 +1,8 @@
+
+      <div id="sidebar">
+        <ul id="sidebar-items">
+			<li><a href="/apps">Applications</a></li>
+			<li><a href="/jobs">Jobs</a></li>
+		</ul>
+	  </div>
+

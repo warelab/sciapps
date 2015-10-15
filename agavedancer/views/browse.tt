@@ -1,0 +1,35 @@
+<div id="page">
+
+	[% INCLUDE sidebar.tt %]
+
+	<div id="content">
+<div>Listing contents for path <strong>[% path %]</strong>:</div>
+
+<div>size: [% list.size %]
+
+[% IF list.size %]
+	<p>
+	[% FOREACH file IN list %]
+		[% INCLUDE display_file_info %]
+	[% END %]
+	</p>
+[% END %]
+
+	</div>
+</div>
+
+[% BLOCK display_file_info %]
+	[% file_full_path = file.path %]
+	[% IF file.type == 'dir' %]
+		[% IF file.name == ".." %]
+		[% PERL %]
+			my $fpath = $stash->get('file_full_path');
+			$fpath =~ s|/[^\/]*$||;
+			$stash->set('file_full_path' => $fpath);
+		[% END %]
+		[% END %]
+<div>D &nbsp;<a href="/browse[% file_full_path %]">[% file.name %]</a></div>
+	[% ELSE %]
+<div>F &nbsp;[% file.name %]</div>
+	[% END %]
+[% END %]

@@ -1,0 +1,177 @@
+[% USE Dumper %]
+<div id="page">
+	[%# INCLUDE sidebar.tt %]
+
+	<div id="content">
+[% IF app %]
+
+
+<!-- Pull in extjs resources -->
+<!-- 
+<link rel="stylesheet" type="text/css" href="/css/extjs/resources/css/ext-all.css">
+<link rel="stylesheet" type="text/css" href="/css/jsfb/resources/css/jsfb.css">
+<script type="text/javascript" src="/css/extjs/adapter/ext/ext-base.js"></script>
+<script type="text/javascript" src="/css/extjs/ext-all.js"></script>
+<script type="text/javascript" src="/css/extjs/examples/ux/CenterLayout.js"></script>
+<script type="text/javascript" src="/css/jsfb/jsfb.js"></script>
+<script type="text/javascript" src="/css/jsfb/data/ApiRestAdapter.js"></script>
+<script type="text/javascript" src="/css/jsfb/widgets/Browser.js"></script>
+-->
+<script type="text/javascript">
+	//var _dbg;
+	var bf = function(id, type) {
+		var browser = new jsfb.widgets.Browser({
+				renderTo: 'fsmain_' + id,
+				user: '[% username %]',
+				width: 540,
+				height: 250,
+				url: 'http://143.48.90.149:3000',
+				path: '/',
+				selectable: type && (type == 'file' || type == 'dir') ? type : '',
+				input_id: id,
+				resource_prefix: '/css/jsfb/resources/',
+				callback: function(data) {
+					/*console.log('item selected: ', data);
+					console.log('this: ', this);*/
+
+					var tbl = Ext.get('fselected_' + id).child('table');
+					if (tbl) {
+						tbl.remove();
+					}					
+					var browser = this;
+					if (this.selectable && this.selectable != data.type)
+						return;
+
+					Ext.get('fselected_' + id).show();
+
+					var buttonHandler = function(button,event) {
+						//alert(data.name);
+						Ext.get('fselected_' + id).hide();
+						Ext.get(id).set({value: data.path});
+						Ext.get(id + '_sf').update(data.name);
+						Ext.get(id + '_cnt').show();
+						//console.log('browser: ' + browser);
+						browser.destroy();
+					};
+					var label = 'Select ' + (data.type === 'dir' ? 'folder' : 'file');
+					var sbtn = new Ext.Button({applyTo:'ok_bt_' + id,text: label, handler:buttonHandler});
+				}
+			}, jsfb.app);
+			Ext.get(id + '_cnt').hide();
+			//_dbg = browser;
+	}
+</script>
+
+<div>New job using application <strong>[% app %]</strong>:</div>
+	<p>
+		<dl id="job_details" style="display:none;">
+			<dt>Name</dt><dd>[% app.name %]</dd>
+			<dt>Version</dt><dd>[% app.version%]</dd>
+			<dt>Short desc</dt><dd>[% app.shortDescription %]</dd>
+			<dt>Input(s)</dt><dd>
+				[% FOREACH i IN app_inputs %]
+				<pre>[% dumper.dump(i) %]</pre>
+				<div>- [% i.id %] - <b>type=[% i.type %]/fileTypes=[%i.fileTypes%]</b> - ([% i.label %])</div>
+				[% END %]
+			</dd>
+			<dt>Parameter(s)</dt><dd>
+				[% FOREACH p IN app_params %]
+				<div>- [% p.id %] - <b>[% p.type %]</b> - ([% p.label %])</div>
+				[% END %]
+			</dd>
+		</dl>
+		<div>
+			<!-- a href="#" onclick="Ext.get('job_details').setVisibilityMode(Ext.Element.DISPLAY).toggle();" id="hs_details">show/hide app details</a -->
+		</div>
+		
+        [% for e in errors %]
+            <div style="color: red;"> &nbsp; * [% e %]</div>
+        [%end%]
+
+		<form method="post" enctype="multipart/form-data">
+		<table>
+			<tbody id="app_info">
+				<tr>
+					<td colspan="2" style="font-weight:bold;background-color: #eee;">Job options</td>
+				</tr>
+				<tr>
+					<td>Job name:</td>
+					<td><input type="text" id="jobName" name="jobName" value="[% form.jobName  |html %]" /></td>
+				</tr>
+<!--
+				<tr>
+					<td>Requested time:</td>
+					<td><input type="text" id="requestedTime" name="requestedTime" value="[% form.requestedTime || '0:10:00'|html %]" /></td>
+				</tr>
+				<tr>
+					<td>Memory:</td>
+					<td><input type="text" id="memory" name="Memory" value="[% form.memory || '1G'|html %]" /></td>
+				</tr>
+				<tr>
+					<td><sup>*</sup>Processors:</td>
+					<td>
+						<select id="processors" name="processors">
+						[% FOREACH p in [1, 2, 4, 8, 16] -%]
+						<option value="[% p |html %]" [% p == form.processors ? 'selected="selected"' : ''%]>[% p%]</option>
+						[% END %]
+						</select>
+					</td>
+				</tr>
+-->
+			</tbody>
+				<tr>
+					<td colspan="2" style="font-weight:bold;background-color: #eee;">Input(s)</td>
+				</tr>
+			<tbody id="app_inputs">
+				<tr>
+					<td></td>
+					<td></td>
+				</tr>
+				[% FOREACH i IN app_inputs.sort %]
+				<tr>
+					<td>[% i.value.required ? "<sup>*</sup>" : "&nbsp;" %][% i.defaults.label || i.id %]</td>
+					<td>
+						file <input type="file" id="[% i.id %].upload" name="[% i.id %].upload" value="[% form.${i.id} || i.value.default |html%]"/>
+					</td>
+				</tr><tr>
+					<td></td>
+					<td>
+						or url <input type="text" id="[% i.id %]" name="[% i.id %]" value="[% form.${i.id} || i.value.default |html%]"/>
+                    </td>
+				</tr>
+				[% END %]
+			</tbody>
+				<tr>
+					<td colspan="2" style="font-weight:bold;background-color: #eee;">Parameters</td>
+				</tr>
+			<tbody id="app_parameters">
+				[% FOREACH p IN app_params.sort %]
+				<tr>
+					<td title="[% p.type %]">[% p.value.required ? "<sup>*</sup>" : "&nbsp;" %][% p.details.label |html%]</td>
+					<td><input type="text" id="[% p.id %]" name="[% p.id %]" req="[%p.value.required%]" value="[% form.${p.id} || p.value.default |html%]"/></td>
+				</tr>
+				[% END %]
+			</tbody>
+			<tbody id="notification">
+				<tr>
+					<td colspan="2" style="font-weight:bold;background-color: #eee;">Notifications</td>
+				</tr>
+				<tr>
+					<td>Email for notitications</td>
+					<td><input type="text" id="_email" name="_email"/></td>
+				</tr>
+			</tbody>
+			<tr>
+					<td></td>
+					<td><input type="submit" value="Submit" /></td>
+				</tr>
+		</table>
+		</form>
+	</p>
+[% ELSE %]
+	No application found for term: '[% name |html %]'.
+[% END %]
+
+	</div>
+</div>
+

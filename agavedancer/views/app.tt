@@ -1,0 +1,38 @@
+[% USE dumper(indent=2, pad="<br>") %]
+<div id="page">
+	[%# INCLUDE sidebar.tt %]
+
+	<div id="content">
+[% IF app %]
+<div>Details on application <strong>[% app %]</strong>:</div>
+	<p>
+		<a href="/job/new/[% app.id %]">Launch new job</a>
+		<dl>
+			<dt>Name</dt><dd>[% app.name %]</dd>
+			<dt>Version</dt><dd>[% app.version%]</dd>
+			<dt>Short desc</dt><dd>[% app.shortDescription %]</dd>
+			<dt>Input(s)</dt><dd>
+				[% FOREACH i IN app_inputs %]
+				<div>
+					- [% i.id %][% i.value.required ? "<sup>*</sup>" : "" %] - ([% i.details.label %])
+					<div>&nbsp; <small><em>[% i.value.default %]</em></small></div>
+                    <small><pre>[% #dumper.dump(i) %]</pre></small>
+				</div>
+				[% END %]
+			</dd>
+			<dt>Parameter(s)</dt><dd>
+				[% FOREACH p IN app_params %]
+				<div>- [% p.id %] - [% p.details.label %]
+					- &nbsp; <small><em>([% p.value.default %])</em></small></div>
+				[% END %]
+			</dd>
+
+		</dl>
+	</p>
+[% ELSE %]
+	No application found for term: '[% name |html %]'.
+[% END %]
+
+	</div>
+</div>
+
