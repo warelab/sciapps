@@ -15,10 +15,10 @@ input_system: 'brie.cshl.edu'
 input_path: 'inputs'
 input_home: '/agave_data'
 output_url: 'http://www.maizecode.org'
-email: 'Maizecode Agave Notification" <noreply@maizecode.org>'
+email: 'noreply@maizecode.org'
 upload_suffix: ".upload"
 
-#environment: "production"
+environment: "production"
 
 # The default layout to use for your application (located in
 # views/layouts/main.tt)
