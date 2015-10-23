@@ -16,3 +16,15 @@ show_errors: 0
 # cache route resolution for maximum performance
 route_cache: 1
 
+# production config
+agave_config: ".agave"
+host_url: "http://agave.maizecode.org"
+archive_system: 'brie.cshl.edu'
+archive_path: 'results'
+archive_home: '/agave_data'
+input_system: 'brie.cshl.edu'
+input_path: 'inputs'
+input_home: '/agave_data'
+output_url: 'http://www.maizecode.org'
+email: 'noreply@maizecode.org'
+upload_suffix: ".upload"

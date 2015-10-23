@@ -1,5 +1,5 @@
 # configuration file for development environment
-port: 3721
+port: 80
 
 # the logger engine to use
 # console: log messages to STDOUT (your console where you started the
@@ -26,3 +26,16 @@ show_errors: 1
 # DO NOT EVER USE THAT FEATURE IN PRODUCTION 
 # OR TINY KITTENS SHALL DIE WITH LOTS OF SUFFERING
 auto_reload: 0
+
+# development config
+agave_config: ".agave"
+host_url: "http://dev.maizecode.org"
+archive_system: 'brie.cshl.edu'
+archive_path: 'results'
+archive_home: '/agave_data'
+input_system: 'brie.cshl.edu'
+input_path: 'inputs'
+input_home: '/agave_data'
+output_url: 'http://www.maizecode.org'
+email: 'noreply@maizecode.org'
+upload_suffix: ".upload"

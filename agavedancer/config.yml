@@ -6,20 +6,6 @@
 appname: "Agave Dancer"
 #port: 3721
 
-agave_config: ".agave"
-host_url: "http://agave.maizecode.org"
-archive_system: 'brie.cshl.edu'
-archive_path: 'results'
-archive_home: '/agave_data'
-input_system: 'brie.cshl.edu'
-input_path: 'inputs'
-input_home: '/agave_data'
-output_url: 'http://www.maizecode.org'
-email: 'noreply@maizecode.org'
-upload_suffix: ".upload"
-
-environment: "production"
-
 # The default layout to use for your application (located in
 # views/layouts/main.tt)
 layout: "main"

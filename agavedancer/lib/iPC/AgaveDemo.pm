@@ -245,7 +245,17 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 	my $form = {};
 	if ( request->method() eq "POST" ) {
 		$form = params();
-		#$form->{archive} = 1;
+		my $archive_system=setting("archive_system");
+		my $archive_home=setting("archive_home");
+		my $archive_path=setting("archive_path");
+		my $input_system=setting("input_system");
+		my $input_home=setting("input_home");
+		my $input_path=setting("input_path");
+
+		# hack for the url input
+		foreach my $input (@$inputs) {
+			$form->{$input->{id}}=~s#^http://www.maizecode.org#agave://$archive_system#;
+		}
 
 		# TODO - check arguments
 
@@ -257,8 +267,8 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 		#}
 		my $io=$apif->io;
 		#my $tempname=tempname();
-		my $tempdir=setting("input_path") . "/" . tempname();
-		my $tempdir_abs=setting("input_home") . '/' . $tempdir;
+		my $tempdir=$input_path . "/" . tempname();
+		my $tempdir_abs=$input_home . '/' . $tempdir;
 		mkdir($tempdir_abs);
 		chmod(0775, $tempdir_abs);
 		my $upload_suffix=quotemeta(setting("upload_suffix"));
@@ -269,7 +279,7 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 				my $target_abs=$tempdir_abs . "/" . $file->filename;
 				my $target=$tempdir . "/" . $file->filename;
 				File::Copy::copy($source, $target_abs) or die "Copy failed: $!";
-				my $input="agave://" . setting("input_system") . "/" . $target;
+				my $input="agave://" . $input_system . "/" . $target;
 				delete $form->{$upload};
 				$upload=~s/$upload_suffix$//;
 				$form->{$upload}=$input;
@@ -280,9 +290,8 @@ any ['get', 'post'] => '/job/new/:id' => sub {
         }
 
 		my ($result_folder)=map {s/\W+/-/g;lc() . "-" . tempname() } ($app_id);
-		my $archive_system=setting("archive_system");
-		my $archive_path=setting("archive_path") . "/$result_folder";
-		my $archive_path_abs=setting("archive_home") . "/" . $archive_path;
+		$archive_path.= "/" . $result_folder;
+		my $archive_path_abs=$archive_home . "/" . $archive_path;
 		mkdir($archive_path_abs);
 		chmod(0775, $archive_path_abs);
 		open FH, ">", "$archive_path_abs/.htaccess" or print STDERR "Error: can't open  ${archive_path_abs}/.htaccess\n";
@@ -313,14 +322,14 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 			archivePath	=> $archive_path,
 			notifications	=> $notifications,
 		);
-		print STDERR Dumper($form), $/;
+		#print STDERR Dumper($form) . "\n";
 		
 		my $job_ep = $apif->job;
 		my $st = eval { $job_ep->submit_job($app, %$form); };
         if ($@) {
             print STDERR 'Error: ', $@, $/;
         }
-		print STDERR Dumper( $st ), $/;
+		#print STDERR Dumper( $st ), $/;
         if ($st) {
             if ($st->{status} eq 'success') {
                 my $job = $st->{data};
