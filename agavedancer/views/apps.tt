@@ -8,7 +8,7 @@
 	<div>size: [% list.size %]
 	<p>
 	[% FOREACH app IN list.sort %]
-		<div><a href="/app/[% app |url%]">[% app %]</a></div>
+		<div><a href="/job/new/[% app |url%]">[% app %]</a></div>
 	[% END %]
 	</p>
 [% END %]

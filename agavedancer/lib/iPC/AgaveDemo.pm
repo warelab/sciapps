@@ -94,6 +94,11 @@ sub tempname {
 	join("", map { $CHARS[ int( rand( @CHARS ) ) ] } (1 .. 10));
 }
 
+sub cmp_maxRunTime {
+	s/://g foreach @_;
+	$_[0] <=> $_[1];
+}
+
 get '/' => sub {
 	return redirect '/apps';
 };
@@ -234,6 +239,7 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 	my $apps = $apif->apps;
 
 	my ($app) = $apps->find_by_id($app_id);
+	#print STDERR Dumper($app) . "\n";
 
 	my ($inputs, $parameters) = ([], []);
 	if ($app) {
@@ -251,6 +257,9 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 		my $input_system=setting("input_system");
 		my $input_home=setting("input_home");
 		my $input_path=setting("input_path");
+
+		$form->{maxRunTime}||=$app->{defaultMaxRunTime} && cmp_maxRunTime($app->{defaultMaxRunTime}, setting("maxRunTime")) < 0 ? $app->{defaultMaxRunTime} : setting("maxRunTime");
+		#$form->{nodeCount}||=setting("nodeCount");
 
 		# hack for the url input
 		foreach my $input (@$inputs) {
@@ -301,6 +310,7 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 		my $notifications;
 		my $host_url=setting("host_url");
 		if (my $email = delete $form->{"_email"}) {
+			session(_email => $email);
 			open FH, ">", "$archive_path_abs/.email" or print STDERR "Error: can't open  ${archive_path}/.email\n";
 			print FH "$email";
 			close FH;

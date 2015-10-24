@@ -158,7 +158,7 @@
 				</tr>
 				<tr>
 					<td>Email for notitications</td>
-					<td><input type="text" id="_email" name="_email"/></td>
+					<td><input type="text" id="_email" name="_email" value="[% session._email %]"/></td>
 				</tr>
 			</tbody>
 			<tr>
@@ -167,6 +167,30 @@
 				</tr>
 		</table>
 		</form>
+	</p>
+<div>Details on application <strong>[% app %]</strong>:</div>
+	<p>
+		<dl>
+			<dt>Name</dt><dd>[% app.name %]</dd>
+			<dt>Version</dt><dd>[% app.version%]</dd>
+			<dt>Short desc</dt><dd>[% app.shortDescription %]</dd>
+			<dt>Input(s)</dt><dd>
+				[% FOREACH i IN app_inputs %]
+				<div>
+					- [% i.id %][% i.value.required ? "<sup>*</sup>" : "" %] - ([% i.details.label %])
+					<div>&nbsp; <small><em>[% i.value.default %]</em></small></div>
+                    <small><pre>[% #dumper.dump(i) %]</pre></small>
+				</div>
+				[% END %]
+			</dd>
+			<dt>Parameter(s)</dt><dd>
+				[% FOREACH p IN app_params %]
+				<div>- [% p.id %] - [% p.details.label %]
+					- &nbsp; <small><em>([% p.value.default %])</em></small></div>
+				[% END %]
+			</dd>
+
+		</dl>
 	</p>
 [% ELSE %]
 	No application found for term: '[% name |html %]'.

@@ -28,3 +28,4 @@ input_home: '/agave_data'
 output_url: 'http://www.maizecode.org'
 email: 'noreply@maizecode.org'
 upload_suffix: ".upload"
+maxRunTime: "96:00:00"
