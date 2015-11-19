@@ -1,0 +1,8 @@
+{
+	"scriptPreprocessor": "./node_modules/babel-jest",
+	"testFileExtensions": ["js"],
+	"testPathDirs": ["public/javascripts"],
+	"moduleFileExtensions": ["js", "jsx", "json"],
+	"unmockedModulePathPatterns": ["node_modules/react", "node_modules/flux", "node_modules/lodash", "node_modules/q"]
+}
+

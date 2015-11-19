@@ -1,0 +1,74 @@
+[
+  {
+    "id": "AVCP-5.2.15",
+    "name": "AVCP"
+  },
+  {
+    "id": "NAM-TASSEL-5.2.15",
+    "name": "NAM-TASSEL"
+  },
+  {
+    "id": "GenSel-0.4.55",
+    "name": "GenSel"
+  },
+  {
+    "id": "EMMAX-0.0.2",
+    "name": "EMMAX"
+  },
+  {
+    "id": "AdjustPvalue-0.0.1",
+    "name": "AdjustPvalue"
+  },
+  {
+    "id": "fastStructure-0.0.1",
+    "name": "fastStructure"
+  },
+  {
+    "id": "MergeG2P-0.0.2",
+    "name": "MergeG2P"
+  },
+  {
+    "id": "MLMM-0.0.2",
+    "name": "MLMM"
+  },
+  {
+    "id": "XYPlot-0.0.2",
+    "name": "XYPlot"
+  },
+  {
+    "id": "NPUTE-0.0.1",
+    "name": "NPUTE"
+  },
+  {
+    "id": "PCA-0.0.1",
+    "name": "PCA"
+  },
+  {
+    "id": "GenomeSelection-TASSEL-4.3.15",
+    "name": "GenomeSelection-TASSEL"
+  },
+  {
+    "id": "GLM-TASSEL-5.1.23",
+    "name": "GLM-TASSEL"
+  },
+  {
+    "id": "MLM-TASSEL-5.1.23",
+    "name": "MLM-TASSEL"
+  },
+  {
+    "id": "NumericalTransform-TASSEL-4.3.15",
+    "name": "NumericalTransform-TASSEL"
+  },
+  {
+    "id": "ConvertTraitID-0.0.0",
+    "name": "ConvertTraitID"
+  },
+  {
+    "id": "STRUCTURE2TASSEL-0.0.2",
+    "name": "STRUCTURE2TASSEL"
+  },
+  {
+    "id": "CloudSTRUCTURE-2.3.4",
+    "name": "CloudSTRUCTURE"
+  }
+]

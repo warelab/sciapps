@@ -4,6 +4,7 @@ use Dancer ':syntax';
 #use Dancer::Plugin::MemcachedFast;
 use Agave::Client ();
 use Agave::Client::Client ();
+use Dancer::Plugin::Ajax;
 use Dancer::Plugin::Email;
 use Data::Dumper;
 use File::Copy ();
@@ -110,6 +111,24 @@ get '/logout' => sub {
 	return redirect '/';
 };
 
+ajax '/apps' => sub {
+	check_login();
+
+	my $username = session('username');
+	my $apif = Agave::Client->new(
+					username => $username,
+					token => session('token'),
+				);
+
+	my $apps = $apif->apps;
+	my $app_list = [grep { ! $_->{isPublic} } ($apps->list)];
+
+	to_json($app_list);
+
+	#print STDERR Dumper($app_list);
+};
+
+
 get qr{/apps/?} => sub {
 	check_login();
 
@@ -131,6 +150,26 @@ get qr{/apps/?} => sub {
 	};
 };
 
+ajax '/app/:id' => sub {
+	check_login();
+
+	my $username = session('username');
+	my $api = Agave::Client->new(
+					user => $username,
+					token => session('token'),
+				);
+
+	my $app_name = param("id");
+	my $apps = $api->apps;
+	my ($app) = $apps->find_by_id($app_name); 
+
+	my ($inputs, $parameters) = ([], []);
+	if ($app) {
+		$inputs = $app->inputs;
+		$parameters = $app->parameters;
+	}
+	to_json($app)
+};
 
 get '/app/:id' => sub {
 	check_login();
