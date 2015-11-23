@@ -83,9 +83,6 @@ const AgaveAppsParam=React.createClass({
 	render: function() {
 		let markup=this.buildAgaveAppsParam(this.props.data);
 		return markup;
-		//return (
-		//	<Input {...props} />
-		//);
 	}
 });
 
