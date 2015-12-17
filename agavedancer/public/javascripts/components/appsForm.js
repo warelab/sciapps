@@ -32,9 +32,17 @@ var AppsForm=React.createClass({
 		}
 		return (
 			<Panel header={header}>
-				{app_inputs}
-				{app_params}
-				<ButtonInput type='submit' value='Submit' />
+				<form>
+					<fieldset>
+						<legend>Inputs</legend>
+						{app_inputs}
+					</fieldset>
+					<fieldset>
+						<legend>Parameters</legend>
+						{app_params}
+					</fieldset>
+					<ButtonInput type='submit' value='Submit' />
+				</form>
 			</Panel>
 		);
 	}

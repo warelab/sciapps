@@ -302,7 +302,11 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 
 		# hack for the url input
 		foreach my $input (@$inputs) {
-			$form->{$input->{id}}=~s#^http://www.maizecode.org#agave://$archive_system#;
+			if ($form->{$input->{id}}=~m#^http://data.maizecode.org#) {
+				$form->{$input->{id}}=~s#^http://data.maizecode.org#agave://$archive_system/data#;
+			} else {
+				$form->{$input->{id}}=~s#^http://www.maizecode.org#agave://$archive_system#;
+			}
 		}
 
 		# TODO - check arguments

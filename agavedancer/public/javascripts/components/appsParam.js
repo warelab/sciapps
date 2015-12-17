@@ -30,7 +30,8 @@ const AgaveAppsParam=React.createClass({
 	buildAgaveAppsParam: function(param) {
 		let markup, options, isSelect=false;
 		let props={
-			key: 'parameters.' + param.id,
+			key: param.id,
+			name: param.id,
 			value: this.state.value
 		};
 		if (! param.value.visible) {

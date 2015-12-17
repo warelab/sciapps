@@ -14,7 +14,8 @@ const AgaveAppsInput=React.createClass({
 	buildAgaveAppsInput: function(input) {
 		let markup;
 		let props={
-			key: 'inputs.' + input.id,
+			key: input.id,
+			name: input.id,
 			value: this.state.value
 		};
 		if (! input.value.visible) {
