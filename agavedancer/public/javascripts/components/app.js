@@ -16,11 +16,6 @@ var App=React.createClass({
 		var agave=this.state.agave;
 
 		return (
-			<Layout type="column">
-				<Fixed className="header">
-					Header
-				</Fixed>
-				<Flex>
 					<Layout type="row">
 						<Fixed className="sidebar">
 							<AppsList apps={agave.apps} />
@@ -32,11 +27,6 @@ var App=React.createClass({
 							<JobsList jobs={agave.jobs} />
 						</Fixed>
 					</Layout>
-				</Flex>
-				<Fixed className="header">
-					Footer
-				</Fixed>
-			</Layout>
 		);
 	}
 });
