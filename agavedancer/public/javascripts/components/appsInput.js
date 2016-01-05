@@ -29,7 +29,7 @@ const AgaveAppsInput=React.createClass({
 			});
 			let addProps;
 			addProps={
-				type: 'text'
+				type: 'file'
 			};
 			props=_.assign(props, addProps);
 		}

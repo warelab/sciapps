@@ -30,7 +30,7 @@
 		</dl>
 	</p>
 [% ELSE %]
-	No application found for term: '[% name |html %]'.
+	No application found for term: '[% id |html %]'.
 [% END %]
 
 	</div>

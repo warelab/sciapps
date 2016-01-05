@@ -115,4 +115,10 @@ sub is_successful {
 	$_[0]->status eq 'FINISHED'
 }
 
+sub TO_JSON {
+	my $self = shift;
+	my $href = { map {$_ => $self->{$_}} keys %$self};
+	return $href;
+}
+
 1; # End of Agave::Client::Object::Application

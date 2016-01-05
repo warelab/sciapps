@@ -39,6 +39,19 @@ var AgaveWebStore = Reflux.createStore({
 		}.bind(this))
 		.catch(function(res) {
 		})
+	},
+
+	submitAgaveWebApps: function(formData) {
+		axios.post('/job/new/' + this.state.appDetail.id , formData, {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+			transformRequest: function(data) { return data; }
+		})
+		.then(function(res) {
+			this.state.jobs.push(res.data);
+			this.trigger(this.state);
+		}.bind(this))
+		.catch(function(res) {
+		})
 	}
 });
 

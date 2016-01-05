@@ -30,5 +30,4 @@ var AppsList=React.createClass({
 	}
 });
 
-
 module.exports = AppsList;

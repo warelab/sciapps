@@ -1,22 +1,31 @@
 'use strict';
 
 import React from 'react';
-import AppsItem from './appsItem.js';
+import JobsItem from './jobsItem.js';
 import AgaveWebActions from '../actions/agaveWebActions.js';
-import {ListGroup, ListGroupItem} from 'react-bootstrap';
+import {ListGroup} from 'react-bootstrap';
 
 var JobsList=React.createClass({
 
-	componentWillMount: function() {
+	componentDidMount: function() {
 		AgaveWebActions.listAgaveWebJobs();
 	},
 
 	render: function() {
-		var app_form, app_info;
+		let jobs, jobsItemNodes;
+		jobs=this.props.jobs;
+		console.log(jobs);
+		if (jobs && jobs.length) {
+			jobsItemNodes = jobs.map(function (jobsItem) {
+				return (
+					<JobsItem key={jobsItem.id} data={jobsItem} />
+				);
+			});
+		}
+
 		return (
 			<ListGroup>
-				<ListGroupItem>job1</ListGroupItem>
-				<ListGroupItem>job2</ListGroupItem>
+				{jobsItemNodes}
 			</ListGroup>
 		);
 	}
