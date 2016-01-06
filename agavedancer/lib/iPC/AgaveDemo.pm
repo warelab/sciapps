@@ -9,6 +9,7 @@ use Dancer::Plugin::Email;
 use File::Copy ();
 
 our $VERSION = '0.2';
+our @EXPORT_SETTINGS=qw/host_url archive_system archive_path archive_home input_system input_path input_home output_url email upload_suffix/;
 
 # TODO - this needs work
 sub token_valid {
@@ -111,9 +112,13 @@ get '/logout' => sub {
 	return redirect '/';
 };
 
+ajax '/settings' => sub {
+	my $settings={map {$_ => setting($_)} @EXPORT_SETTINGS};
+	to_json($settings);
+};
+
 ajax '/apps' => sub {
 	my $app_list=retrieveApps();
-
 	to_json($app_list);
 };
 
@@ -278,10 +283,16 @@ ajax '/job/new/:id' => sub {
 		$parameters = $app->parameters;
 	}
 	my $form = params();
-	#my $st=submitJob($apif, $app, $app_id, $form, $inputs, $parameters);
-	my $job_id='5203299830500889061-e0bd34dffff8de6-0001-007';
-	my $result=redirect '/job/' . $job_id;
-	$result;
+	#my $job_id='5203299830500889061-e0bd34dffff8de6-0001-007';
+	#return redirect '/job/' . $job_id;
+	my $st=submitJob($apif, $app, $app_id, $form, $inputs, $parameters);
+	#print STDERR to_dumper( $st ), $/;
+	if ($st) {
+		if ($st->{status} eq 'success') {
+			my $job = $st->{data};
+			return redirect '/job/' . $job->{id};
+		}
+	}
 };
 
 any ['get', 'post'] => '/job/new/:id' => sub {

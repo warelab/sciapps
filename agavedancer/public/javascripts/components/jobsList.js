@@ -12,13 +12,13 @@ var JobsList=React.createClass({
 	},
 
 	render: function() {
-		let jobs, jobsItemNodes;
+		let jobs, settings, jobsItemNodes;
 		jobs=this.props.jobs;
-		console.log(jobs);
+		settings=this.props.settings;
 		if (jobs && jobs.length) {
 			jobsItemNodes = jobs.map(function (jobsItem) {
 				return (
-					<JobsItem key={jobsItem.id} data={jobsItem} />
+					<JobsItem key={jobsItem.id} data={jobsItem} settings={settings} />
 				);
 			});
 		}

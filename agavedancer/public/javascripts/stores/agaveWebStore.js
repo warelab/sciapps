@@ -2,6 +2,7 @@
 
 import Reflux from 'reflux';
 import axios from 'axios';
+import _ from 'lodash';
 import AgaveWebActions from  '../actions/agaveWebActions.js';
 
 var AgaveWebStore = Reflux.createStore({
@@ -9,14 +10,28 @@ var AgaveWebStore = Reflux.createStore({
 
 	init: function() {
 		this.state={
+			settings: {},
 			apps: [],
 			appDetail: {},
-			jobs: []
+			jobs: [],
+			jobDetail: {_showModal: false}
 		};
 	},
 	
 	getInitialState: function() {
 		return this.state;
+	},
+
+	setupAgaveWebApps: function() {
+		axios.get('/settings', {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		})
+		.then(function(res) {
+			this.state.settings=res.data;
+			this.trigger(this.state);
+		}.bind(this))
+		.catch(function(res) {
+		});
 	},
 
 	listAgaveWebApps: function() {
@@ -48,10 +63,29 @@ var AgaveWebStore = Reflux.createStore({
 		})
 		.then(function(res) {
 			this.state.jobs.push(res.data);
+			//console.log(this.state.jobs);
 			this.trigger(this.state);
 		}.bind(this))
 		.catch(function(res) {
 		})
+	},
+
+	showAgaveWebJobs: function(jobId) {
+		axios.get('/job/' + jobId, {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		})
+		.then(function(res) {
+			this.state.jobDetail=_.assign(res.data, {_showModal: true});
+			//console.log(this.state.jobDetail);
+			this.trigger(this.state);
+		}.bind(this))
+		.catch(function(res) {
+		})
+	},
+
+	hideAgaveWebJobs: function() {
+		this.state.jobDetail._showModal=false;
+		this.trigger(this.state);
 	}
 });
 
