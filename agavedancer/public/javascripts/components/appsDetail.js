@@ -5,15 +5,15 @@ import {Panel, Table, Jumbotron} from 'react-bootstrap';
 import AppsInfo from './appsInfo.js';
 import AppsForm from './appsForm.js';
 
-var AppsDetail=React.createClass({
+const AppsDetail=React.createClass({
 	render: function() {
-		var appDetail=this.props.appDetail;
-		var markup;
+		let appDetail=this.props.appDetail, settings=this.props.settings;
+		let markup;
 		if (appDetail && undefined !== appDetail.name) {
 			markup=(
 				<div>
-					<AppsForm appDetail={appDetail} />
-					<AppsInfo appDetail={appDetail} />
+					<AppsForm appDetail={appDetail} settings={settings} />
+					<AppsInfo appDetail={appDetail} settings={settings} />
 				</div>
 			);
 		} else {

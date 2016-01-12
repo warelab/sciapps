@@ -51,7 +51,7 @@ const AppsForm=React.createClass({
 				<form ref='agaveWebAppForm'>
 					<fieldset>
 						<legend>Job options</legend>
-						<Input type='text' id="jobName" name="jobName" label="Job name" placeholder="Create a job name" />
+						<Input type='text' id="jobName" name="jobName" label="Job name" placeholder="Create a job name" help='Optional job name' />
 					</fieldset>
 					<fieldset>
 						<legend>Inputs</legend>
@@ -63,7 +63,7 @@ const AppsForm=React.createClass({
 					</fieldset>
 					<fieldset>
 						<legend>Notifications</legend>
-							<Input type='text' id='_email' name='_email' label="Email Address" placeholder="Enter an email address" />
+							<Input type='email' id='_email' name='_email' label="Email Address" placeholder="Enter email" />
 					</fieldset>
 					<Button
 						bsStyle='primary'

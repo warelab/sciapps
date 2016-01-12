@@ -4,45 +4,71 @@ import React from 'react';
 import _ from 'lodash';
 import {Input} from 'react-bootstrap';
 
-const AgaveAppsInput=React.createClass({
+const AppsInput=React.createClass({
 	getInitialState: function() {
-		return {value: this.props.data.value.default};
-	},
-
-	handleChange: function(event) {
-		this.setState({value: event.target.value});
-	},
-
-	buildAgaveAppsInput: function(input) {
-		let markup;
-		let props={
-			key: input.id,
-			name: input.id,
-			value: this.state.value
+		return {
+			textValue: this.props.data.value.default,
+			fileValue: this.props.data.value.default
 		};
-		if (! input.value.visible) {
-			props.type='hidden';
-		} else {
-			props=_.assign(props, {
-				onChange: this.handleChange,
-				label: input.details.label,
-				placeholder: input.value.default,
-				help: input.details.description
-			});
-			let addProps;
-			addProps={
-				type: 'file'
+	},
+
+	handleTextChange: function(event) {
+		this.setState({textValue: event.target.value});
+	},
+
+	handleFileChange: function(event) {
+		this.setState({fileValue: event.target.value});
+	},
+
+	buildAgaveAppsInput: function(data, settings, type) {
+		let markup;
+		let suffix=settings.upload_suffix;
+		if (! data.value.visible) {
+			let props={
+				key: data.id,
+				name: data.id,
+				value: this.state.value,
+				type: 'hidden'
 			};
-			props=_.assign(props, addProps);
+			markup=(<Input {...props} />);
+		} else {
+			let props={
+				label: data.details.label,
+				help: data.details.description,
+				wrapperClassName: 'wrapper',
+			};
+			let textProps={
+				key: data.id,
+				name: data.id,
+				value: this.state.textValue,
+				type: 'text',
+				placeholder: 'or Enter URL',
+				className: 'form-control',
+				wrapperClassName: 'col-xs-6',
+				onChange: this.handleTextChange
+			};
+			let fileProps={
+				key: data.id + suffix,
+				name: data.id + suffix,
+				value: this.state.fileValue,
+				type: 'file',
+				className: 'form-control',
+				wrapperClassName: 'col-xs-6',
+				onChange: this.handleFileChange
+			};
+			markup=(
+				<Input {...props} >
+					<Input {...fileProps} />
+					<Input {...textProps} />
+				</Input>
+			);
 		}
-		markup=(<Input {...props} />);
 		return markup;
 	},
-
 	render: function() {
-		let markup=this.buildAgaveAppsInput(this.props.data);
+		let markup=this.buildAgaveAppsInput(this.props.data, this.props.settings);
 		return markup;
 	}
 });
 
-module.exports = AgaveAppsInput;
+module.exports = AppsInput;

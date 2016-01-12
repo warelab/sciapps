@@ -2,7 +2,7 @@
 
 import React from 'react';
 import AgaveWebActions from '../actions/agaveWebActions.js';
-import {ListGroupItem, Label} from 'react-bootstrap';
+import {ListGroupItem, Button} from 'react-bootstrap';
 
 var JobsItem=React.createClass({
 
@@ -15,9 +15,9 @@ var JobsItem=React.createClass({
 		let displayName=appId ? this.props.data.submitNumber + ': ' + appId : 'Job submission failed!';
 		return (
 			<ListGroupItem onClick={this.showJobDetail}>
-				<h4><Label bsStyle={appId ? 'default' : 'warning'} >
+				<div className={(appId ? 'btn-default' : 'btn-warning') + ' btn-block'} >
 					{displayName}
-				</Label></h4>
+				</div>
 			</ListGroupItem>
 		);
 	}
