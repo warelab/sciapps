@@ -8,9 +8,11 @@ const AgaveAppsInput=React.createClass({
 	getInitialState: function() {
 		return {value: this.props.data.value.default};
 	},
+
 	handleChange: function(event) {
 		this.setState({value: event.target.value});
 	},
+
 	buildAgaveAppsInput: function(input) {
 		let markup;
 		let props={
@@ -36,6 +38,7 @@ const AgaveAppsInput=React.createClass({
 		markup=(<Input {...props} />);
 		return markup;
 	},
+
 	render: function() {
 		let markup=this.buildAgaveAppsInput(this.props.data);
 		return markup;

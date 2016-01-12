@@ -1,0 +1,233 @@
+{
+    "_links": {
+        "executionSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
+        }, 
+        "metadata": {
+            "href": "https://agave.iplantc.org/meta/v2/data/?q={\"associationIds\":\"7649612252353991141-e0bd34dffff8de6-0001-005\"}"
+        }, 
+        "owner": {
+            "href": "https://agave.iplantc.org/profiles/v2/lwang"
+        }, 
+        "permissions": {
+            "href": "https://agave.iplantc.org/apps/v2/MergeG2P-0.0.2/pems"
+        }, 
+        "self": {
+            "href": "https://agave.iplantc.org/apps/v2/MergeG2P-0.0.2"
+        }, 
+        "storageSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+        }
+    }, 
+    "available": true, 
+    "checkpointable": false, 
+    "defaultMaxRunTime": null, 
+    "defaultMemoryPerNode": 1, 
+    "defaultNodeCount": 1, 
+    "defaultProcessorsPerNode": 1, 
+    "defaultQueue": "debug", 
+    "deploymentPath": "/lwang/applications/mergeg2p/bin", 
+    "deploymentSystem": "data.iplantcollaborative.org", 
+    "executionSystem": "cshl-compute-10", 
+    "executionType": "HPC", 
+    "helpURI": "http://www.iplantc.org", 
+    "icon": null, 
+    "id": "MergeG2P-0.0.2", 
+    "inputs": [
+        {
+            "details": {
+                "argument": null, 
+                "description": "marker file", 
+                "label": "Select marker file in Hapmap format", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "sid", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 0, 
+                "required": true, 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "trait file", 
+                "label": "Select trait file", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "trait", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 1, 
+                "required": true, 
+                "validator": null, 
+                "visible": true
+            }
+        }
+    ], 
+    "isPublic": false, 
+    "label": "MergeG2P", 
+    "lastModified": "2015-10-04T21:33:08.000-05:00", 
+    "longDescription": "MergeG2P is a function written in perl script that intersects genotype data with phenotype data by sample ids. It outputs the phenotype data in two different formats, one for TASSEL (or EMMAX) and another one for MLMM", 
+    "modules": [], 
+    "name": "MergeG2P", 
+    "ontology": [], 
+    "outputs": [
+        {
+            "details": {
+                "description": "Numerical file", 
+                "label": "Merged trait file for mlmm"
+            }, 
+            "id": "trait2_output", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "http://sswapmeet.sswap.info"
+                ]
+            }, 
+            "value": {
+                "default": "mlmm_trait_merged.txt", 
+                "order": 0, 
+                "validator": null
+            }
+        }, 
+        {
+            "details": {
+                "description": "Numerical file", 
+                "label": "Merged trait file"
+            }, 
+            "id": "trait_output", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "http://sswapmeet.sswap.info"
+                ]
+            }, 
+            "value": {
+                "default": "mergeg2p_output_trait.txt", 
+                "order": 0, 
+                "validator": null
+            }
+        }, 
+        {
+            "details": {
+                "description": "", 
+                "label": "Merged marker file"
+            }, 
+            "id": "marker_output", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "http://sswapmeet.sswap.info"
+                ]
+            }, 
+            "value": {
+                "default": "mergeg2p_output_marker.txt", 
+                "order": 1, 
+                "validator": null
+            }
+        }
+    ], 
+    "parallelism": "SERIAL", 
+    "parameters": [
+        {
+            "details": {
+                "argument": null, 
+                "description": "Number of extra columns", 
+                "label": "Enter number of additional columns before marker data start", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "extracols", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 11, 
+                "enquote": false, 
+                "order": 0, 
+                "required": true, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Number of header rows in trait file", 
+                "label": "Enter number of header lines in trait file", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "headlines", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 1, 
+                "enquote": false, 
+                "order": 1, 
+                "required": true, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }
+    ], 
+    "revision": 4, 
+    "shortDescription": "Intersecting genotype data with phenotype data", 
+    "tags": [
+        "GWAS"
+    ], 
+    "templatePath": "mergeg2p_wrapper.sh", 
+    "testPath": "mergeg2p_test_wrapper.sh", 
+    "uuid": "7649612252353991141-e0bd34dffff8de6-0001-005", 
+    "version": "0.0.2"
+}

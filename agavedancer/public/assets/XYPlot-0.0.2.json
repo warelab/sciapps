@@ -1,0 +1,291 @@
+{
+    "_links": {
+        "executionSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
+        }, 
+        "metadata": {
+            "href": "https://agave.iplantc.org/meta/v2/data/?q={\"associationIds\":\"6600096517792731621-e0bd34dffff8de6-0001-005\"}"
+        }, 
+        "owner": {
+            "href": "https://agave.iplantc.org/profiles/v2/lwang"
+        }, 
+        "permissions": {
+            "href": "https://agave.iplantc.org/apps/v2/XYPlot-0.0.2/pems"
+        }, 
+        "self": {
+            "href": "https://agave.iplantc.org/apps/v2/XYPlot-0.0.2"
+        }, 
+        "storageSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+        }
+    }, 
+    "available": true, 
+    "checkpointable": false, 
+    "defaultMaxRunTime": null, 
+    "defaultMemoryPerNode": 1, 
+    "defaultNodeCount": 1, 
+    "defaultProcessorsPerNode": 1, 
+    "defaultQueue": "debug", 
+    "deploymentPath": "/lwang/applications/myplot/bin", 
+    "deploymentSystem": "data.iplantcollaborative.org", 
+    "executionSystem": "cshl-compute-10", 
+    "executionType": "HPC", 
+    "helpURI": "http://www.gnuplot.info/", 
+    "icon": null, 
+    "id": "XYPlot-0.0.2", 
+    "inputs": [
+        {
+            "details": {
+                "argument": null, 
+                "description": "Text file", 
+                "label": "Select tab delimited file with X/Y columns", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "i", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 0, 
+                "required": true, 
+                "validator": null, 
+                "visible": true
+            }
+        }
+    ], 
+    "isPublic": false, 
+    "label": "XYPlot", 
+    "lastModified": "2015-10-03T23:57:05.000-05:00", 
+    "longDescription": "XYPlot is function written in shell script that generates 2D plot via gnuplot", 
+    "modules": [], 
+    "name": "XYPlot", 
+    "ontology": [], 
+    "outputs": [
+        {
+            "details": {
+                "description": "Image file", 
+                "label": "Output filename"
+            }, 
+            "id": "export", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "http://sswapmeet.sswap.info"
+                ]
+            }, 
+            "value": {
+                "default": "out.png", 
+                "order": 0, 
+                "validator": null
+            }
+        }
+    ], 
+    "parallelism": "SERIAL", 
+    "parameters": [
+        {
+            "details": {
+                "argument": null, 
+                "description": "X column number", 
+                "label": "Enter column number of X", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "xcol", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 4, 
+                "enquote": false, 
+                "order": 0, 
+                "required": true, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Y column number", 
+                "label": "Enter column number of Y", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "ycol", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:int"
+                ]
+            }, 
+            "value": {
+                "default": 6, 
+                "enquote": false, 
+                "order": 1, 
+                "required": true, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "X axis label", 
+                "label": "Enter X axis label", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "xlabel", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "Loci", 
+                "enquote": false, 
+                "order": 2, 
+                "required": true, 
+                "type": "string", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Y axis label", 
+                "label": "Enter Y axis label", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "ylabel", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "-log(Pval)", 
+                "enquote": false, 
+                "order": 3, 
+                "required": true, 
+                "type": "string", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": null, 
+                "label": "Enter title of the plot", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "title", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "GLM", 
+                "enquote": false, 
+                "order": 4, 
+                "required": true, 
+                "type": "string", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Negative log10 transform", 
+                "label": "Negative log10 transform", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "logt", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 0, 
+                "ontology": [
+                    "xs:boolean"
+                ]
+            }, 
+            "value": {
+                "default": true, 
+                "enquote": false, 
+                "order": 5, 
+                "required": false, 
+                "type": "bool", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Plot lines or dots", 
+                "label": "Plot lines", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "type", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 0, 
+                "ontology": [
+                    "xs:boolean"
+                ]
+            }, 
+            "value": {
+                "default": false, 
+                "enquote": false, 
+                "order": 6, 
+                "required": false, 
+                "type": "bool", 
+                "validator": null, 
+                "visible": true
+            }
+        }
+    ], 
+    "revision": 5, 
+    "shortDescription": "Create 2D Plot", 
+    "tags": [
+        "GWAS"
+    ], 
+    "templatePath": "myplot_wrapper.sh", 
+    "testPath": "myplot_test_wrapper.sh", 
+    "uuid": "6600096517792731621-e0bd34dffff8de6-0001-005", 
+    "version": "0.0.2"
+}

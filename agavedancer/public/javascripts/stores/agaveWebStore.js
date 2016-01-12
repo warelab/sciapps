@@ -10,11 +10,15 @@ var AgaveWebStore = Reflux.createStore({
 
 	init: function() {
 		this.state={
-			settings: {},
+			settings: {
+				_submitCount: 0,
+				_showJobModal: false, 
+				_showDataStoreModal: false
+			},
 			apps: [],
 			appDetail: {},
 			jobs: [],
-			jobDetail: {_showModal: false}
+			jobDetail: {}
 		};
 	},
 	
@@ -27,7 +31,7 @@ var AgaveWebStore = Reflux.createStore({
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		})
 		.then(function(res) {
-			this.state.settings=res.data;
+			this.state.settings=_.assign(this.state.settings, res.data);
 			this.trigger(this.state);
 		}.bind(this))
 		.catch(function(res) {
@@ -45,9 +49,10 @@ var AgaveWebStore = Reflux.createStore({
 	},
 
 	showAgaveWebApps: function(appId) {
-		axios.get('/app/' + appId, {
-			headers: {'X-Requested-With': 'XMLHttpRequest'},
-		})
+		//axios.get('/app/' + appId, {
+		//	headers: {'X-Requested-With': 'XMLHttpRequest'},
+		//})
+		axios.get('/assets/' + appId + '.json')
 		.then(function(res) {
 			this.state.appDetail=res.data;
 			this.trigger(this.state);
@@ -62,8 +67,9 @@ var AgaveWebStore = Reflux.createStore({
 			transformRequest: function(data) { return data; }
 		})
 		.then(function(res) {
+			console.log(res.data);
+			res.data.submitNumber=this.state.settings._submitCount++;
 			this.state.jobs.push(res.data);
-			//console.log(this.state.jobs);
 			this.trigger(this.state);
 		}.bind(this))
 		.catch(function(res) {
@@ -75,8 +81,8 @@ var AgaveWebStore = Reflux.createStore({
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		})
 		.then(function(res) {
-			this.state.jobDetail=_.assign(res.data, {_showModal: true});
-			//console.log(this.state.jobDetail);
+			this.state.jobDetail=res.data;
+			this.state.settings._showJobModal=true;
 			this.trigger(this.state);
 		}.bind(this))
 		.catch(function(res) {
@@ -84,7 +90,7 @@ var AgaveWebStore = Reflux.createStore({
 	},
 
 	hideAgaveWebJobs: function() {
-		this.state.jobDetail._showModal=false;
+		this.state.settings._showJobModal=false;
 		this.trigger(this.state);
 	}
 });

@@ -1,0 +1,108 @@
+{
+    "_links": {
+        "executionSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
+        }, 
+        "metadata": {
+            "href": "https://agave.iplantc.org/meta/v2/data/?q={\"associationIds\":\"13325666830315035-e0bd34dffff8de6-0001-005\"}"
+        }, 
+        "owner": {
+            "href": "https://agave.iplantc.org/profiles/v2/lwang"
+        }, 
+        "permissions": {
+            "href": "https://agave.iplantc.org/apps/v2/STRUCTURE2TASSEL-0.0.2/pems"
+        }, 
+        "self": {
+            "href": "https://agave.iplantc.org/apps/v2/STRUCTURE2TASSEL-0.0.2"
+        }, 
+        "storageSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+        }
+    }, 
+    "available": true, 
+    "checkpointable": false, 
+    "defaultMaxRunTime": null, 
+    "defaultMemoryPerNode": 1, 
+    "defaultNodeCount": 1, 
+    "defaultProcessorsPerNode": 1, 
+    "defaultQueue": "debug", 
+    "deploymentPath": "/lwang/applications/str2tassel/bin", 
+    "deploymentSystem": "data.iplantcollaborative.org", 
+    "executionSystem": "cshl-compute-10", 
+    "executionType": "HPC", 
+    "helpURI": "http://www.cshl.edu", 
+    "icon": null, 
+    "id": "STRUCTURE2TASSEL-0.0.2", 
+    "inputs": [
+        {
+            "details": {
+                "argument": null, 
+                "description": "structure output file", 
+                "label": "Input Data", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "i", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 0, 
+                "required": true, 
+                "validator": null, 
+                "visible": true
+            }
+        }
+    ], 
+    "isPublic": false, 
+    "label": "STRUCTURE2TASSEL", 
+    "lastModified": "2015-10-03T19:36:49.000-05:00", 
+    "longDescription": "STRUCTURE2TASSEL is a function written in shell script that converts STRUCTURE output for feeding into TASSEL for population structure stratification", 
+    "modules": [], 
+    "name": "STRUCTURE2TASSEL", 
+    "ontology": [], 
+    "outputs": [
+        {
+            "details": {
+                "description": "Numerical file", 
+                "label": "Output filename"
+            }, 
+            "id": "export", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 0, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "s2t_output.txt", 
+                "order": 0, 
+                "validator": null
+            }
+        }
+    ], 
+    "parallelism": "SERIAL", 
+    "parameters": [], 
+    "revision": 4, 
+    "shortDescription": "Converting STRUCTURE output for TASSEL", 
+    "tags": [
+        "GWAS"
+    ], 
+    "templatePath": "str2tassel_wrapper.sh", 
+    "testPath": "str2tassel_test_wrapper.sh", 
+    "uuid": "13325666830315035-e0bd34dffff8de6-0001-005", 
+    "version": "0.0.2"
+}

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import {Panel, ButtonInput, Input} from 'react-bootstrap';
+import {Panel, Button, Input} from 'react-bootstrap';
 import AppsParam from './appsParam.js';
 import AppsInput from './appsInput.js';
 import AgaveWebActions from '../actions/agaveWebActions.js';
@@ -13,27 +13,37 @@ function sortByOrder(unsorted) {
 	});
 }
 
-var AppsForm=React.createClass({
+const AppsForm=React.createClass({
+
+	getInitialState() {
+		return { isSubmitting: false };
+	},
 
 	handleSubmit: function() {
+		this.setState({isSubmitting: true});
 		let formData=new FormData(this.refs.agaveWebAppForm);
 		AgaveWebActions.submitAgaveWebApps(formData);
+		setTimeout(() => {
+			this.setState({isSubmitting: false});
+		}, 2000);
 	},
 
 	render: function() {
-		var appDetail=this.props.appDetail;
-		var app_inputs='inputs';
-		var app_params='params';
-		var header='New job using application';
+		let appDetail=this.props.appDetail;
+		let settings=this.props.settings;
+		let app_inputs='inputs';
+		let app_params='params';
+		let header='New job using application';
+		let isSubmitting=this.state.isSubmitting;
 		if (appDetail && undefined !== appDetail.name) {
 			header+=' ' + appDetail.name + ':';
 			let sortedInputs=sortByOrder(appDetail.inputs);
 			app_inputs=sortedInputs.map(function(input) {
-				return(<AppsInput data={input} />);
+				return(<AppsInput data={input} settings={settings} />);
 			});
 			let sortedParams=sortByOrder(appDetail.parameters);
 			app_params=sortedParams.map(function(param) {
-				return(<AppsParam data={param} />);
+				return(<AppsParam data={param} settings={settings} />);
 			});
 		}
 		return (
@@ -55,7 +65,12 @@ var AppsForm=React.createClass({
 						<legend>Notifications</legend>
 							<Input type='text' id='_email' name='_email' label="Email Address" placeholder="Enter an email address" />
 					</fieldset>
-					<ButtonInput value='Submit' onClick={this.handleSubmit} />
+					<Button
+						bsStyle='primary'
+						disabled={isSubmitting}
+						onClick={isSubmitting ? null : this.handleSubmit}>
+						{isSubmitting ? 'Submitting...' : 'Submit Job'}
+					</Button>
 				</form>
 			</Panel>
 		);

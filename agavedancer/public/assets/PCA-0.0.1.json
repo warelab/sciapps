@@ -1,0 +1,168 @@
+{
+    "_links": {
+        "executionSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
+        }, 
+        "metadata": {
+            "href": "https://agave.iplantc.org/meta/v2/data/?q={\"associationIds\":\"2609664733343641115-e0bd34dffff8de6-0001-005\"}"
+        }, 
+        "owner": {
+            "href": "https://agave.iplantc.org/profiles/v2/lwang"
+        }, 
+        "permissions": {
+            "href": "https://agave.iplantc.org/apps/v2/PCA-0.0.1/pems"
+        }, 
+        "self": {
+            "href": "https://agave.iplantc.org/apps/v2/PCA-0.0.1"
+        }, 
+        "storageSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+        }
+    }, 
+    "available": true, 
+    "checkpointable": false, 
+    "defaultMaxRunTime": null, 
+    "defaultMemoryPerNode": 1, 
+    "defaultNodeCount": 1, 
+    "defaultProcessorsPerNode": 1, 
+    "defaultQueue": "debug", 
+    "deploymentPath": "/lwang/applications/pca/bin", 
+    "deploymentSystem": "data.iplantcollaborative.org", 
+    "executionSystem": "cshl-compute-10", 
+    "executionType": "HPC", 
+    "helpURI": "https://stat.ethz.ch/R-manual/R-patched/library/stats/html/prcomp.html", 
+    "icon": null, 
+    "id": "PCA-0.0.1", 
+    "inputs": [
+        {
+            "details": {
+                "argument": null, 
+                "description": "marker file", 
+                "label": "Select marker file in Hapmap format", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "input", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 0, 
+                "required": true, 
+                "validator": null, 
+                "visible": true
+            }
+        }
+    ], 
+    "isPublic": false, 
+    "label": "PCA", 
+    "lastModified": "2015-10-03T19:42:58.000-05:00", 
+    "longDescription": "PCA function performs PCA with R's prcomp function. It takes a marker file in Hapmap format and outputs population structure (pca_output.txt, formatted for TASSEL), eigenvalues (eigval_out), scree plot (scree_out.png), and pairwise plot of the first three PCs (pcplot_out.png)", 
+    "modules": [], 
+    "name": "PCA", 
+    "ontology": [], 
+    "outputs": [
+        {
+            "details": {
+                "description": "Output filename", 
+                "label": "File with PCA results"
+            }, 
+            "id": "out", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "http://sswapmeet.sswap.info"
+                ]
+            }, 
+            "value": {
+                "default": "pca_output.txt", 
+                "order": 0, 
+                "validator": null
+            }
+        }
+    ], 
+    "parallelism": "SERIAL", 
+    "parameters": [
+        {
+            "details": {
+                "argument": null, 
+                "description": null, 
+                "label": "Select PCA method", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "model", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "pca", 
+                "enquote": false, 
+                "enum_values": [
+                    {
+                        "pca": "pca"
+                    }, 
+                    {
+                        "mds": "mds"
+                    }
+                ], 
+                "order": 0, 
+                "required": true, 
+                "type": "enumeration", 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Number of PCs", 
+                "label": "Enter number of PCs to be output", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "numPCs", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 3, 
+                "enquote": false, 
+                "order": 1, 
+                "required": true, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }
+    ], 
+    "revision": 3, 
+    "shortDescription": "Perform PCA with R's prcomp function", 
+    "tags": [
+        "GWAS"
+    ], 
+    "templatePath": "pca_wrapper.sh", 
+    "testPath": "pca_test_wrapper.sh", 
+    "uuid": "2609664733343641115-e0bd34dffff8de6-0001-005", 
+    "version": "0.0.1"
+}
