@@ -117,6 +117,27 @@ ajax '/settings' => sub {
 	to_json($settings);
 };
 
+ajax qr{/browse/?(.*)} => sub {
+	check_login();
+
+	my $username = session('username');
+	my $apif = Agave::Client->new(
+		username => $username,
+		token => session('token'),
+	);
+
+	my ($path) = splat;
+	#my $path = param("path");
+	my $path_to_read = $path ? $path : $username;
+	my $io = $apif->io;
+	my $dir_list = $io->readdir('/' . $path_to_read);
+	to_json({
+			path => $path_to_read,
+			list => $dir_list,
+		}
+	);
+};
+
 ajax '/apps' => sub {
 	my $app_list=retrieveApps();
 	to_json($app_list);

@@ -2,7 +2,8 @@
 
 import React from 'react';
 import _ from 'lodash';
-import {Input} from 'react-bootstrap';
+import AgaveWebActions from '../actions/agaveWebActions.js';
+import {Input, Button} from 'react-bootstrap';
 
 const AppsInput=React.createClass({
 	getInitialState: function() {
@@ -20,6 +21,11 @@ const AppsInput=React.createClass({
 		this.setState({fileValue: event.target.value});
 	},
 
+	handleDataStore: function() {
+		AgaveWebActions.showAgaveWebDataStore();
+		//this.setState({textValue: });
+	},
+
 	buildAgaveAppsInput: function(data, settings, type) {
 		let markup;
 		let suffix=settings.upload_suffix;
@@ -32,6 +38,9 @@ const AppsInput=React.createClass({
 			};
 			markup=(<Input {...props} />);
 		} else {
+			let dataStoreButton=(
+				<Button onClick={this.handleDataStore}>DataStore</Button>
+			);
 			let props={
 				label: data.details.label,
 				help: data.details.description,
@@ -43,6 +52,7 @@ const AppsInput=React.createClass({
 				value: this.state.textValue,
 				type: 'text',
 				placeholder: 'or Enter URL',
+				buttonAfter: dataStoreButton, 
 				className: 'form-control',
 				wrapperClassName: 'col-xs-6',
 				onChange: this.handleTextChange

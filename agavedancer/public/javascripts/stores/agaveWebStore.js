@@ -18,7 +18,9 @@ var AgaveWebStore = Reflux.createStore({
 			apps: [],
 			appDetail: {},
 			jobs: [],
-			jobDetail: {}
+			jobDetail: {},
+			dsDetail: [],
+			dsItem: null
 		};
 	},
 	
@@ -91,6 +93,27 @@ var AgaveWebStore = Reflux.createStore({
 
 	hideAgaveWebJobs: function() {
 		this.state.settings._showJobModal=false;
+		this.trigger(this.state);
+	},
+
+	showAgaveWebDataStore: function(path) {
+		path=path || '';
+		axios.get('/browse/' + path, {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		})
+		.then(function(res) {
+			console.log(res.data);
+			this.state.dsDetail=res.data;
+			this.state.dsItem=null;
+			this.state.settings._showDataStoreModal=true;
+			this.trigger(this.state);
+		}.bind(this))
+		.catch(function(res) {
+		})
+	},
+
+	hideAgaveWebDataStore: function() {
+		this.state.settings._showDataStoreModal=false;
 		this.trigger(this.state);
 	}
 });

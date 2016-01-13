@@ -8,7 +8,7 @@ function toLocaleString(date) {
 	return (new Date(date).toLocaleString());
 }
 
-var JobsDetail=React.createClass({
+const JobsDetail=React.createClass({
 	hideJobDetail: function() {
 		AgaveWebActions.hideAgaveWebJobs();
 	},
@@ -50,7 +50,6 @@ var JobsDetail=React.createClass({
 			</Modal>
 		);
 	}
-
 });
 
 module.exports= JobsDetail;
