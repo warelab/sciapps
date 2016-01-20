@@ -4,6 +4,7 @@ import React from 'react';
 import _ from 'lodash';
 import AgaveWebActions from '../actions/agaveWebActions.js';
 import {Input, Button} from 'react-bootstrap';
+import BaseInput from './baseInput.js';
 
 const AppsInput=React.createClass({
 	getInitialState: function() {
@@ -11,6 +12,18 @@ const AppsInput=React.createClass({
 			textValue: this.props.data.value.default,
 			fileValue: this.props.data.value.default
 		};
+	},
+
+	componentWillReceiveProps: function(nextProps) {
+		let textValue=nextProps.data.value.default, fileValue=nextProps.data.value.default;
+		let dsItemUrl=_.get(nextProps.dsItems, nextProps.data.id);
+		if (dsItemUrl) {
+			textValue=dsItemUrl;
+		}
+		this.setState({
+			textValue: textValue,
+			fileValue: fileValue
+		});
 	},
 
 	handleTextChange: function(event) {
@@ -21,20 +34,19 @@ const AppsInput=React.createClass({
 		this.setState({fileValue: event.target.value});
 	},
 
-	handleDataStore: function() {
+	handleDataStore: function(event) {
+		AgaveWebActions.setAgaveWebDataStoreItemTarget(this.props.data.id);
 		AgaveWebActions.showAgaveWebDataStore();
-		//this.setState({textValue: });
 	},
 
-	buildAgaveAppsInput: function(data, settings, type) {
+	buildAgaveAppsInput: function(data, settings) {
 		let markup;
 		let suffix=settings.upload_suffix;
 		if (! data.value.visible) {
 			let props={
 				key: data.id,
 				name: data.id,
-				value: this.state.value,
-				type: 'hidden'
+				value: this.state.textValue
 			};
 			markup=(<Input {...props} />);
 		} else {

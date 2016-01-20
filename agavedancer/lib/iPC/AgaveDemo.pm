@@ -129,9 +129,13 @@ ajax qr{/browse/?(.*)} => sub {
 	my ($path) = splat;
 	#my $path = param("path");
 	my $path_to_read = $path ? $path : $username;
+	unless (substr($path_to_read,-1,1) eq '/') {
+		$path_to_read.="/";
+	}
 	my $io = $apif->io;
 	my $dir_list = $io->readdir('/' . $path_to_read);
 	to_json({
+			root => $username . '/',
 			path => $path_to_read,
 			list => $dir_list,
 		}

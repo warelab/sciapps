@@ -5,10 +5,12 @@ import AgaveWebActions from '../actions/agaveWebActions.js';
 import {ListGroupItem, Button} from 'react-bootstrap';
 
 const DSItem=React.createClass({
-	handleDir: function() {
+	handleDir: function(event) {
+		AgaveWebActions.showAgaveWebDataStore(event.target.textContent);
 	},
 
-	handleFile: function() {
+	handleFile: function(event) {
+		AgaveWebActions.selectAgaveWebDataStoreItem(event.target.textContent);
 	},
 
 	render: function() {

@@ -11,7 +11,9 @@ var AgaveWebActions=Reflux.createActions([
 	'hideAgaveWebJobs',
 	'listAgaveWebJobs',
 	'showAgaveWebDataStore',
-	'hideAgaveWebDataStore'
+	'hideAgaveWebDataStore',
+	'setAgaveWebDataStoreItemTarget',
+	'selectAgaveWebDataStoreItem'
 ]);
 
 module.exports = AgaveWebActions;

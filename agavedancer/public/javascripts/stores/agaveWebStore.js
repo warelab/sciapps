@@ -13,14 +13,16 @@ var AgaveWebStore = Reflux.createStore({
 			settings: {
 				_submitCount: 0,
 				_showJobModal: false, 
-				_showDataStoreModal: false
+				_showDataStoreModal: false,
+				_activeInput: ''
 			},
 			apps: [],
 			appDetail: {},
 			jobs: [],
 			jobDetail: {},
-			dsDetail: [],
-			dsItem: null
+			dsDetail: {},
+			dsDetailCache: {},
+			dsItems: {}
 		};
 	},
 	
@@ -37,6 +39,7 @@ var AgaveWebStore = Reflux.createStore({
 			this.trigger(this.state);
 		}.bind(this))
 		.catch(function(res) {
+				console.log(res);
 		});
 	},
 
@@ -47,10 +50,14 @@ var AgaveWebStore = Reflux.createStore({
 			this.trigger(this.state);
 		}.bind(this))
 		.catch(function(res) {
+				console.log(res);
 		});
 	},
 
 	showAgaveWebApps: function(appId) {
+		this.state.dsItems={};
+		this.state.settings._activeInput='';
+
 		//axios.get('/app/' + appId, {
 		//	headers: {'X-Requested-With': 'XMLHttpRequest'},
 		//})
@@ -60,6 +67,7 @@ var AgaveWebStore = Reflux.createStore({
 			this.trigger(this.state);
 		}.bind(this))
 		.catch(function(res) {
+				console.log(res);
 		})
 	},
 
@@ -75,19 +83,22 @@ var AgaveWebStore = Reflux.createStore({
 			this.trigger(this.state);
 		}.bind(this))
 		.catch(function(res) {
+				console.log(res);
 		})
 	},
 
 	showAgaveWebJobs: function(jobId) {
+		this.state.settings._showJobModal=true;
+		this.trigger(this.state);
 		axios.get('/job/' + jobId, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		})
 		.then(function(res) {
 			this.state.jobDetail=res.data;
-			this.state.settings._showJobModal=true;
 			this.trigger(this.state);
 		}.bind(this))
 		.catch(function(res) {
+				console.log(res);
 		})
 	},
 
@@ -97,23 +108,64 @@ var AgaveWebStore = Reflux.createStore({
 	},
 
 	showAgaveWebDataStore: function(path) {
-		path=path || '';
-		axios.get('/browse/' + path, {
-			headers: {'X-Requested-With': 'XMLHttpRequest'},
-		})
-		.then(function(res) {
-			console.log(res.data);
-			this.state.dsDetail=res.data;
-			this.state.dsItem=null;
-			this.state.settings._showDataStoreModal=true;
-			this.trigger(this.state);
-		}.bind(this))
-		.catch(function(res) {
-		})
+		let cached=false;
+		if (this.state.dsDetail.root && ! path) {
+			path=this.state.dsDetail.root;
+		}
+		console.log(path);
+		if ('../' === path) {
+			path=this.state.dsDetail.path.replace(/[^\/]+\/$/, '');
+		}
+		let cachedPath=_.get(this.state.dsDetailCache, path);
+		if (cachedPath) {
+			this.state.dsDetail.path=path;
+			this.state.dsDetail.list=cachedPath;
+			cached=true;
+		}
+		this.state.settings._showDataStoreModal=true;
+		this.trigger(this.state);
+		if (! cached) {
+			let oldPath=this.state.dsDetail.path;
+			if (path && oldPath) {
+				path=this.state.dsDetail.path + path;
+			} else {
+				path='';
+			}
+			if (path.endsWith('/')) {
+				path=path.slice(0,-1);
+			}
+			axios.get('/browse/' + path, {
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+			})
+			.then(function(res) {
+				let dsDetail=res.data;
+				if (dsDetail.list[0].name === '.') {
+					dsDetail.list.shift();
+				}
+				if (dsDetail.root !== dsDetail.path) {
+					dsDetail.list.unshift({name: '..', type: 'dir'});
+				}
+				this.state.dsDetail=dsDetail;
+				_.set(this.state.dsDetailCache, dsDetail.path, dsDetail.list);
+				this.trigger(this.state);
+			}.bind(this))
+			.catch(function(res) {
+				console.log(res);
+			})
+		}
+	},
+
+	setAgaveWebDataStoreItemTarget: function(target) {
+		this.state.settings._activeInput=target;
 	},
 
 	hideAgaveWebDataStore: function() {
 		this.state.settings._showDataStoreModal=false;
+		this.trigger(this.state);
+	},
+
+	selectAgaveWebDataStoreItem: function(item) {
+		_.set(this.state.dsItems, this.state.settings._activeInput, 'agave://' + this.state.dsDetail.path + item);
 		this.trigger(this.state);
 	}
 });

@@ -27,8 +27,8 @@ const App=React.createClass({
 							<AppsList apps={agave.apps} settings={agave.settings} />
 						</Fixed>
 						<Flex className="main">
-							<AppsDetail appDetail={agave.appDetail} dsItem={agave.dsItem} settings={agave.settings} />
-							<DSDetail dsDetail={agave.dsDetail} dsItem={agave.dsItem} settings={agave.settings} />
+							<AppsDetail appDetail={agave.appDetail} dsItems={agave.dsItems} settings={agave.settings} />
+							<DSDetail dsDetail={agave.dsDetail} dsItems={agave.dsItems} settings={agave.settings} />
 						</Flex>
 						<Fixed className="rightbar">
 							<JobsList jobs={agave.jobs} settings={agave.settings} />

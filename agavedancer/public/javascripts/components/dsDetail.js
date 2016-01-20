@@ -2,6 +2,7 @@
 
 import React from 'react';
 import AgaveWebActions from '../actions/agaveWebActions.js';
+import _ from 'lodash';
 import {Modal, ListGroup, ListGroupItem, Button} from 'react-bootstrap';
 import DSItem from './dsItem.js';
 
@@ -11,14 +12,13 @@ const DSDetail=React.createClass({
 	},
 
 	render: function() {
-		let dsDetail=this.props.dsDetail;
-		let settings=this.props.settings;
+		let dsDetail=this.props.dsDetail, settings=this.props.settings;
 		let showDataStoreModal=settings._showDataStoreModal;
 		let dsFileNodes;
+		let dsItemUrl=_.get(this.props.dsItems, settings._activeInput);
+		let dsBtnValue=dsItemUrl ? "Select and close" : "Close";
 		if (dsDetail.list && dsDetail.list.length) {
-			dsFileNodes=dsDetail.list.filter(function(dsItem) {
-				return dsItem.name !== '.';
-			}).map(function(dsItem) {
+			dsFileNodes=dsDetail.list.map(function(dsItem) {
 				return (
 					<DSItem key={dsItem.name} data={dsItem} settings={settings} />
 				);
@@ -35,8 +35,7 @@ const DSDetail=React.createClass({
 					</ListGroup>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button disabled onClick={this.chooseDSFile}>Choose</Button>
-					<Button onClick={this.hideDataStoreDetail}>Close</Button>
+					<Button onClick={this.hideDataStoreDetail}>{dsBtnValue}</Button>
 				</Modal.Footer>
 			</Modal>
 		);

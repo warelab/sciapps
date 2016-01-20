@@ -7,12 +7,12 @@ import AppsForm from './appsForm.js';
 
 const AppsDetail=React.createClass({
 	render: function() {
-		let appDetail=this.props.appDetail, settings=this.props.settings;
+		let appDetail=this.props.appDetail, settings=this.props.settings, dsItems=this.props.dsItems;
 		let markup;
 		if (appDetail && undefined !== appDetail.name) {
 			markup=(
 				<div>
-					<AppsForm appDetail={appDetail} settings={settings} />
+					<AppsForm appDetail={appDetail} settings={settings} dsItems={dsItems} />
 					<AppsInfo appDetail={appDetail} settings={settings} />
 				</div>
 			);

@@ -2,7 +2,8 @@
 
 import React from 'react';
 import _ from 'lodash';
-import {Panel, Button, Input} from 'react-bootstrap';
+import {Panel, Button} from 'react-bootstrap';
+import BaseInput from './baseInput.js';
 import AppsParam from './appsParam.js';
 import AppsInput from './appsInput.js';
 import AgaveWebActions from '../actions/agaveWebActions.js';
@@ -29,8 +30,7 @@ const AppsForm=React.createClass({
 	},
 
 	render: function() {
-		let appDetail=this.props.appDetail;
-		let settings=this.props.settings;
+		let appDetail=this.props.appDetail, settings=this.props.settings, dsItems=this.props.dsItems;
 		let app_inputs='inputs';
 		let app_params='params';
 		let header='New job using application';
@@ -39,19 +39,35 @@ const AppsForm=React.createClass({
 			header+=' ' + appDetail.name + ':';
 			let sortedInputs=sortByOrder(appDetail.inputs);
 			app_inputs=sortedInputs.map(function(input) {
-				return(<AppsInput data={input} settings={settings} />);
+				return(<AppsInput key={input.id} data={input} settings={settings} dsItems={dsItems} />);
 			});
 			let sortedParams=sortByOrder(appDetail.parameters);
 			app_params=sortedParams.map(function(param) {
-				return(<AppsParam data={param} settings={settings} />);
+				return(<AppsParam key={param.id} data={param} settings={settings} />);
 			});
 		}
+		let jobNameInput={
+			type: 'text',
+			id: 'jobName',
+			name: 'jobName', 
+			label: 'Job name',
+			placeholder: 'Create a job name',
+			help: 'Optional job name'
+		};
+		let emailInput={
+			type: 'email',
+			id: '_email',
+			name: '_email',
+			label: 'Email Address',
+			placeholder: 'Enter email',
+			help: 'Optional Email for notification'
+		};
 		return (
 			<Panel header={header}>
 				<form ref='agaveWebAppForm'>
 					<fieldset>
 						<legend>Job options</legend>
-						<Input type='text' id="jobName" name="jobName" label="Job name" placeholder="Create a job name" help='Optional job name' />
+						<BaseInput data={jobNameInput} />
 					</fieldset>
 					<fieldset>
 						<legend>Inputs</legend>
@@ -63,7 +79,7 @@ const AppsForm=React.createClass({
 					</fieldset>
 					<fieldset>
 						<legend>Notifications</legend>
-							<Input type='email' id='_email' name='_email' label="Email Address" placeholder="Enter email" />
+							<BaseInput data={emailInput} />
 					</fieldset>
 					<Button
 						bsStyle='primary'
