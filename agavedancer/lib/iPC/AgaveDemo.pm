@@ -9,7 +9,7 @@ use Dancer::Plugin::Email;
 use File::Copy ();
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/host_url archive_system archive_path archive_home input_system input_path input_home output_url email upload_suffix/;
+our @EXPORT_SETTINGS=qw/host_url archive_system archive_path archive_home input_system input_path input_home output_url email upload_suffix iplant_datastore/;
 
 # TODO - this needs work
 sub token_valid {

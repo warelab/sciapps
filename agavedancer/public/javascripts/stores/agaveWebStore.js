@@ -165,7 +165,7 @@ var AgaveWebStore = Reflux.createStore({
 	},
 
 	selectAgaveWebDataStoreItem: function(item) {
-		_.set(this.state.dsItems, this.state.settings._activeInput, 'agave://' + this.state.dsDetail.path + item);
+		_.set(this.state.dsItems, this.state.settings._activeInput, this.state.settings.iplant_datastore + this.state.dsDetail.path + item);
 		this.trigger(this.state);
 	}
 });

@@ -35,7 +35,7 @@ const DSDetail=React.createClass({
 					</ListGroup>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button onClick={this.hideDataStoreDetail}>{dsBtnValue}</Button>
+					<Button bsStyle='primary' onClick={this.hideDataStoreDetail}>{dsBtnValue}</Button>
 				</Modal.Footer>
 			</Modal>
 		);

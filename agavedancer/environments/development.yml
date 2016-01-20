@@ -40,3 +40,4 @@ output_url: 'http://www.maizecode.org'
 email: 'noreply@maizecode.org'
 upload_suffix: ".upload"
 maxRunTime: "96:00:00"
+iplant_datastore: 'agave://data.iplantcollaborative.org/'
