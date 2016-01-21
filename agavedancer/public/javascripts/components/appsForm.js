@@ -26,7 +26,7 @@ const AppsForm=React.createClass({
 		AgaveWebActions.submitAgaveWebApps(formData);
 		setTimeout(() => {
 			this.setState({isSubmitting: false});
-		}, 2000);
+		}, 1000);
 	},
 
 	render: function() {

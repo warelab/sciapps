@@ -16,9 +16,10 @@ var JobsList=React.createClass({
 		jobs=this.props.jobs;
 		settings=this.props.settings;
 		if (jobs && jobs.length) {
-			jobsItemNodes = jobs.map(function (jobsItem) {
+			console.log(jobs);
+			jobsItemNodes = jobs.map(function (jobsItem, index) {
 				return (
-					<JobsItem key={jobsItem.id} data={jobsItem} settings={settings} />
+					<JobsItem key={index} data={jobsItem} settings={settings} index={index} />
 				);
 			});
 		}

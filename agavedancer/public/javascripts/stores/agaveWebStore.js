@@ -11,7 +11,7 @@ var AgaveWebStore = Reflux.createStore({
 	init: function() {
 		this.state={
 			settings: {
-				_submitCount: 0,
+			//	_submitCount: 0,
 				_showJobModal: false, 
 				_showDataStoreModal: false,
 				_activeInput: ''
@@ -72,14 +72,16 @@ var AgaveWebStore = Reflux.createStore({
 	},
 
 	submitAgaveWebApps: function(formData) {
+		let submitNumber=this.state.jobs.length;
+		this.state.jobs[submitNumber]={appId: this.state.appDetail.id};
+		this.trigger(this.state);
 		axios.post('/job/new/' + this.state.appDetail.id , formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
 		})
 		.then(function(res) {
-			console.log(res.data);
-			res.data.submitNumber=this.state.settings._submitCount++;
-			this.state.jobs.push(res.data);
+			//this.state.jobs.push(res.data);
+			this.state.jobs[submitNumber]=res.data;
 			this.trigger(this.state);
 		}.bind(this))
 		.catch(function(res) {
