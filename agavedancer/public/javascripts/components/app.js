@@ -31,7 +31,7 @@ const App=React.createClass({
 							<DSDetail dsDetail={agave.dsDetail} dsItems={agave.dsItems} settings={agave.settings} />
 						</Flex>
 						<Fixed className="rightbar">
-							<JobsList jobs={agave.jobs} settings={agave.settings} />
+							<JobsList jobs={agave.jobs} resultsCache={agave.resultsCache} settings={agave.settings} />
 							<JobsDetail jobDetail={agave.jobDetail} settings={agave.settings} />
 						</Fixed>
 					</Layout>

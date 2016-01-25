@@ -3,6 +3,7 @@
 import Reflux from 'reflux';
 import axios from 'axios';
 import _ from 'lodash';
+import Q from 'q';
 import AgaveWebActions from  '../actions/agaveWebActions.js';
 
 var AgaveWebStore = Reflux.createStore({
@@ -11,15 +12,17 @@ var AgaveWebStore = Reflux.createStore({
 	init: function() {
 		this.state={
 			settings: {
-			//	_submitCount: 0,
 				_showJobModal: false, 
 				_showDataStoreModal: false,
 				_activeInput: ''
 			},
 			apps: [],
 			appDetail: {},
+			appsDetailCache: {},
 			jobs: [],
 			jobDetail: {},
+			jobDetailCache: {},
+			resultsCache: {},
 			dsDetail: {},
 			dsDetailCache: {},
 			dsItems: {}
@@ -80,7 +83,6 @@ var AgaveWebStore = Reflux.createStore({
 			transformRequest: function(data) { return data; }
 		})
 		.then(function(res) {
-			//this.state.jobs.push(res.data);
 			this.state.jobs[submitNumber]=res.data;
 			this.trigger(this.state);
 		}.bind(this))
@@ -92,16 +94,25 @@ var AgaveWebStore = Reflux.createStore({
 	showAgaveWebJobs: function(jobId) {
 		this.state.settings._showJobModal=true;
 		this.trigger(this.state);
-		axios.get('/job/' + jobId, {
-			headers: {'X-Requested-With': 'XMLHttpRequest'},
-		})
-		.then(function(res) {
-			this.state.jobDetail=res.data;
+		let jobDetail=_.get(this.state.jobDetailCache, jobId);
+		if (jobDetail) {
+			this.state.jobDetail=jobDetail;
 			this.trigger(this.state);
-		}.bind(this))
-		.catch(function(res) {
-				console.log(res);
-		})
+		} else {
+			axios.get('/job/' + jobId, {
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+			})
+			.then(function(res) {
+				this.state.jobDetail=res.data;
+				if(_.includes(['FINISHED','FAILED'], res.data.status)) {
+					_.set(this.state.jobDetailCache, res.data.id, res.data);
+				}
+				this.trigger(this.state);
+			}.bind(this))
+			.catch(function(res) {
+					console.log(res);
+			});
+		}
 	},
 
 	hideAgaveWebJobs: function() {
@@ -114,7 +125,6 @@ var AgaveWebStore = Reflux.createStore({
 		if (this.state.dsDetail.root && ! path) {
 			path=this.state.dsDetail.root;
 		}
-		console.log(path);
 		if ('../' === path) {
 			path=this.state.dsDetail.path.replace(/[^\/]+\/$/, '');
 		}
@@ -150,6 +160,49 @@ var AgaveWebStore = Reflux.createStore({
 				this.state.dsDetail=dsDetail;
 				_.set(this.state.dsDetailCache, dsDetail.path, dsDetail.list);
 				this.trigger(this.state);
+			}.bind(this))
+			.catch(function(res) {
+				console.log(res);
+			})
+		}
+	},
+
+	showAgaveWebJobResults: function(jobId) {
+		let jobDetail=_.get(this.state.jobDetailCache, jobId);
+		let promise;
+		if (jobDetail) {
+			promise=Q.fcall(function() {
+				return jobDetail;
+			});
+		} else {
+			promise=axios.get('/job/' + jobId, {
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+			})
+			.then(function(res) {
+				if(_.includes(['FINISHED','FAILED'], res.data.status)) {
+					_.set(this.state.jobDetailCache, res.data.id, res.data);
+				}
+				return res.data;
+			}.bind(this));
+		}
+		if (_.has(this.state.resultsCache, jobId)) {
+			this.trigger(this.state);
+		} else {
+			promise.then(function(jobDetail) {
+				let path='system/' + jobDetail.archiveSystem + '/' + jobDetail.archivePath;
+				axios.get('/browse/' + path, {
+					headers: {'X-Requested-With': 'XMLHttpRequest'},
+				})
+				.then(function(res) {
+					let results=res.data.list.filter(function(result) {
+						return ! result.name.startsWith('.');
+					});
+					return results;
+				})
+				.then(function(results) {
+					_.set(this.state.resultsCache, jobId, results);
+					this.trigger(this.state);
+				}.bind(this))
 			}.bind(this))
 			.catch(function(res) {
 				console.log(res);

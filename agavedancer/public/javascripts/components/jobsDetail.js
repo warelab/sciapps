@@ -27,7 +27,6 @@ const JobsDetail=React.createClass({
 				<tbody>
 						<tr key='job_info_name'><th>Name:</th><td>{jobDetail.name}</td></tr>
 						<tr key='jobs_info_status'><th>Status:</th><td>{jobDetail.status}</td></tr>
-						<tr key='job_info_message'><th>Message:</th><td>{jobDetail.message}</td></tr>
 						<tr key='job_info_submitTime'><th>Submitted on:</th><td>{toLocaleString(jobDetail.submitTime)}</td></tr>
 						<tr key='job_info_startTime'><th>Started on:</th><td>{toLocaleString(jobDetail.startTime)}</td></tr>
 						<tr key='job_info_endTime'><th>Finished on:</th><td>{toLocaleString(jobDetail.endTime)}</td></tr>
