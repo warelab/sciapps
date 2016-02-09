@@ -102,7 +102,7 @@ sub cmp_maxRunTime {
 }
 
 get '/' => sub {
-	return redirect '/apps';
+	send_file 'index.html';
 };
 
 get '/logout' => sub {

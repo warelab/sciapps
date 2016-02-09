@@ -1,13 +1,13 @@
 'use strict';
 
 import React from 'react';
-import AgaveWebActions from '../actions/agaveWebActions.js';
+import AppsActions from '../actions/appsActions.js';
 import {ListGroupItem} from 'react-bootstrap';
 
 var AppsItem=React.createClass({
 
 	showApp: function() {
-		AgaveWebActions.showAgaveWebApps(this.props.data.id);
+		AppsActions.showApp(this.props.data.id);
 	},
 
 	render: function() {

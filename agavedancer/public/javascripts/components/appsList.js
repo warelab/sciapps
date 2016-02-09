@@ -1,19 +1,23 @@
 'use strict';
 
 import React from 'react';
+import Reflux from 'reflux';
+import AppsStore from '../stores/appsStore.js';
+import AppsActions from '../actions/appsActions.js';
 import AppsItem from './appsItem.js';
-import AgaveWebActions from '../actions/agaveWebActions.js';
 import {ListGroup} from 'react-bootstrap';
 
-var AppsList=React.createClass({
+const AppsList=React.createClass({
+	mixins: [Reflux.connect(AppsStore, 'appsStore')],
 
 	componentDidMount: function() {
-		AgaveWebActions.listAgaveWebApps();
+		AppsActions.listApps();
 	},
 	
 	render: function() {
-		var apps, appsItemNodes;
-		apps=this.props.apps;
+		let appsStore=this.state.appsStore;
+		let apps, appsItemNodes;
+		apps=appsStore.apps;
 		if (apps && apps.length) {
 			appsItemNodes = apps.map(function (appsItem) {
 				return (

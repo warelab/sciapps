@@ -2,6 +2,22 @@
     {
         "_links": {
             "self": {
+                "href": "https://agave.iplantc.org/apps/v2/VCAP-Kinships-5.2.15"
+            }
+        }, 
+        "executionSystem": "cshl-compute-10", 
+        "id": "VCAP-Kinships-5.2.15", 
+        "isPublic": false, 
+        "label": "VCAP-Kinships", 
+        "lastModified": "2016-01-15T09:02:29.000-06:00", 
+        "name": "VCAP-Kinships", 
+        "revision": 5, 
+        "shortDescription": "VCAP Kinship", 
+        "version": "5.2.15"
+    }, 
+    {
+        "_links": {
+            "self": {
                 "href": "https://agave.iplantc.org/apps/v2/CIM-0.1.17"
             }
         }, 

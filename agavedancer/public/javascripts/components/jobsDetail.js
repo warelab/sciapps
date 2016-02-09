@@ -1,7 +1,11 @@
 'use strict';
 
 import React from 'react';
-import AgaveWebActions from '../actions/agaveWebActions.js';
+import Reflux from 'reflux';
+import _ from 'lodash';
+import JobsActions from '../actions/jobsActions.js';
+import JobsStore from '../stores/jobsStore.js';
+import SettingsStore from '../stores/settingsStore.js';
 import {Modal, Table, Button} from 'react-bootstrap';
 
 function toLocaleString(date) {
@@ -9,16 +13,19 @@ function toLocaleString(date) {
 }
 
 const JobsDetail=React.createClass({
-	hideJobDetail: function() {
-		AgaveWebActions.hideAgaveWebJobs();
+	mixins: [Reflux.connect(JobsStore, 'jobsStore'), Reflux.connect(SettingsStore, 'settingsStore')],
+	
+	hideJob: function() {
+		JobsActions.hideJob();
 	},
 
 	render: function() {
-		let settings=this.props.settings;
-		let jobDetail=this.props.jobDetail;
-		let showJobModal=settings._showJobModal;
+		let jobsStore=this.state.jobsStore;
+		let settings=this.state.settingsStore.settings;
+		let jobDetail=jobsStore.jobDetail;
+		let showJob=jobsStore.showJob;
 		let output_link;
-		if ('FINISHED' === jobDetail.status || 'FAILED' === jobDetail.status) {
+		if (jobDetail.status && _.includes(['FINISHED','FAILED'], jobDetail.status)) {
 			let link_url=settings.output_url + '/' + jobDetail.archivePath;
 			output_link=(<a href={link_url} target='_blank'>{link_url}</a>);
 		}
@@ -36,7 +43,7 @@ const JobsDetail=React.createClass({
 		);
 
 		return (
-			<Modal show={showJobModal} onHide={this.hideJobDetail}>
+			<Modal show={showJob} onHide={this.hideJob}>
 				<Modal.Header>
 					<Modal.Title>Details on job {jobDetail.name}</Modal.Title>
 				</Modal.Header>
@@ -44,7 +51,7 @@ const JobsDetail=React.createClass({
 					{job_info}
 				</Modal.Body>
 				<Modal.Footer>
-					<Button onClick={this.hideJobDetail}>Close</Button>
+					<Button onClick={this.hideJob}>Close</Button>
 				</Modal.Footer>
 			</Modal>
 		);

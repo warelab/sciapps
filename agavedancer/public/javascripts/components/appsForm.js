@@ -1,12 +1,13 @@
 'use strict';
 
 import React from 'react';
+import Reflux from 'reflux';
 import _ from 'lodash';
 import {Panel, Button} from 'react-bootstrap';
 import BaseInput from './baseInput.js';
 import AppsParam from './appsParam.js';
 import AppsInput from './appsInput.js';
-import AgaveWebActions from '../actions/agaveWebActions.js';
+import JobsActions from '../actions/jobsActions.js';
 
 function sortByOrder(unsorted) {
 	return _.sortBy(unsorted, function(item) {
@@ -15,7 +16,6 @@ function sortByOrder(unsorted) {
 }
 
 const AppsForm=React.createClass({
-
 	getInitialState() {
 		return { isSubmitting: false };
 	},
@@ -23,14 +23,14 @@ const AppsForm=React.createClass({
 	handleSubmit: function() {
 		this.setState({isSubmitting: true});
 		let formData=new FormData(this.refs.agaveWebAppForm);
-		AgaveWebActions.submitAgaveWebApps(formData);
+		JobsActions.submitJob(this.props.appDetail.id, formData);
 		setTimeout(() => {
 			this.setState({isSubmitting: false});
 		}, 1000);
 	},
 
 	render: function() {
-		let appDetail=this.props.appDetail, settings=this.props.settings, dsItems=this.props.dsItems;
+		let appDetail=this.props.appDetail;
 		let app_inputs='inputs';
 		let app_params='params';
 		let header='New job using application';
@@ -39,11 +39,11 @@ const AppsForm=React.createClass({
 			header+=' ' + appDetail.name + ':';
 			let sortedInputs=sortByOrder(appDetail.inputs);
 			app_inputs=sortedInputs.map(function(input) {
-				return(<AppsInput key={input.id} data={input} settings={settings} dsItems={dsItems} />);
+				return(<AppsInput key={input.id} data={input} />);
 			});
 			let sortedParams=sortByOrder(appDetail.parameters);
 			app_params=sortedParams.map(function(param) {
-				return(<AppsParam key={param.id} data={param} settings={settings} />);
+				return(<AppsParam key={param.id} data={param} />);
 			});
 		}
 		let jobNameInput={
@@ -67,7 +67,7 @@ const AppsForm=React.createClass({
 				<form ref='agaveWebAppForm'>
 					<fieldset>
 						<legend>Job options</legend>
-						<BaseInput data={jobNameInput} />
+						<BaseInput data={jobNameInput} isSubmitting={isSubmitting} />
 					</fieldset>
 					<fieldset>
 						<legend>Inputs</legend>
@@ -79,7 +79,7 @@ const AppsForm=React.createClass({
 					</fieldset>
 					<fieldset>
 						<legend>Notifications</legend>
-							<BaseInput data={emailInput} />
+						<BaseInput data={emailInput} isSubmitting={isSubmitting} />
 					</fieldset>
 					<Button
 						bsStyle='primary'

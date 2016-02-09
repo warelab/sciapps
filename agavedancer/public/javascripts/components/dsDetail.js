@@ -1,31 +1,36 @@
 'use strict';
 
 import React from 'react';
-import AgaveWebActions from '../actions/agaveWebActions.js';
+import Reflux from 'reflux';
+import DsActions from '../actions/dsActions.js';
+import DsStore from '../stores/dsStore.js';
 import _ from 'lodash';
 import {Modal, ListGroup, ListGroupItem, Button} from 'react-bootstrap';
-import DSItem from './dsItem.js';
+import DsItem from './dsItem.js';
 
-const DSDetail=React.createClass({
+const DsDetail=React.createClass({
+	mixins: [Reflux.connect(DsStore, 'dsStore')],
+
 	hideDataStoreDetail: function() {
-		AgaveWebActions.hideAgaveWebDataStore();
+		DsActions.hideDataStore();
 	},
 
 	render: function() {
-		let dsDetail=this.props.dsDetail, settings=this.props.settings;
-		let showDataStoreModal=settings._showDataStoreModal;
+		let dsStore=this.state.dsStore;
+		let dsDetail=dsStore.dsDetail;
+		let showDataStore=dsStore.showDataStore;
 		let dsFileNodes;
-		let dsItemUrl=_.get(this.props.dsItems, settings._activeInput);
-		let dsBtnValue=dsItemUrl ? "Select and close" : "Close";
+		let targetPath=_.get(dsStore.dsItemPaths, dsStore.target);
+		let dsBtnValue=targetPath ? "Select and close" : "Close";
 		if (dsDetail.list && dsDetail.list.length) {
 			dsFileNodes=dsDetail.list.map(function(dsItem) {
 				return (
-					<DSItem key={dsItem.name} data={dsItem} settings={settings} />
+					<DsItem key={dsItem.name} data={dsItem} />
 				);
 			});
 		}
 		return (
-			<Modal show={showDataStoreModal} onHide={this.hideDataStoreDetail}>
+			<Modal show={showDataStore} onHide={this.hideDataStoreDetail}>
 				<Modal.Header>
 					<Modal.Title>Listing contents for path: {dsDetail.path}</Modal.Title>
 				</Modal.Header>
@@ -42,4 +47,4 @@ const DSDetail=React.createClass({
 	}
 });
 
-module.exports = DSDetail;
+module.exports = DsDetail;

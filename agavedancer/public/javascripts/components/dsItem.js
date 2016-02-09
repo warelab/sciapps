@@ -1,21 +1,21 @@
 'use strict';
 
 import React from 'react';
-import AgaveWebActions from '../actions/agaveWebActions.js';
+import DsActions from '../actions/dsActions.js';
 import {ListGroupItem, Button} from 'react-bootstrap';
 
-const DSItem=React.createClass({
+const DsItem=React.createClass({
 	handleDir: function(event) {
-		AgaveWebActions.showAgaveWebDataStore(event.target.textContent);
+		DsActions.selectDataStoreItem(undefined);
+		DsActions.showDataStore(event.target.textContent);
 	},
 
 	handleFile: function(event) {
-		AgaveWebActions.selectAgaveWebDataStoreItem(event.target.textContent);
+		DsActions.selectDataStoreItem(event.target.textContent);
 	},
 
 	render: function() {
 		let data=this.props.data;
-		let setting=this.props.settings;
 		let markup, props;
 		switch(data.type) {
 			case 'dir':
@@ -34,4 +34,4 @@ const DSItem=React.createClass({
 	}
 });
 
-module.exports = DSItem;
+module.exports = DsItem;

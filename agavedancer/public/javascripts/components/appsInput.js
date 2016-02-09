@@ -1,12 +1,16 @@
 'use strict';
 
 import React from 'react';
+import Reflux from 'reflux';
 import _ from 'lodash';
-import AgaveWebActions from '../actions/agaveWebActions.js';
+import DsActions from '../actions/dsActions.js';
+import DsStore from '../stores/dsStore.js';
+import SettingsStore from '../stores/settingsStore.js';
 import {Input, Button} from 'react-bootstrap';
-import BaseInput from './baseInput.js';
 
 const AppsInput=React.createClass({
+	mixins: [Reflux.listenTo(DsStore, 'handleDsStoreChange'), Reflux.connect(SettingsStore, 'settingsStore')],
+
 	getInitialState: function() {
 		return {
 			textValue: this.props.data.value.default,
@@ -15,15 +19,20 @@ const AppsInput=React.createClass({
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		let textValue=nextProps.data.value.default, fileValue=nextProps.data.value.default;
-		let dsItemUrl=_.get(nextProps.dsItems, nextProps.data.id);
-		if (dsItemUrl) {
-			textValue=dsItemUrl;
-		}
 		this.setState({
-			textValue: textValue,
-			fileValue: fileValue
+			fileValue: nextProps.data.value.default,
+			textValue: nextProps.data.value.default
 		});
+	},
+
+	handleDsStoreChange: function(dsStore) {
+		let dsItemPath=_.get(dsStore.dsItemPaths, this.props.data.id);
+		let dsItemUrl=dsItemPath ? this.state.settingsStore.settings.iplant_datastore + dsItemPath : '';
+		if (dsItemUrl !== this.state.textValue) {
+			this.setState({
+				textValue: dsItemUrl 
+			});
+		}
 	},
 
 	handleTextChange: function(event) {
@@ -35,13 +44,12 @@ const AppsInput=React.createClass({
 	},
 
 	handleDataStore: function(event) {
-		AgaveWebActions.setAgaveWebDataStoreItemTarget(this.props.data.id);
-		AgaveWebActions.showAgaveWebDataStore();
+		DsActions.setDataStoreItemTarget(this.props.data.id);
+		DsActions.showDataStore();
 	},
 
-	buildAgaveAppsInput: function(data, settings) {
+	buildAgaveAppsInput: function(data, suffix) {
 		let markup;
-		let suffix=settings.upload_suffix;
 		if (! data.value.visible) {
 			let props={
 				key: data.id,
@@ -88,7 +96,7 @@ const AppsInput=React.createClass({
 		return markup;
 	},
 	render: function() {
-		let markup=this.buildAgaveAppsInput(this.props.data, this.props.settings);
+		let markup=this.buildAgaveAppsInput(this.props.data, this.props.suffix);
 		return markup;
 	}
 });

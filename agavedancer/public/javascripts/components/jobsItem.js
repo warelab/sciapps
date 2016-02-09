@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import AgaveWebActions from '../actions/agaveWebActions.js';
+import JobsActions from '../actions/jobsActions.js';
 import {ListGroup, ListGroupItem, Button, ButtonToolbar, Panel} from 'react-bootstrap';
 
 var JobsItem=React.createClass({
@@ -9,12 +9,14 @@ var JobsItem=React.createClass({
 		return {isOpen: false};
 	},
 
-	showJobDetail: function() {
-		AgaveWebActions.showAgaveWebJobs(this.props.data.id);
+	showJob: function() {
+		JobsActions.showJob(this.props.data.id);
 	},
 
 	showJobResults: function() {
-		AgaveWebActions.showAgaveWebJobResults(this.props.data.id);
+		if (! this.state.isOpen) {
+			JobsActions.showJobResults(this.props.data.id);
+		}
 		this.setState({ isOpen: !this.state.isOpen });
 	},
 
@@ -40,7 +42,7 @@ var JobsItem=React.createClass({
 			<ListGroupItem>
 				{displayName}
 				<ButtonToolbar>
-					<Button key='status' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.showJobDetail} >Status</Button>
+					<Button key='status' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.showJob} >Status</Button>
 					<Button key='results' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.showJobResults} >Results</Button>
 				</ButtonToolbar>
 				<Panel collapsible expanded={this.state.isOpen}>
@@ -54,4 +56,3 @@ var JobsItem=React.createClass({
 });
 
 module.exports= JobsItem;
-
