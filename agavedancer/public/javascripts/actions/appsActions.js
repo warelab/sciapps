@@ -4,7 +4,8 @@ import Reflux from 'reflux';
 
 var AppsActions=Reflux.createActions([
 	'listApps',
-	'showApp'
+	'showApp',
+	'hideApp'
 ]);
 
 module.exports = AppsActions;

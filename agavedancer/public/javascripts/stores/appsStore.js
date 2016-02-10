@@ -55,7 +55,13 @@ const AppsStore=Reflux.createStore({
 				console.log(res);
 			})
 		}
+	},
+
+	hideApp: function() {
+		this.state.appDetail={};
+		this.complete();
 	}
+
 });
 
 module.exports = AppsStore;

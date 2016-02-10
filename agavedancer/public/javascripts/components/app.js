@@ -9,6 +9,7 @@ import AppsDetail from './appsDetail.js';
 import JobsList from './jobsList.js';
 import JobsDetail from './jobsDetail.js';
 import DsDetail from './dsDetail.js';
+import Header from './header.js';
 
 const App=React.createClass({
 
@@ -18,6 +19,9 @@ const App=React.createClass({
 
 	render: function () {
 		return (
+			<Layout type="column">
+				<Header />
+				<Flex>
 					<Layout type="row">
 						<Fixed className="leftbar">
 							<AppsList />
@@ -31,6 +35,8 @@ const App=React.createClass({
 							<JobsDetail />
 						</Fixed>
 					</Layout>
+				</Flex>
+			</Layout>
 		);
 	}
 });
