@@ -66,10 +66,6 @@ const AppsForm=React.createClass({
 			<Panel header={header}>
 				<form ref='agaveWebAppForm'>
 					<fieldset>
-						<legend>Job options</legend>
-						<BaseInput data={jobNameInput} isSubmitting={isSubmitting} />
-					</fieldset>
-					<fieldset>
 						<legend>Inputs</legend>
 						{app_inputs}
 					</fieldset>
