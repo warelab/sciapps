@@ -36,8 +36,8 @@ archive_home: '/agave_data'
 input_system: 'brie.cshl.edu'
 input_path: 'inputs'
 input_home: '/agave_data'
-output_url: 'http://www.maizecode.org'
+output_url: 'http://data.sciapps.org'
 email: 'noreply@maizecode.org'
 upload_suffix: ".upload"
 maxRunTime: "96:00:00"
-iplant_datastore: 'agave://data.iplantcollaborative.org/'
+datastore_system: 'data.sciapps.org'

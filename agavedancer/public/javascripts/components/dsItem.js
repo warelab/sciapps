@@ -6,12 +6,15 @@ import {ListGroupItem, Button} from 'react-bootstrap';
 
 const DsItem=React.createClass({
 	handleDir: function(event) {
-		DsActions.selectDataStoreItem(undefined);
+		DsActions.selectDataStoreItem();
 		DsActions.showDataStore(event.target.textContent);
 	},
 
 	handleFile: function(event) {
-		DsActions.selectDataStoreItem(event.target.textContent);
+		let path=event.target.textContent;
+		//remove leading "/"
+		path=path.slice(1, path.length);
+		DsActions.selectDataStoreItem(path);
 	},
 
 	render: function() {

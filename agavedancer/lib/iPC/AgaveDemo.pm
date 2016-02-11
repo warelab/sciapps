@@ -9,7 +9,7 @@ use Dancer::Plugin::Email;
 use File::Copy ();
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/host_url archive_system archive_path archive_home input_system input_path input_home output_url email upload_suffix iplant_datastore/;
+our @EXPORT_SETTINGS=qw/host_url archive_system archive_path archive_home input_system input_path input_home output_url email upload_suffix datastore_system/;
 
 # TODO - this needs work
 sub token_valid {
@@ -126,16 +126,20 @@ ajax qr{/browse/?(.*)} => sub {
 		token => session('token'),
 	);
 
+	my $system='system/' . setting('datastore_system') . '/';
+
 	my ($path) = splat;
 	#my $path = param("path");
-	my $path_to_read = $path ? $path : $username;
-	unless (substr($path_to_read,-1,1) eq '/') {
-		$path_to_read.="/";
-	}
+	my $path_to_read = $path ? $path : '';
+	#$path_to_read=~s/^\///;
+	#unless (substr($path_to_read,-1,1) eq '/') {
+	#	$path_to_read.="/";
+	#}
 	my $io = $apif->io;
-	my $dir_list = $io->readdir('/' . $path_to_read);
+	my $dir_list = $io->readdir('/' . $system . $path_to_read);
 	to_json({
-			root => $username . '/',
+			#root => $username,
+			root => '',
 			path => $path_to_read,
 			list => $dir_list,
 		}
@@ -377,6 +381,7 @@ sub submitJob {
 	my $input_system=setting("input_system");
 	my $input_home=setting("input_home");
 	my $input_path=setting("input_path");
+	my $output_url=setting("output_url");
 
 	$form->{maxRunTime}||=$app->{defaultMaxRunTime} && cmp_maxRunTime($app->{defaultMaxRunTime}, setting("maxRunTime")) < 0 ? $app->{defaultMaxRunTime} : setting("maxRunTime");
 	#$form->{nodeCount}||=setting("nodeCount");
@@ -385,8 +390,10 @@ sub submitJob {
 	foreach my $input (@$inputs) {
 		if ($form->{$input->{id}}=~m#^http://data.maizecode.org#) {
 			$form->{$input->{id}}=~s#^http://data.maizecode.org#agave://$archive_system/data#;
-		} else {
+		} elsif ($form->{$input->{id}}=~m#^http://www.maizecode.org#) {
 			$form->{$input->{id}}=~s#^http://www.maizecode.org#agave://$archive_system#;
+		} else {
+			$form->{$input->{id}}=~s#^$output_url#agave://$archive_system#;
 		}
 	}
 

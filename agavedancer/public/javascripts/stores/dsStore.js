@@ -30,15 +30,25 @@ const DsStore=Reflux.createStore({
 	showDataStore: function(path) {
 		if (! path) {
 			path=this.state.dsDetail.root ? this.state.dsDetail.root : '';
-		} else if ('../' === path) {
-			path=this.state.dsDetail.path.replace(/[^\/]+\/$/, '');
 		} else {
-			path=this.state.dsDetail.path + path;
+			if (path.endsWith('/')) {
+				path=path.slice(0,-1);
+			}
+			if ('..' === path) {
+				path=this.state.dsDetail.path.replace(/(\/|^)[^\/]+$/, '');
+			} else {
+				if (this.state.dsDetail.path) {
+					path=this.state.dsDetail.path + '/' + path;
+				}
+			}
 		}
+		//if (! path.startsWith('/')) {
+		//	path='/' + path;
+		//}
 
+		this.state.dsDetail.path=path;
 		let cachedPath=_.get(this.dsDetailCache, path);
 		if (cachedPath) {
-			this.state.dsDetail.path=path;
 			this.state.dsDetail.list=cachedPath;
 		}
 		if (! this.state.showDataStore || cachedPath) {
@@ -46,17 +56,18 @@ const DsStore=Reflux.createStore({
 			this.complete();
 		}
 		if (! cachedPath) {
-			if (path.endsWith('/')) {
-				path=path.slice(0,-1);
-			}
 			axios.get('/browse/' + path, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			})
 			.then(function(res) {
 				let dsDetail=res.data;
-				if (dsDetail.list[0].name === '.') {
-					dsDetail.list.shift();
-				}
+				//if (dsDetail.list[0].name === '.') {
+				//	dsDetail.list.shift();
+				//}
+				let filtered=dsDetail.list.filter(function(item) {
+					return ! item.name.startsWith('.');
+				});
+				dsDetail.list=filtered;
 				if (dsDetail.root !== dsDetail.path) {
 					dsDetail.list.unshift({name: '..', type: 'dir'});
 				}
