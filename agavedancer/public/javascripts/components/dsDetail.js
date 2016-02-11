@@ -32,7 +32,7 @@ const DsDetail=React.createClass({
 		return (
 			<Modal show={showDataStore} onHide={this.hideDataStoreDetail}>
 				<Modal.Header>
-					<Modal.Title>Listing contents for path: {dsDetail.path}</Modal.Title>
+					<Modal.Title>Listing contents for path: {'/' + dsDetail.path}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<ListGroup>
