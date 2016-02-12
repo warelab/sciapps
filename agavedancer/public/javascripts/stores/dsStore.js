@@ -94,7 +94,8 @@ const DsStore=Reflux.createStore({
 	},
 
 	selectDataStoreItem: function(item) {
-		let path=item ? this.state.dsDetail.path + item : undefined;
+		let path=this.state.dsDetail.path ? this.state.dsDetail.path + '/' : '';
+		path=item ? path + item : undefined;
 		_.set(this.state.dsItemPaths, this.state.target, path);
 		this.complete();
 	},
