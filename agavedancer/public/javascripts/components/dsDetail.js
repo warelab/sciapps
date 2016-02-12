@@ -8,6 +8,10 @@ import _ from 'lodash';
 import {Modal, ListGroup, ListGroupItem, Button} from 'react-bootstrap';
 import DsItem from './dsItem.js';
 
+function sortDsItem(a, b) {
+	return a.type.localeCompare(b.type) || a.name.localeCompare(b.name); 
+}
+
 const DsDetail=React.createClass({
 	mixins: [Reflux.connect(DsStore, 'dsStore')],
 
@@ -23,7 +27,7 @@ const DsDetail=React.createClass({
 		let targetPath=_.get(dsStore.dsItemPaths, dsStore.target);
 		let dsBtnValue=targetPath ? "Select and close" : "Close";
 		if (dsDetail.list && dsDetail.list.length) {
-			dsFileNodes=dsDetail.list.map(function(dsItem) {
+			dsFileNodes=dsDetail.list.sort(sortDsItem).map(function(dsItem) {
 				return (
 					<DsItem key={dsItem.name} data={dsItem} />
 				);

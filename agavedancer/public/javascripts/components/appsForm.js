@@ -9,7 +9,7 @@ import AppsParam from './appsParam.js';
 import AppsInput from './appsInput.js';
 import JobsActions from '../actions/jobsActions.js';
 
-function sortByOrder(unsorted) {
+function sortBy(unsorted) {
 	return _.sortBy(unsorted, function(item) {
 		return item.value.order;
 	});
@@ -37,11 +37,11 @@ const AppsForm=React.createClass({
 		let isSubmitting=this.state.isSubmitting;
 		if (appDetail && undefined !== appDetail.name) {
 			header+=' ' + appDetail.name + ':';
-			let sortedInputs=sortByOrder(appDetail.inputs);
+			let sortedInputs=sortBy(appDetail.inputs);
 			app_inputs=sortedInputs.map(function(input) {
 				return(<AppsInput key={input.id} data={input} />);
 			});
-			let sortedParams=sortByOrder(appDetail.parameters);
+			let sortedParams=sortBy(appDetail.parameters);
 			app_params=sortedParams.map(function(param) {
 				return(<AppsParam key={param.id} data={param} />);
 			});
