@@ -26,7 +26,7 @@ input_system: 'brie.cshl.edu'
 input_path: 'inputs'
 input_home: '/agave_data'
 output_url: 'http://data.sciapps.org'
-email: 'noreply@maizecode.org'
+email: 'noreply@sciapps.org'
 upload_suffix: ".upload"
 maxRunTime: "96:00:00"
 datastore_system: 'data.sciapps.org'
