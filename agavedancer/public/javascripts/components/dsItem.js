@@ -11,10 +11,7 @@ const DsItem=React.createClass({
 	},
 
 	handleFile: function(event) {
-		let path=event.target.textContent;
-		//remove leading "/"
-		path=path.slice(1, path.length);
-		DsActions.selectDataStoreItem(path);
+		DsActions.selectDataStoreItem(event.target.textContent);
 	},
 
 	render: function() {
