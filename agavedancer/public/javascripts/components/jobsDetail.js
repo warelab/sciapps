@@ -32,11 +32,12 @@ const JobsDetail=React.createClass({
 		let job_info=(
 			<Table striped condensed hover>
 				<tbody>
+						<tr key='job_info_id'><th>ID:</th><td>{jobDetail.id}</td></tr>
 						<tr key='job_info_name'><th>Name:</th><td>{jobDetail.name}</td></tr>
 						<tr key='jobs_info_status'><th>Status:</th><td>{jobDetail.status}</td></tr>
-						<tr key='job_info_submitTime'><th>Submitted on:</th><td>{toLocaleString(jobDetail.submitTime)}</td></tr>
-						<tr key='job_info_startTime'><th>Started on:</th><td>{toLocaleString(jobDetail.startTime)}</td></tr>
-						<tr key='job_info_endTime'><th>Finished on:</th><td>{toLocaleString(jobDetail.endTime)}</td></tr>
+						<tr key='job_info_submitTime'><th>Submitted on:</th><td>{jobDetail.submitTime ? toLocaleString(jobDetail.submitTime) : ''}</td></tr>
+						<tr key='job_info_startTime'><th>Started on:</th><td>{jobDetail.startTime ? toLocaleString(jobDetail.startTime) : ''}</td></tr>
+						<tr key='job_info_endTime'><th>Finished on:</th><td>{jobDetail.endTime ? toLocaleString(jobDetail.endTime) : ''}</td></tr>
 						<tr key='job_info_results'><th>Results:</th><td>{output_link}</td></tr>
 				</tbody>
 			</Table>

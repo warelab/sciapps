@@ -126,10 +126,16 @@ ajax qr{/browse/?(.*)} => sub {
 		token => session('token'),
 	);
 
-	my $system='system/' . setting('datastore_system') . '/';
-
 	my ($path) = splat;
-	#my $path = param("path");
+	my $system;
+	if ($path=~m#system/([^\/]+)/(.*)#) {
+		$system=$1;
+		$path=$2;
+	} else {
+		$system=setting('datastore_system');
+	}
+	$system='system/' . $system . '/';
+
 	my $path_to_read = $path ? $path : '';
 	#$path_to_read=~s/^\///;
 	#unless (substr($path_to_read,-1,1) eq '/') {
