@@ -34,7 +34,7 @@ sub _build_client {
     });
 
     my $client_name = 'AGAVEWEB';
-	$apic->client({name => $client_name}) || $apic->create({name => $client_name});
+	$apic->client($client_name) || $apic->create({name => $client_name});
 }
 
 sub _auth {
@@ -48,7 +48,7 @@ sub _auth {
 		Agave::Client->new(
 			username  => $agave->{username},
 			password  => $agave->{password},
-			apisecret => $client->{consumerSecret},
+			apisecret => $agave->{consumerSecret},
 			apikey    => $client->{consumerKey},
 		)};
 
@@ -101,8 +101,16 @@ sub cmp_maxRunTime {
 	$_[0] <=> $_[1];
 }
 
+#get '/' => sub {
+#	send_file 'index.html';
+#};
+
 get '/' => sub {
-	send_file 'index.html';
+	my $app_id = param("app_id");
+
+	template 'index', {
+		app_id => $app_id,
+	};
 };
 
 get '/logout' => sub {

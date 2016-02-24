@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Reflux from 'reflux';
+import AppsActions from '../actions/appsActions.js';
 import SettingsActions from '../actions/settingsActions.js';
 import {Layout, Fixed, Flex} from 'react-layout-pane';
 import AppsList from './appsList.js';
@@ -15,6 +16,10 @@ const App=React.createClass({
 
 	componentWillMount: function () {
 		SettingsActions.getSettings();
+		let app_id=_config.app_id;
+		if (app_id) {
+			AppsActions.showApp(app_id);
+		}
 	},
 
 	render: function () {
