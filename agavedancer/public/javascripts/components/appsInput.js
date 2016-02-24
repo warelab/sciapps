@@ -48,7 +48,9 @@ const AppsInput=React.createClass({
 		DsActions.showDataStore();
 	},
 
-	buildAgaveAppsInput: function(data, suffix) {
+	buildAgaveAppsInput: function() {
+		let data=this.props.data;
+		let suffix=this.state.settingsStore.settings.upload_suffix;
 		let markup;
 		if (! data.value.visible) {
 			let props={
@@ -96,7 +98,7 @@ const AppsInput=React.createClass({
 		return markup;
 	},
 	render: function() {
-		let markup=this.buildAgaveAppsInput(this.props.data, this.props.suffix);
+		let markup=this.buildAgaveAppsInput();
 		return markup;
 	}
 });
