@@ -36,7 +36,7 @@ const AppsForm=React.createClass({
 		let header='New job using application';
 		let isSubmitting=this.state.isSubmitting;
 		if (appDetail && undefined !== appDetail.name) {
-			header+=' ' + appDetail.name + ':';
+			header=appDetail.name + ' (SciApps Version ' + appDetail.version + ')';
 			let sortedInputs=sortBy(appDetail.inputs);
 			app_inputs=sortedInputs.map(function(input) {
 				return(<AppsInput key={input.id} data={input} />);
@@ -66,15 +66,12 @@ const AppsForm=React.createClass({
 			<Panel header={header}>
 				<form ref='agaveWebAppForm'>
 					<fieldset>
-						<legend>Inputs</legend>
 						{app_inputs}
 					</fieldset>
 					<fieldset>
-						<legend>Parameters</legend>
 						{app_params}
 					</fieldset>
 					<fieldset>
-						<legend>Notifications</legend>
 						<BaseInput data={emailInput} isSubmitting={isSubmitting} />
 					</fieldset>
 					<Button

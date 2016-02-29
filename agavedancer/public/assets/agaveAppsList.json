@@ -34,18 +34,18 @@
     {
         "_links": {
             "self": {
-                "href": "https://agave.iplantc.org/apps/v2/VCAP-5.2.15"
+                "href": "https://agave.iplantc.org/apps/v2/VCAP-5.2.20"
             }
         }, 
         "executionSystem": "cshl-compute-10", 
-        "id": "VCAP-5.2.15", 
+        "id": "VCAP-5.2.20", 
         "isPublic": false, 
         "label": "VCAP", 
-        "lastModified": "2015-12-01T20:09:19.000-06:00", 
+        "lastModified": "2016-02-25T15:41:49.000-06:00", 
         "name": "VCAP", 
-        "revision": 7, 
+        "revision": 1, 
         "shortDescription": "VCAP", 
-        "version": "5.2.15"
+        "version": "5.2.20"
     }, 
     {
         "_links": {

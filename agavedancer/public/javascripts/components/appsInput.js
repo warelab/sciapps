@@ -65,7 +65,6 @@ const AppsInput=React.createClass({
 			);
 			let props={
 				label: data.details.label,
-				help: data.details.description,
 				wrapperClassName: 'wrapper',
 			};
 			let textProps={

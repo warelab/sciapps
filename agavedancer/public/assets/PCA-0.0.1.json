@@ -4,7 +4,7 @@
             "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
         }, 
         "metadata": {
-            "href": "https://agave.iplantc.org/meta/v2/data/?q={\"associationIds\":\"2609664733343641115-e0bd34dffff8de6-0001-005\"}"
+            "href": "https://agave.iplantc.org/meta/v2/data/?q={\"associationIds\":\"6636699330558038501-242ac115-0001-005\"}"
         }, 
         "owner": {
             "href": "https://agave.iplantc.org/profiles/v2/lwang"
@@ -36,9 +36,9 @@
     "inputs": [
         {
             "details": {
-                "argument": null, 
-                "description": "marker file", 
-                "label": "Select marker file in Hapmap format", 
+                "argument": "-i ", 
+                "description": "Marker file needs to be in Hapmap format", 
+                "label": "Marker file", 
                 "repeatArgument": false, 
                 "showArgument": false
             }, 
@@ -65,7 +65,7 @@
     ], 
     "isPublic": false, 
     "label": "PCA", 
-    "lastModified": "2015-10-03T19:42:58.000-05:00", 
+    "lastModified": "2016-02-29T09:51:56.000-06:00", 
     "longDescription": "PCA function performs PCA with R's prcomp function. It takes a marker file in Hapmap format and outputs population structure (pca_output.txt, formatted for TASSEL), eigenvalues (eigval_out), scree plot (scree_out.png), and pairwise plot of the first three PCs (pcplot_out.png)", 
     "modules": [], 
     "name": "PCA", 
@@ -76,7 +76,7 @@
                 "description": "Output filename", 
                 "label": "File with PCA results"
             }, 
-            "id": "out", 
+            "id": "output", 
             "semantics": {
                 "fileTypes": [
                     "raw-0"
@@ -98,11 +98,11 @@
     "parameters": [
         {
             "details": {
-                "argument": null, 
-                "description": null, 
-                "label": "Select PCA method", 
+                "argument": "-m ", 
+                "description": "Choose the method (pca or mds) for PCA", 
+                "label": "PCA method", 
                 "repeatArgument": false, 
-                "showArgument": false
+                "showArgument": true
             }, 
             "id": "model", 
             "semantics": {
@@ -131,11 +131,11 @@
         }, 
         {
             "details": {
-                "argument": null, 
-                "description": "Number of PCs", 
-                "label": "Enter number of PCs to be output", 
+                "argument": "-n ", 
+                "description": "Number of PCs to be output", 
+                "label": "Number of PCs", 
                 "repeatArgument": false, 
-                "showArgument": false
+                "showArgument": true
             }, 
             "id": "numPCs", 
             "semantics": {
@@ -156,13 +156,13 @@
             }
         }
     ], 
-    "revision": 3, 
+    "revision": 5, 
     "shortDescription": "Perform PCA with R's prcomp function", 
     "tags": [
         "GWAS"
     ], 
     "templatePath": "pca_wrapper.sh", 
     "testPath": "pca_test_wrapper.sh", 
-    "uuid": "2609664733343641115-e0bd34dffff8de6-0001-005", 
+    "uuid": "6636699330558038501-242ac115-0001-005", 
     "version": "0.0.1"
 }
