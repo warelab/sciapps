@@ -2,6 +2,22 @@
     {
         "_links": {
             "self": {
+                "href": "https://agave.iplantc.org/apps/v2/MAKER-0.0.1"
+            }
+        }, 
+        "executionSystem": "cshl-compute-10", 
+        "id": "MAKER-0.0.1", 
+        "isPublic": false, 
+        "label": "Maker", 
+        "lastModified": "2016-02-29T22:19:25.000-06:00", 
+        "name": "MAKER", 
+        "revision": 4, 
+        "shortDescription": "Perform genome annotation with Maker", 
+        "version": "0.0.1"
+    },
+    {
+        "_links": {
+            "self": {
                 "href": "https://agave.iplantc.org/apps/v2/VCAP-Kinships-5.2.15"
             }
         }, 

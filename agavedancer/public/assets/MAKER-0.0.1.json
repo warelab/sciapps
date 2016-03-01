@@ -1,0 +1,459 @@
+{
+    "_links": {
+        "executionSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
+        }, 
+        "metadata": {
+            "href": "https://agave.iplantc.org/meta/v2/data/?q={\"associationIds\":\"4027000434363985435-242ac115-0001-005\"}"
+        }, 
+        "owner": {
+            "href": "https://agave.iplantc.org/profiles/v2/lwang"
+        }, 
+        "permissions": {
+            "href": "https://agave.iplantc.org/apps/v2/MAKER-0.0.1/pems"
+        }, 
+        "self": {
+            "href": "https://agave.iplantc.org/apps/v2/MAKER-0.0.1"
+        }, 
+        "storageSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+        }
+    }, 
+    "available": true, 
+    "checkpointable": false, 
+    "defaultMaxRunTime": null, 
+    "defaultMemoryPerNode": 1, 
+    "defaultNodeCount": 1, 
+    "defaultProcessorsPerNode": 12, 
+    "defaultQueue": "parallel", 
+    "deploymentPath": "/lwang/applications/maker", 
+    "deploymentSystem": "data.iplantcollaborative.org", 
+    "executionSystem": "cshl-compute-10", 
+    "executionType": "HPC", 
+    "helpURI": "http://www.yandell-lab.org/software/maker.html", 
+    "icon": null, 
+    "id": "MAKER-0.0.1", 
+    "inputs": [
+        {
+            "details": {
+                "argument": "genome=./", 
+                "description": "Genome sequence to be annotated, fasta file or fasta embeded in GFF3 file", 
+                "label": "Genome sequence file", 
+                "repeatArgument": false, 
+                "showArgument": true
+            }, 
+            "id": "genome", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 1, 
+                "required": true, 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": "est=./", 
+                "description": "Set of ESTs or assembled mRNA-seq in fasta format", 
+                "label": "EST file", 
+                "repeatArgument": false, 
+                "showArgument": true
+            }, 
+            "id": "est", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 2, 
+                "required": true, 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": "protein=./", 
+                "description": "Protein sequence file in fasta format (i.e. from mutiple related oransisms)", 
+                "label": "Protein sequence file", 
+                "repeatArgument": false, 
+                "showArgument": true
+            }, 
+            "id": "protein", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 3, 
+                "required": true, 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": "rmlib=./", 
+                "description": "Organism specific repeat library in fasta format for RepeatMasker", 
+                "label": "Repeat library", 
+                "repeatArgument": false, 
+                "showArgument": true
+            }, 
+            "id": "repeat", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 4, 
+                "required": true, 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": "snaphmm=./", 
+                "description": "HMM file for gene prediction using SNAP", 
+                "label": "SNAP HMM file", 
+                "repeatArgument": false, 
+                "showArgument": true
+            }, 
+            "id": "hmm", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 5, 
+                "required": true, 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "maker_opts.ctl file that specifies input files and options", 
+                "label": "Maker option file", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "maker_options", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "maker_opts.ctl", 
+                "enquote": false, 
+                "order": 6, 
+                "required": false, 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Compressed tar.gz file for all other evidences, also specified in the option file (e.g. est=./mRNA.fasta)", 
+                "label": "Other evidences", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "otherEvidences", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 6, 
+                "required": false, 
+                "validator": null, 
+                "visible": true
+            }
+        }
+    ], 
+    "isPublic": false, 
+    "label": "Maker", 
+    "lastModified": "2016-02-29T22:19:25.000-06:00", 
+    "longDescription": "Identifies repeats, aligns ESTs and proteins to a genome, produces ab-initio gene predictions and automatically synthesizes these data into gene annotations having evidence-based quality values", 
+    "modules": [], 
+    "name": "MAKER", 
+    "ontology": [], 
+    "outputs": [
+        {
+            "details": {
+                "description": "Output filename", 
+                "label": "maker_out"
+            }, 
+            "id": "output", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "http://sswapmeet.sswap.info"
+                ]
+            }, 
+            "value": {
+                "default": "test_genome.maker.output", 
+                "order": 0, 
+                "validator": null
+            }
+        }
+    ], 
+    "parallelism": "SERIAL", 
+    "parameters": [
+        {
+            "details": {
+                "argument": "max_dna_len=", 
+                "description": "Length for dividing up contigs into chunks (increases/decreases memory usage)", 
+                "label": "Max chunk size", 
+                "repeatArgument": false, 
+                "showArgument": true
+            }, 
+            "id": "max_dna_len", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 100000, 
+                "enquote": false, 
+                "order": 0, 
+                "required": true, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": "min_contig=", 
+                "description": "Contig size below this value will be ommitted", 
+                "label": "Min contig size (kb)", 
+                "repeatArgument": false, 
+                "showArgument": true
+            }, 
+            "id": "min_contig", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 1, 
+                "enquote": false, 
+                "order": 1, 
+                "required": true, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": "pred_flank=", 
+                "description": "For genome with a sparse/fragmented evidence set, increasing this value can capture exons missing from your evidence. In very compact genomes decreasing this value can decrease gene merging", 
+                "label": "Flank region", 
+                "repeatArgument": false, 
+                "showArgument": true
+            }, 
+            "id": "pred_flank", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 200, 
+                "enquote": false, 
+                "order": 2, 
+                "required": true, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": "split_hit=", 
+                "description": "Expected maximum intron size for evidence alignments", 
+                "label": "Maximum intron size", 
+                "repeatArgument": false, 
+                "showArgument": true
+            }, 
+            "id": "split_hit", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 10000, 
+                "enquote": false, 
+                "order": 3, 
+                "required": true, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": "alt_splice=", 
+                "description": "Take extra steps to try and find alternative splicing", 
+                "label": "Alternative splicing", 
+                "repeatArgument": false, 
+                "showArgument": true
+            }, 
+            "id": "alt_splice", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:boolean"
+                ]
+            }, 
+            "value": {
+                "default": false, 
+                "enquote": false, 
+                "order": 4, 
+                "required": true, 
+                "type": "bool", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": "always_complete=", 
+                "description": "Take extra steps to force start and stop codons", 
+                "label": "Start/stop codon", 
+                "repeatArgument": false, 
+                "showArgument": true
+            }, 
+            "id": "always_complete", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:boolean"
+                ]
+            }, 
+            "value": {
+                "default": true, 
+                "enquote": false, 
+                "order": 5, 
+                "required": true, 
+                "type": "bool", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": "correct_est_fusion=", 
+                "description": "", 
+                "label": "Avoid fusion genes", 
+                "repeatArgument": false, 
+                "showArgument": true
+            }, 
+            "id": "correct_est_fusion", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:boolean"
+                ]
+            }, 
+            "value": {
+                "default": false, 
+                "enquote": false, 
+                "order": 6, 
+                "required": true, 
+                "type": "bool", 
+                "validator": null, 
+                "visible": true
+            }
+        }
+    ], 
+    "revision": 4, 
+    "shortDescription": "Perform genome annotation with Maker", 
+    "tags": [
+        "Annotation"
+    ], 
+    "templatePath": "maker_wrapper.sh", 
+    "testPath": "maker_test_wrapper.sh", 
+    "uuid": "4027000434363985435-242ac115-0001-005", 
+    "version": "0.0.1"
+}
