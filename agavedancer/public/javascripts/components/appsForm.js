@@ -36,7 +36,7 @@ const AppsForm=React.createClass({
 		let header='New job using application';
 		let isSubmitting=this.state.isSubmitting;
 		if (appDetail && undefined !== appDetail.name) {
-			header=appDetail.name + ' (SciApps Version ' + appDetail.version + ')';
+			header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
 			let sortedInputs=sortBy(appDetail.inputs);
 			app_inputs=sortedInputs.map(function(input) {
 				return(<AppsInput key={input.id} data={input} />);

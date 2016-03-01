@@ -6,7 +6,7 @@ import {Panel, Table} from 'react-bootstrap';
 var AppsInfo=React.createClass({
 	render: function() {
 		let appDetail=this.props.appDetail;
-		let header=appDetail.name + ' (' + appDetail.version + '): ' + appDetail.shortDescription;
+		let header=appDetail.name + '(' + appDetail.version + '): ' + appDetail.longDescription; 
 		let app_info='info';
 		if (appDetail && undefined !== appDetail.name) {
 			let inputsDetail=appDetail.inputs.map(function (inputItem) {
@@ -26,6 +26,7 @@ var AppsInfo=React.createClass({
 					<tbody>
 						{inputsDetail}
 						{paramsDetail}
+						<tr><th><a href={appDetail.helpURI} target="_blank">Source</a></th><td></td></tr>
 					</tbody>
 				</Table>
 			);

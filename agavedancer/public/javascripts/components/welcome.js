@@ -28,8 +28,9 @@ const Welcome=React.createClass({
 			</div>
 			<br />
 			<div id="myimages">
+                        <a href="http://cyverse.org" target="_blank"><img className="mylogo"src="http://www.maizecode.org/cyverse.png" hspace="10" align="middle" /></a>
+&nbsp;&nbsp;&nbsp;&nbsp;
 			<a href="http://cshl.edu" target="_blank"><img classNmae="mylogo" src="http://www.maizecode.org/cshl.png" hspace="10" align="middle" /></a>
-			<a href="http://cyverse.org" target="_blank"><img className="mylogo"src="http://www.maizecode.org/cyverse.png" hspace="10" align="middle" /></a>
 			</div>
 			<br />
 			<div>
