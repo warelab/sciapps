@@ -194,7 +194,7 @@
                 ]
             }, 
             "value": {
-                "default": "maker_opts.ctl", 
+                "default": "", 
                 "enquote": false, 
                 "order": 6, 
                 "required": false, 

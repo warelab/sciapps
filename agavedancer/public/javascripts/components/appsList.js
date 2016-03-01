@@ -10,7 +10,9 @@ const AppsList=React.createClass({
 		let apps, appsItemNodes;
 		apps=this.props.apps;
 		if (apps && apps.length) {
-			appsItemNodes = apps.map(function (appsItem) {
+			appsItemNodes = apps.sort(function (a, b) {
+				return a.name.localeCompare(b.name);
+			}).map(function (appsItem) {
 				return (
 					<AppsItem key={appsItem.id} data={appsItem} />
 				);

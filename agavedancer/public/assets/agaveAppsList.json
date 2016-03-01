@@ -13,27 +13,11 @@
         "name": "MAKER", 
         "revision": 4, 
         "shortDescription": "Perform genome annotation with Maker", 
+    	"tags": [
+       		"Annotation"
+    	], 
         "version": "0.0.1"
     },
-    {
-        "_links": {
-            "self": {
-                "href": "https://agave.iplantc.org/apps/v2/VCAP-Kinships-5.2.15"
-            }
-        }, 
-        "executionSystem": "cshl-compute-10", 
-        "id": "VCAP-Kinships-5.2.15", 
-        "isPublic": false, 
-        "label": "VCAP-Kinships", 
-        "lastModified": "2016-01-15T09:02:29.000-06:00", 
-        "name": "VCAP-Kinships", 
-        "revision": 5, 
-        "shortDescription": "VCAP Kinship", 
-    		"tags": [
-        		"GWAS"
-    		], 
-        "version": "5.2.15"
-    }, 
     {
         "_links": {
             "self": {
@@ -48,10 +32,9 @@
         "name": "CIM", 
         "revision": 6, 
         "shortDescription": "Composite interval mapping", 
-    		"tags": [
-							"CIM",
-							"QTL"
-    		], 
+    	"tags": [
+		"Association"
+    	], 
         "version": "0.1.17"
     }, 
     {
@@ -68,9 +51,9 @@
         "name": "VCAP", 
         "revision": 1, 
         "shortDescription": "VCAP", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Phenotype"
+    	], 
         "version": "5.2.20"
     }, 
     {
@@ -87,9 +70,9 @@
         "name": "NAM-TASSEL", 
         "revision": 1, 
         "shortDescription": "NAM GWAS", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Association"
+    	], 
         "version": "5.2.15"
     }, 
     {
@@ -106,9 +89,9 @@
         "name": "GenSel", 
         "revision": 1, 
         "shortDescription": "", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Association"
+    	], 
         "version": "0.4.55"
     }, 
     {
@@ -125,9 +108,9 @@
         "name": "EMMAX", 
         "revision": 3, 
         "shortDescription": "Efficient Mixed-Model Association eXpedited", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Association"
+    	], 
         "version": "0.0.2"
     }, 
     {
@@ -144,9 +127,9 @@
         "name": "AdjustPvalue", 
         "revision": 4, 
         "shortDescription": "Adjust P-values for multiple comparisons", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Statistics"
+    	], 
         "version": "0.0.1"
     }, 
     {
@@ -163,9 +146,9 @@
         "name": "fastStructure", 
         "revision": 14, 
         "shortDescription": "Inferring population structure from large SNP genotype data", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Genotype"
+    	], 
         "version": "0.0.1"
     }, 
     {
@@ -182,9 +165,9 @@
         "name": "MergeG2P", 
         "revision": 4, 
         "shortDescription": "Intersecting genotype data with phenotype data", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Transform"
+    	], 
         "version": "0.0.2"
     }, 
     {
@@ -201,9 +184,9 @@
         "name": "MLMM", 
         "revision": 3, 
         "shortDescription": "Multi-locus Mixed-Model Association", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Association"
+    	], 
         "version": "0.0.2"
     }, 
     {
@@ -220,9 +203,9 @@
         "name": "XYPlot", 
         "revision": 5, 
         "shortDescription": "Create 2D Plot", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Visualization"
+    	], 
         "version": "0.0.2"
     }, 
     {
@@ -239,9 +222,9 @@
         "name": "NPUTE", 
         "revision": 3, 
         "shortDescription": "Imputing missing SNPs", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Genotype"
+    	], 
         "version": "0.0.1"
     }, 
     {
@@ -258,9 +241,9 @@
         "name": "PCA", 
         "revision": 3, 
         "shortDescription": "Perform PCA with R's prcomp function", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Genotype"
+    	], 
         "version": "0.0.1"
     }, 
     {
@@ -277,9 +260,9 @@
         "name": "GenomeSelection-TASSEL", 
         "revision": 2, 
         "shortDescription": "Ridge regression based genomic selection", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Association"
+    	], 
         "version": "4.3.15"
     }, 
     {
@@ -296,9 +279,9 @@
         "name": "GLM-TASSEL", 
         "revision": 2, 
         "shortDescription": "General Linear Model analysis", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Association"
+    	], 
         "version": "5.1.23"
     }, 
     {
@@ -315,9 +298,9 @@
         "name": "MLM-TASSEL", 
         "revision": 2, 
         "shortDescription": "Mixed Linear Model analysis", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Association"
+    	], 
         "version": "5.1.23"
     }, 
     {
@@ -334,9 +317,9 @@
         "name": "NumericalTransform-TASSEL", 
         "revision": 2, 
         "shortDescription": "Numerical Transform of marker data", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Transform"
+    	], 
         "version": "4.3.15"
     }, 
     {
@@ -353,9 +336,9 @@
         "name": "ConvertTraitID", 
         "revision": 3, 
         "shortDescription": "Resolving accession name with accession id", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Phenotype"
+    	], 
         "version": "0.0.0"
     }, 
     {
@@ -372,9 +355,9 @@
         "name": "STRUCTURE2TASSEL", 
         "revision": 4, 
         "shortDescription": "Converting STRUCTURE output for TASSEL", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Transform"
+    	], 
         "version": "0.0.2"
     }, 
     {
@@ -391,9 +374,9 @@
         "name": "CloudSTRUCTURE", 
         "revision": 6, 
         "shortDescription": "Estimating population structure", 
-    		"tags": [
-        		"GWAS"
-    		], 
+    	"tags": [
+       		"Genotype"
+    	], 
         "version": "2.3.4"
     }
 ]
