@@ -5,7 +5,7 @@ import Reflux from 'reflux';
 import AppsActions from '../actions/appsActions.js';
 import SettingsActions from '../actions/settingsActions.js';
 import {Layout, Fixed, Flex} from 'react-layout-pane';
-import AppsList from './appsList.js';
+import AppsGroup from './appsGroup.js';
 import AppsDetail from './appsDetail.js';
 import JobsList from './jobsList.js';
 import JobsDetail from './jobsDetail.js';
@@ -29,7 +29,7 @@ const App=React.createClass({
 				<Flex>
 					<Layout type="row">
 						<Fixed className="leftbar">
-							<AppsList />
+							<AppsGroup />
 						</Fixed>
 						<Flex className="main">
 							<AppsDetail />

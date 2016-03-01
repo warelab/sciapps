@@ -4,7 +4,7 @@ import React from 'react';
 import AppsActions from '../actions/appsActions.js';
 import {ListGroupItem} from 'react-bootstrap';
 
-var AppsItem=React.createClass({
+const AppsItem=React.createClass({
 
 	showApp: function() {
 		AppsActions.showApp(this.props.data.id);

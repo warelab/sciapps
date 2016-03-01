@@ -4,6 +4,7 @@ use warnings;
 use strict;
 
 use base 'Agave::Client::Base';
+use URI::Encode ();
 use MIME::Base64;
 use Try::Tiny;
 use Data::Dumper;
@@ -103,11 +104,12 @@ sub _auth_post_token {
 	my $auth_ep = $self->_get_end_point;
 	my $url = "https://" . $self->hostname . "/$auth_ep";
 
+	my $uri = URI::Encode->new;
 	my $content = {
             scope => 'PRODUCTION',
             grant_type => 'client_credentials',
-            username => $self->user,
-            password => $self->password,
+            username => $uri->encode( $self->user ),
+            password => $uri->encode( $self->password ),
         };
 
     if ($refresh_token) {
@@ -247,7 +249,9 @@ sub _encode_credentials {
 	# p can be either a password or RSA encrypted token
 	
 	my ($u, $p) = @_;
-	encode_base64("$u:$p");
+	#encode_base64("$u:$p");
+	my $uri = URI::Encode->new;
+	encode_base64(join(':', $uri->encode($u), $uri->encode($p)));
 }
 
 =head1 AUTHOR

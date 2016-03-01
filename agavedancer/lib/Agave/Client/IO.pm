@@ -188,7 +188,7 @@ sub stream_file {
 	}
 
 	# TODO - make limit_size = 1024 by default - why?
-    my $ep_path = '/media';
+	my $ep_path = '/media';
 
 	$path = "/$path" unless $path =~ m/^\//;
 
