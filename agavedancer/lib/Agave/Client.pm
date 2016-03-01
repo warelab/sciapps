@@ -21,6 +21,7 @@ use Agave::Client::IO ();
 use Agave::Client::Apps ();
 use Agave::Client::Auth ();
 use Agave::Client::Job ();
+use Agave::Client::Metadata ();
 
 # Needed to emit the curl-compatible form when DEBUG is enabled
 use URI::Escape;
@@ -124,7 +125,7 @@ sub _auto_config {
 		if ($c =~ /^~/) {
 			$c =~ s/^~/$home_dir/;
 		}
-
+		
 		if (-f $c) {
 			open(CONFIG, $c);
 			my $contents = do { local $/;  <CONFIG> };
@@ -178,6 +179,13 @@ sub job {
 	my $self = shift;
 	return Agave::Client::Job->new($self);
 }
+
+
+sub meta {
+	my $self = shift;
+	return Agave::Client::Metadata->new($self);
+}
+
 
 sub token_expiration_in {
 	my $self = shift;

@@ -6,7 +6,7 @@ use strict;
 use base qw/Agave::Client::Base/;
 
 use Agave::Client::Object::Job ();
-use HTTP::Request::Common qw(POST);
+use Agave::Client::Object::OutputFile ();
 use Try::Tiny;
 use File::Temp;
 
@@ -22,7 +22,7 @@ Version 0.03
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 
 =head1 SYNOPSIS
@@ -53,10 +53,6 @@ Perhaps a little code snippet.
 
 sub submit_job {
 	my ($self, $application, %params) = @_;
-	my $END_POINT = $self->_get_end_point;
-	unless ($END_POINT) {
-		Agave::Exceptions::InvalidEndPoint->throw("do_get: invalid endpoint.");
-	}
 
 	unless ($application && ref($application) =~ /::Application/) {
 		print STDERR  "::submit_job: Invalid argument. Expecting Application object", $/;
@@ -77,7 +73,7 @@ sub submit_job {
 			appId => $application->id,
 			jobName => delete $params{name} || delete $params{jobName} || 'Job for ' . $application->id,
 			maxRunTime => delete $params{maxRunTime} || delete $params{requestedTime} || '01:00:00',
-			nodeCount => delete $params{nodeCount} || delete $params{processors} || 1,
+			#nodeCount => delete $params{nodeCount} || delete $params{processors} || 1,
 			#processorsPerNode => delete $params{processorsPerNode} || delete $params{processorsPerNode} || 1,
 			#memory => delete $params{memory} || '',
 		);
@@ -112,36 +108,43 @@ sub submit_job {
 	print $tmp JSON->new->encode(\%post_content);
 	$tmp->close;
 
-	my $content={fileToUpload => [$filename]};
-
-	my $ua = $self->_setup_user_agent;
-
-	#my $resp = try {
-	#       $self->do_post('/', %post_content);
-	#   }
-	#   catch {
-	#       if (ref($_) && $_->isa('Agave::Exceptions::HTTPError')) {
-	#           return {status => 'error', message => $_->code . ' ' . $_->message}
-	#       }
-	#       return $self->_error("JobEP: Unable to submit job." . (ref $_ ? $_->message : ''));
-	#   };
-	my $res =$ua->request(
-		POST "https://" . $self->hostname . "/" . $END_POINT,
-		'Content_Type' => 'form-data',
-		Content	=> $content,
+	my %post_params=(
+		_content_type	=> 'form-data',
+		_body	=> {fileToUpload => [$filename]},
 	);
-	#print STDERR "CC|" . Dumper($res) . "\n";
 
-	if ($res->is_success) {
-		my $json = JSON->new->allow_nonref;
-		my $mref = eval {$json->decode( $res->content );};
-		if ($mref && $mref->{status} eq 'success') {
-			if ($mref->{result}{id}) {
-				return { status => 'success', data => Agave::Client::Object::Job->new($mref->{result}) };
-			}
-			return $mref->{result};
+	my $resp = try {
+            $self->do_post('/', %post_params);
+        }
+        catch {
+            if (ref($_) && $_->isa('Agave::Exceptions::HTTPError')) {
+                return {status => 'error', message => $_->code . ' ' . $_->message}
+            }
+	        return $self->_error("JobEP: Unable to submit job." . (ref $_ ? $_->message : ''));
+        };
+	if (ref $resp) {
+		if ($resp->{id}) {
+			return { status => 'success', data => Agave::Client::Object::Job->new($resp) };
 		}
+		return $resp;
 	}
+}
+
+=head2 resubmit_job
+
+=cut
+
+sub resubmit_job {
+	my ($self, $job_id) = @_;
+
+	return unless $job_id;
+
+    my $data = $self->do_post('/' . $job_id , 'action' => 'resubmit');
+	if ('HASH' eq ref $data) {
+		return Agave::Client::Object::Job->new($data);
+	}
+
+	return $data;
 }
 
 =head2 job_details
@@ -151,6 +154,7 @@ sub submit_job {
 sub job_details {
 	my ($self, $job_id) = @_;
 
+	return unless $job_id;
 	my $data = $self->do_get('/' . $job_id);
 	if ('HASH' eq ref $data) {
 		return Agave::Client::Object::Job->new($data);
@@ -163,12 +167,44 @@ sub job_output_files {
 	my ($self, $job_id, $path) = @_;
 	
 	$path ||= '';
+	if (ref($path) && $path->isa('Agave::Client::Object::File')) {
+		$path = $path->path;
+	}
 	if ($path ne '' && $path !~ m/^\//) {
 		$path = "/" . $path;
 	}
 
-	$self->do_get('/' . $job_id . '/outputs/listings' . $path);
+	my $list = $self->do_get('/' . $job_id . '/outputs/listings' . $path);
+	return $list && @$list 
+		? [map {Agave::Client::Object::OutputFile->new($_)} @$list] 
+		: [];
 }
+
+# similar to the one in ::IO
+sub stream_file {
+	my ($self, $ofile, %params) = @_;
+
+	# Check for the requested path to be renamed
+	unless (defined($ofile) && ref($ofile)) {
+		print STDERR "::Job::stream_file Please specify a output file which you want streamed\n";
+		return;
+	}
+
+	my $ep_path = sprintf("/%s/outputs/media", $ofile->job);
+
+	#$path = "/$path" unless $path =~ m/^\//;
+
+	my $buffer = try {$self->do_get($ep_path . $ofile->path, %params);}
+				catch {
+					return $self->_error("JOB::stream_file. Error streaming file.", $_)
+						unless ref($_);
+					# catch/handle the error upstream
+					$_->rethrow;
+				};
+
+    return $buffer;
+}
+
 
 =head2 jobs
 
