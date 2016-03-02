@@ -50,7 +50,7 @@ const AppsInput=React.createClass({
 
 	buildAgaveAppsInput: function() {
 		let data=this.props.data;
-		let suffix=this.state.settingsStore.settings.upload_suffix;
+		let suffix=_.get(this.state.settingsStore.settings, 'upload_suffix', '.upload');
 		let markup;
 		if (! data.value.visible) {
 			let props={
