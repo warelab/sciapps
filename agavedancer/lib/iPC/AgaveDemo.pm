@@ -326,8 +326,6 @@ ajax '/job/new/:id' => sub {
 		$parameters = $app->parameters;
 	}
 	my $form = params();
-	#my $job_id='5203299830500889061-e0bd34dffff8de6-0001-007';
-	#return redirect '/job/' . $job_id;
 	my $st=submitJob($apif, $app, $app_id, $form, $inputs, $parameters);
 	#print STDERR to_dumper( $st ), $/;
 	if ($st) {
@@ -359,7 +357,6 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 		$inputs = $app->inputs;
 		$parameters = $app->parameters;
 	}
-	#my $genomes = genomes();
 
 	my $form = params();
 	if ( request->method() eq "POST" ) {
@@ -475,6 +472,7 @@ sub submitJob {
 		
 	my $job_ep = $apif->job;
 	my $st = eval { $job_ep->submit_job($app, %$form); };
+	#print STDERR to_dumper($st) . "\n";
 	if ($@) {
 		print STDERR 'Error: ', $@, $/;
 	}

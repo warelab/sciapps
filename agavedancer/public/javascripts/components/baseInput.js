@@ -16,16 +16,19 @@ const BaseInput=React.createClass({
 	},
 
 	handleChange: function(event) {
-		this.setState({value: event.target.value});
+		let nextValue=this.props.data.type === 'checkbox' ? ! this.state.value : event.target.value;
+		this.setState({value: nextValue});
 	},
 
 	render: function() {
 		let data=this.props.data, isSelect=this.props.isSelect, options=this.props.options, markup;
-		delete data.value;
 		data=_.assign(data, {
 			value: this.state.value,
 			onChange: this.handleChange
 		});
+		if (data.type === 'checkbox') {
+			data.checked=this.state.value;
+		}
 		if (isSelect) {
 			let optionsMarkup=options.map(function(option) {
 				return(
