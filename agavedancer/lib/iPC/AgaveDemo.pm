@@ -463,7 +463,7 @@ sub submitJob {
 	}
 
 	%$form=(%$form,
-		archive => 'true',
+		archive => 1,
 		archiveSystem => $archive_system,
 		archivePath	=> $archive_path,
 		notifications	=> $notifications,

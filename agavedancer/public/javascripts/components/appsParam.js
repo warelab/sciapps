@@ -3,6 +3,7 @@
 import React from 'react';
 import _ from 'lodash';
 import BaseInput from './baseInput.js';
+import AppsBoolParam from './appsBoolParam.js';
 
 const AppsParam=React.createClass({
 	buildAgaveAppsSelectOption: function(option) {
@@ -70,10 +71,13 @@ const AppsParam=React.createClass({
 		};
 	},
 	render: function() {
-		let data=this.buildAgaveAppsParam(this.props.data);
-		return (
-			<BaseInput {...data} />
-		);
+		let data=this.buildAgaveAppsParam(this.props.data), markup;
+		if (data.data.type === 'checkbox') {
+			markup=<AppsBoolParam {...data} />;
+		} else {
+			markup=<BaseInput {...data} />;
+		}
+		return markup;
 	}
 });
 
