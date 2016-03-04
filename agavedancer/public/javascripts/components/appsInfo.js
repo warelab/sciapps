@@ -12,13 +12,13 @@ var AppsInfo=React.createClass({
 			let inputsDetail=appDetail.inputs.map(function (inputItem) {
 				let inputKey='app_info_' + inputItem.id;
 				return (
-					<tr key={inputKey}><th>{inputItem.details.label} ( {inputItem.details.argument}):</th><td>{inputItem.details.description}</td></tr>
+					<tr key={inputKey}><th>{inputItem.details.label}:</th><td>{inputItem.details.description}</td></tr>
 				);
 			});
 			let paramsDetail=appDetail.parameters.map(function (paramItem) {
 				let paramKey='app_info_' + paramItem.id;
 				return (
-					<tr key={paramKey}><th>{paramItem.details.label} ( {paramItem.details.argument}):</th><td>{paramItem.details.description}</td></tr>
+					<tr key={paramKey}><th>{paramItem.details.label}:</th><td>{paramItem.details.description}</td></tr>
 				);
 			});
 			app_info=(
