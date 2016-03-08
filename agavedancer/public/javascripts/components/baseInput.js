@@ -10,9 +10,9 @@ const BaseInput=React.createClass({
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		this.setState({
-			value: nextProps.data.value
-		});
+		//this.setState({
+		//	value: nextProps.data.value
+		//});
 	},
 
 	handleChange: function(event) {
@@ -20,10 +20,16 @@ const BaseInput=React.createClass({
 		this.setState({value: nextValue});
 	},
 
+	validateState: function() {
+		if (this.props.data.required && ! _.toString(this.state.value).length) return 'warning';
+		else return undefined;
+	},
+
 	render: function() {
 		let data=this.props.data, isSelect=this.props.isSelect, options=this.props.options, markup;
 		data=_.assign(data, {
 			value: this.state.value,
+			bsStyle: this.props.onValidate ? this.validateState() : undefined,
 			onChange: this.handleChange
 		});
 		if (data.type === 'checkbox') {

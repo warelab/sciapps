@@ -25,15 +25,17 @@ const AppsParam=React.createClass({
 		let options, isSelect=false;
 		let props={
 			key: param.id,
+			required: param.value.required,
 			name: param.id,
 			value: param.value.default
 		};
 		if (! param.value.visible) {
 			props.type='hidden';
 		} else {
+			let prefix=param.value.required ? '*' : '';
 			props=_.assign(props, {
-				label: param.details.label,
 				//placeholder: param.value.default,
+				label: prefix + param.details.label
 			});
 			let addProps;
 			switch (param.value.type) {
@@ -73,9 +75,9 @@ const AppsParam=React.createClass({
 	render: function() {
 		let data=this.buildAgaveAppsParam(this.props.data), markup;
 		if (data.data.type === 'checkbox') {
-			markup=<AppsBoolParam {...data} />;
+			markup=<AppsBoolParam {...data} onValidate={this.props.onValidate} />;
 		} else {
-			markup=<BaseInput {...data} />;
+			markup=<BaseInput {...data} onValidate={this.props.onValidate} />;
 		}
 		return markup;
 	}

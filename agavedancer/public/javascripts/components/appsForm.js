@@ -17,43 +17,69 @@ function sortBy(unsorted) {
 
 const AppsForm=React.createClass({
 	getInitialState() {
-		return { isSubmitting: false };
+		let appDetail=this.props.appDetail;
+		let required={};
+		let setRequired=function (item) {
+			if (item.value.required) required[item.id]=1
+		};
+		if (appDetail.inputs && appDetail.inputs.length) {
+			appDetail.inputs.forEach(setRequired);
+		}
+		if (appDetail.parameters && appDetail.parameters.length) {
+			appDetail.parameters.forEach(setRequired);
+		}
+		return { onSubmit: false, onValidate: false, required: required};
+	},
+
+	validateForm: function() {
+		let appDetail=this.props.appDetail;
+		let required=this.state.required;
+		let form=this.refs.agaveWebAppForm;
+		for (let key of _.keys(form)) {
+			let res = _.has(required, form[key].name) && ! _.toString(form[key].value).length;
+			if (res) return false;
+		}
+		return true;
+	},
+
+	componentWillReceiveProps: function(nextProps) {
+		this.setState({
+			onSubmit: false,
+			onValidate: false
+		});
 	},
 
 	handleSubmit: function() {
-		this.setState({isSubmitting: true});
-		let formData=new FormData(this.refs.agaveWebAppForm);
-		JobsActions.submitJob(this.props.appDetail.id, formData);
+		this.setState({onSubmit: true, onValidate: true});
+		if(this.validateForm()) {
+			let formData=new FormData(this.refs.agaveWebAppForm);
+			//JobsActions.submitJob(this.props.appDetail.id, formData);
+		}
 		setTimeout(() => {
-			this.setState({isSubmitting: false});
+			this.setState({onSubmit: false});
 		}, 1000);
 	},
 
 	render: function() {
 		let appDetail=this.props.appDetail;
-		let app_inputs='inputs';
-		let app_params='params';
-		let header='New job using application';
-		let isSubmitting=this.state.isSubmitting;
+		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
+		let getValueOrder=function(item) { return item.value.order };
+		let app_inputs=[], app_params=[], header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
+
 		if (appDetail && undefined !== appDetail.name) {
-			header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
-			let sortedInputs=sortBy(appDetail.inputs);
-			app_inputs=sortedInputs.map(function(input) {
-				return(<AppsInput key={input.id} data={input} />);
-			});
-			let sortedParams=sortBy(appDetail.parameters);
-			app_params=sortedParams.map(function(param) {
-				return(<AppsParam key={param.id} data={param} />);
-			});
+			if (appDetail.inputs && appDetail.inputs.length) {
+				let sortedInputs=_.sortBy(appDetail.inputs, getValueOrder);
+				app_inputs=sortedInputs.map(function(input) {
+					return(<AppsInput key={input.id} data={input} onValidate={onValidate} />);
+				});
+			}
+			if (appDetail.parameters &&  appDetail.parameters.length) {
+				let sortedParams=_.sortBy(appDetail.parameters, getValueOrder);
+				app_params=sortedParams.map(function(param) {
+					return(<AppsParam key={param.id} data={param} onValidate={onValidate} />);
+				});
+			}
 		}
-		let jobNameInput={
-			type: 'text',
-			id: 'jobName',
-			name: 'jobName', 
-			label: 'Job name',
-			placeholder: 'Create a job name',
-			help: 'Optional job name'
-		};
 		let emailInput={
 			type: 'email',
 			id: '_email',
@@ -72,13 +98,13 @@ const AppsForm=React.createClass({
 						{app_params}
 					</fieldset>
 					<fieldset>
-						<BaseInput data={emailInput} isSubmitting={isSubmitting} />
+						<BaseInput data={emailInput} />
 					</fieldset>
 					<Button
 						bsStyle='primary'
-						disabled={isSubmitting}
-						onClick={isSubmitting ? null : this.handleSubmit}>
-						{isSubmitting ? 'Submitting...' : 'Submit Job'}
+						disabled={onSubmit}
+						onClick={onSubmit ? null : this.handleSubmit}>
+						{onSubmit ? 'Submitting...' : 'Submit Job'}
 					</Button>
 				</form>
 			</Panel>

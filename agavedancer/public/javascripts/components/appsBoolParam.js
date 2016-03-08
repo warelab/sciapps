@@ -2,7 +2,7 @@
 
 import React from 'react';
 import _ from 'lodash';
-import {Input, BottonGroup, Button} from 'react-bootstrap';
+import {Input, Button, ButtonGroup} from 'react-bootstrap';
 
 const AppsBoolParam=React.createClass({
 	TRUE: 'Yes',
@@ -15,9 +15,9 @@ const AppsBoolParam=React.createClass({
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		this.setState({
-			value: nextProps.data.value ? 1 : 0
-		});
+		//this.setState({
+		//	value: nextProps.data.value ? 1 : 0
+		//});
 	},
 
 	handleBtn: function(event) {
@@ -41,11 +41,15 @@ const AppsBoolParam=React.createClass({
 			value: this.state.value
 		});
 		markup=(
-			<Input {...props} >
-				<Button active={this.state.value ? true : false} onClick={this.handleBtn} >{this.TRUE}</Button>
-				<Button active={this.state.value ? false : true} onClick={this.handleBtn} >{this.FALSE}</Button>
-				<Input {...hiddenProps} />
-			</Input>
+			<div>
+				<Input {...props} >
+					<Input {...hiddenProps} />
+				</Input>
+				<ButtonGroup>
+					<Button bsStyle={this.state.value ? 'primary' : undefined} active={this.state.value ? true : false} onClick={this.handleBtn} >{this.TRUE}</Button>
+					<Button bsStyle={this.state.value ? undefined : 'warning'} active={this.state.value ? false : true} onClick={this.handleBtn} >{this.FALSE}</Button>
+				</ButtonGroup>
+			</div>
 		);
 		return markup;
 	}

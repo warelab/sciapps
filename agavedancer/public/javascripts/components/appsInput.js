@@ -19,10 +19,10 @@ const AppsInput=React.createClass({
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		this.setState({
-			fileValue: nextProps.data.value.default,
-			textValue: nextProps.data.value.default
-		});
+		//this.setState({
+		//	fileValue: nextProps.data.value.default,
+		//	textValue: nextProps.data.value.default
+		//});
 	},
 
 	handleDsStoreChange: function(dsStore) {
@@ -48,8 +48,14 @@ const AppsInput=React.createClass({
 		DsActions.showDataStore();
 	},
 
+	validateState: function() {
+		if (this.props.data.value.required && ! (this.state.textValue.length || this.state.fileValue.length)) return 'warning';
+		else return undefined;
+	},
+
 	buildAgaveAppsInput: function() {
 		let data=this.props.data;
+		let prefix=data.value.required ? '*' : '';
 		let suffix=_.get(this.state.settingsStore.settings, 'upload_suffix', '.upload');
 		let markup;
 		if (! data.value.visible) {
@@ -61,10 +67,11 @@ const AppsInput=React.createClass({
 			markup=(<Input {...props} />);
 		} else {
 			let dataStoreButton=(
-				<Button onClick={this.handleDataStore}>DataStore</Button>
+				<Button onClick={this.handleDataStore} bsStyle={this.props.onValidate ? this.validateState() : 'default'} >DataStore</Button>
 			);
 			let props={
-				label: data.details.label,
+				label: prefix + data.details.label,
+				bsStyle: this.props.onValidate ? this.validateState() : undefined,
 				wrapperClassName: 'wrapper'
 			};
 			let textProps={
