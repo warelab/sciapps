@@ -9,37 +9,24 @@ import AppsParam from './appsParam.js';
 import AppsInput from './appsInput.js';
 import JobsActions from '../actions/jobsActions.js';
 
-function sortBy(unsorted) {
-	return _.sortBy(unsorted, function(item) {
-		return item.value.order;
-	});
-}
-
 const AppsForm=React.createClass({
 	getInitialState() {
-		let appDetail=this.props.appDetail;
-		let required={};
-		let setRequired=function (item) {
-			if (item.value.required) required[item.id]=1
-		};
-		if (appDetail.inputs && appDetail.inputs.length) {
-			appDetail.inputs.forEach(setRequired);
-		}
-		if (appDetail.parameters && appDetail.parameters.length) {
-			appDetail.parameters.forEach(setRequired);
-		}
-		return { onSubmit: false, onValidate: false, required: required};
+		return { onSubmit: false, onValidate: false, setting: _config.setting };
 	},
 
 	validateForm: function() {
+		let setting=this.state.setting;
 		let appDetail=this.props.appDetail;
-		let required=this.state.required;
+		let required=this.computeRequired();
 		let form=this.refs.agaveWebAppForm;
+		let formdata={};
 		for (let key of _.keys(form)) {
-			let res = _.has(required, form[key].name) && ! _.toString(form[key].value).length;
-			if (res) return false;
+			if (form[key].name && form[key].value && form[key].name.toString().length && form[key].value.toString().length) formdata[form[key].name]=form[key].value;
 		}
-		return true;
+		let ret=required.every(function(r) {
+			if (formdata[r] || formdata[r + setting.upload_suffix]) return true 
+		});
+		return ret;
 	},
 
 	componentWillReceiveProps: function(nextProps) {
@@ -49,11 +36,28 @@ const AppsForm=React.createClass({
 		});
 	},
 
+	computeRequired: function() {
+		let setting=this.state.setting;
+		let appDetail=this.props.appDetail;
+		let required=[];
+		let addRequired=function (item) {
+			if (item.value.required) required.push(item.id);
+		};
+		if (appDetail.inputs && appDetail.inputs.length) {
+			appDetail.inputs.forEach(addRequired);
+		}
+		if (appDetail.parameters && appDetail.parameters.length) {
+			appDetail.parameters.forEach(addRequired);
+		}
+		return required;
+	},
+
 	handleSubmit: function() {
 		this.setState({onSubmit: true, onValidate: true});
 		if(this.validateForm()) {
 			let formData=new FormData(this.refs.agaveWebAppForm);
-			//JobsActions.submitJob(this.props.appDetail.id, formData);
+			JobsActions.submitJob(this.props.appDetail.id, formData);
+			this.setState({onValidate: false});
 		}
 		setTimeout(() => {
 			this.setState({onSubmit: false});

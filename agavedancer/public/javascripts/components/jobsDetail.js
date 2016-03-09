@@ -5,7 +5,6 @@ import Reflux from 'reflux';
 import _ from 'lodash';
 import JobsActions from '../actions/jobsActions.js';
 import JobsStore from '../stores/jobsStore.js';
-import SettingsStore from '../stores/settingsStore.js';
 import {Modal, Table, Button} from 'react-bootstrap';
 
 function toLocaleString(date) {
@@ -13,7 +12,11 @@ function toLocaleString(date) {
 }
 
 const JobsDetail=React.createClass({
-	mixins: [Reflux.connect(JobsStore, 'jobsStore'), Reflux.connect(SettingsStore, 'settingsStore')],
+	mixins: [Reflux.connect(JobsStore, 'jobsStore')],
+
+	getInitialState: function() {
+		return { setting: _config.setting };
+	},
 	
 	hideJob: function() {
 		JobsActions.hideJob();
@@ -21,12 +24,12 @@ const JobsDetail=React.createClass({
 
 	render: function() {
 		let jobsStore=this.state.jobsStore;
-		let settings=this.state.settingsStore.settings;
+		let setting=this.state.setting;
 		let jobDetail=jobsStore.jobDetail;
 		let showJob=jobsStore.showJob;
 		let output_link;
 		if (jobDetail.status && _.includes(['FINISHED','FAILED'], jobDetail.status)) {
-			let link_url=settings.output_url + '/' + jobDetail.archivePath;
+			let link_url=setting.output_url + '/' + jobDetail.archivePath;
 			output_link=(<a href={link_url} target='_blank'>{link_url}</a>);
 		}
 		let job_info=(

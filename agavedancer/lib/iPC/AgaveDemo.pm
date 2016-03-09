@@ -7,9 +7,10 @@ use Agave::Client::Client ();
 use Dancer::Plugin::Ajax;
 use Dancer::Plugin::Email;
 use File::Copy ();
+use Archive::Tar ();
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/host_url archive_system archive_path archive_home input_system input_path input_home output_url email upload_suffix datastore_system/;
+our @EXPORT_SETTINGS=qw/output_url upload_suffix datastore_system/;
 
 # TODO - this needs work
 sub token_valid {
@@ -101,15 +102,27 @@ sub cmp_maxRunTime {
 	$_[0] <=> $_[1];
 }
 
+sub uncompress_result {
+	my ($path)=@_;
+	my $path_abs=setting("archive_home") . '/' . $path;
+	my $uncompress_suffix= setting("uncompress_suffix");
+	chdir $path_abs;
+	foreach my $file (glob("*" . $uncompress_suffix)) {
+		system("tar --overwrite -xzf $file && rm $file");
+	}
+};
+
 #get '/' => sub {
 #	send_file 'index.html';
 #};
 
 get '/' => sub {
 	my $app_id = param("app_id");
+	my $setting={map {$_ => setting($_)} @EXPORT_SETTINGS};
 
 	template 'index', {
 		app_id => $app_id,
+		setting => $setting,
 	};
 };
 
@@ -120,10 +133,10 @@ get '/logout' => sub {
 	return redirect '/';
 };
 
-ajax '/settings' => sub {
-	my $settings={map {$_ => setting($_)} @EXPORT_SETTINGS};
-	to_json($settings);
-};
+#ajax '/settings' => sub {
+#	my $settings={map {$_ => setting($_)} @EXPORT_SETTINGS};
+#	to_json($settings);
+#};
 
 ajax qr{/browse/?(.*)} => sub {
 	check_login();
@@ -145,10 +158,6 @@ ajax qr{/browse/?(.*)} => sub {
 	$system='system/' . $system . '/';
 
 	my $path_to_read = $path ? $path : '';
-	#$path_to_read=~s/^\///;
-	#unless (substr($path_to_read,-1,1) eq '/') {
-	#	$path_to_read.="/";
-	#}
 	my $io = $apif->io;
 	my $dir_list = $io->readdir('/' . $system . $path_to_read);
 	to_json({
@@ -443,23 +452,22 @@ sub submitJob {
 	print FH "DirectoryIndex ../.index.php?dir=$result_folder\n";
 	close FH;
 
-	my $notifications;
 	my $host_url=setting("host_url");
+	my $notifications=[
+	{
+		event	=> "FINISHED",
+		url		=> $host_url . '/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}',
+		},
+	{
+		event	=> "FAILED",
+		url		=> $host_url . '/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}',
+	},
+	];
 	if (my $email = delete $form->{"_email"}) {
 		session(_email => $email);
 		open FH, ">", "$archive_path_abs/.email" or print STDERR "Error: can't open  ${archive_path}/.email\n";
 		print FH "$email";
 		close FH;
-		$notifications=[
-		{
-			event	=> "FINISHED",
-			url		=> $host_url . '/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}',
-		},
-		{
-			event	=> "FAILED",
-			url		=> $host_url . '/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}',
-		},
-		];
 	}
 
 	%$form=(%$form,
@@ -481,7 +489,6 @@ sub submitJob {
 
 any ['get', 'post'] => '/notification/:id' => sub {
 	my $params=params;
-	#my ($id, $name, $status, $start, $end, $submit, $path, $message)=@$params{qw/id name status startTime endTime submitTime path message/};
 	
 	if ( $params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED' ) {
 		my $path=setting("archive_home") . '/' . $params->{archivePath};
@@ -492,7 +499,6 @@ any ['get', 'post'] => '/notification/:id' => sub {
 			close EMAIL;
 			my $template_engine = engine 'template';
 			my $content=$template_engine->apply_renderer('job', {job => $params}); 
-			#my $content=template 'job', {job => $params};
 			my $mail={
 				from	=> setting("email"),
 				to 		=> $email,
@@ -502,6 +508,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 			};
 			email $mail;
 		}
+		uncompress_result($params->{archivePath});
 	}
 	return;
 };

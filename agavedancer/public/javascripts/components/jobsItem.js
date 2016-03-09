@@ -23,19 +23,22 @@ var JobsItem=React.createClass({
 	render: function() {
 		let displayName=this.props.index + ': ' + this.props.data.appId;
 		let isSubmitting=undefined === this.props.data.id;
-		let settings=this.props.settings;
+		let setting=this.props.setting;
 		let results=this.props.results;
+		let jobId=this.props.data.id;
 		let resultsItemNodes;
 		if (results && results.length) {
-			resultsItemNodes=results.map(function(result, index) {
-				let href=settings.output_url + '/' + result.path;
+			resultsItemNodes=results.filter(function(item) {
+				return item.name.includes(jobId) ? false : true;
+			}).map(function(result, index) {
+				let href=setting.output_url + '/' + result.path;
 				return (
 					<ListGroupItem key={index}><a href={href} target='_blank'>{result.name}</a></ListGroupItem>
 				);
 			});
 		}
 		if (undefined === resultsItemNodes) {
-			resultsItemNodes='No result yet'
+			resultsItemNodes='Loading ...'
 		}
 
 		return (

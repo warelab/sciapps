@@ -5,29 +5,29 @@ import Reflux from 'reflux';
 import _ from 'lodash';
 import DsActions from '../actions/dsActions.js';
 import DsStore from '../stores/dsStore.js';
-import SettingsStore from '../stores/settingsStore.js';
 import {Input, Button} from 'react-bootstrap';
 
 const AppsInput=React.createClass({
-	mixins: [Reflux.listenTo(DsStore, 'handleDsStoreChange'), Reflux.connect(SettingsStore, 'settingsStore')],
+	mixins: [Reflux.listenTo(DsStore, 'handleDsStoreChange')],
 
 	getInitialState: function() {
 		return {
+			setting: _config.setting,
 			textValue: this.props.data.value.default,
 			fileValue: this.props.data.value.default
 		};
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		//this.setState({
-		//	fileValue: nextProps.data.value.default,
-		//	textValue: nextProps.data.value.default
-		//});
+		this.setState({
+		//	textValue: nextProps.data.value.default,
+			fileValue: nextProps.data.value.default
+		});
 	},
 
 	handleDsStoreChange: function(dsStore) {
 		let dsItemPath=_.get(dsStore.dsItemPaths, this.props.data.id);
-		let dsItemUrl=dsItemPath ? 'agave://' + this.state.settingsStore.settings.datastore_system + '/' + dsItemPath : '';
+		let dsItemUrl=dsItemPath ? 'agave://' + this.state.setting.datastore_system + '/' + dsItemPath : '';
 		if (dsItemUrl !== this.state.textValue) {
 			this.setState({
 				textValue: dsItemUrl 
@@ -56,7 +56,7 @@ const AppsInput=React.createClass({
 	buildAgaveAppsInput: function() {
 		let data=this.props.data;
 		let prefix=data.value.required ? '*' : '';
-		let suffix=_.get(this.state.settingsStore.settings, 'upload_suffix', '.upload');
+		let suffix=_.get(this.state.setting, 'upload_suffix', '.upload');
 		let markup;
 		if (! data.value.visible) {
 			let props={

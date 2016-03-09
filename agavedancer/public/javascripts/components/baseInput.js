@@ -21,7 +21,7 @@ const BaseInput=React.createClass({
 	},
 
 	validateState: function() {
-		if (this.props.data.required && ! _.toString(this.state.value).length) return 'warning';
+		if (this.props.data.required && ! this.state.value.toString().length) return 'warning';
 		else return undefined;
 	},
 

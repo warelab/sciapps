@@ -3,7 +3,6 @@
 import React from 'react';
 import Reflux from 'reflux';
 import AppsActions from '../actions/appsActions.js';
-import SettingsActions from '../actions/settingsActions.js';
 import {Layout, Fixed, Flex} from 'react-layout-pane';
 import {Panel, Well} from 'react-bootstrap';
 import AppsGroup from './appsGroup.js';
@@ -16,7 +15,6 @@ import Header from './header.js';
 const App=React.createClass({
 
 	componentWillMount: function () {
-		SettingsActions.getSettings();
 		let app_id=_config.app_id;
 		if (app_id) {
 			AppsActions.showApp(app_id);

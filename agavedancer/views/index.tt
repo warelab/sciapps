@@ -1,7 +1,12 @@
 		<div id="content"></div>
 		<script type="text/javascript">
 		var _config={
-			app_id: '[% app_id || "" %]'
+			app_id: '[% app_id || "" %]',
+			setting: {
+				[% FOREACH pair IN setting.pairs %]
+				[% pair.key %]: '[% pair.value %]',
+				[%- END %]
+			}
 		};
 		</script>
 		<script src="javascripts/bundle.js"></script>
