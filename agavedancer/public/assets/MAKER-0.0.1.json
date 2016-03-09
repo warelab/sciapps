@@ -57,7 +57,7 @@
                 "default": "", 
                 "enquote": false, 
                 "order": 1, 
-                "required": true, 
+                "required": false, 
                 "validator": null, 
                 "visible": true
             }
@@ -85,7 +85,7 @@
                 "default": "", 
                 "enquote": false, 
                 "order": 2, 
-                "required": true, 
+                "required": false, 
                 "validator": null, 
                 "visible": true
             }
@@ -113,7 +113,7 @@
                 "default": "", 
                 "enquote": false, 
                 "order": 3, 
-                "required": true, 
+                "required": false, 
                 "validator": null, 
                 "visible": true
             }
@@ -141,7 +141,7 @@
                 "default": "", 
                 "enquote": false, 
                 "order": 4, 
-                "required": true, 
+                "required": false, 
                 "validator": null, 
                 "visible": true
             }
@@ -169,7 +169,7 @@
                 "default": "", 
                 "enquote": false, 
                 "order": 5, 
-                "required": true, 
+                "required": false, 
                 "validator": null, 
                 "visible": true
             }
