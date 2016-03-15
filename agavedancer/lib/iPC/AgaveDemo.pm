@@ -8,6 +8,7 @@ use Dancer::Plugin::Ajax;
 use Dancer::Plugin::Email;
 use File::Copy ();
 use Archive::Tar ();
+use FindBin;
 
 our $VERSION = '0.2';
 our @EXPORT_SETTINGS=qw/output_url upload_suffix datastore_system/;
@@ -112,6 +113,38 @@ sub uncompress_result {
 	}
 };
 
+sub parse_ls {
+	my ($ls, $file_root)=@_;
+	my $regex=qr#^$file_root/(.*):#;
+	my %result;
+	#shift @$ls;
+	my $path;
+	foreach (@$ls) {
+		chomp;
+		if (m/$regex/) {
+			$path=$1;
+			$result{$path}=[];
+		} else {
+			my (@f)=split /\s+/;
+			if ($#f >= 8) {
+				push @{$result{$path}}, +{
+					length  => $f[4],
+					name  => $f[8],
+					type  => substr($f[0], 0, 1) eq 'd' ? 'dir' : 'file',
+				};
+			}
+		}
+
+		#my (@f)=split /\s+/;
+		#push @result, {
+		#	length	=> $f[4],
+		#	name	=> $f[8],
+		#	type	=> substr($f[0], 0, 1) eq 'd' ? 'dir' : 'file',
+		#};
+	}
+	\%result;
+};
+
 #get '/' => sub {
 #	send_file 'index.html';
 #};
@@ -138,7 +171,10 @@ get '/logout' => sub {
 #	to_json($settings);
 #};
 
-ajax qr{/browse/?(.*)} => sub {
+sub browse_datastore {
+	my ($path, $system)=@_;
+	$system||=setting('datastore_system');
+
 	check_login();
 
 	my $username = session('username');
@@ -147,26 +183,53 @@ ajax qr{/browse/?(.*)} => sub {
 		token => session('token'),
 	);
 
+	#my $root=$username;
+	my $root='';
+	my $path_to_read = $path ? $path : $root;
+	$system='system/' . $system . '/';
+
+	my $io = $apif->io;
+	my $dir_list = $io->readdir('/' . $system . $path_to_read);
+
+	to_json([{
+			is_root => $path_to_read eq $root ? 1 : 0,
+			path => $path_to_read,
+			list => $dir_list,
+		}]
+	);
+}
+
+sub browse_server {
+	my ($path)=@_;
+	my $server=setting("file_server");
+	my $file_root=setting("file_root");
+	my $file_user=setting("file_user");
+	my $bin=$FindBin::Bin;
+
+	my $root='';
+	my $path_to_read = $path ? $path : $root;
+
+	my @ls=`sudo -u $file_user $bin/files-list.sh $server $file_root $path_to_read`;
+	my $dir_list=parse_ls(\@ls, $file_root);
+
+	to_json([map +{
+			is_root => $_ eq $root ? 1 : 0,
+			path => $_,
+			list => $dir_list->{$_},
+		}, keys %$dir_list]
+	);
+}
+
+ajax qr{/browse/?(.*)} => sub {
 	my ($path) = splat;
+	my $use_file_server=setting('use_file_server');
 	my $system;
 	if ($path=~m#system/([^\/]+)/(.*)#) {
 		$system=$1;
 		$path=$2;
-	} else {
-		$system=setting('datastore_system');
+		$use_file_server=0;
 	}
-	$system='system/' . $system . '/';
-
-	my $path_to_read = $path ? $path : '';
-	my $io = $apif->io;
-	my $dir_list = $io->readdir('/' . $system . $path_to_read);
-	to_json({
-			#root => $username,
-			root => '',
-			path => $path_to_read,
-			list => $dir_list,
-		}
-	);
+	$use_file_server ? browse_server($path) : browse_datastore($path, $system);
 };
 
 ajax '/apps' => sub {
@@ -194,7 +257,6 @@ sub retrieveApps {
 
 	my $apps = $apif->apps;
 	my $app_list = [grep { ! $_->{isPublic} } ($apps->list)];
-	#print STDERR to_dumper($app_list);
 	return $app_list;
 }
 
@@ -231,7 +293,6 @@ sub retrieveApp {
 
 	my $apps = $api->apps;
 	my ($app) = $apps->find_by_id($app_id); 
-	#print STDERR to_dumper($app);
 	return $app;
 }
 
@@ -359,7 +420,6 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 	my $apps = $apif->apps;
 
 	my ($app) = $apps->find_by_id($app_id);
-	#print STDERR to_dumper($app) . "\n";
 
 	my ($inputs, $parameters) = ([], []);
 	if ($app) {
@@ -492,7 +552,6 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	
 	if ( $params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED' ) {
 		my $path=setting("archive_home") . '/' . $params->{archivePath};
-		#print STDERR to_dumper($params) . "\n";
 		if (-r $path . "/.email") {
 			open(EMAIL, $path . "/.email");
 			my $email=do { local $/;  <EMAIL> };

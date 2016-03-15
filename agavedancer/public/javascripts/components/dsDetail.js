@@ -19,9 +19,9 @@ const DsDetail=React.createClass({
 		let dsStore=this.state.dsStore;
 		let dsDetail=dsStore.dsDetail;
 		let showDataStore=dsStore.showDataStore;
-		let dsFileNodes;
+		let dsFileNodes='Loading ...';
 		let targetPath=_.get(dsStore.dsItemPaths, dsStore.target);
-		let dsBtnValue=targetPath ? "Select and close" : "Close";
+		let dsBtnValue=targetPath ? 'Select and close' : 'Close';
 		if (dsDetail.list && dsDetail.list.length) {
 			dsFileNodes=dsDetail.list.sort(function (a,b) {
 				return a.type.localeCompare(b.type) || a.name.localeCompare(b.name); 

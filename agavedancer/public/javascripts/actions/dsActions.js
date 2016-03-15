@@ -7,7 +7,8 @@ var DsActions=Reflux.createActions([
 	'hideDataStore',
 	'setDataStoreItemTarget',
 	'selectDataStoreItem',
-	'clearDataStoreItem'
+	'clearDataStoreItem',
+	'resetDsDetail'
 ]);
 
 module.exports = DsActions;

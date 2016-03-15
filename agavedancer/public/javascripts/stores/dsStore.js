@@ -10,12 +10,7 @@ const DsStore=Reflux.createStore({
 	listenables: DsActions,
 
 	init: function() {
-		this.state={
-			showDataStore: false,
-			target: undefined,
-			dsDetail: {},
-			dsItemPaths: {}
-		};
+		this.resetState();
 		this.dsDetailCache={};
 	},
 
@@ -27,9 +22,18 @@ const DsStore=Reflux.createStore({
 		this.trigger(this.state);
 	},
 
+	resetState: function() {
+		this.state={
+			showDataStore: false,
+			target: undefined,
+			dsDetail: {},
+			dsItemPaths: {}
+		};
+	},
+
 	showDataStore: function(path) {
 		if (! path) {
-			path=this.state.dsDetail.root ? this.state.dsDetail.root : '';
+			path=this.state.dsDetail.path || '';
 		} else {
 			if (path.endsWith('/')) {
 				path=path.slice(0,-1);
@@ -60,19 +64,17 @@ const DsStore=Reflux.createStore({
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			})
 			.then(function(res) {
-				let dsDetail=res.data;
-				//if (dsDetail.list[0].name === '.') {
-				//	dsDetail.list.shift();
-				//}
-				let filtered=dsDetail.list.filter(function(item) {
-					return ! item.name.startsWith('.');
-				});
-				dsDetail.list=filtered;
-				if (dsDetail.root !== dsDetail.path) {
-					dsDetail.list.unshift({name: '..', type: 'dir'});
+				for (let dsDetail of res.data) {
+					let filtered=dsDetail.list.filter(function(item) {
+						return ! item.name.startsWith('.');
+					});
+					dsDetail.list=filtered;
+					if (! dsDetail.is_root) {
+						dsDetail.list.unshift({name: '..', type: 'dir'});
+					}
+					_.set(this.dsDetailCache, dsDetail.path, dsDetail.list);
 				}
-				this.state.dsDetail=dsDetail;
-				_.set(this.dsDetailCache, dsDetail.path, dsDetail.list);
+				this.state.dsDetail.list=_.get(this.dsDetailCache, path);
 				this.complete();
 			}.bind(this))
 			.catch(function(res) {
@@ -107,6 +109,10 @@ const DsStore=Reflux.createStore({
 			this.state.dsItemPaths={};
 		}
 		this.complete();
+	},
+
+	resetDsDetail: function() {
+		this.resetState();
 	}
 
 });
