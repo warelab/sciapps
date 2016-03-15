@@ -4,7 +4,7 @@
             "href": "https://agave.iplantc.org/systems/v2/cshl-compute-00"
         }, 
         "metadata": {
-            "href": "https://agave.iplantc.org/meta/v2/data/?q={\"associationIds\":\"2282201238721719835-e0bd34dffff8de6-0001-005\"}"
+            "href": "https://agave.iplantc.org/meta/v2/data/?q={\"associationIds\":\"3810208695796100635-242ac11d-0001-005\"}"
         }, 
         "owner": {
             "href": "https://agave.iplantc.org/profiles/v2/lwang"
@@ -37,8 +37,8 @@
         {
             "details": {
                 "argument": null, 
-                "description": "Linkage map for QTL analysis", 
-                "label": "Select linkage map file (in map.inp format)", 
+                "description": "Linkage map for QTL analysis, in map.inp format", 
+                "label": "Linkage map file", 
                 "repeatArgument": false, 
                 "showArgument": false
             }, 
@@ -57,7 +57,7 @@
                 "default": "", 
                 "enquote": false, 
                 "order": 0, 
-                "required": false, 
+                "required": true, 
                 "validator": null, 
                 "visible": true
             }
@@ -65,12 +65,12 @@
         {
             "details": {
                 "argument": null, 
-                "description": "marker and trait file", 
-                "label": "Select marker and trait file (in cross.inp format)", 
+                "description": "Marker file in cross.inp format", 
+                "label": "Marker file", 
                 "repeatArgument": false, 
                 "showArgument": false
             }, 
-            "id": "MarkerTrait", 
+            "id": "Marker", 
             "semantics": {
                 "fileTypes": [
                     "raw-0"
@@ -85,7 +85,35 @@
                 "default": "", 
                 "enquote": false, 
                 "order": 1, 
-                "required": false, 
+                "required": true, 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Trait file in cross.inp format", 
+                "label": "Trait file", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "Trait", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 2, 
+                "required": true, 
                 "validator": null, 
                 "visible": true
             }
@@ -93,7 +121,7 @@
     ], 
     "isPublic": false, 
     "label": "Composite interval mapping via QTL Cartographer", 
-    "lastModified": "2015-12-16T09:30:03.000-06:00", 
+    "lastModified": "2016-03-10T13:46:34.000-06:00", 
     "longDescription": "Parallelized composite interval mapping via QTL Cartographer", 
     "modules": [], 
     "name": "CIM", 
@@ -128,7 +156,7 @@
             "details": {
                 "argument": null, 
                 "description": "Single word name used for filename stem", 
-                "label": "Enter the study name", 
+                "label": "Study name", 
                 "repeatArgument": false, 
                 "showArgument": false
             }, 
@@ -154,7 +182,7 @@
             "details": {
                 "argument": null, 
                 "description": "Permutations for single marker QTL analysis", 
-                "label": "Specify the number of permutations to do", 
+                "label": "Number of permutations", 
                 "repeatArgument": false, 
                 "showArgument": false
             }, 
@@ -167,7 +195,7 @@
                 ]
             }, 
             "value": {
-                "default": 1000, 
+                "default": 100, 
                 "enquote": false, 
                 "order": 1, 
                 "required": false, 
@@ -179,8 +207,8 @@
         {
             "details": {
                 "argument": null, 
-                "description": "Enter an integer from 1 to 8", 
-                "label": "Specify the model for composite interval mapping", 
+                "description": "Different models for composite interval mapping", 
+                "label": "Model for CIM", 
                 "repeatArgument": false, 
                 "showArgument": false
             }, 
@@ -189,24 +217,49 @@
                 "maxCardinality": 1, 
                 "minCardinality": 0, 
                 "ontology": [
-                    "xs:integer"
+                    "xs:string"
                 ]
             }, 
             "value": {
-                "default": 6, 
+                "default": "6", 
                 "enquote": false, 
+                "enum_values": [
+                    {
+                        "1": "1. Fit all the background markers"
+                    }, 
+                    {
+                        "2": "2. Fit all unlinked background markers"
+                    }, 
+                    {
+                        "3": "3. Fit only the mean"
+                    }, 
+                    {
+                        "4": "4. Fit unlinked markers with the highest correlation with the trait"
+                    }, 
+                    {
+                        "5": "5. Fit all linked markers that fall outside a window around the flanking markers"
+                    }, 
+                    {
+                        "6": "6. Fit specified number of markers that fall outside a window around the flanking markers"
+                    }, 
+                    {
+                        "7": "7. Fit all identified markers that do not fall within the window"
+                    }, 
+                    {
+                        "8": "8. Fit all non-virtual markers that do not fall within the window"
+                    }
+                ], 
                 "order": 2, 
                 "required": false, 
-                "type": "number", 
-                "validator": null, 
+                "type": "enumeration", 
                 "visible": true
             }
         }, 
         {
             "details": {
                 "argument": null, 
-                "description": "The default is to do an analysis every 2 cM along the Chromosome", 
-                "label": "Step size along the chromosome (in cM)", 
+                "description": "Step size along the chromosome (in cM)", 
+                "label": "Step size", 
                 "repeatArgument": false, 
                 "showArgument": false
             }, 
@@ -219,7 +272,7 @@
                 ]
             }, 
             "value": {
-                "default": 0.5, 
+                "default": 1, 
                 "enquote": false, 
                 "order": 3, 
                 "required": false, 
@@ -231,8 +284,8 @@
         {
             "details": {
                 "argument": null, 
-                "description": "The region on either side of the markers flanking the test position is blocked when picking background markers)", 
-                "label": "Window size along the chromosome (in cM)", 
+                "description": "Window size along the chromosome (in cM)", 
+                "label": "Window size", 
                 "repeatArgument": false, 
                 "showArgument": false
             }, 
@@ -258,7 +311,7 @@
             "details": {
                 "argument": null, 
                 "description": "Only needed for model 6", 
-                "label": "Specify the number of background markers for CIM", 
+                "label": "Number of background markers", 
                 "repeatArgument": false, 
                 "showArgument": false
             }, 
@@ -284,7 +337,7 @@
             "details": {
                 "argument": null, 
                 "description": "Assuming the test statistic is significant if greater than this value", 
-                "label": "Specify the significance threshold", 
+                "label": "Significance threshold", 
                 "repeatArgument": false, 
                 "showArgument": false
             }, 
@@ -309,8 +362,8 @@
         {
             "details": {
                 "argument": null, 
-                "description": "Use values 10 or 14 for data with two marker classes, and 30, 31, 32, 34 for those with three marker classes", 
-                "label": "Specify the hypothesis test results to process", 
+                "description": "Hypothesis to test. For more details, check QTL Cartographer manual", 
+                "label": "Hypothesis test", 
                 "repeatArgument": false, 
                 "showArgument": false
             }, 
@@ -319,24 +372,43 @@
                 "maxCardinality": 1, 
                 "minCardinality": 0, 
                 "ontology": [
-                    "xs:integer"
+                    "xs:string"
                 ]
             }, 
             "value": {
-                "default": 10, 
+                "default": "10", 
                 "enquote": false, 
+                "enum_values": [
+                    {
+                        "10": "10 for data with two marker classes (backcrosses)"
+                    }, 
+                    {
+                        "14": "14 for data with two marker classes (GxE)"
+                    }, 
+                    {
+                        "30": "30 for those with three marker classes (H3:H0)"
+                    }, 
+                    {
+                        "31": "31 for those with three marker classes (H3:H0, H3:H1, H1:H0)"
+                    }, 
+                    {
+                        "32": "32 for those with three marker classes (H3:H0, H3:H2, H2:H0)"
+                    }, 
+                    {
+                        "34": "34 for those with three marker classes (GxE)"
+                    }
+                ], 
                 "order": 7, 
                 "required": false, 
-                "type": "number", 
-                "validator": null, 
+                "type": "enumeration", 
                 "visible": true
             }
         }, 
         {
             "details": {
                 "argument": null, 
-                "description": "LOD scores or LR statistics", 
-                "label": "Select the output statistics", 
+                "description": "Either LOD scores or LR statistics", 
+                "label": "Output statistics", 
                 "repeatArgument": false, 
                 "showArgument": false
             }, 
@@ -366,7 +438,7 @@
             }
         }
     ], 
-    "revision": 6, 
+    "revision": 9, 
     "shortDescription": "Composite interval mapping", 
     "tags": [
         "CIM", 
@@ -374,6 +446,6 @@
     ], 
     "templatePath": "cim_wrapper.sh", 
     "testPath": "cim_test_wrapper.sh", 
-    "uuid": "2282201238721719835-e0bd34dffff8de6-0001-005", 
+    "uuid": "3810208695796100635-242ac11d-0001-005", 
     "version": "0.1.17"
 }

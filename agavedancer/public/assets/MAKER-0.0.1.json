@@ -319,7 +319,7 @@
         {
             "details": {
                 "argument": "pred_flank=", 
-                "description": "For genome with a sparse/fragmented evidence set, increasing this value can capture exons missing from your evidence. In very compact genomes decreasing this value can decrease gene merging", 
+                "description": "Increasing this can capture missing exons but decreasing it can decrease gene merging", 
                 "label": "Flank region", 
                 "repeatArgument": false, 
                 "showArgument": true
