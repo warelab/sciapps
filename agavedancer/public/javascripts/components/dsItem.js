@@ -5,31 +5,50 @@ import DsActions from '../actions/dsActions.js';
 import {ListGroupItem, Button} from 'react-bootstrap';
 
 const DsItem=React.createClass({
-	handleDir: function(event) {
-		DsActions.selectDataStoreItem();
-		DsActions.showDataStore(event.target.textContent);
+	getInitialState: function() {
+		return { clickTimer: undefined };
 	},
 
-	handleFile: function(event) {
-		DsActions.selectDataStoreItem(event.target.textContent);
+	handleDblClick: function(content) {
+		switch(this.props.data.type) {
+			case 'dir':
+				DsActions.selectDataStoreItem();
+				DsActions.showDataStore(content);
+				break;
+			case 'file':
+				DsActions.selectDataStoreItem(content);
+				break;
+		}
+	},
+
+	handleClick: function(content) {
+		switch(this.props.data.type) {
+			case 'dir':
+				DsActions.selectDataStoreItem(content.slice(0,-1));
+				break;
+			case 'file':
+				DsActions.selectDataStoreItem(content);
+				break;
+		}
+	},
+
+	handleSelect: function(event) {
+		let content=event.target.textContent;
+		if (this.state.clickTimer) {
+			clearTimeout(this.state.clickTimer);
+			this.state.clickTimer=undefined;
+			this.handleDblClick(content);
+		} else {
+			this.state.clickTimer=setTimeout(() => {
+				this.state.clickTimer=undefined;
+				this.handleClick(content);
+			}, 250);
+		}
 	},
 
 	render: function() {
 		let data=this.props.data;
-		let markup, props;
-		switch(data.type) {
-			case 'dir':
-				props={
-					onClick: this.handleDir
-				};
-				break;
-			case 'file':
-				props={
-					onClick: this.handleFile
-				};
-				break;
-		}
-		markup=<ListGroupItem {...props}>{data.type === 'dir' ? data.name + '/' : data.name}</ListGroupItem>
+		let markup=<ListGroupItem onClick={this.handleSelect}>{data.type === 'dir' ? data.name + '/' : data.name}</ListGroupItem>
 		return markup;
 	}
 });

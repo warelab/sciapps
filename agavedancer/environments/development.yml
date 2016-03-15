@@ -42,3 +42,7 @@ upload_suffix: ".upload"
 maxRunTime: "96:00:00"
 datastore_system: 'data.sciapps.org'
 uncompress_suffix: '.open.tar.gz'
+file_server: 'brie7'
+file_root: '/wildcat'
+file_user: 'scopy'
+use_file_server: 1

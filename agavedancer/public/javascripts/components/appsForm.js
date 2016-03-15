@@ -10,7 +10,7 @@ import AppsInput from './appsInput.js';
 import JobsActions from '../actions/jobsActions.js';
 
 const AppsForm=React.createClass({
-	getInitialState() {
+	getInitialState: function() {
 		return { onSubmit: false, onValidate: false, setting: _config.setting };
 	},
 

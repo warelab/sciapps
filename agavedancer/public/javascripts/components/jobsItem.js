@@ -26,7 +26,7 @@ var JobsItem=React.createClass({
 		let setting=this.props.setting;
 		let results=this.props.results;
 		let jobId=this.props.data.id;
-		let resultsItemNodes;
+		let resultsItemNodes='Loading ...';
 		if (results && results.length) {
 			resultsItemNodes=results.filter(function(item) {
 				return item.name.includes(jobId) ? false : true;
@@ -36,9 +36,6 @@ var JobsItem=React.createClass({
 					<ListGroupItem key={index}><a href={href} target='_blank'>{result.name}</a></ListGroupItem>
 				);
 			});
-		}
-		if (undefined === resultsItemNodes) {
-			resultsItemNodes='Loading ...'
 		}
 
 		return (
