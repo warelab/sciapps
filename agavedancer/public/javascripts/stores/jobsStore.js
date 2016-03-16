@@ -104,7 +104,7 @@ const JobsStore=Reflux.createStore({
 					headers: {'X-Requested-With': 'XMLHttpRequest'},
 				})
 				.then(function(res) {
-					let results=res.data.list.filter(function(result) {
+					let results=res.data[0].list.filter(function(result) {
 						return ! result.name.startsWith('.');
 					});
 					return results;
