@@ -7,6 +7,7 @@ import {Layout, Fixed, Flex} from 'react-layout-pane';
 import {Panel, Well} from 'react-bootstrap';
 import AppsGroup from './appsGroup.js';
 import AppsDetail from './appsDetail.js';
+import AppsSearchBox from './appsSearchBox.js';
 import JobsList from './jobsList.js';
 import JobsDetail from './jobsDetail.js';
 import DsDetail from './dsDetail.js';
@@ -29,6 +30,7 @@ const App=React.createClass({
 					<Layout type="row">
 						<Fixed className="leftbar">
 							<div className="panel-heading"><h3 className="apps-panel-title">Apps</h3></div>
+							<AppsSearchBox />
 							<AppsGroup />
 						</Fixed>
 						<Flex className="main">

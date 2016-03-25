@@ -109,7 +109,8 @@ sub uncompress_result {
 	my $uncompress_suffix= setting("uncompress_suffix");
 	chdir $path_abs;
 	foreach my $file (glob("*" . $uncompress_suffix)) {
-		system("tar --overwrite -xzf $file && rm $file");
+		system("tar --overwrite -xzf $file && rm $file") == 0 or
+		print STDERR "uncompress_result error: $!\n";
 	}
 };
 

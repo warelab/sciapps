@@ -350,7 +350,7 @@
                 ]
             }, 
             "value": {
-                "default": 11.5, 
+                "default": 2.5, 
                 "enquote": false, 
                 "order": 6, 
                 "required": false, 

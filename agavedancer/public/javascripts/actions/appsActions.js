@@ -4,6 +4,7 @@ import Reflux from 'reflux';
 
 var AppsActions=Reflux.createActions([
 	'listApps',
+	'debouncedListApps',
 	'showApp',
 	'hideApp'
 ]);

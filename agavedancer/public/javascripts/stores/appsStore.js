@@ -11,10 +11,17 @@ const AppsStore=Reflux.createStore({
 
 	init: function() {
 		this.state={
+			filtered: false,
+			searchString: '',
 			apps: [],
 			appDetail: {}
 		};
+		this.appsCache=[];
 		this.appDetailCache={};
+		let func=function() {
+			this._listApps();
+		}.bind(this);
+		this._debouncedListApps=_.debounce(func, 200);
 	},
 
 	getInitialState: function() {
@@ -25,18 +32,50 @@ const AppsStore=Reflux.createStore({
 		this.trigger(this.state);
 	},
 
-	listApps: function() {
-		if (this.state.apps.length) {
+	debouncedListApps: function(searchString) {
+		this.state.searchString=searchString;
+		this._debouncedListApps();
+	},
+
+	listApps: function(searchString) {
+		this.state.searchString=searchString;
+		this._listApps();
+	},
+
+	_listApps: function() {
+		if (this.appsCache.length) {
+			this.state.apps=this.appsCache;
+			this.filterApps();
 			this.complete();
 		} else {
 			axios.get('/assets/agaveAppsList.json')
 			.then(function(res) {
-				this.state.apps=res.data;
+				this.appsCache=res.data;
+				this.state.apps=this.appsCache;
+				this.filterApps();
 				this.complete();
 			}.bind(this))
 			.catch(function(res) {
 					console.log(res);
 			});
+		}
+	},
+
+	filterApps: function() {
+		let searchString=this.state.searchString;
+		let matched;
+		let apps=this.state.apps;
+		if (searchString && searchString.length) {
+			let regex=new RegExp(searchString, 'i');
+			matched=apps.filter(function(app) {
+				return regex.test(app.name);
+			});
+		}
+		if (matched && matched.length) {
+			this.state.apps=matched;
+			this.state.filtered=true;
+		} else {
+			this.state.filtered=false;
 		}
 	},
 
