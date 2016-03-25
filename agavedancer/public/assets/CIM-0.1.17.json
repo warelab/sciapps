@@ -28,7 +28,7 @@
     "defaultQueue": "parallel", 
     "deploymentPath": "/lwang/applications/qtl/bin", 
     "deploymentSystem": "data.iplantcollaborative.org", 
-    "executionSystem": "cshl-compute-00", 
+    "executionSystem": "cshl-compute-10", 
     "executionType": "HPC", 
     "helpURI": "http://http://statgen.ncsu.edu/qtlcart/", 
     "icon": null, 

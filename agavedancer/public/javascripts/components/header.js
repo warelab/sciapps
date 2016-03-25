@@ -15,7 +15,7 @@ const Header=React.createClass({
 				<Nav>
 					<NavItem onClick={this.showWelcome}>SciApps</NavItem>
 					<NavItem onClick={this.showWelcome}>Workflows</NavItem>
-					<NavItem href='http://data.sciapps.org/data' target='_blank'>Data</NavItem>
+					<NavItem href='http://data.sciapps.org' target='_blank'>Data</NavItem>
 					<NavItem href='http://ask.cyverse.org' target='_blank'>Help</NavItem>
 				</Nav>
 			</Navbar>
