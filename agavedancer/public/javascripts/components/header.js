@@ -7,6 +7,14 @@ import AppsActions from '../actions/appsActions.js';
 const Header=React.createClass({
 	showWelcome : function() {
 		AppsActions.hideApp();
+		var title="Scientific Apps";
+  		var url="/";
+  		if (typeof (history.pushState) != "undefined") {
+  		        var obj = { Title: title, Url: url };
+  	        	history.pushState(obj, obj.Title, obj.Url);
+  		    } else {
+          		alert("Browser does not support HTML5.");
+      		}
 	},
 
 	render: function() {
