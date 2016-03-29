@@ -1,0 +1,135 @@
+{
+    "_links": {
+        "executionSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
+        }, 
+        "metadata": {
+            "href": "https://agave.iplantc.org/meta/v2/data/?q={\"associationIds\":\"8866527397507240421-242ac115-0001-005\"}"
+        }, 
+        "owner": {
+            "href": "https://agave.iplantc.org/profiles/v2/lwang"
+        }, 
+        "permissions": {
+            "href": "https://agave.iplantc.org/apps/v2/SNAP-0.0.1/pems"
+        }, 
+        "self": {
+            "href": "https://agave.iplantc.org/apps/v2/SNAP-0.0.1"
+        }, 
+        "storageSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/brie.cshl.edu"
+        }
+    }, 
+    "available": true, 
+    "checkpointable": false, 
+    "defaultMaxRunTime": null, 
+    "defaultMemoryPerNode": 1, 
+    "defaultNodeCount": 1, 
+    "defaultProcessorsPerNode": 1, 
+    "defaultQueue": "debug", 
+    "deploymentPath": "applications/snap", 
+    "deploymentSystem": "brie.cshl.edu", 
+    "executionSystem": "cshl-compute-10", 
+    "executionType": "HPC", 
+    "helpURI": "https://www.psc.edu/index.php/user-resources/software/snap", 
+    "icon": null, 
+    "id": "SNAP-0.0.1", 
+    "inputs": [
+        {
+            "details": {
+                "argument": "-i ", 
+                "description": "GFF file with gene models", 
+                "label": "GFF file", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "gff", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 0, 
+                "required": true, 
+                "validator": null, 
+                "visible": true
+            }
+        }
+    ], 
+    "isPublic": false, 
+    "label": "SNAP", 
+    "lastModified": "2016-03-21T17:01:37.000-05:00", 
+    "longDescription": "A Semi-HMM-based general purpose gene finding program suitable for both eukaryotic and prokaryotic genomes", 
+    "modules": [], 
+    "name": "SNAP", 
+    "ontology": [], 
+    "outputs": [
+        {
+            "details": {
+                "description": "Output filename", 
+                "label": "File with HMM training results"
+            }, 
+            "id": "output", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "http://sswapmeet.sswap.info"
+                ]
+            }, 
+            "value": {
+                "default": "snap_out", 
+                "order": 0, 
+                "validator": null
+            }
+        }
+    ], 
+    "parallelism": "SERIAL", 
+    "parameters": [
+        {
+            "details": {
+                "argument": "", 
+                "description": "Intergenic region on either side of gene", 
+                "label": "Flanking region (bp)", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "intg", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 1000, 
+                "enquote": false, 
+                "order": 1, 
+                "required": true, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }
+    ], 
+    "revision": 1, 
+    "shortDescription": "Semi-HMM-based Nucleic Acid Parser", 
+    "tags": [
+        "Annotation"
+    ], 
+    "templatePath": "snap_wrapper.sh", 
+    "testPath": "snap_test_wrapper.sh", 
+    "uuid": "8866527397507240421-242ac115-0001-005", 
+    "version": "0.0.1"
+}
