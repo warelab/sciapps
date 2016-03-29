@@ -2,6 +2,25 @@
     {
         "_links": {
             "self": {
+                "href": "https://agave.iplantc.org/apps/v2/SNAP-0.0.1"
+            }
+        }, 
+        "executionSystem": "cshl-compute-10", 
+        "id": "SNAP-0.0.1", 
+        "isPublic": false, 
+        "label": "SNAP", 
+        "lastModified": "2016-03-21T17:01:37.000-05:00", 
+        "name": "SNAP", 
+        "revision": 1, 
+        "shortDescription": "Semi-HMM-based Nucleic Acid Parser", 
+        "tags": [
+                "Annotation"
+        ],
+        "version": "0.0.1"
+    },
+    {
+        "_links": {
+            "self": {
                 "href": "https://agave.iplantc.org/apps/v2/queryGramene-0.0.1"
             }
         }, 
