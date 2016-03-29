@@ -28,7 +28,7 @@ const AppsGroup=React.createClass({
 			}
 		}
 		let appsPanel=_.keys(appGroup).sort().map(function (tag, index) {
-			return <AppsPanel key={index} index={index} header={tag} apps={_.get(appGroup, tag)} />
+			return <AppsPanel key={index} index={index} header={tag} apps={_.get(appGroup, tag)} expanded={appsStore.filtered}/>
 		});
 		return (
 			<PanelGroup>
