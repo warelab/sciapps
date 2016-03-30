@@ -12,7 +12,8 @@ html, body {
 }
 
 .leftbar {
-	padding: 0.3rem;
+	padding: 0;
+	padding-left: 15px;
 	width: 15rem;
 	margin: 0;
 	background: #d7f4f4;
@@ -20,7 +21,7 @@ html, body {
 }
 
 .rightbar {
-	padding: 0.3rem;
+	padding: 0;
 	width: 15rem;
 	margin: 0;
 	background: #d7f4f4;
@@ -32,26 +33,37 @@ html, body {
 	margin: 0;
 	background: #FFFFFF;
 	overflow: auto;
+	border-left: solid #999 1px;
+	border-right: solid #999 1px;
 }
 
 .apps-panel-title {
 	margin-top: 0;
 	margin-bottom: 0;
+	background:#eee;
 	color: inherit;
 }
 
-.jobs-panel-title {
-	margin-top: 0;
-	margin-bottom: 0;
-	color: inherit;
+.apps-panel-header {
+	height: 30px;
+	z-index: 1000;
+	text-shadow: rgba(255,255,255,0.8) 0 1px 0;
+	background: #eee;
+	border-bottom: solid #999 1px;
+	margin: 0;
+	padding: 0;
+	padding-right: 10px;
+	padding-left: 10px;
+	font-weight: bold;
+	color: #555;
 }
 
 .search-wrapper {
 	width: 85%;
 	text-align:center;
+	padding-top: 10px;
 	margin: auto;
-	margin-top: 0;
-	margin-bottom: 10px;
+	padding-bottom: 10px;
 }
 .app-search-box {
 	width: 100%;
