@@ -1,5 +1,8 @@
 'use strict';
 
+require('../../styles/layout.less');
+
+
 import React from 'react';
 import Reflux from 'reflux';
 import AppsActions from '../actions/appsActions.js';
@@ -30,7 +33,7 @@ const App=React.createClass({
 					<Layout type="row">
 						<Fixed className="leftbar">
 							<div className="panel-heading"><h3 className="apps-panel-title">Apps</h3></div>
-							<AppsSearchBox />
+							<Fixed className="search-wrapper"><AppsSearchBox /></Fixed>
 							<AppsGroup />
 						</Fixed>
 						<Flex className="main">
