@@ -32,7 +32,7 @@ const App=React.createClass({
 				<Flex>
 					<Layout type="row">
 						<Fixed className="leftbar">
-							<div className="panel-heading"><h3 className="apps-panel-title">Apps</h3></div>
+                                                        <Fixed className="apps-panel-header">Apps</Fixed>
 							<Fixed className="search-wrapper"><AppsSearchBox /></Fixed>
 							<AppsGroup />
 						</Fixed>
@@ -41,7 +41,7 @@ const App=React.createClass({
 							<DsDetail />
 						</Flex>
 						<Fixed className="rightbar">
-							<div className="panel-heading"><h3 className="jobs-panel-title">History</h3></div>
+							<Fixed className="apps-panel-header">History</Fixed>
 							<JobsList />
 							<JobsDetail />
 						</Fixed>

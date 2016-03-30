@@ -19,7 +19,7 @@ const Header=React.createClass({
 
 	render: function() {
 		return (
-			<Navbar className='header'>
+			<Navbar className="navbar">
 				<Nav>
 					<NavItem onClick={this.showWelcome}>SciApps</NavItem>
 					<NavItem onClick={this.showWelcome}>Workflows</NavItem>
