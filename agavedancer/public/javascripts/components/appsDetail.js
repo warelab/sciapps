@@ -9,6 +9,7 @@ import {Panel, Table, Jumbotron} from 'react-bootstrap';
 import AppsInfo from './appsInfo.js';
 import AppsForm from './appsForm.js';
 import Welcome from './welcome.js';
+import Workflow from './workflow.js';
 
 const AppsDetail=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore')],
@@ -29,9 +30,13 @@ const AppsDetail=React.createClass({
 				</div>
 			);
 		} else {
-			markup=(
-				<Welcome />
-			);
+			switch (appsStore.pageId) {
+				case 'workflow':
+					markup=<Workflow />
+					break;
+				default:
+					markup=<Welcome />
+			}
 		}
 		return markup;
 	}

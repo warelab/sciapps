@@ -6,7 +6,8 @@ var AppsActions=Reflux.createActions([
 	'listApps',
 	'debouncedListApps',
 	'showApp',
-	'hideApp'
+	'hideApp',
+	'showPage'
 ]);
 
 module.exports = AppsActions;

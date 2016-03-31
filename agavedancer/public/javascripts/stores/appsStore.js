@@ -14,7 +14,8 @@ const AppsStore=Reflux.createStore({
 			filtered: false,
 			searchString: '',
 			apps: [],
-			appDetail: {}
+			appDetail: {},
+			pageId: ''
 		};
 		this.appsCache=[];
 		this.appDetailCache={};
@@ -99,8 +100,12 @@ const AppsStore=Reflux.createStore({
 	hideApp: function() {
 		this.state.appDetail={};
 		this.complete();
-	}
+	},
 
+	showPage: function(pageId) {
+		this.state.pageId=pageId;
+		this.hideApp();
+	}
 });
 
 module.exports = AppsStore;
