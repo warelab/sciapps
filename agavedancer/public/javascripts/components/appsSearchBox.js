@@ -1,5 +1,7 @@
 'use strict';
 
+require('../../styles/layout.less');
+
 import React from 'react';
 import Reflux from 'reflux';
 import AppsStore from '../stores/appsStore.js';
@@ -24,14 +26,12 @@ const AppsSearchBox=React.createClass({
 	},
 
 	render: function() {
-		let resetButton=<Button onClick={this.handleValueClear}>Clear</Button>;
 		let props={
 			type: 'text',
 			value: this.state.value,
-			className: 'search-box',
+			className: 'app-search-box',
 			standalone: true,
-			placeholder: 'search apps',
-			buttonAfter: resetButton,
+			placeholder: 'Search apps',
 			onChange: this.handleValueChange
 		}
 		let markup=(

@@ -12,36 +12,67 @@ html, body {
 }
 
 .leftbar {
-	padding: 0.3rem;
+	padding: 0;
+	padding-left: 15px;
 	width: 15rem;
-	margin: 0.1rem;
+	margin: 0;
 	background: #d7f4f4;
 	overflow: auto;
 }
 
 .rightbar {
-	padding: 0.3rem;
+	padding: 0;
 	width: 15rem;
-	margin: 0.1rem;
+	margin: 0;
 	background: #d7f4f4;
 	overflow: auto;
 }
 
 .main {
 	padding: 0.3rem;
-	margin: 0.1rem;
-	background: #ECF0F1;
+	margin: 0;
+	background: #FFFFFF;
 	overflow: auto;
+	border-left: solid #999 1px;
+	border-right: solid #999 1px;
 }
 
 .apps-panel-title {
 	margin-top: 0;
 	margin-bottom: 0;
+	background:#eee;
 	color: inherit;
 }
 
-.jobs-panel-title {
-	margin-top: 0;
-	margin-bottom: 0;
-	color: inherit;
+.apps-panel-header {
+	height: 30px;
+	z-index: 1000;
+	text-shadow: rgba(255,255,255,0.8) 0 1px 0;
+	background: #eee;
+	border-bottom: solid #999 1px;
+	margin: 0;
+	padding: 0;
+	padding-right: 10px;
+	padding-left: 10px;
+	font-weight: bold;
+	color: #555;
+}
+
+.search-wrapper {
+	width: 85%;
+	text-align:center;
+	padding-top: 10px;
+	margin: auto;
+	padding-bottom: 10px;
+}
+.app-search-box {
+	width: 100%;
+	border: 1px solid #ccc;
+	outline: 0;
+	border-radius: 15px;
+	padding-left: 15px;
+}
+.app-search-box:focus {
+	box-shadow: 0 0 15px 5px #b0e0ee;
+	border: 2px solid #bebede;
 }
