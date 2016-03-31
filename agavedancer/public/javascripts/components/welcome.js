@@ -7,7 +7,7 @@ const Welcome=React.createClass({
 		return(
 			<div className="welcome">
 			<div className="section">
-			<b>SciApps</b> is a web-based platform for executing scientific applications. The web interface of the application is powered by the Agave API of the <a href="http://www.cyverse.org" target="_blank">CyVerse</a> project. To wrap your application with the Agave API, please consult the <a href="https://github.com/iPlantCollaborativeOpenSource/iplant-agave-sdk" target="_blank">Agave app development guide</a>.
+			<b>SciApps</b> is a web-based platform for sharing scientific applications (apps) and workflows. The web interface of the app is powered by the Agave API of the <a href="http://www.cyverse.org" target="_blank">CyVerse</a> project. To wrap your app with the Agave API, please consult the <a href="https://github.com/iPlantCollaborativeOpenSource/iplant-agave-sdk" target="_blank">Agave app development guide</a>.
 				<br /><br />
 			You can run any apps listed on the left column by following steps:<br />
 			</div>
@@ -34,7 +34,7 @@ const Welcome=React.createClass({
 			</div>
 			<br />
 			<div>
-			This platform is utilizing infrastructure provided by the CyVerse project at Cold Spring Harbor laboratory, with support from the <a href="http://nsf.gov" target="_blank">National Science Foundation</a>. 
+			This platform is utilizing infrastructure provided by the CyVerse project at Cold Spring Harbor Laboratory, with support from the <a href="http://nsf.gov" target="_blank">National Science Foundation</a>. 
 			</div>
 			</div>
 		)
