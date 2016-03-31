@@ -19,6 +19,14 @@ const Header=React.createClass({
 
 	showWorkflow: function() {
 		AppsActions.showPage('workflow');
+		let title="Scientific Workflows";
+		let url="/";
+		if (typeof (history.pushState) != "undefined") {
+                        let obj = { Title: title, Url: url };
+                        history.pushState(obj, obj.Title, obj.Url);
+                } else {
+                        alert("Browser does not support HTML5.");
+                }
 	},
 
 	render: function() {
