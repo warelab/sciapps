@@ -18,12 +18,12 @@ import Header from './header.js';
 
 const App=React.createClass({
 
-	componentWillMount: function () {
-		let app_id=_config.app_id, page_id=_config.page_id
-		if (page_id) {
-			AppsActions.showPage(page_id);
-		} else if (app_id) {
+	componentDidMount: function () {
+		let app_id=_config.app_id, page_id=_config.page_id || 'welcome';
+		if (app_id) {
 			AppsActions.showApp(app_id);
+		} else {
+			AppsActions.showPage(page_id);
 		}
 	},
 

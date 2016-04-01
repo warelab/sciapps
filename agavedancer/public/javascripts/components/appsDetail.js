@@ -34,8 +34,11 @@ const AppsDetail=React.createClass({
 				case 'workflow':
 					markup=<Workflow />
 					break;
-				default:
+				case 'welcome':
 					markup=<Welcome />
+					break;
+				default:
+					markup=<div />
 			}
 		}
 		return markup;
