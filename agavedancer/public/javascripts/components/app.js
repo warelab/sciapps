@@ -19,8 +19,10 @@ import Header from './header.js';
 const App=React.createClass({
 
 	componentWillMount: function () {
-		let app_id=_config.app_id;
-		if (app_id) {
+		let app_id=_config.app_id, page_id=_config.page_id
+		if (page_id) {
+			AppsActions.showPage(page_id);
+		} else if (app_id) {
 			AppsActions.showApp(app_id);
 		}
 	},
@@ -32,7 +34,7 @@ const App=React.createClass({
 				<Flex>
 					<Layout type="row">
 						<Fixed className="leftbar">
-                                                        <Fixed className="apps-panel-header">Apps</Fixed>
+              <Fixed className="apps-panel-header">Apps</Fixed>
 							<Fixed className="search-wrapper"><AppsSearchBox /></Fixed>
 							<AppsGroup />
 						</Fixed>

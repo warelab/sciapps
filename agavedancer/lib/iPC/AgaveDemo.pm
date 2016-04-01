@@ -152,10 +152,12 @@ sub parse_ls {
 
 get '/' => sub {
 	my $app_id = param("app_id");
+	my $page_id = param("page_id");
 	my $setting={map {$_ => setting($_)} @EXPORT_SETTINGS};
 
 	template 'index', {
 		app_id => $app_id,
+		page_id => $page_id,
 		setting => $setting,
 	};
 };

@@ -2,6 +2,7 @@
 		<script type="text/javascript">
 		var _config={
 			app_id: '[% app_id || "" %]',
+			page_id: '[% page_id || "" %]',
 			setting: {
 				[% FOREACH pair IN setting.pairs %]
 				[% pair.key %]: '[% pair.value %]',
