@@ -17,10 +17,10 @@ const Header=React.createClass({
 		}
 	},
 
-	showWorkflow: function() {
-		AppsActions.showPage('workflow');
+	showWorkflows: function() {
+		AppsActions.showPage('workflows');
 		let title="Scientific Workflows";
-		let url="/?page_id=workflow";
+		let url="/?page_id=workflows";
 		if (typeof (history.pushState) != "undefined") {
                         let obj = { Title: title, Url: url };
                         history.pushState(obj, obj.Title, obj.Url);
@@ -34,7 +34,7 @@ const Header=React.createClass({
 			<Navbar className="navbar">
 				<Nav>
 					<NavItem onClick={this.showWelcome}>SciApps</NavItem>
-					<NavItem onClick={this.showWorkflow}>Workflows</NavItem>
+					<NavItem onClick={this.showWorkflows}>Workflows</NavItem>
 					<NavItem href='http://data.sciapps.org' target='_blank'>Data</NavItem>
 					<NavItem href='http://ask.cyverse.org' target='_blank'>Help</NavItem>
 				</Nav>
