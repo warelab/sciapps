@@ -20,7 +20,7 @@ const Header=React.createClass({
 	showWorkflow: function() {
 		AppsActions.showPage('workflow');
 		let title="Scientific Workflows";
-		let url="/";
+		let url="/?page_id=workflow";
 		if (typeof (history.pushState) != "undefined") {
                         let obj = { Title: title, Url: url };
                         history.pushState(obj, obj.Title, obj.Url);
