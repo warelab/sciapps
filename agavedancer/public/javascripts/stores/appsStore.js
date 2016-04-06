@@ -5,6 +5,7 @@ import axios from 'axios';
 import _ from 'lodash';
 import Q from 'q';
 import AppsActions from  '../actions/appsActions.js';
+import JobsActions from  '../actions/jobsActions.js';
 
 const AppsStore=Reflux.createStore({
 	listenables: AppsActions,
@@ -44,22 +45,26 @@ const AppsStore=Reflux.createStore({
 	},
 
 	_listApps: function() {
-		if (this.appsCache.length) {
-			this.state.apps=this.appsCache;
-			this.filterApps();
-			this.complete();
+		let apps=this.appsCache;
+		let appPromise;
+		if (apps.length) {
+			appPromise=Q(apps);
 		} else {
-			axios.get('/assets/agaveAppsList.json')
+			appPromise=Q(axios.get('/assets/agaveAppsList.json'))
 			.then(function(res) {
 				this.appsCache=res.data;
-				this.state.apps=this.appsCache;
-				this.filterApps();
-				this.complete();
-			}.bind(this))
-			.catch(function(res) {
-					console.log(res);
-			});
+				return res.data;
+			}.bind(this));
 		}
+		appPromise.then(function(appsList) {
+			this.state.apps=appsList;
+			this.filterApps();
+			this.complete();
+		}.bind(this))
+		.catch(function(error) {
+			console.log(error);
+		})
+		.done();
 	},
 
 	filterApps: function() {
@@ -80,21 +85,42 @@ const AppsStore=Reflux.createStore({
 		}
 	},
 
-	showApp: function(appId) {
-		if (_.has(this.appDetailCache, appId)) {
-			this.state.appDetail=_.get(this.appDetailCache, appId);
-			this.complete();
+	setApp: function(appId) {
+		let appDetail=_.get(this.appDetailCache, appId);
+		let appPromise;
+		if (appDetail) {
+			appPromise=Q(appDetail);
 		} else {
-			axios.get('/assets/' + appId + '.json')
+			appPromise=Q(axios.get('/assets/' + appId + '.json'))
 			.then(function(res) {
 				_.set(this.appDetailCache, appId, res.data);
-				this.state.appDetail=res.data;
-				this.complete();
-			}.bind(this))
-			.catch(function(res) {
-				console.log(res);
-			})
+				return res.data;
+			}.bind(this));
 		}
+		return appPromise;
+	},
+
+	showAppByJob: function(jobsStore) {
+		if (jobsStore.resubmit && jobsStore.jobDetail.appId) {
+			this._showApp(jobsStore.jobDetail.appId);
+		}
+	},
+
+	showApp: function(appId) {
+		JobsActions.resetResubmit();
+		this._showApp(appId);
+	},
+
+	_showApp: function(appId) {
+		let appPromise=this.setApp(appId);
+		appPromise.then(function(appDetail) {
+			this.state.appDetail=appDetail;
+			this.complete();
+		}.bind(this))
+		.catch(function(error) {
+			console.log(error);
+		})
+		.done();
 	},
 
 	hideApp: function() {

@@ -66,7 +66,10 @@ const AppsForm=React.createClass({
 
 	render: function() {
 		let appDetail=this.props.appDetail;
+		let jobDetail=this.props.jobDetail;
+		let resubmit=this.props.resubmit;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
+		let useResubmit=resubmit && appDetail.id === jobDetail.appId; 
 		let getValueOrder=function(item) { return item.value.order };
 		let app_inputs=[], app_params=[], header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
 
@@ -74,13 +77,21 @@ const AppsForm=React.createClass({
 			if (appDetail.inputs && appDetail.inputs.length) {
 				let sortedInputs=_.sortBy(appDetail.inputs, getValueOrder);
 				app_inputs=sortedInputs.map(function(input) {
-					return(<AppsInput key={input.id} data={input} onValidate={onValidate} />);
+					let resubmitValue;
+					if (useResubmit) {
+						resubmitValue=jobDetail.inputs[input.id];
+					}
+					return(<AppsInput key={input.id} data={input} useResubmit={useResubmit} resubmitValue={resubmitValue} onValidate={onValidate} />);
 				});
 			}
 			if (appDetail.parameters &&  appDetail.parameters.length) {
 				let sortedParams=_.sortBy(appDetail.parameters, getValueOrder);
 				app_params=sortedParams.map(function(param) {
-					return(<AppsParam key={param.id} data={param} onValidate={onValidate} />);
+					let resubmitValue;
+					if (useResubmit) {
+						resubmitValue=jobDetail.parameters[param.id];
+					}
+					return(<AppsParam key={param.id} data={param} useResubmit={useResubmit} resubmitValue={resubmitValue} onValidate={onValidate} />);
 				});
 			}
 		}

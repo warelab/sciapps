@@ -10,9 +10,9 @@ const BaseInput=React.createClass({
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		//this.setState({
-		//	value: nextProps.data.value
-		//});
+		this.setState({
+			value: nextProps.data.value
+		});
 	},
 
 	handleChange: function(event) {

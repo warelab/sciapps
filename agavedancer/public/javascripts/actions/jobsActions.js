@@ -7,7 +7,9 @@ var JobsActions=Reflux.createActions([
 	'submitJob',
 	'showJob',
 	'hideJob',
-	'showJobResults'
+	'showJobResults',
+	'resubmitJob',
+	'resetResubmit'
 ]);
 
 module.exports = JobsActions;

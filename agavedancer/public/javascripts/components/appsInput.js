@@ -13,16 +13,21 @@ const AppsInput=React.createClass({
 	getInitialState: function() {
 		return {
 			setting: _config.setting,
-			textValue: this.props.data.value.default,
-			fileValue: this.props.data.value.default
+			textValue: this.props.useResubmit ? this.props.resubmitValue : this.props.data.value.default,
+			fileValue: ''
+			// fileValue: this.props.data.value.default
 		};
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		this.setState({
-		//	textValue: nextProps.data.value.default,
-			fileValue: nextProps.data.value.default
-		});
+		let props={
+			textValue: nextProps.useResubmit ? nextProps.resubmitValue : nextProps.data.value.default,
+			fileValue: ''
+		};
+		if (nextProps.useResubmit) {
+			props.textValue=nextProps.resubmitValue;
+		}
+		this.setState(props);
 	},
 
 	handleDsStoreChange: function(dsStore) {

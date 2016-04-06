@@ -20,6 +20,10 @@ var JobsItem=React.createClass({
 		this.setState({ isOpen: !this.state.isOpen });
 	},
 
+	resubmitJob: function() {
+		JobsActions.resubmitJob(this.props.data.id);
+	},
+
 	render: function() {
 		let displayName=this.props.index + ': ' + this.props.data.appId;
 		let isSubmitting=undefined === this.props.data.id;
@@ -44,6 +48,7 @@ var JobsItem=React.createClass({
 				<ButtonToolbar>
 					<Button key='status' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.showJob} >Status</Button>
 					<Button key='results' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.showJobResults} >Results</Button>
+					<Button key='resubmit' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.resubmitJob} >Resubmit</Button>
 				</ButtonToolbar>
 				<Panel collapsible expanded={this.state.isOpen}>
 					<ListGroup>
