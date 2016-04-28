@@ -31,7 +31,7 @@ const AppsInput=React.createClass({
 	},
 
 	handleDsStoreChange: function(dsStore) {
-		let dsItemPath=_.get(dsStore.dsItemPaths, this.props.data.id);
+		let dsItemPath=dsStore.dsItemPaths[this.props.data.id];
 		let dsItemUrl=dsItemPath ? 'agave://' + this.state.setting.datastore_system + '/' + dsItemPath : '';
 		if (dsItemUrl !== this.state.textValue) {
 			this.setState({
@@ -61,7 +61,7 @@ const AppsInput=React.createClass({
 	buildAgaveAppsInput: function() {
 		let data=this.props.data;
 		let prefix=data.value.required ? '*' : '';
-		let suffix=_.get(this.state.setting, 'upload_suffix', '.upload');
+		let suffix=this.state.setting['upload_suffix'] || '.upload';
 		let markup;
 		if (! data.value.visible) {
 			let props={

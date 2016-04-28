@@ -10,8 +10,10 @@ const DsStore=Reflux.createStore({
 	listenables: DsActions,
 
 	init: function() {
+		this.state={
+			dsDetailCache: {}
+		};
 		this.resetState();
-		this.dsDetailCache={};
 	},
 
 	getInitialState: function() {
@@ -23,12 +25,12 @@ const DsStore=Reflux.createStore({
 	},
 
 	resetState: function() {
-		this.state={
+		_.assign(this.state, {
 			showDataStore: false,
 			target: undefined,
 			dsDetail: {},
 			dsItemPaths: {}
-		};
+		});
 	},
 
 	showDataStore: function(path) {
@@ -51,7 +53,7 @@ const DsStore=Reflux.createStore({
 		//}
 
 		this.state.dsDetail.path=path;
-		let cachedPath=_.get(this.dsDetailCache, path);
+		let cachedPath=this.state.dsDetailCache[path];
 		if (cachedPath) {
 			this.state.dsDetail.list=cachedPath;
 		}
@@ -72,9 +74,9 @@ const DsStore=Reflux.createStore({
 					if (! dsDetail.is_root) {
 						dsDetail.list.unshift({name: '..', type: 'dir'});
 					}
-					_.set(this.dsDetailCache, dsDetail.path, dsDetail.list);
+					this.state.dsDetailCache[dsDetail.path]=dsDetail.list;
 				}
-				this.state.dsDetail.list=_.get(this.dsDetailCache, path);
+				this.state.dsDetail.list=this.state.dsDetailCache[path];
 				this.complete();
 			}.bind(this))
 			.catch(function(res) {
@@ -98,7 +100,7 @@ const DsStore=Reflux.createStore({
 	selectDataStoreItem: function(item) {
 		let path=this.state.dsDetail.path ? this.state.dsDetail.path + '/' : '';
 		path=item ? path + item : undefined;
-		_.set(this.state.dsItemPaths, this.state.target, path);
+		this.state.dsItemPaths[this.state.target]=path;
 		this.complete();
 	},
 

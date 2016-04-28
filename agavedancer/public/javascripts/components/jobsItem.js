@@ -4,7 +4,7 @@ import React from 'react';
 import JobsActions from '../actions/jobsActions.js';
 import {ListGroup, ListGroupItem, Button, ButtonToolbar, Panel} from 'react-bootstrap';
 
-var JobsItem=React.createClass({
+const JobsItem=React.createClass({
 	getInitialState: function() {
 		return {isOpen: false};
 	},
@@ -13,9 +13,9 @@ var JobsItem=React.createClass({
 		JobsActions.showJob(this.props.data.id);
 	},
 
-	showJobResults: function() {
+	showJobOutputs: function() {
 		if (! this.state.isOpen) {
-			JobsActions.showJobResults(this.props.data.id);
+			JobsActions.showJobOutputs(this.props.data.id);
 		}
 		this.setState({ isOpen: !this.state.isOpen });
 	},
@@ -28,11 +28,11 @@ var JobsItem=React.createClass({
 		let displayName=this.props.index + ': ' + this.props.data.appId;
 		let isSubmitting=undefined === this.props.data.id;
 		let setting=this.props.setting;
-		let results=this.props.results;
+		let outputs=this.props.outputs;
 		let jobId=this.props.data.id;
-		let resultsItemNodes='Loading ...';
-		if (results && results.length) {
-			resultsItemNodes=results.filter(function(item) {
+		let outputsItemNodes='Loading ...';
+		if (outputs && outputs.length) {
+			outputsItemNodes=outputs.filter(function(item) {
 				return item.name.includes(jobId) ? false : true;
 			}).map(function(result, index) {
 				let href=setting.output_url + '/' + result.path;
@@ -47,12 +47,12 @@ var JobsItem=React.createClass({
 				{displayName}
 				<ButtonToolbar>
 					<Button key='status' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.showJob} >Status</Button>
-					<Button key='results' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.showJobResults} >Results</Button>
+					<Button key='outputs' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.showJobOutputs} >Outputs</Button>
 					<Button key='resubmit' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.resubmitJob} >Resubmit</Button>
 				</ButtonToolbar>
 				<Panel collapsible expanded={this.state.isOpen}>
 					<ListGroup>
-						{resultsItemNodes}
+						{outputsItemNodes}
 					</ListGroup>
 				</Panel>
 			</ListGroupItem>

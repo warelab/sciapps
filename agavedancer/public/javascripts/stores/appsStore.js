@@ -16,10 +16,11 @@ const AppsStore=Reflux.createStore({
 			searchString: '',
 			apps: [],
 			appDetail: {},
-			pageId: ''
+			pageId: '',
+			appDetailCache: {},
+			appsCache: [],
+			wid: {}
 		};
-		this.appsCache=[];
-		this.appDetailCache={};
 		let func=function() {
 			this._listApps();
 		}.bind(this);
@@ -45,14 +46,14 @@ const AppsStore=Reflux.createStore({
 	},
 
 	_listApps: function() {
-		let apps=this.appsCache;
+		let apps=this.state.appsCache;
 		let appPromise;
 		if (apps.length) {
 			appPromise=Q(apps);
 		} else {
 			appPromise=Q(axios.get('/assets/agaveAppsList.json'))
 			.then(function(res) {
-				this.appsCache=res.data;
+				this.state.appsCache=res.data;
 				return res.data;
 			}.bind(this));
 		}
@@ -85,15 +86,28 @@ const AppsStore=Reflux.createStore({
 		}
 	},
 
+	setWorkflowApps: function(appIds, wid) {
+		Q.all(appIds.map(this.setApp)).done(function(apps) {
+			if (wid !== undefined) {
+				this.state.wid[wid]=true;
+			}
+			this.complete();
+		}.bind(this));
+	},
+
+	resetWorkflowApps: function(wid) {
+		delete this.state.wid[wid];
+	},
+
 	setApp: function(appId) {
-		let appDetail=_.get(this.appDetailCache, appId);
+		let appDetail=this.state.appDetailCache[appId];
 		let appPromise;
 		if (appDetail) {
 			appPromise=Q(appDetail);
 		} else {
 			appPromise=Q(axios.get('/assets/' + appId + '.json'))
 			.then(function(res) {
-				_.set(this.appDetailCache, appId, res.data);
+				this.state.appDetailCache[appId]=res.data;
 				return res.data;
 			}.bind(this));
 		}

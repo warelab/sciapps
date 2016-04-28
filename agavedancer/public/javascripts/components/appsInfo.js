@@ -3,7 +3,7 @@
 import React from 'react';
 import {Panel, Table} from 'react-bootstrap';
 
-var AppsInfo=React.createClass({
+const AppsInfo=React.createClass({
 	render: function() {
 		let appDetail=this.props.appDetail;
 		let header=appDetail.name + '(' + appDetail.version + '): ' + appDetail.longDescription; 

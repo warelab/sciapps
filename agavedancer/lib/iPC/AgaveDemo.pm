@@ -11,7 +11,7 @@ use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/output_url upload_suffix datastore_system/;
+our @EXPORT_SETTINGS=qw/output_url upload_suffix wf_step_prefix datastore_system/;
 
 # TODO - this needs work
 sub token_valid {

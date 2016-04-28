@@ -1,0 +1,105 @@
+'use strict';
+
+import Reflux from 'reflux';
+import axios from 'axios';
+import _ from 'lodash';
+import Q from 'q';
+import AppsStore from './appsStore.js';
+import JobsStore from './jobsStore.js';
+import AppsActions from  '../actions/appsActions.js';
+import JobsActions from  '../actions/jobsActions.js';
+import WorkflowActions from  '../actions/workflowActions.js';
+
+const WorkflowStore=Reflux.createStore({
+	listenables: WorkflowActions,
+	
+	init: function() {
+		this.state={
+			workflowDetail: undefined,
+			workflows: {}
+		};
+		this.listenTo(JobsStore, this.setJobsStore);
+	},
+
+	getInitialState: function() {
+		return this.state;
+	},
+
+	complete: function() {
+		this.trigger(this.state);
+	},
+
+	setJobsStore: function(jobsStore) {
+		for (let wid of _.keys(jobsStore.wid)) {
+			this.jobsAreReady(wid, jobsStore);
+			JobsActions.resetWorkflowJobs(wid);
+		}
+	},
+
+	setWorkflowSteps: function(wfDetail) {
+		this.state.workflowDetail=wfDetail;
+		let appIds=_.values(wfDetail.steps).map(function(o) {
+			return o.appId;
+		});
+		AppsActions.setWorkflowApps(appIds, wfDetail.id);
+		this.complete();
+	},
+
+	buildWorkflow: function(wid, jobIds) {
+		if (wid && jobIds && jobIds.length > 0) {
+			this.state.workflows[wid]={
+				id: wid, 
+				jobIds: jobIds,
+				jobs: {},
+				jobOutputs: {},
+				steps: {},
+				outputs: {},
+				completed: false
+			};
+			JobsActions.setWorkflowJobOutputs(jobIds, wid);
+		} else if (wid) {
+			let workflow=this.state.workflows[wid];
+			for (let jobId of workflow.jobIds) {
+				this._buildWfStep(wid, jobId);
+			}
+			workflow.completed=true;
+			this.complete();
+		}
+	},
+
+	jobsAreReady: function(wid, jobsStore) {
+		let workflow=this.state.workflows[wid];
+		for (let jobId of workflow.jobIds) {
+			workflow.jobs[jobId]=jobsStore.jobDetailCache[jobId];
+			workflow.jobOutputs[jobId]=jobsStore.jobOutputs[jobId];
+		}
+		WorkflowActions.buildWorkflow(wid);
+	},
+
+	_buildWfStep: function(wid, jobId) {
+		let wf=this.state.workflows[wid];
+		let sid=_.size(wf.steps);
+		let job=wf.jobs[jobId], jobOutputs=wf.jobOutputs[jobId];
+		let step={
+			id: sid,
+			appId: job.appId,
+			input_connections: {},
+			parameters: job.parameters
+		};
+		_.forIn(job.inputs, function(iv, ik) {
+			let output=_.find(wf.outputs, function(ov, ok) {
+				return _.endsWith(iv, ok);
+			});
+			if (output) {
+				step.input_connections[ik]=output;
+			};
+		}.bind(this));
+		for (let output of jobOutputs) {
+			wf.outputs[output.path]={step: sid, output_name: output.name};
+		}
+		wf.steps[sid]=step;
+	}
+
+});
+
+module.exports = WorkflowStore;

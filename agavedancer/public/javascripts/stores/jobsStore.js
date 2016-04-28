@@ -16,9 +16,10 @@ const JobsStore=Reflux.createStore({
 			showJob: false,
 			jobs: [],
 			jobDetail: {},
-			jobResults: {}
+			jobOutputs: {},
+			jobDetailCache: {},
+			wid: {}
 		};
-		this.jobDetailCache={};
 	},
 
 	getInitialState: function() {
@@ -47,8 +48,21 @@ const JobsStore=Reflux.createStore({
 		.done();
 	},
 
+	setWorkflowJobs: function(jobIds, wid) {
+		Q.all(jobIds.map(this.setJob)).done(function(jobs) {
+			if (wid !== undefined) {
+				this.state.wid[wid]=true;
+			}
+			this.complete();
+		}.bind(this));
+	},
+
+	resetWorkflowJobs: function(wid) {
+		delete this.state.wid[wid];
+	},
+
 	setJob: function(jobId) {
-		let jobDetail=_.get(this.jobDetailCache, jobId);
+		let jobDetail=this.state.jobDetailCache[jobId];
 		let jobPromise;
 		if (jobDetail) {
 			jobPromise=Q(jobDetail);
@@ -59,7 +73,7 @@ const JobsStore=Reflux.createStore({
 			.then(function(res) {
 				this.state.jobDetail=res.data;
 				if(_.includes(['FINISHED','FAILED'], res.data.status)) {
-					_.set(this.jobDetailCache, res.data.id, res.data);
+					this.state.jobDetailCache[res.data.id]=res.data;
 				}
 				return res.data;
 			}.bind(this));
@@ -90,33 +104,51 @@ const JobsStore=Reflux.createStore({
 		}
 	},
 
-	showJobResults: function(jobId) {
-		if (_.has(this.state.jobResults, jobId)) {
+	setWorkflowJobOutputs: function(jobIds, wid) {
+		Q.all(jobIds.map(this.setJobOutputs)).done(function(jobOutputs) {
+			if (wid !== undefined) {
+				this.state.wid[wid]=true;
+			}
 			this.complete();
+		}.bind(this));
+	},
+
+	setJobOutputs: function(jobId) {
+		let jobOutputs=this.state.jobOutputs[jobId];
+		let jobOutputsPromise;
+		if (jobOutputs) {
+			jobOutputsPromise=Q(jobOutputs);
 		} else {
 			let jobPromise=this.setJob(jobId);
-			jobPromise.then(function(jobDetail) {
+			jobOutputsPromise=jobPromise.then(function(jobDetail) {
 				let path='system/' + jobDetail.archiveSystem + '/' + jobDetail.archivePath;
-				Q(axios.get('/browse/' + path, {
+				return Q(axios.get('/browse/' + path, {
 					headers: {'X-Requested-With': 'XMLHttpRequest'},
 				}))
-				.then(function(res) {
-					let results=res.data[0].list.filter(function(result) {
-						return ! result.name.startsWith('.');
-					});
-					return results;
-				})
-				.then(function(results) {
-					_.set(this.state.jobResults, jobId, results);
-					this.complete()
-				}.bind(this))
-				.done();
-			}.bind(this))
-			.catch(function(error) {
-				console.log(error);
 			})
-			.done();
+			.then(function(res) {
+				let results=res.data[0].list.filter(function(result) {
+					return ! result.name.startsWith('.');
+				});
+				return results;
+			})
+			.then(function(results) {
+				this.state.jobOutputs[jobId]=results;
+				return results;
+			}.bind(this));
 		}
+		return jobOutputsPromise;
+	},
+
+	showJobOutputs: function(jobId) {
+		let jobOutputsPromise=this.setJobOutputs(jobId);
+		jobOutputsPromise.then(function() {
+			this.complete();
+		}.bind(this))
+		.catch(function(error) {
+			console.log(error);
+		})
+		.done();
 	},
 
 	resubmitJob: function(jobId) {

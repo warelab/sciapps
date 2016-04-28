@@ -7,7 +7,7 @@ import AppsBoolParam from './appsBoolParam.js';
 
 const AppsParam=React.createClass({
 	buildAgaveAppsSelectOption: function(option) {
-		var optionChild, optionValue;
+		let optionChild, optionValue;
 		if (_.isString(option)) {
 			optionProps={value: option};
 			optionChild=option;

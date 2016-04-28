@@ -21,14 +21,14 @@ const AppsGroup=React.createClass({
 		let appGroup={};
 		for (let app of apps) {
 			for (let tag of app.tags) {
-				if (! _.has(appGroup, tag)) {
-					_.set(appGroup, tag, []);
+				if (! appGroup[tag]) {
+					appGroup[tag]=[];
 				}
-				_.get(appGroup, tag).push(app);
+				appGroup[tag].push(app);
 			}
 		}
 		let appsPanel=_.keys(appGroup).sort().map(function (tag, index) {
-			return <AppsPanel key={index} index={index} header={tag} apps={_.get(appGroup, tag)} expanded={appsStore.filtered}/>
+			return <AppsPanel key={index} index={index} header={tag} apps={appGroup[tag]} expanded={appsStore.filtered}/>
 		});
 		return (
 			<PanelGroup>
