@@ -20,6 +20,10 @@ const AppsBoolParam=React.createClass({
 		});
 	},
 
+	componentWillUnmount: function() {
+		this.setState({value: this.props.data.value});
+	},
+
 	handleBtn: function(event) {
 		switch(event.target.textContent) {
 			case this.TRUE:

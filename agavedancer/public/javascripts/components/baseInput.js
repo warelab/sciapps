@@ -15,6 +15,10 @@ const BaseInput=React.createClass({
 		});
 	},
 
+	componentWillUnmount: function() {
+		this.setState({value: this.props.data.value});
+	},
+
 	handleChange: function(event) {
 		let nextValue=this.props.data.type === 'checkbox' ? ! this.state.value : event.target.value;
 		this.setState({value: nextValue});

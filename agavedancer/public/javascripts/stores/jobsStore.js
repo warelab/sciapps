@@ -14,7 +14,7 @@ const JobsStore=Reflux.createStore({
 		this.state={
 			resubmit: false,
 			showJob: false,
-			jobs: [],
+			jobs: this.sampleJobs(),
 			jobDetail: {},
 			jobOutputs: {},
 			jobDetailCache: {},
@@ -24,6 +24,17 @@ const JobsStore=Reflux.createStore({
 
 	getInitialState: function() {
 		return this.state;
+	},
+
+	sampleJobs: function() {
+		return [
+			{appId: 'GLM-TASSEL-5.1.23', id: '4853251334283718170-242ac113-0001-007'},
+			{appId: 'AdjustPvalue-0.0.1', id: '688707076778028570-242ac113-0001-007'},
+			{appId: 'XYPlot-0.0.2', id: '4577730763006218726-242ac113-0001-007'},
+			{appId: 'XYPlot-0.0.2', id: '8186737218570424806-242ac113-0001-007'},
+			{appId: 'queryGramene-0.0.1', id: '4402175727251886566-242ac115-0001-007'},
+			{appId: 'MAKER-0.0.1', id: '3469005640213074406-242ac113-0001-007'}
+		];
 	},
 
 	complete: function() {

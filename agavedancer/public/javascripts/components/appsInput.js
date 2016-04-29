@@ -15,19 +15,17 @@ const AppsInput=React.createClass({
 			setting: _config.setting,
 			textValue: this.props.useResubmit ? this.props.resubmitValue : this.props.data.value.default,
 			fileValue: ''
-			// fileValue: this.props.data.value.default
 		};
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		let props={
-			textValue: nextProps.useResubmit ? nextProps.resubmitValue : nextProps.data.value.default,
-			fileValue: ''
-		};
 		if (nextProps.useResubmit) {
-			props.textValue=nextProps.resubmitValue;
+			this.setState({textValue: nextProps.resubmitValue, fileValue: ''});
 		}
-		this.setState(props);
+	},
+
+	componentWillUnmount: function() {
+		this.setState({textValue: this.props.data.value.default});
 	},
 
 	handleDsStoreChange: function(dsStore) {

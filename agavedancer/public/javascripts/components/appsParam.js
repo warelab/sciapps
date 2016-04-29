@@ -9,7 +9,7 @@ const AppsParam=React.createClass({
 	buildAgaveAppsSelectOption: function(option) {
 		let optionChild, optionValue;
 		if (_.isString(option)) {
-			optionProps={value: option};
+			optionValue=option;
 			optionChild=option;
 		} else {
 			option=_.flatten(_.pairs(option));
@@ -21,6 +21,7 @@ const AppsParam=React.createClass({
 			optionChild: optionChild
 		};
 	},
+
 	buildAgaveAppsParam: function(param, useResubmit, resubmitValue) {
 		let options, isSelect=false;
 		let props={
