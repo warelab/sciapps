@@ -37,10 +37,3 @@ create index nextstep_prev on nextstep(prev);
 
 drop index if exists nextstep_next;
 create index nextstep_next on nextstep(next);
-
-insert into job (job_id, agave_id, app_id) values ('4853251334283718170-242ac113-0001-007', '4853251334283718170-242ac113-0001-007', 'GLM-TASSEL-5.1.23');
-insert into job (job_id, agave_id, app_id) values ('688707076778028570-242ac113-0001-007', '688707076778028570-242ac113-0001-007', 'AdjustPvalue-0.0.1');
-insert into job (job_id, agave_id, app_id) values ('4577730763006218726-242ac113-0001-007', '4577730763006218726-242ac113-0001-007', 'XYPlot-0.0.2');
-insert into job (job_id, agave_id, app_id) values ('8186737218570424806-242ac113-0001-007', '8186737218570424806-242ac113-0001-007', 'XYPlot-0.0.2');
-insert into job (job_id, agave_id, app_id) values ('4402175727251886566-242ac115-0001-007', '4402175727251886566-242ac115-0001-007', 'queryGramene-0.0.1');
-insert into job (job_id, agave_id, app_id) values ('3469005640213074406-242ac113-0001-007', '3469005640213074406-242ac113-0001-007', 'MAKER-0.0.1');
