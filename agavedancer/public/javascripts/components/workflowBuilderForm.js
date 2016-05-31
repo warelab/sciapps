@@ -62,7 +62,7 @@ const WorkflowBuilderForm=React.createClass({
 	buildSelectOptions: function(jobs) {
 		let options=jobs.map(function(o, i) {
 			return {
-				optionValue: o.id,
+				optionValue: o.job_id,
 				optionChild: i + ': ' + o.appId
 			};
 		});

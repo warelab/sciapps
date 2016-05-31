@@ -31,7 +31,7 @@ const WorkflowStore=Reflux.createStore({
 
 	setJobsStore: function(jobsStore) {
 		for (let wid of _.keys(jobsStore.wid)) {
-			this.jobsAreReady(wid, jobsStore);
+			this._jobsAreReady(wid, jobsStore);
 			JobsActions.resetWorkflowJobs(wid);
 		}
 	},
@@ -52,7 +52,7 @@ const WorkflowStore=Reflux.createStore({
 				jobIds: jobIds,
 				jobs: {},
 				jobOutputs: {},
-				steps: {},
+				steps: [],
 				outputs: {},
 				completed: false
 			};
@@ -67,7 +67,7 @@ const WorkflowStore=Reflux.createStore({
 		}
 	},
 
-	jobsAreReady: function(wid, jobsStore) {
+	_jobsAreReady: function(wid, jobsStore) {
 		let workflow=this.state.workflows[wid];
 		for (let jobId of workflow.jobIds) {
 			workflow.jobs[jobId]=jobsStore.jobDetailCache[jobId];
@@ -83,21 +83,24 @@ const WorkflowStore=Reflux.createStore({
 		let step={
 			id: sid,
 			appId: job.appId,
-			input_connections: {},
+			inputs: {},
 			parameters: job.parameters
 		};
 		_.forIn(job.inputs, function(iv, ik) {
 			let output=_.find(wf.outputs, function(ov, ok) {
 				return _.endsWith(iv, ok);
 			});
-			if (output) {
-				step.input_connections[ik]=output;
-			};
+			step.inputs[ik]=output ? output : '';
 		}.bind(this));
 		for (let output of jobOutputs) {
 			wf.outputs[output.path]={step: sid, output_name: output.name};
 		}
-		wf.steps[sid]=step;
+		wf.steps.push(step);
+	},
+
+	submitWorkflow: function(formData) {
+		let wf=JSON.parse(formData.get('_workflow_json'));
+		JobsActions.submitWorkflowJobs(wf, formData);
 	}
 
 });

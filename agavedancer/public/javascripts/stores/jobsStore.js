@@ -14,7 +14,7 @@ const JobsStore=Reflux.createStore({
 		this.state={
 			resubmit: false,
 			showJob: false,
-			jobs: this.sampleJobs(),
+			jobs: [],
 			jobDetail: {},
 			jobOutputs: {},
 			jobDetailCache: {},
@@ -26,19 +26,30 @@ const JobsStore=Reflux.createStore({
 		return this.state;
 	},
 
-	sampleJobs: function() {
-		return [
-			{appId: 'GLM-TASSEL-5.1.23', id: '4853251334283718170-242ac113-0001-007'},
-			{appId: 'AdjustPvalue-0.0.1', id: '688707076778028570-242ac113-0001-007'},
-			{appId: 'XYPlot-0.0.2', id: '4577730763006218726-242ac113-0001-007'},
-			{appId: 'XYPlot-0.0.2', id: '8186737218570424806-242ac113-0001-007'},
-			{appId: 'queryGramene-0.0.1', id: '4402175727251886566-242ac115-0001-007'},
-			{appId: 'MAKER-0.0.1', id: '3469005640213074406-242ac113-0001-007'}
-		];
-	},
-
 	complete: function() {
 		this.trigger(this.state);
+	},
+
+	submitWorkflowJobs: function(wf, formData) {
+		let submitNumber=this.state.jobs.length;
+		wf.steps.map(function(step, i) {
+			this.state.jobs[submitNumber + i]={appId: step.appId};
+		}.bind(this));
+		this.complete();
+		Q(axios.post('/workflow/new', formData, {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+			transformRequest: function(data) { return data; }
+		}))
+		.then(function(res) {
+			wf.steps.map(function(step, i) {
+				this.state.jobs[submitNumber + i]=res.data[i];
+			}.bind(this));
+			this.complete();
+		}.bind(this))
+		.catch(function(error) {
+				console.log(error);
+		})
+		.done();
 	},
 
 	submitJob: function(appId, formData) {
@@ -84,7 +95,7 @@ const JobsStore=Reflux.createStore({
 			.then(function(res) {
 				this.state.jobDetail=res.data;
 				if(_.includes(['FINISHED','FAILED'], res.data.status)) {
-					this.state.jobDetailCache[res.data.id]=res.data;
+					this.state.jobDetailCache[res.data.job_id]=res.data;
 				}
 				return res.data;
 			}.bind(this));
@@ -110,6 +121,7 @@ const JobsStore=Reflux.createStore({
 
 	hideJob: function() {
 		if (this.state.showJob) {
+			this.state.jobDetail={};
 			this.state.showJob=false;
 			this.complete();
 		}

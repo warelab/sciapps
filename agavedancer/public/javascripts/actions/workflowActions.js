@@ -4,7 +4,8 @@ import Reflux from 'reflux';
 
 const WorkflowActions=Reflux.createActions([
 	'setWorkflowSteps',
-	'buildWorkflow'
+	'buildWorkflow',
+	'submitWorkflow'
 ]);
 
 module.exports = WorkflowActions;

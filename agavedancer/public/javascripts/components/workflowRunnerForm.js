@@ -7,6 +7,7 @@ import BaseInput from './baseInput.js';
 import AppsStore from '../stores/appsStore.js';
 import WorkflowStore from '../stores/workflowStore.js';
 import AppsActions from '../actions/appsActions.js';
+import JobsActions from '../actions/jobsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import _ from 'lodash';
 import utilities from '../libs/utilities.js';
@@ -17,9 +18,9 @@ const WorkflowRunnerForm=React.createClass({
 
 	getInitialState: function() {
 		return {
-			setting: _config.setting,
 			onSubmit: false,
-			onValidate: false
+			onValidate: false,
+			setting: _config.setting
 		}
 	},
 
@@ -33,8 +34,13 @@ const WorkflowRunnerForm=React.createClass({
 	},
 
 	handleSubmit: function() {
-		this.validateForm();
-		1;
+		//this.validateForm();
+		this.setState({onSubmit: true, onValidate: true});
+		let formData=new FormData(this.refs[this.formName]);
+		WorkflowActions.submitWorkflow(formData);
+		setTimeout(() => {
+			this.setState({onSubmit: false});
+		}, 1500);
 	},
 
 	validateForm: function() {
@@ -53,27 +59,24 @@ const WorkflowRunnerForm=React.createClass({
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
 		if (workflowStore.workflowDetail && appsStore.wid[workflowStore.workflowDetail.id]) {
 			let steps=workflowStore.workflowDetail.steps;
-			let steps_keys=_.keys(steps).sort();
-			for (let step_key in steps_keys) {
-			}
-			appsFieldsets=steps_keys.map(function(o) {
-				let appId=steps[o].appId;
+			appsFieldsets=steps.map(function(step, i) {
+				let appId=step.appId;
 				let appDetail=_.cloneDeep(appsStore.appDetailCache[appId]);
 				_.forEach(appDetail.inputs, function(v) {
-					let ic=steps[o].input_connections[v.id];
+					let ic=step.inputs[v.id];
 					if (ic) {
 						v.value.default=setting.wf_step_prefix + ic.step + ':' + ic.output_name;
 					}
-					v.id=setting.wf_step_prefix + o + ':' + v.id;
+					v.id=setting.wf_step_prefix + i + ':' + v.id;
 				});
 				_.forEach(appDetail.parameters, function(v) {
-					let p=steps[o].parameters[v.id];
+					let p=step.parameters[v.id];
 					if (p !== undefined) {
 						v.value.default=p;
 					}
-					v.id=setting.wf_step_prefix + o + ':' + v.id;
+					v.id=setting.wf_step_prefix + i + ':' + v.id;
 				});
-				return <AppsFieldset key={o} appDetail={appDetail} index={o} />;
+				return <AppsFieldset key={i} appDetail={appDetail} index={i} />;
 			});
 			let emailInput={
 				type: 'email',

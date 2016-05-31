@@ -10,30 +10,32 @@ const JobsItem=React.createClass({
 	},
 
 	showJob: function() {
-		JobsActions.showJob(this.props.data.id);
+		JobsActions.showJob(this.props.data.job_id);
 	},
 
 	showJobOutputs: function() {
 		if (! this.state.isOpen) {
-			JobsActions.showJobOutputs(this.props.data.id);
+			JobsActions.showJobOutputs(this.props.data.job_id);
 		}
 		this.setState({ isOpen: !this.state.isOpen });
 	},
 
 	resubmitJob: function() {
-		JobsActions.resubmitJob(this.props.data.id);
+		JobsActions.resubmitJob(this.props.data.job_id);
 	},
 
 	render: function() {
-		let displayName=this.props.index + ': ' + this.props.data.appId;
-		let isSubmitting=undefined === this.props.data.id;
+		let appId=this.props.data.appId;
+		let displayName=this.props.index + ': ' + appId;
+		let isSubmitting=undefined === this.props.data.job_id;
 		let setting=this.props.setting;
 		let outputs=this.props.outputs;
-		let jobId=this.props.data.id;
+		let jobId=this.props.data.job_id;
 		let outputsItemNodes='Loading ...';
 		if (outputs && outputs.length) {
 			outputsItemNodes=outputs.filter(function(item) {
-				return item.name.includes(jobId) ? false : true;
+				let name='job-for-' + appId.toLowerCase().replace(/\W+/g, '-');
+				return item.name.includes(name) ? false : true;
 			}).map(function(result, index) {
 				let href=setting.output_url + '/' + result.path;
 				return (

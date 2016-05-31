@@ -27,7 +27,7 @@ const JobsList=React.createClass({
 		jobOutputs=jobsStore.jobOutputs;
 		if (jobs && jobs.length) {
 			jobsItemNodes = jobs.map(function (jobsItem, index) {
-				let outputs=jobOutputs[jobsItem.id];
+				let outputs=jobOutputs[jobsItem.job_id];
 				return (
 					<JobsItem key={index} data={jobsItem} index={index} setting={setting} outputs={outputs} />
 				);

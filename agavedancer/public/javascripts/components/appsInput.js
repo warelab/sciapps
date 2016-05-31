@@ -31,7 +31,7 @@ const AppsInput=React.createClass({
 	handleDsStoreChange: function(dsStore) {
 		let dsItemPath=dsStore.dsItemPaths[this.props.data.id];
 		let dsItemUrl=dsItemPath ? 'agave://' + this.state.setting.datastore_system + '/' + dsItemPath : '';
-		if (dsItemUrl !== this.state.textValue) {
+		if (dsItemUrl && dsItemUrl !== this.state.textValue) {
 			this.setState({
 				textValue: dsItemUrl 
 			});

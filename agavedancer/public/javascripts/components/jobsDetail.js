@@ -49,7 +49,7 @@ const JobsDetail=React.createClass({
 		return (
 			<Modal show={showJob} onHide={this.hideJob}>
 				<Modal.Header>
-					<Modal.Title>Details on job {jobDetail.name}</Modal.Title>
+					<Modal.Title>Details on {jobDetail.name}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					{job_info}

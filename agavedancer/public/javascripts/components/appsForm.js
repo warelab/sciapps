@@ -57,7 +57,7 @@ const AppsForm=React.createClass({
 		}
 		setTimeout(() => {
 			this.setState({onSubmit: false});
-		}, 1000);
+		}, 1500);
 	},
 
 	render: function() {
