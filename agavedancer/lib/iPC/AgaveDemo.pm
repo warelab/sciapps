@@ -508,6 +508,7 @@ sub prepareJob {
 
 	# hack for the url input
 	foreach my $name (keys %job_form) {
+		next unless $job_form{$name};
 		if ($job_form{$name}=~m#^http://data.maizecode.org#) {
 			$job_form{$name}=~s#^http://data.maizecode.org#agave://$archive_system/data#;
 		} elsif ($job_form{$name}=~m#^http://www.maizecode.org#) {
