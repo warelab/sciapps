@@ -6,12 +6,24 @@ use Agave::Client ();
 use Agave::Client::Client ();
 use Dancer::Plugin::Ajax;
 use Dancer::Plugin::Email;
+use Dancer::Plugin::Database;
 use File::Copy ();
 use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/output_url upload_suffix datastore_system/;
+our @EXPORT_SETTINGS=qw/output_url upload_suffix wf_step_prefix datastore_system/;
+
+sub uuid {
+	my $s='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+	my $f=sub {
+		my $r=rand()*16|0;
+		my $v=$_[0] eq 'x' ? $r : ($r&0x3|0x8);
+		return sprintf("%x", $v);
+	};
+	$s=~s/[xy]/$f->($&)/ge;
+	return $s;
+}
 
 # TODO - this needs work
 sub token_valid {
@@ -29,13 +41,13 @@ sub token_valid {
 
 sub _build_client {
 	my ($u, $p)=@_;
-
-    my $apic = Agave::Client::Client->new({
+	my $apic = Agave::Client::Client->new({
 			username => $u,
 			password => $p,
-    });
+		}
+	);
 
-    my $client_name = 'AGAVEWEB';
+	my $client_name = 'AGAVEWEB';
 	$apic->client($client_name) || $apic->create({name => $client_name});
 }
 
@@ -52,13 +64,12 @@ sub _auth {
 			password  => $agave->{password},
 			apisecret => $agave->{consumerSecret},
 			apikey    => $client->{consumerKey},
-		)};
-
-    if ($@) {
-			print STDERR 'auth failed: ', $@, $/;
-		}
-
-    return $apio;
+		)
+	};
+	if ($@) {
+		print STDERR 'auth failed: ', $@, $/;
+	}
+	return $apio;
 }
 
 sub auto_login {
@@ -149,6 +160,7 @@ sub parse_ls {
 #get '/' => sub {
 #	send_file 'index.html';
 #};
+
 
 get '/' => sub {
 	my $app_id = param("app_id");
@@ -321,6 +333,7 @@ ajax '/job/:id' => sub {
 	my $job_id = param("id");
 
 	my $job=retrieveJob($job_id);
+	$job->{job_id}=$job_id;
 	return to_json($job);
 };
 
@@ -348,10 +361,11 @@ sub retrieveJob {
 	);
 
 	my $job_ep = $apif->job;
+	my $row = database->quick_select('job', {job_id => $job_id});
 	my $job;
 	my $retry=2;
 	do {
-		$job = eval { $job_ep->job_details($job_id) };
+		$job = eval { $job_ep->job_details($row->{'agave_id'}) };
     if ($@) {
 			print STDERR $@, $/;
 			if ($@=~/token (?:expired|inactive)/i || $@=~/invalid credentials/i) {
@@ -369,14 +383,43 @@ get '/job/:id/remove' => sub {
 	my $job_id = param("id");
 	my $username = session('username');
 	my $apif = Agave::Client->new(
-					username => $username,
-					token => session('token'),
-				);
+		username => $username,
+		token => session('token'),
+	);
 
 	my $job_ep = $apif->job;
-	my $st = $job_ep->delete_job($job_id);
+	my $row = database->quick_select('job', {job_id => $job_id});
+	my $st = $job_ep->delete_job($row->{'agave_id'});
 
 	return redirect '/apps';
+};
+
+ajax '/workflow/new' => sub {
+	check_login();
+
+	my @err = ();
+	my $app_id = param("id");
+	my $username = session('username');
+	my $apif = Agave::Client->new(
+		user => $username,
+		token => session('token'),
+	);
+	my $apps = $apif->apps;
+
+	my (@jobs, @step_form);
+	my $form = params();
+	my $wf=from_json($form->{'_workflow_json'});
+	foreach my $step (@{$wf->{'steps'}}) {
+		my $app_id=$step->{appId};
+		my ($app) = $apps->find_by_id($app_id);
+		my ($job_id, $job_form)=prepareJob($app, $form, $step, \@step_form, \@jobs);
+		my ($job, $err)=submitJob($apif, $app, $job_id, $job_form);
+		if ($job_id) {
+			push @jobs, {appId => $app_id, job_id => $job_id};
+			push @step_form, $job_form;
+		}
+	}
+	return to_json(\@jobs);
 };
 
 ajax '/job/new/:id' => sub {
@@ -386,26 +429,18 @@ ajax '/job/new/:id' => sub {
 	my $app_id = param("id");
 	my $username = session('username');
 	my $apif = Agave::Client->new(
-					user => $username,
-					token => session('token'),
-				);
+		user => $username,
+		token => session('token'),
+	);
 
 	my $apps = $apif->apps;
 
 	my ($app) = $apps->find_by_id($app_id);
-	my ($inputs, $parameters) = ([], []);
-	if ($app) {
-		$inputs = $app->inputs;
-		$parameters = $app->parameters;
-	}
 	my $form = params();
-	my $st=submitJob($apif, $app, $app_id, $form, $inputs, $parameters);
-	#print STDERR to_dumper( $st ), $/;
-	if ($st) {
-		if ($st->{status} eq 'success') {
-			my $job = $st->{data};
-			return redirect '/job/' . $job->{id};
-		}
+	my ($job_id, $job_form)=prepareJob($app, $form);
+	my ($job, $err)=submitJob($apif, $app, $job_id, $job_form);
+	if ($job_id && $job && $job->{id}) {
+		return redirect '/job/' . $job_id;
 	}
 };
 
@@ -416,48 +451,37 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 	my $app_id = param("id");
 	my $username = session('username');
 	my $apif = Agave::Client->new(
-					user => $username,
-					token => session('token'),
-				);
+		user => $username,
+		token => session('token'),
+	);
 
 	my $apps = $apif->apps;
-
 	my ($app) = $apps->find_by_id($app_id);
-
-	my ($inputs, $parameters) = ([], []);
-	if ($app) {
-		$inputs = $app->inputs;
-		$parameters = $app->parameters;
-	}
 
 	my $form = params();
 	if ( request->method() eq "POST" ) {
-		my $st=submitJob($apif, $app, $app_id, $form, $inputs, $parameters);
-		#print STDERR to_dumper( $st ), $/;
-		if ($st) {
-			if ($st->{status} eq 'success') {
-				my $job = $st->{data};
-				return redirect '/job/' . $job->{id};
-			}
-			else {
-				push @err, $st->{message};
-			}
+		my ($job_id, $job_form)=prepareJob($app, $form);
+		my ($job, $err)=submitJob($apif, $app, $job_id, $job_form);
+		if ($job_id && $job && $job->{id}) {
+			return redirect '/job/' . $job_id;
+		} else {
+			push @err, $err;
 		}
 	}
  	template 'job_new', {
 		errors => \@err,
  		app => $app,
-		app_inputs => $inputs,
-		app_params => $parameters,
+		app_inputs => $app->inputs || [],
+		app_params => $app->parameters || [],
 		name => $app_id,
-		#genomes => $genomes,
 		username => $username,
 		form => $form,
 	};
 };
 
-sub submitJob {
-	my ($apif, $app, $app_id, $form, $inputs, $parameters)=@_;
+sub prepareJob {
+	my ($app, $form, $step, $step_form, $prev_job)=@_;
+	my $app_id=$app->{id};
 	my $archive_system=setting("archive_system");
 	my $archive_home=setting("archive_home");
 	my $archive_path=setting("archive_path");
@@ -466,24 +490,36 @@ sub submitJob {
 	my $input_path=setting("input_path");
 	my $output_url=setting("output_url");
 
-	$form->{maxRunTime}||=$app->{defaultMaxRunTime} && cmp_maxRunTime($app->{defaultMaxRunTime}, setting("maxRunTime")) < 0 ? $app->{defaultMaxRunTime} : setting("maxRunTime");
-	#$form->{nodeCount}||=setting("nodeCount");
+	my ($inputs, $parameters) = ([], []);
+	if ($app) {
+		$inputs = $app->inputs;
+		$parameters = $app->parameters;
+	}
+
+	my $step_prefix = defined $step ? setting("wf_step_prefix") . $step->{id} . ':' : '';
+
+	my %job_form;
+	foreach my $key (@$inputs, @$parameters) {
+		my $name=defined $step ? $step_prefix . $key->{id} : $key->{id};
+		$job_form{$name}=$form->{$name};
+	}
+
+	$job_form{maxRunTime}||=$app->{defaultMaxRunTime} && cmp_maxRunTime($app->{defaultMaxRunTime}, setting("maxRunTime")) < 0 ? $app->{defaultMaxRunTime} : setting("maxRunTime");
 
 	# hack for the url input
-	foreach my $input (@$inputs) {
-		if ($form->{$input->{id}}=~m#^http://data.maizecode.org#) {
-			$form->{$input->{id}}=~s#^http://data.maizecode.org#agave://$archive_system/data#;
-		} elsif ($form->{$input->{id}}=~m#^http://www.maizecode.org#) {
-			$form->{$input->{id}}=~s#^http://www.maizecode.org#agave://$archive_system#;
+	foreach my $name (keys %job_form) {
+		next unless $job_form{$name};
+		if ($job_form{$name}=~m#^http://data.maizecode.org#) {
+			$job_form{$name}=~s#^http://data.maizecode.org#agave://$archive_system/data#;
+		} elsif ($job_form{$name}=~m#^http://www.maizecode.org#) {
+			$job_form{$name}=~s#^http://www.maizecode.org#agave://$archive_system#;
 		} else {
-			$form->{$input->{id}}=~s#^$output_url#agave://$archive_system#;
+			$job_form{$name}=~s#^$output_url#agave://$archive_system#;
 		}
 	}
 
 	# TODO - check arguments
 
-	my $io=$apif->io;
-	#my $tempname=tempname();
 	my $tempdir=$input_path . "/" . tempname();
 	my $tempdir_abs=$input_home . '/' . $tempdir;
 	mkdir($tempdir_abs);
@@ -491,22 +527,37 @@ sub submitJob {
 	my $upload_suffix=quotemeta(setting("upload_suffix"));
 	eval {
 		foreach my $upload (keys %{request->uploads()}) {
+			next unless exists $job_form{$upload};
 			my $file=request->upload($upload);
 			my $source=$file->tempname;
 			my $target_abs=$tempdir_abs . "/" . $file->filename;
 			my $target=$tempdir . "/" . $file->filename;
 			File::Copy::copy($source, $target_abs) or die "Copy failed: $!";
 			my $input="agave://" . $input_system . "/" . $target;
-			delete $form->{$upload};
+			delete $job_form{$upload};
 			$upload=~s/$upload_suffix$//;
-			$form->{$upload}=$input;
+			$job_form{$upload}=$input;
 		}
 	};
 	if ($@) {
 		print STDERR 'Error: ', $@, $/;
 	}
 
-	my ($result_folder)=map {s/\W+/-/g;lc() . "-" . tempname() } ($app_id);
+	foreach my $name (keys %job_form) {
+		my $n=$name;
+		if ($n=~s/^$step_prefix//) {
+			$job_form{$n}=delete $job_form{$name};
+		}
+	}
+
+	while (my ($k, $v)=each %{$step->{inputs}}) {
+		if ($v) {
+			my $sf=$step_form->[$v->{step}];
+			$job_form{$k}='agave://' . $input_system . '/' . $sf->{archivePath} . '/' . $v->{output_name};
+		}
+	}
+
+	my ($result_folder)=map {my $t=$_; $t=~s/\W+/-/g; lc($t) . "-" . tempname()} ($app_id);
 	$archive_path.= "/" . $result_folder;
 	my $archive_path_abs=$archive_home . "/" . $archive_path;
 	mkdir($archive_path_abs);
@@ -516,44 +567,80 @@ sub submitJob {
 	close FH;
 
 	my $host_url=setting("host_url");
+	my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}';
 	my $notifications=[
 	{
 		event	=> "FINISHED",
-		url		=> $host_url . '/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}',
+		url		=> $host_url . $noteinfo,
 		},
 	{
 		event	=> "FAILED",
-		url		=> $host_url . '/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}',
+		url		=> $host_url . $noteinfo,
 	},
 	];
-	if (my $email = delete $form->{"_email"}) {
-		session(_email => $email);
+	if (my $email = $form->{"_email"}) {
 		open FH, ">", "$archive_path_abs/.email" or print STDERR "Error: can't open  ${archive_path}/.email\n";
-		print FH "$email";
+		print FH $email;
 		close FH;
 	}
 
-	%$form=(%$form,
-		archive => 1,
-		archiveSystem => $archive_system,
-		archivePath	=> $archive_path,
-		notifications	=> $notifications,
-	);
-	#print STDERR to_dumper($form) . "\n";
-		
+	$job_form{archive}=1;
+	$job_form{archiveSystem}=$archive_system;
+	$job_form{archivePath}=$archive_path;
+	$job_form{notifications}=$notifications;
+
+	my $job_id=uuid();
+	my $job_json=to_json(\%job_form);
+	eval {
+		database->quick_insert('job', {job_id => $job_id, app_id => $app_id, job_json => $job_json});
+		while (my ($k, $v)=each %{$step->{inputs}}) {
+			if ($v) {
+				my $prev=$prev_job->[$v->{step}]{job_id};
+				my $row=database->quick_insert('nextstep', {prev => $prev, next => $job_id, input_name => $job_form{$k}});
+			}
+		}
+	};
+	if ($@) {
+		print STDERR 'Error: ', $@, $/;
+	} else {
+		return ($job_id, \%job_form);
+	}
+}
+
+sub submitJob {
+	my ($apif, $app, $job_id, $job_form)=@_;
+	#print STDERR to_dumper($job_form) . "\n";
+	
+	return unless $job_id;
+	
+	my @row=database->quick_select('nextstep', {next => $job_id});
+	foreach my $row (@row) {
+		return unless $row->{status};
+	}
+
 	my $job_ep = $apif->job;
-	my $st = eval { $job_ep->submit_job($app, %$form); };
+	my $st = eval { $job_ep->submit_job($app, %$job_form); };
 	#print STDERR to_dumper($st) . "\n";
 	if ($@) {
 		print STDERR 'Error: ', $@, $/;
 	}
-	$st;
+	if ($st) {
+		if ($st->{status} eq 'success') {
+			my $job = $st->{data};
+			database->quick_update('job', {job_id => $job_id}, {agave_id => $job->{id}});
+			return ($job);
+		} else {
+			print STDERR 'Error: ', $st->{message}, $/;
+			return (undef, $st->{message});
+		}
+	}
+	return;
 }
 
 any ['get', 'post'] => '/notification/:id' => sub {
 	my $params=params;
 	
-	if ( $params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED' ) {
+	if ($params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED') {
 		my $path=setting("archive_home") . '/' . $params->{archivePath};
 		if (-r $path . "/.email") {
 			open(EMAIL, $path . "/.email");
@@ -570,9 +657,41 @@ any ['get', 'post'] => '/notification/:id' => sub {
 			};
 			email $mail;
 		}
-		uncompress_result($params->{archivePath});
+		if ($params->{status} eq 'FINISHED') {
+			submitNextJob($params);
+			uncompress_result($params->{archivePath});
+		}
 	}
 	return;
 };
+
+sub submitNextJob {
+	my ($params)=@_;
+
+	check_login();
+
+	my $username = session('username');
+	my $apif = Agave::Client->new(
+		user => $username,
+		token => session('token'),
+	);
+	my $apps = $apif->apps;
+
+	my $prev=database->quick_select('job', {agave_id => $params->{id}});
+	my @next=database->quick_select('nextstep', {prev => $prev->{job_id}, status => 0});
+	if (scalar @next) {
+		database->quick_update('nextstep', {prev => $prev->{job_id}}, {status => 1});
+	}
+
+	foreach my $next (@next) {
+		my @incomplete=database->quick_select('nextstep', {next => $next->{next}, status => 0});
+		next if scalar @incomplete;
+		my $job=database->quick_select('job', {job_id => $next->{next}});
+		my $job_form=from_json($job->{job_json});
+		my ($app) = $apps->find_by_id($job->{app_id});
+	
+		my ($res, $err)=submitJob($apif, $app, $job->{job_id}, $job_form);
+	}
+}
 
 true;

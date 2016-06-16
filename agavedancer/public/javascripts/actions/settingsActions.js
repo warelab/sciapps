@@ -2,7 +2,7 @@
 
 import Reflux from 'reflux';
 
-var SettingsActions=Reflux.createActions([
+const SettingsActions=Reflux.createActions([
 	'getSettings'
 ]);
 

@@ -2,12 +2,18 @@
 
 import Reflux from 'reflux';
 
-var JobsActions=Reflux.createActions([
+const JobsActions=Reflux.createActions([
 	'listJobs',
+	'submitWorkflowJobs',
 	'submitJob',
 	'showJob',
 	'hideJob',
-	'showJobResults'
+	'setJob',
+	'setWorkflowJobOutputs',
+	'resetWorkflowJobs',
+	'showJobOutputs',
+	'resubmitJob',
+	'resetResubmit'
 ]);
 
 module.exports = JobsActions;

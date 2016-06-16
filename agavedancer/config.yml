@@ -36,11 +36,16 @@ engines:
     allow_blessed: '1'
 
 plugins:
-  'Ajax':
+  Ajax:
     content_type: 'application/json'
+  Database:
+    driver: 'SQLite'
+    database: 'database'
+    dbi_params:
+      RaiseError: 1
+      AutoCommit: 1
 #  MemcachedFast:
 #    servers:
 #      - "127.0.0.1:11211"
 #    default_timeout: 1800
 #    namespace: "agaveapidemo:"
-

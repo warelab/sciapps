@@ -15,9 +15,13 @@ const AppsBoolParam=React.createClass({
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		//this.setState({
-		//	value: nextProps.data.value ? 1 : 0
-		//});
+		this.setState({
+			value: nextProps.data.value ? 1 : 0
+		});
+	},
+
+	componentWillUnmount: function() {
+		this.setState({value: this.props.data.value});
 	},
 
 	handleBtn: function(event) {

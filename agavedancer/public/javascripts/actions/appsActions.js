@@ -2,11 +2,15 @@
 
 import Reflux from 'reflux';
 
-var AppsActions=Reflux.createActions([
+const AppsActions=Reflux.createActions([
 	'listApps',
 	'debouncedListApps',
+	'showAppByJob',
 	'showApp',
 	'hideApp',
+	'setApp',
+	'setWorkflowApps',
+	'resetWorkflowApps',
 	'showPage'
 ]);
 

@@ -4,32 +4,38 @@ import React from 'react';
 import JobsActions from '../actions/jobsActions.js';
 import {ListGroup, ListGroupItem, Button, ButtonToolbar, Panel} from 'react-bootstrap';
 
-var JobsItem=React.createClass({
+const JobsItem=React.createClass({
 	getInitialState: function() {
 		return {isOpen: false};
 	},
 
 	showJob: function() {
-		JobsActions.showJob(this.props.data.id);
+		JobsActions.showJob(this.props.data.job_id);
 	},
 
-	showJobResults: function() {
+	showJobOutputs: function() {
 		if (! this.state.isOpen) {
-			JobsActions.showJobResults(this.props.data.id);
+			JobsActions.showJobOutputs(this.props.data.job_id);
 		}
 		this.setState({ isOpen: !this.state.isOpen });
 	},
 
+	resubmitJob: function() {
+		JobsActions.resubmitJob(this.props.data.job_id);
+	},
+
 	render: function() {
-		let displayName=this.props.index + ': ' + this.props.data.appId;
-		let isSubmitting=undefined === this.props.data.id;
+		let appId=this.props.data.appId;
+		let displayName=this.props.index + ': ' + appId;
+		let isSubmitting=undefined === this.props.data.job_id;
 		let setting=this.props.setting;
-		let results=this.props.results;
-		let jobId=this.props.data.id;
-		let resultsItemNodes='Loading ...';
-		if (results && results.length) {
-			resultsItemNodes=results.filter(function(item) {
-				return item.name.includes(jobId) ? false : true;
+		let outputs=this.props.outputs;
+		let jobId=this.props.data.job_id;
+		let outputsItemNodes='Loading ...';
+		if (outputs && outputs.length) {
+			outputsItemNodes=outputs.filter(function(item) {
+				let name='job-for-' + appId.toLowerCase().replace(/\W+/g, '-');
+				return item.name.includes(name) ? false : true;
 			}).map(function(result, index) {
 				let href=setting.output_url + '/' + result.path;
 				return (
@@ -43,11 +49,12 @@ var JobsItem=React.createClass({
 				{displayName}
 				<ButtonToolbar>
 					<Button key='status' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.showJob} >Status</Button>
-					<Button key='results' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.showJobResults} >Results</Button>
+					<Button key='outputs' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.showJobOutputs} >Outputs</Button>
+					<Button key='resubmit' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.resubmitJob} >Resubmit</Button>
 				</ButtonToolbar>
 				<Panel collapsible expanded={this.state.isOpen}>
 					<ListGroup>
-						{resultsItemNodes}
+						{outputsItemNodes}
 					</ListGroup>
 				</Panel>
 			</ListGroupItem>

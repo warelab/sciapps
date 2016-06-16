@@ -20,7 +20,7 @@ const DsDetail=React.createClass({
 		let dsDetail=dsStore.dsDetail;
 		let showDataStore=dsStore.showDataStore;
 		let dsFileNodes='Loading ...';
-		let targetPath=_.get(dsStore.dsItemPaths, dsStore.target);
+		let targetPath=dsStore.dsItemPaths[dsStore.target];
 		let dsBtnValue=targetPath ? 'Select and close' : 'Close';
 		if (dsDetail.list && dsDetail.list.length) {
 			dsFileNodes=dsDetail.list.sort(function (a,b) {

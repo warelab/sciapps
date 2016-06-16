@@ -29,3 +29,5 @@ node_modules
 bundle.js
 *.swp
 __mytest__
+tmp
+database

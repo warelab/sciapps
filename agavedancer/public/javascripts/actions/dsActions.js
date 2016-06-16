@@ -2,7 +2,7 @@
 
 import Reflux from 'reflux';
 
-var DsActions=Reflux.createActions([
+const DsActions=Reflux.createActions([
 	'showDataStore',
 	'hideDataStore',
 	'setDataStoreItemTarget',

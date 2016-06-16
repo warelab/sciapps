@@ -7,9 +7,9 @@ import AppsBoolParam from './appsBoolParam.js';
 
 const AppsParam=React.createClass({
 	buildAgaveAppsSelectOption: function(option) {
-		var optionChild, optionValue;
+		let optionChild, optionValue;
 		if (_.isString(option)) {
-			optionProps={value: option};
+			optionValue=option;
 			optionChild=option;
 		} else {
 			option=_.flatten(_.pairs(option));
@@ -21,13 +21,14 @@ const AppsParam=React.createClass({
 			optionChild: optionChild
 		};
 	},
-	buildAgaveAppsParam: function(param) {
+
+	buildAgaveAppsParam: function(param, useResubmit, resubmitValue) {
 		let options, isSelect=false;
 		let props={
 			key: param.id,
 			required: param.value.required,
 			name: param.id,
-			value: param.value.default
+			value: useResubmit ? resubmitValue : param.value.default
 		};
 		if (! param.value.visible) {
 			props.type='hidden';
@@ -73,7 +74,7 @@ const AppsParam=React.createClass({
 		};
 	},
 	render: function() {
-		let data=this.buildAgaveAppsParam(this.props.data), markup;
+		let data=this.buildAgaveAppsParam(this.props.data, this.props.useResubmit, this.props.resubmitValue), markup;
 		if (data.data.type === 'checkbox') {
 			markup=<AppsBoolParam {...data} onValidate={this.props.onValidate} />;
 		} else {

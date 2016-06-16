@@ -22,14 +22,14 @@ const JobsList=React.createClass({
 	render: function() {
 		let jobsStore=this.state.jobsStore;
 		let setting=this.state.setting;
-		let jobs, jobResults, jobsItemNodes;
+		let jobs, jobOutputs, jobsItemNodes;
 		jobs=jobsStore.jobs;
-		jobResults=jobsStore.jobResults;
+		jobOutputs=jobsStore.jobOutputs;
 		if (jobs && jobs.length) {
 			jobsItemNodes = jobs.map(function (jobsItem, index) {
-				let results=_.get(jobResults, jobsItem.id);
+				let outputs=jobOutputs[jobsItem.job_id];
 				return (
-					<JobsItem key={index} data={jobsItem} index={index} setting={setting} results={results} />
+					<JobsItem key={index} data={jobsItem} index={index} setting={setting} outputs={outputs} />
 				);
 			});
 		}

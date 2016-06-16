@@ -10,9 +10,15 @@ const BaseInput=React.createClass({
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		//this.setState({
-		//	value: nextProps.data.value
-		//});
+		if (nextProps.data.value !== undefined) {
+			this.setState({
+				value: nextProps.data.value
+			});
+		}
+	},
+
+	componentWillUnmount: function() {
+		this.setState({value: this.props.data.value});
 	},
 
 	handleChange: function(event) {

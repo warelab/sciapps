@@ -39,6 +39,7 @@ input_home: '/agave_data'
 output_url: 'http://data.sciapps.org'
 email: 'noreply@sciapps.org'
 upload_suffix: ".upload"
+wf_step_prefix: 'wf:step:'
 maxRunTime: "96:00:00"
 datastore_system: 'data.sciapps.org'
 uncompress_suffix: '.open.tar.gz'
