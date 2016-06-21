@@ -20,11 +20,20 @@ const WorkflowRunnerForm=React.createClass({
 		return {
 			onSubmit: false,
 			onValidate: false,
-			setting: _config.setting
+			setting: _config.setting,
+			required: {}
 		}
 	},
 
 	formName: 'workflowRunnerForm',
+
+	validateForm: function() {
+		let setting=this.state.setting;
+		let required=_.keys(this.state.required);
+		let form=this.refs[this.formName];
+		let formdata={};
+		return utilities.validateForm(form, required, setting.upload_suffix);
+	},
 
 	componentWillReceiveProps: function(nextProps) {
 		this.setState({
@@ -34,29 +43,24 @@ const WorkflowRunnerForm=React.createClass({
 	},
 
 	handleSubmit: function() {
-		//this.validateForm();
 		this.setState({onSubmit: true, onValidate: true});
-		let formData=new FormData(this.refs[this.formName]);
-		WorkflowActions.submitWorkflow(formData);
+		if (this.validateForm()) {
+			let formData=new FormData(this.refs[this.formName]);
+			WorkflowActions.submitWorkflow(formData);
+			this.setState({onValidate: false});
+		}
 		setTimeout(() => {
 			this.setState({onSubmit: false});
 		}, 1500);
 	},
 
-	validateForm: function() {
-		let setting=this.state.setting;
-		let required=[];
-		let form=this.refs[this.formName];
-		let formdata={};
-		return utilities.validateForm(form, required, setting.upload_suffix);
-	},
-	
 	render: function() {
 		let workflowStore=this.state.workflowStore;
 		let appsStore=this.state.appsStore;
 		let setting=this.state.setting;
 		let markup=<div />, appsFieldsets;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
+		let required=this.state.required;
 		if (workflowStore.workflowDetail && appsStore.wid[workflowStore.workflowDetail.id]) {
 			let steps=workflowStore.workflowDetail.steps;
 			appsFieldsets=steps.map(function(step, i) {
@@ -68,6 +72,9 @@ const WorkflowRunnerForm=React.createClass({
 						v.value.default=setting.wf_step_prefix + ic.step + ':' + ic.output_name;
 					}
 					v.id=setting.wf_step_prefix + i + ':' + v.id;
+					if (v.value.required) {
+						required[v.id]=1;
+					}
 				});
 				_.forEach(appDetail.parameters, function(v) {
 					let p=step.parameters[v.id];
@@ -75,8 +82,11 @@ const WorkflowRunnerForm=React.createClass({
 						v.value.default=p;
 					}
 					v.id=setting.wf_step_prefix + i + ':' + v.id;
+					if (v.value.required) {
+						required[v.id]=1;
+					}
 				});
-				return <AppsFieldset key={i} appDetail={appDetail} index={i} />;
+				return <AppsFieldset key={i} appDetail={appDetail} index={i} onValidate={onValidate} />;
 			});
 			let emailInput={
 				type: 'email',

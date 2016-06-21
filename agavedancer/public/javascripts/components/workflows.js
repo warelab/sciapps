@@ -45,8 +45,6 @@ const Workflows=React.createClass({
 					<li>Run each app used in the workflow at least once</li>
 					<li>Whenever possible, feed the outputs from the right column (History panel) as input for subsequent steps</li>
 					<li>Check whether outputs from each step are as expected; fix errors and repeat step 1 and 2 if not</li>
-					<li>Build a workflow:<Button bsStyle="link" onClick={this.showWorkflowBuilder}>HERE</Button></li>
-					<li>Load a workflow:<Button bsStyle="link" onClick={this.loadWorkflowRunner}>HERE</Button></li>
 				</ol>
 				<br />
 				Example workflows:<br />
