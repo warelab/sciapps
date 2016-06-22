@@ -10,14 +10,11 @@ import AppsInput from './appsInput.js';
 import utilities from '../libs/utilities.js';
 
 const AppsFieldset=React.createClass({
-	getInitialState: function() {
-		return { onSubmit: false, onValidate: false, setting: _config.setting };
-	},
 
 	render: function() {
 		let appDetail=this.props.appDetail;
 		let index=this.props.index;
-		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
+		let onValidate=this.props.onValidate;
 		let app_inputs, app_params, header='Step ' + index + ': ' + appDetail.name + ' (SciApps Version ' + appDetail.version + ')';
 		if (appDetail && undefined !== appDetail.name) {
 			if (appDetail.inputs && appDetail.inputs.length) {

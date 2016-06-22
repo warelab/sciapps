@@ -620,7 +620,6 @@ sub submitJob {
 
 	my $job_ep = $apif->job;
 	my $st = eval { $job_ep->submit_job($app, %$job_form); };
-	#print STDERR to_dumper($st) . "\n";
 	if ($@) {
 		print STDERR 'Error: ', $@, $/;
 	}
@@ -641,6 +640,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	my $params=params;
 	
 	if ($params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED') {
+		next if $params->{message}=~/Attempt [12] to submit job/;
 		my $path=setting("archive_home") . '/' . $params->{archivePath};
 		if (-r $path . "/.email") {
 			open(EMAIL, $path . "/.email");

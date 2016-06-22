@@ -12,14 +12,14 @@ import utilities from '../libs/utilities.js';
 
 const AppsForm=React.createClass({
 	getInitialState: function() {
-		return { onSubmit: false, onValidate: false, setting: _config.setting };
+		return { onSubmit: false, onValidate: false, setting: _config.setting, required: {} };
 	},
 
 	formName: 'agaveWebAppForm',
 
 	validateForm: function() {
 		let setting=this.state.setting;
-		let required=this.computeRequired();
+		let required=_.keys(this.state.required);
 		let form=this.refs[this.formName];
 		let formdata={};
 		return utilities.validateForm(form, required, setting.upload_suffix);
@@ -30,22 +30,6 @@ const AppsForm=React.createClass({
 			onSubmit: false,
 			onValidate: false
 		});
-	},
-
-	computeRequired: function() {
-		let setting=this.state.setting;
-		let appDetail=this.props.appDetail;
-		let required=[];
-		let addRequired=function (item) {
-			if (item.value.required) required.push(item.id);
-		};
-		if (appDetail.inputs && appDetail.inputs.length) {
-			appDetail.inputs.forEach(addRequired);
-		}
-		if (appDetail.parameters && appDetail.parameters.length) {
-			appDetail.parameters.forEach(addRequired);
-		}
-		return required;
 	},
 
 	handleSubmit: function() {
@@ -72,22 +56,28 @@ const AppsForm=React.createClass({
 			if (appDetail.inputs && appDetail.inputs.length) {
 				let sortedInputs=_.sortBy(appDetail.inputs, utilities.getValueOrder);
 				app_inputs=sortedInputs.map(function(input) {
+					if (input.value.required) {
+						this.state.required[input.id]=1;
+					}
 					let resubmitValue;
 					if (useResubmit) {
 						resubmitValue=jobDetail.inputs[input.id];
 					}
 					return(<AppsInput key={input.id} data={input} useResubmit={useResubmit} resubmitValue={resubmitValue} onValidate={onValidate} />);
-				});
+				}.bind(this));
 			}
 			if (appDetail.parameters &&  appDetail.parameters.length) {
 				let sortedParams=_.sortBy(appDetail.parameters, utilities.getValueOrder);
 				app_params=sortedParams.map(function(param) {
+					if (param.value.required) {
+						this.state.required[param.id]=1;
+					}
 					let resubmitValue;
 					if (useResubmit) {
 						resubmitValue=jobDetail.parameters[param.id];
 					}
 					return(<AppsParam key={param.id} data={param} useResubmit={useResubmit} resubmitValue={resubmitValue} onValidate={onValidate} />);
-				});
+				}.bind(this));
 			}
 		}
 		let emailInput={

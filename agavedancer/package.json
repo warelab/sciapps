@@ -18,7 +18,6 @@
     "react-dom": "^0.14.2",
     "react-layout-pane": "^0.1.14",
     "reflux": "^0.3.0",
-    "superagent": "^1.4.0",
     "uglifyify": "^3.0.1"
   },
   "devDependencies": {
