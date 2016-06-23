@@ -1,1 +1,1 @@
-# MaizeCode
+# SciApps
