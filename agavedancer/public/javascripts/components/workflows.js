@@ -4,27 +4,13 @@ import React from 'react';
 import Reflux from 'reflux';
 import {Button, Modal} from 'react-bootstrap';
 import AppsActions from '../actions/appsActions.js';
+import WorkflowActions from '../actions/workflowActions.js';
 
 const Workflows=React.createClass({
 
-	getInitialState: function() {
-		return { onBuild: false, wid: undefined };
-	},
-
-	showWorkflowBuilder: function() {
-		AppsActions.showPage('workflowBuilder');
-		let title="Building Scientific Workflows";
-		let url="/?page_id=workflowBuilder";
-		if (typeof (history.pushState) !== "undefined") {
-			let obj = { Title: title, Url: url };
-			history.pushState(obj, obj.Title, obj.Url);
-		} else {
-			alert("Browser does not support HTML5.");
-		}
-	},
-
-	loadWorkflowRunner: function() {
+	showWorkflowRunner: function(event) {
 		AppsActions.showPage('workflowRunner');
+		WorkflowActions.showWorkflow(event.target.value);
 		let title="Running Scientific Workflows";
 		let url="/?page_id=workflowRunner";
 		if (typeof (history.pushState) !== "undefined") {
@@ -49,7 +35,7 @@ const Workflows=React.createClass({
 				<br />
 				Example workflows:<br />
 				<ul className="list">
-					<li>Gwas</li>
+					<li><Button value="Gwas" bsStyle="link" bsSize="large" onClick={this.showWorkflowRunner}>Gwas</Button></li>
 					<li>Annotation</li>
 					<li>Variant calling</li>
 					<li>Expression</li>

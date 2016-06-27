@@ -16,6 +16,7 @@ const WorkflowStore=Reflux.createStore({
 	init: function() {
 		this.state={
 			workflowDetail: undefined,
+			workflowDetailCache: {},
 			workflows: {}
 		};
 		this.listenTo(JobsStore, this.setJobsStore);
@@ -27,6 +28,27 @@ const WorkflowStore=Reflux.createStore({
 
 	complete: function() {
 		this.trigger(this.state);
+	},
+
+	showWorkflow: function(wfId) {
+		this.setWorkflow(wfId);
+		this.complete();
+	},
+
+	setWorkflow: function(wfId) {
+		let workflowDetail=this.state.workflowDetailCache[wfId];
+		let workflowPromise;
+		if (workflowDetail) {
+			workflowPromise=Q(workflowDetail);
+		} else {
+			workflowPromise=Q(axios.get('/assets/' + wfId + '.workflow.json'))
+			.then(function(res) {
+				this.state.workflowDetailCache[wfId]=res.data;
+				this.setWorkflowSteps(res.data);
+				return res.data;
+			}.bind(this));
+		}
+		return workflowPromise;
 	},
 
 	setJobsStore: function(jobsStore) {
