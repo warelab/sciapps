@@ -22,7 +22,7 @@ const WorkflowDiagram=React.createClass({
 
 		return (
 			<Modal show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
-				<Modal.Header>
+				<Modal.Header closeButton>
 					<Modal.Title>Workflow Diagram</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
