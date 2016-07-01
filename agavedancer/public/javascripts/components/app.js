@@ -14,6 +14,7 @@ import AppsSearchBox from './appsSearchBox.js';
 import JobsList from './jobsList.js';
 import JobsDetail from './jobsDetail.js';
 import DsDetail from './dsDetail.js';
+import WorkflowDiagram from './workflowDiagram.js';
 import Header from './header.js';
 
 const App=React.createClass({
@@ -41,6 +42,7 @@ const App=React.createClass({
 						<Flex className="main">
 							<AppsDetail />
 							<DsDetail />
+							<WorkflowDiagram />
 						</Flex>
 						<Fixed className="rightbar">
 							<Fixed className="apps-panel-header">History</Fixed>
