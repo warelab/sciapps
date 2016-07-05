@@ -12,6 +12,7 @@ import WorkflowActions from '../actions/workflowActions.js';
 import _ from 'lodash';
 import utilities from '../libs/utilities.js';
 import {Panel, Button} from 'react-bootstrap';
+import Mermaid from './mermaid.js';
 
 const WorkflowRunnerForm=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(WorkflowStore, 'workflowStore')],
@@ -54,6 +55,10 @@ const WorkflowRunnerForm=React.createClass({
 		}, 1500);
 	},
 
+	showWorkflowDiagram: function(event) {
+		WorkflowActions.showWorkflowDiagram(event.target.value);
+	},
+
 	render: function() {
 		let workflowStore=this.state.workflowStore;
 		let appsStore=this.state.appsStore;
@@ -63,13 +68,26 @@ const WorkflowRunnerForm=React.createClass({
 		let required=this.state.required;
 		if (workflowStore.workflowDetail && appsStore.wid[workflowStore.workflowDetail.id]) {
 			let steps=workflowStore.workflowDetail.steps;
+			let diagramDefStmts=['graph TB']; 
 			appsFieldsets=steps.map(function(step, i) {
+				diagramDefStmts.push(step.id + '[' + step.appId + ']');
+				diagramDefStmts.push("class " + step.id + " appsNode");
 				let appId=step.appId;
 				let appDetail=_.cloneDeep(appsStore.appDetailCache[appId]);
+				_.forEach(appDetail.outputs, function(v) {
+					let output_name=(setting.wf_step_prefix + step.id + ':' + v.value.default).toLowerCase();
+					diagramDefStmts.push(output_name + '(' + v.value.default + ')');
+					diagramDefStmts.push("class " + output_name + " fileNode");
+					diagramDefStmts.push(step.id + '-->' + output_name);
+				});
 				_.forEach(appDetail.inputs, function(v) {
 					let ic=step.inputs[v.id];
 					if (ic) {
-						v.value.default=setting.wf_step_prefix + ic.step + ':' + ic.output_name;
+						v.value.default=(setting.wf_step_prefix + ic.step + ':' + ic.output_name).toLowerCase();
+						//diagramDefStmts.push(v.value.default + '(' + ic.output_name + ')');
+						//diagramDefStmts.push("class " + v.value.default + " fileNode");
+						//diagramDefStmts.push(ic.step + '-->' + v.value.default);
+						diagramDefStmts.push(v.value.default + '-->' + step.id);
 					}
 					v.id=setting.wf_step_prefix + i + ':' + v.id;
 					if (v.value.required) {
@@ -102,7 +120,12 @@ const WorkflowRunnerForm=React.createClass({
 				name: '_workflow_json',
 				value: JSON.stringify(workflowStore.workflowDetail)
 			};
+			let diagramDef=_.uniq(diagramDefStmts).join(';\n');
 			markup=(
+				<div>
+				<Button bsStyle='primary' value={diagramDef} onClick={this.showWorkflowDiagram}>
+					Show Diagram
+				</Button>
 				<form ref={this.formName} >
 					{appsFieldsets}
 					<BaseInput data={emailInput} />
@@ -114,6 +137,7 @@ const WorkflowRunnerForm=React.createClass({
 						{onSubmit ? 'Submitting...' : 'Submit Workflow'}
 					</Button>
 				</form>
+				</div>
 			);
 		}
 		return markup;

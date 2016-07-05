@@ -21,7 +21,7 @@ const DsDetail=React.createClass({
 		let showDataStore=dsStore.showDataStore;
 		let dsFileNodes='Loading ...';
 		let targetPath=dsStore.dsItemPaths[dsStore.target];
-		let dsBtnValue=targetPath ? 'Select and close' : 'Close';
+		let dsBtnValue=targetPath ? 'Select and Close' : 'Close';
 		if (dsDetail.list && dsDetail.list.length) {
 			dsFileNodes=dsDetail.list.sort(function (a,b) {
 				return a.type.localeCompare(b.type) || a.name.localeCompare(b.name); 
@@ -33,7 +33,7 @@ const DsDetail=React.createClass({
 		}
 		return (
 			<Modal show={showDataStore} onHide={this.hideDataStoreDetail}>
-				<Modal.Header>
+				<Modal.Header closeButton>
 					<Modal.Title>Listing contents for path: {'/' + dsDetail.path}</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>

@@ -42,7 +42,7 @@ module.exports = {
 			if (form[key].name && form[key].value && form[key].name.toString().length && form[key].value.toString().length) formdata[form[key].name]=form[key].value;
 		}
 		let ret=required.every(function(n) {
-			if (formdata[n] || formdata[n + upload_suffix]) return true
+			if (formdata[n].toString().length || formdata[n + upload_suffix].toString().length) return true
 		});
 		return ret;
 	},
