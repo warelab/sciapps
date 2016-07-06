@@ -37,7 +37,7 @@ const JobsItem=React.createClass({
 				let name='job-for-' + appId.toLowerCase().replace(/\W+/g, '-');
 				return item.name.includes(name) ? false : true;
 			}).map(function(result, index) {
-				let href=setting.output_url + '/' + result.path;
+				let href=setting.output_url + result.path.replace(setting.archive_home, '');
 				return (
 					<ListGroupItem key={index}><a href={href} target='_blank'>{result.name}</a></ListGroupItem>
 				);

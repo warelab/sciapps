@@ -3,6 +3,7 @@
 import React from 'react';
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap';
 import AppsActions from '../actions/appsActions.js';
+import WorkflowActions from '../actions/workflowActions.js';
 
 const Header=React.createClass({
 	showWelcome: function() {
@@ -42,6 +43,7 @@ const Header=React.createClass({
 	},
 
 	showWorkflowRunner: function() {
+		WorkflowActions.hideWorkflow();
 		AppsActions.showPage('workflowRunner');
 		let title="Running Scientific Workflows";
 		let url="/?page_id=workflowRunner";

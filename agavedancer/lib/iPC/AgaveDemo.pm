@@ -12,7 +12,7 @@ use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/output_url upload_suffix wf_step_prefix datastore_system/;
+our @EXPORT_SETTINGS=qw/output_url upload_suffix wf_step_prefix datastore_system archive_home/;
 
 sub uuid {
 	my $s='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';

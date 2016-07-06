@@ -26,6 +26,17 @@ const WorkflowRunnerForm=React.createClass({
 		}
 	},
 
+	componentWillReceiveProps: function(nextProps) {
+		this.setState({
+			onSubmit: false,
+			onValidate: false
+		});
+	},
+
+	componentWillUnmount: function() {
+		WorkflowActions.hideWorkflow();
+	},
+
 	formName: 'workflowRunnerForm',
 
 	validateForm: function() {
@@ -34,13 +45,6 @@ const WorkflowRunnerForm=React.createClass({
 		let form=this.refs[this.formName];
 		let formdata={};
 		return utilities.validateForm(form, required, setting.upload_suffix);
-	},
-
-	componentWillReceiveProps: function(nextProps) {
-		this.setState({
-			onSubmit: false,
-			onValidate: false
-		});
 	},
 
 	handleSubmit: function() {

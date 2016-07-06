@@ -6,6 +6,7 @@ import AppsStore from '../stores/appsStore.js';
 import JobsStore from '../stores/jobsStore.js';
 import AppsActions from '../actions/appsActions.js';
 import dsActions from '../actions/dsActions.js';
+import WorkflowActions from '../actions/workflowActions.js';
 import {Panel, Table, Jumbotron} from 'react-bootstrap';
 import AppsInfo from './appsInfo.js';
 import AppsForm from './appsForm.js';
