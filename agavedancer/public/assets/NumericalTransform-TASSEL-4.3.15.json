@@ -116,7 +116,7 @@
                 ]
             }, 
             "value": {
-                "default": "nt_output.txt", 
+                "default": "nt.txt", 
                 "order": 0, 
                 "validator": null
             }
