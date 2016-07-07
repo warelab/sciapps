@@ -26,7 +26,7 @@ const AppsFieldset=React.createClass({
 			if (appDetail.parameters &&  appDetail.parameters.length) {
 				let sortedParams=_.sortBy(appDetail.parameters, utilities.getValueOrder);
 				app_params=sortedParams.map(function(param) {
-					return(<AppsParam key={appDetail.id + ':' + appsparam.id} data={param} onValidate={onValidate} />);
+					return(<AppsParam key={appDetail.id + ':' + param.id} data={param} onValidate={onValidate} />);
 				});
 			}
 		}
