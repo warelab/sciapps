@@ -91,7 +91,7 @@
                 ]
             }, 
             "value": {
-                "default": "tnrs_output.txt", 
+                "default": "tnrs.txt", 
                 "order": 0, 
                 "validator": null
             }
