@@ -116,7 +116,7 @@
                 ]
             }, 
             "value": {
-                "default": "structure_output.4_f", 
+                "default": "s4_f", 
                 "order": 0, 
                 "validator": null
             }
@@ -138,7 +138,7 @@
                 ]
             }, 
             "value": {
-                "default": "structure_output.3_f", 
+                "default": "s3_f", 
                 "order": 0, 
                 "validator": null
             }
@@ -160,7 +160,7 @@
                 ]
             }, 
             "value": {
-                "default": "structure_output.5_f", 
+                "default": "s5_f", 
                 "order": 0, 
                 "validator": null
             }
