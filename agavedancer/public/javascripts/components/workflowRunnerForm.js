@@ -72,9 +72,10 @@ const WorkflowRunnerForm=React.createClass({
 		let required=this.state.required={};
 		if (workflowStore.workflowDetail && appsStore.wid[workflowStore.workflowDetail.id]) {
 			let steps=workflowStore.workflowDetail.steps;
-			let diagramDefStmts=['graph TB']; 
+			let diagramDefStmts=['graph LR']; 
 			appsFieldsets=steps.map(function(step, i) {
-				diagramDefStmts.push(step.id + '[' + step.appId + ']');
+				let showAppId=step.appId.replace(/\-[\.\d]+$/, '');
+				diagramDefStmts.push(step.id + '[' + showAppId + ']');
 				diagramDefStmts.push("class " + step.id + " appsNode");
 				let appId=step.appId;
 				let appDetail=_.cloneDeep(appsStore.appDetailCache[appId]);
