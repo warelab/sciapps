@@ -6,6 +6,7 @@ import _ from 'lodash';
 import Q from 'q';
 import AppsActions from  '../actions/appsActions.js';
 import JobsActions from  '../actions/jobsActions.js';
+import DsActions from  '../actions/dsActions.js';
 
 const AppsStore=Reflux.createStore({
 	listenables: AppsActions,
@@ -121,6 +122,9 @@ const AppsStore=Reflux.createStore({
 	},
 
 	showApp: function(appId) {
+		this.state.pageId='';
+		this.state.appDetail={};
+		DsActions.clearDataStoreItem();
 		JobsActions.resetResubmit();
 		this._showApp(appId);
 	},

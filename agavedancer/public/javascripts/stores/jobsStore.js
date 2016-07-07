@@ -138,6 +138,7 @@ const JobsStore=Reflux.createStore({
 
 	setJobOutputs: function(jobId) {
 		let jobOutputs=this.state.jobOutputs[jobId];
+		let setting=_config.setting;
 		let jobOutputsPromise;
 		if (jobOutputs) {
 			jobOutputsPromise=Q(jobOutputs);
@@ -153,6 +154,9 @@ const JobsStore=Reflux.createStore({
 				let results=res.data[0].list.filter(function(result) {
 					return ! result.name.startsWith('.');
 				});
+				for (let r of results) {
+					r.path=r.path.replace(setting.archive_home + '/', '');
+				}
 				return results;
 			})
 			.then(function(results) {
