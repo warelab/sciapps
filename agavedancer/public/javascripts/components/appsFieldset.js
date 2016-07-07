@@ -20,13 +20,13 @@ const AppsFieldset=React.createClass({
 			if (appDetail.inputs && appDetail.inputs.length) {
 				let sortedInputs=_.sortBy(appDetail.inputs, utilities.getValueOrder);
 				app_inputs=sortedInputs.map(function(input) {
-					return(<AppsInput key={input.id} data={input} onValidate={onValidate} />);
+					return(<AppsInput key={appDetail.id + ':' + input.id} data={input} onValidate={onValidate} />);
 				});
 			}
 			if (appDetail.parameters &&  appDetail.parameters.length) {
 				let sortedParams=_.sortBy(appDetail.parameters, utilities.getValueOrder);
 				app_params=sortedParams.map(function(param) {
-					return(<AppsParam key={param.id} data={param} onValidate={onValidate} />);
+					return(<AppsParam key={appDetail.id + ':' + appsparam.id} data={param} onValidate={onValidate} />);
 				});
 			}
 		}
