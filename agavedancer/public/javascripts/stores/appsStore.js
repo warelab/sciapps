@@ -122,9 +122,6 @@ const AppsStore=Reflux.createStore({
 	},
 
 	showApp: function(appId) {
-		this.state.pageId='';
-		this.state.appDetail={};
-		DsActions.clearDataStoreItem();
 		JobsActions.resetResubmit();
 		this._showApp(appId);
 	},

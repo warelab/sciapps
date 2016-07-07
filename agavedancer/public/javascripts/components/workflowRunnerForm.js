@@ -69,7 +69,7 @@ const WorkflowRunnerForm=React.createClass({
 		let setting=this.state.setting;
 		let markup=<div />, appsFieldsets;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
-		let required=this.state.required;
+		let required=this.state.required={};
 		if (workflowStore.workflowDetail && appsStore.wid[workflowStore.workflowDetail.id]) {
 			let steps=workflowStore.workflowDetail.steps;
 			let diagramDefStmts=['graph TB']; 

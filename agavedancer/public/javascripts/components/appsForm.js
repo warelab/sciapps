@@ -49,6 +49,7 @@ const AppsForm=React.createClass({
 		let jobDetail=this.props.jobDetail;
 		let resubmit=this.props.resubmit;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
+		let required=this.state.required={};
 		let useResubmit=resubmit && appDetail.id === jobDetail.appId; 
 		let app_inputs=[], app_params=[], header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
 
@@ -57,7 +58,7 @@ const AppsForm=React.createClass({
 				let sortedInputs=_.sortBy(appDetail.inputs, utilities.getValueOrder);
 				app_inputs=sortedInputs.map(function(input) {
 					if (input.value.required) {
-						this.state.required[input.id]=1;
+						required[input.id]=1;
 					}
 					let resubmitValue;
 					if (useResubmit) {
@@ -70,7 +71,7 @@ const AppsForm=React.createClass({
 				let sortedParams=_.sortBy(appDetail.parameters, utilities.getValueOrder);
 				app_params=sortedParams.map(function(param) {
 					if (param.value.required) {
-						this.state.required[param.id]=1;
+						required[param.id]=1;
 					}
 					let resubmitValue;
 					if (useResubmit) {
