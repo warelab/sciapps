@@ -101,28 +101,6 @@
     "outputs": [
         {
             "details": {
-                "description": "Numerical file2", 
-                "label": "Structure output file2"
-            }, 
-            "id": "o2", 
-            "semantics": {
-                "fileTypes": [
-                    "raw-0"
-                ], 
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
-                "ontology": [
-                    "xs:string"
-                ]
-            }, 
-            "value": {
-                "default": "structure_output.2_f", 
-                "order": 0, 
-                "validator": null
-            }
-        }, 
-        {
-            "details": {
                 "description": "Numerical file4", 
                 "label": "Structure output file4"
             }, 
@@ -138,29 +116,7 @@
                 ]
             }, 
             "value": {
-                "default": "structure_output.4_f", 
-                "order": 0, 
-                "validator": null
-            }
-        }, 
-        {
-            "details": {
-                "description": "Numerical file1", 
-                "label": "Structure output file1"
-            }, 
-            "id": "o1", 
-            "semantics": {
-                "fileTypes": [
-                    "raw-0"
-                ], 
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
-                "ontology": [
-                    "xs:string"
-                ]
-            }, 
-            "value": {
-                "default": "structure_output.1_f", 
+                "default": "s4_f", 
                 "order": 0, 
                 "validator": null
             }
@@ -182,7 +138,7 @@
                 ]
             }, 
             "value": {
-                "default": "structure_output.3_f", 
+                "default": "s3_f", 
                 "order": 0, 
                 "validator": null
             }
@@ -204,7 +160,7 @@
                 ]
             }, 
             "value": {
-                "default": "structure_output.5_f", 
+                "default": "s5_f", 
                 "order": 0, 
                 "validator": null
             }

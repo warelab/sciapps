@@ -116,7 +116,7 @@
                 ]
             }, 
             "value": {
-                "default": "mlmm_trait_merged.txt", 
+                "default": "mlmm_trait.txt", 
                 "order": 0, 
                 "validator": null
             }
@@ -138,7 +138,7 @@
                 ]
             }, 
             "value": {
-                "default": "mergeg2p_output_trait.txt", 
+                "default": "m_trait.txt", 
                 "order": 0, 
                 "validator": null
             }
@@ -160,7 +160,7 @@
                 ]
             }, 
             "value": {
-                "default": "mergeg2p_output_marker.txt", 
+                "default": "m_marker.txt", 
                 "order": 1, 
                 "validator": null
             }

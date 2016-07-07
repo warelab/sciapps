@@ -88,7 +88,7 @@
                 ]
             }, 
             "value": {
-                "default": "s2t_output.txt", 
+                "default": "s2t.txt", 
                 "order": 0, 
                 "validator": null
             }

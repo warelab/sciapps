@@ -21,7 +21,7 @@ const WorkflowDiagram=React.createClass({
 		let showWorkflowDiagram=workflowDiagramDef ? true : false;
 
 		return (
-			<Modal show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
+			<Modal bsSize="large" show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
 				<Modal.Header closeButton>
 					<Modal.Title>Workflow Diagram</Modal.Title>
 				</Modal.Header>
