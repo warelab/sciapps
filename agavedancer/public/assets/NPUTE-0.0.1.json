@@ -88,7 +88,7 @@
                 ]
             }, 
             "value": {
-                "default": null, 
+                "default": "npute_output.txt", 
                 "order": 0, 
                 "validator": null
             }
