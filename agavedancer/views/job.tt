@@ -9,7 +9,6 @@
 		<dl>
 			<dt>Name: </dt><dd>[% job.name %]</dd>
 			<dt>Status: </dt><dd>[% job.status %]</dd>
-			<dt>Message: </dt><dd>[% job.message %]</dd>
 			<dt>Submitted on: </dt><dd>[% date.format(job.submitTime) %]</dd>
 			<dt>Started on: </dt><dd>[% date.format(job.startTime) %]</dd>
 			<dt>Finished on: </dt><dd>[% date.format(job.endTime) %]</dd>
