@@ -88,7 +88,7 @@ const WorkflowRunnerForm=React.createClass({
 				_.forEach(appDetail.inputs, function(v) {
 					let ic=step.inputs[v.id];
 					if (ic) {
-						//v.value.default=(setting.wf_step_prefix + ic.step + ':' + ic.output_name).toLowerCase();
+						v.value.default=(setting.wf_step_prefix + ic.step + ':' + ic.output_name).toLowerCase();
 						//diagramDefStmts.push(v.value.default + '(' + ic.output_name + ')');
 						//diagramDefStmts.push("class " + v.value.default + " fileNode");
 						//diagramDefStmts.push(ic.step + '-->' + v.value.default);
