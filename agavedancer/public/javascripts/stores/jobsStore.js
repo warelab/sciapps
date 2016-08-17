@@ -70,6 +70,16 @@ const JobsStore=Reflux.createStore({
 		.done();
 	},
 
+	setJobs: function(jobIds) {
+		let submitNumber=this.state.jobs.length;
+		Q.all(jobIds.map(this.setJob)).done(function(jobs) {
+			_.forEach(jobs, function(job) {
+				this.state.jobs[submitNumber++]=this.state.jobDetailCache[job.id];
+			}.bind(this));
+			this.complete();
+		}.bind(this));
+	},
+
 	setWorkflowJobs: function(jobIds, wid) {
 		Q.all(jobIds.map(this.setJob)).done(function(jobs) {
 			if (wid !== undefined) {

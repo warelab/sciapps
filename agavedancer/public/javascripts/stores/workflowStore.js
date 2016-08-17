@@ -82,7 +82,11 @@ const WorkflowStore=Reflux.createStore({
 		let appIds=_.values(wfDetail.steps).map(function(o) {
 			return o.appId;
 		});
+		let jobIds=_.values(wfDetail.steps).map(function(o) {
+			return o.jobId;
+		}).filter(function(o){return o});
 		AppsActions.setWorkflowApps(appIds, wfDetail.id);
+		JobsActions.setJobs(jobIds);
 		this.complete();
 	},
 
@@ -124,6 +128,7 @@ const WorkflowStore=Reflux.createStore({
 		let step={
 			id: sid,
 			appId: job.appId,
+			jobId: job.id,
 			inputs: {},
 			parameters: job.parameters
 		};

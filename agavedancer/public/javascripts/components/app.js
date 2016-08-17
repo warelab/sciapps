@@ -16,6 +16,7 @@ import JobsDetail from './jobsDetail.js';
 import DsDetail from './dsDetail.js';
 import WorkflowDiagram from './workflowDiagram.js';
 import Header from './header.js';
+import UserLoginBox from './userLoginBox.js';
 
 const App=React.createClass({
 
@@ -32,6 +33,7 @@ const App=React.createClass({
 		return (
 			<Layout type="column">
 				<Header />
+				<UserLoginBox />
 				<Flex>
 					<Layout type="row">
 						<Fixed className="leftbar">

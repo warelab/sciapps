@@ -1,11 +1,17 @@
 'use strict';
 
 import React from 'react';
+import Reflux from 'reflux';
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap';
+import UserLoginBox from './userLoginBox.js';
 import AppsActions from '../actions/appsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
+import UserStore from '../stores/userStore.js';
+import UserActions from  '../actions/userActions.js';
 
 const Header=React.createClass({
+	mixins: [Reflux.connect(UserStore, 'userStore')],
+
 	showWelcome: function() {
 		AppsActions.showPage('welcome');
 		let title="Scientific Apps";
@@ -67,7 +73,16 @@ const Header=React.createClass({
 		}
 	},
 
+	handleLogin: function(event) {
+		if ('Login' === event.target.textContent) {
+			UserActions.showLoginBox();
+		} else {
+			UserActions.logout();
+		}
+	},
+
 	render: function() {
+		let username=this.state.userStore.username;
 		return (
 			<Navbar className="navbar">
 				<Nav>

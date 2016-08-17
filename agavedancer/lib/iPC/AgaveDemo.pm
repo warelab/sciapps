@@ -362,10 +362,11 @@ sub retrieveJob {
 
 	my $job_ep = $apif->job;
 	my $row = database->quick_select('job', {job_id => $job_id});
+	my $agave_id=$row ? $row->{'agave_id'} : $job_id;
 	my $job;
 	my $retry=2;
 	do {
-		$job = eval { $job_ep->job_details($row->{'agave_id'}) };
+		$job = eval { $job_ep->job_details($agave_id) };
     if ($@) {
 			print STDERR $@, $/;
 			if ($@=~/token (?:expired|inactive)/i || $@=~/invalid credentials/i) {

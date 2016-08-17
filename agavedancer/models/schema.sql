@@ -1,5 +1,12 @@
 PRAGMA encoding = "UTF-8";
 
+drop table if exists user;
+create table user (
+	id integer primary key autoincrement,
+	name varchar(40) unique,
+	consumer_secret varchar(40) not null
+);
+
 drop table if exists workflow;
 create table workflow (
 	id integer primary key autoincrement
