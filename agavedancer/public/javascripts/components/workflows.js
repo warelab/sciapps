@@ -10,7 +10,7 @@ const Workflows=React.createClass({
 
 	showWorkflowRunner: function(event) {
 		AppsActions.showPage('workflowRunner');
-		WorkflowActions.showWorkflow(event.target.value);
+		WorkflowActions.showWorkflow(event.target.textContent);
 		let title="Running Scientific Workflows";
 		let url="/?page_id=workflowRunner";
 		if (typeof (history.pushState) !== "undefined") {
@@ -35,8 +35,8 @@ const Workflows=React.createClass({
 				<br />
 				Example workflows:<br />
 				<ul className="list">
-					<li><Button value="Gwas" bsStyle="link" bsSize="large" onClick={this.showWorkflowRunner}>Gwas</Button></li>
-					<li><Button value="Annotation" bsStyle="link" bsSize="large" onClick={this.showWorkflowRunner}>Annotation</Button></li>
+					<li><a href="#" onClick={this.showWorkflowRunner}>Association</a></li>
+					<li><a href="#" onClick={this.showWorkflowRunner}>Annotation</a></li>
 					<li>Variant calling</li>
 					<li>Expression</li>
 					<li>Methylation</li>
