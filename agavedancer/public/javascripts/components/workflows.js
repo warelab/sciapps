@@ -36,7 +36,7 @@ const Workflows=React.createClass({
 				Example workflows:<br />
 				<ul className="list">
 					<li><Button value="Gwas" bsStyle="link" bsSize="large" onClick={this.showWorkflowRunner}>Gwas</Button></li>
-					<li>Annotation</li>
+					<li><Button value="Annotation" bsStyle="link" bsSize="large" onClick={this.showWorkflowRunner}>Annotation</Button></li>
 					<li>Variant calling</li>
 					<li>Expression</li>
 					<li>Methylation</li>
