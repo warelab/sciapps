@@ -6,6 +6,7 @@ require('../../styles/layout.less');
 import React from 'react';
 import Reflux from 'reflux';
 import AppsActions from '../actions/appsActions.js';
+import WorkflowActions from '../actions/workflowActions.js';
 import {Layout, Fixed, Flex} from 'react-layout-pane';
 import {Panel, Well} from 'react-bootstrap';
 import AppsGroup from './appsGroup.js';
@@ -21,8 +22,11 @@ import UserLoginBox from './userLoginBox.js';
 const App=React.createClass({
 
 	componentDidMount: function () {
-		let app_id=_config.app_id, page_id=_config.page_id || 'welcome';
-		if (app_id) {
+		let app_id=_config.app_id, wf_id=_config.wf_id, page_id=_config.page_id || 'welcome';
+		if (wf_id) {
+			AppsActions.showPage('workflowRunner');
+			WorkflowActions.showWorkflow(wf_id);
+		} else if (app_id) {
 			AppsActions.showApp(app_id);
 		} else {
 			AppsActions.showPage(page_id);
