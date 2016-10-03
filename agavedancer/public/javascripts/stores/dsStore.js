@@ -11,6 +11,7 @@ const DsStore=Reflux.createStore({
 
 	init: function() {
 		this.state={
+			setting: _config.setting,
 			dsDetailCache: {}
 		};
 		this.resetState();
@@ -34,6 +35,7 @@ const DsStore=Reflux.createStore({
 	},
 
 	showDataStore: function(path) {
+		let setting=this.state.setting;
 		if (! path) {
 			path=this.state.dsDetail.path || '';
 		} else {
@@ -62,7 +64,7 @@ const DsStore=Reflux.createStore({
 			this.complete();
 		}
 		if (! cachedPath) {
-			axios.get('/browse/' + path, {
+			axios.get(setting.host_url + '/browse/' + path, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			})
 			.then(function(res) {

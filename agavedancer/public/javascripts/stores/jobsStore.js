@@ -12,6 +12,7 @@ const JobsStore=Reflux.createStore({
 
 	init: function() {
 		this.state={
+			setting: _config.setting,
 			resubmit: false,
 			showJob: false,
 			jobs: [],
@@ -32,11 +33,12 @@ const JobsStore=Reflux.createStore({
 
 	submitWorkflowJobs: function(wf, formData) {
 		let submitNumber=this.state.jobs.length;
+		let setting=this.state.setting;
 		wf.steps.map(function(step, i) {
 			this.state.jobs[submitNumber + i]={appId: step.appId};
 		}.bind(this));
 		this.complete();
-		Q(axios.post('/workflow/new', formData, {
+		Q(axios.post(setting.host_url + '/workflow/new', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
 		}))
@@ -54,9 +56,10 @@ const JobsStore=Reflux.createStore({
 
 	submitJob: function(appId, formData) {
 		let submitNumber=this.state.jobs.length;
+		let setting=this.state.setting;
 		this.state.jobs[submitNumber]={appId: appId};
 		this.complete();
-		Q(axios.post('/job/new/' + appId , formData, {
+		Q(axios.post(setting.host_url + '/job/new/' + appId , formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
 		}))
@@ -95,11 +98,12 @@ const JobsStore=Reflux.createStore({
 
 	setJob: function(jobId) {
 		let jobDetail=this.state.jobDetailCache[jobId];
+		let setting=this.state.setting;
 		let jobPromise;
 		if (jobDetail) {
 			jobPromise=Q(jobDetail);
 		} else {
-			jobPromise=Q(axios.get('/job/' + jobId, {
+			jobPromise=Q(axios.get(setting.host_url + '/job/' + jobId, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			}))
 			.then(function(res) {
@@ -156,7 +160,7 @@ const JobsStore=Reflux.createStore({
 			let jobPromise=this.setJob(jobId);
 			jobOutputsPromise=jobPromise.then(function(jobDetail) {
 				let path='system/' + jobDetail.archiveSystem + '/' + jobDetail.archivePath;
-				return Q(axios.get('/browse/' + path, {
+				return Q(axios.get(setting.host_url + '/browse/' + path, {
 					headers: {'X-Requested-With': 'XMLHttpRequest'},
 				}))
 			})

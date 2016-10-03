@@ -12,7 +12,7 @@ use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/output_url upload_suffix wf_step_prefix datastore_system archive_home/;
+our @EXPORT_SETTINGS=qw/host_url output_url upload_suffix wf_step_prefix datastore_system archive_home/;
 
 sub uuid {
 	my $s='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
@@ -49,6 +49,34 @@ sub _build_client {
 
 	my $client_name = 'AGAVEWEB';
 	$apic->client($client_name) || $apic->create({name => $client_name});
+}
+
+sub __build_client {
+	my ($u, $p, $purge)=@_;
+	my $client;
+	my $apic = Agave::Client::Client->new({
+			username => $u,
+			password => $p,
+		}
+	);
+
+	my $client_name = '_AGAVEWEB';
+	my $user;
+	if ($purge) {
+		print STDERR '** purging client ', $client_name, ' for user ', $u, "\n";
+		eval {$apic->delete($client_name)};
+		print STDERR  '** deleting: ', $@, "\n" if $@;
+	} else {
+		$client=$apic->client($client_name);
+	}
+	if ($client) {
+		$client->{consumerSecret} = $user->consumerSecret;
+	} else {
+		$client=$apic->create({name => $client_name});
+		$user->consumerSecret( $client->{consumerSecret} );
+		$user->update;
+	}
+	return $client;
 }
 
 sub _auth {

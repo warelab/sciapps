@@ -13,6 +13,7 @@ const AppsStore=Reflux.createStore({
 
 	init: function() {
 		this.state={
+			setting: _config.setting,
 			filtered: false,
 			searchString: '',
 			apps: [],
@@ -48,11 +49,12 @@ const AppsStore=Reflux.createStore({
 
 	_listApps: function() {
 		let apps=this.state.appsCache;
+		let setting=this.state.setting;
 		let appPromise;
 		if (apps.length) {
 			appPromise=Q(apps);
 		} else {
-			appPromise=Q(axios.get('/assets/agaveAppsList.json'))
+			appPromise=Q(axios.get(setting.host_url + '/assets/agaveAppsList.json'))
 			.then(function(res) {
 				this.state.appsCache=res.data;
 				return res.data;
@@ -102,11 +104,12 @@ const AppsStore=Reflux.createStore({
 
 	setApp: function(appId) {
 		let appDetail=this.state.appDetailCache[appId];
+		let setting=this.state.setting;
 		let appPromise;
 		if (appDetail) {
 			appPromise=Q(appDetail);
 		} else {
-			appPromise=Q(axios.get('/assets/' + appId + '.json'))
+			appPromise=Q(axios.get(setting.host_url + '/assets/' + appId + '.json'))
 			.then(function(res) {
 				this.state.appDetailCache[appId]=res.data;
 				return res.data;
