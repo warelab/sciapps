@@ -60,7 +60,7 @@ const WorkflowStore=Reflux.createStore({
 			workflowPromise=Q(workflowDetail);
 
 		} else {
-			workflowPromise=Q(axios.get(setting.host_url + '/assets/' + wfId + '.workflow.json'))
+			workflowPromise=Q(axios.get('/assets/' + wfId + '.workflow.json'))
 			.then(function(res) {
 				this.state.workflowDetailCache[wfId]=res.data;
 				return res.data;

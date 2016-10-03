@@ -189,6 +189,10 @@ sub parse_ls {
 #	send_file 'index.html';
 #};
 
+hook 'after' => sub {
+	my $response = shift;
+	$response->header('Access-Control-Allow-Origin' => '*');
+};
 
 get '/' => sub {
 	my $app_id = param("app_id");

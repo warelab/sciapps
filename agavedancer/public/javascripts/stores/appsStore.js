@@ -54,7 +54,7 @@ const AppsStore=Reflux.createStore({
 		if (apps.length) {
 			appPromise=Q(apps);
 		} else {
-			appPromise=Q(axios.get(setting.host_url + '/assets/agaveAppsList.json'))
+			appPromise=Q(axios.get('/assets/agaveAppsList.json'))
 			.then(function(res) {
 				this.state.appsCache=res.data;
 				return res.data;
@@ -109,7 +109,7 @@ const AppsStore=Reflux.createStore({
 		if (appDetail) {
 			appPromise=Q(appDetail);
 		} else {
-			appPromise=Q(axios.get(setting.host_url + '/assets/' + appId + '.json'))
+			appPromise=Q(axios.get('/assets/' + appId + '.json'))
 			.then(function(res) {
 				this.state.appDetailCache[appId]=res.data;
 				return res.data;
