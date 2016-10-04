@@ -188,10 +188,20 @@ sub parse_ls {
 #get '/' => sub {
 #	send_file 'index.html';
 #};
+#
 
 hook 'after' => sub {
 	my $response = shift;
 	$response->header('Access-Control-Allow-Origin' => '*');
+};
+
+options qr{/.*} => sub {
+	headers(
+		'Access-Control-Allow-Origin' => '*',
+		'Access-Control-Allow-Headers' => 'Origin, X-Requested-With, Content-Type, Accept',
+		'Access-Control-Allow-Methods' => 'GET, POST, OPTIONS',
+	);
+
 };
 
 get '/' => sub {
@@ -475,7 +485,9 @@ ajax '/job/new/:id' => sub {
 	my ($job_id, $job_form)=prepareJob($app, $form);
 	my ($job, $err)=submitJob($apif, $app, $job_id, $job_form);
 	if ($job_id && $job && $job->{id}) {
-		return redirect '/job/' . $job_id;
+		my $jobRef=retrieveJob($job_id);
+		$jobRef->{job_id}=$job_id;
+		return to_json($jobRef);
 	}
 };
 
