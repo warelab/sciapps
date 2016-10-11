@@ -47,7 +47,7 @@ const WorkflowRunnerForm=React.createClass({
 		return utilities.validateForm(form, required, setting.upload_suffix);
 	},
 
-	handleSubmit: function() {
+	handleSubmit: function(event) {
 		this.setState({onSubmit: true, onValidate: true});
 		if (this.validateForm()) {
 			let formData=new FormData(this.refs[this.formName]);
@@ -57,6 +57,7 @@ const WorkflowRunnerForm=React.createClass({
 		setTimeout(() => {
 			this.setState({onSubmit: false});
 		}, 1500);
+		WorkflowActions.showWorkflowDiagram(event.target.value);
 	},
 
 	showWorkflowDiagram: function(event) {
@@ -138,6 +139,7 @@ const WorkflowRunnerForm=React.createClass({
 					<BaseInput data={workflowJson} />
 					<Button
 						bsStyle='primary'
+						value={diagramDef}
 						disabled={onSubmit}
 						onClick={onSubmit ? null : this.handleSubmit}>
 						{onSubmit ? 'Submitting...' : 'Submit Workflow'}
