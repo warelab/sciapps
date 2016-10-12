@@ -256,7 +256,29 @@
                 ]
             }, 
             "value": {
-                "default": "test_genome.maker.output", 
+                "default": "my.all.gff.gz", 
+                "order": 0, 
+                "validator": null
+            }
+        },
+        {
+            "details": {
+                "description": "Maker jbrowse file", 
+                "label": "maker_jbrowse"
+            }, 
+            "id": "maker_jbrowse", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "http://sswapmeet.sswap.info"
+                ]
+            }, 
+            "value": {
+                "default": "maker.jbrowse", 
                 "order": 0, 
                 "validator": null
             }

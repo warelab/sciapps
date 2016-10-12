@@ -80,21 +80,27 @@ const WorkflowRunnerForm=React.createClass({
 				diagramDefStmts.push("class " + step.id + " appsNode");
 				let appId=step.appId;
 				let appDetail=_.cloneDeep(appsStore.appDetailCache[appId]);
-				//_.forEach(appDetail.outputs, function(v) {
-				//	let output_name=(setting.wf_step_prefix + step.id + ':' + v.value.default).toLowerCase();
-				//	diagramDefStmts.push(output_name + '(' + v.value.default + ')');
-				//	diagramDefStmts.push("class " + output_name + " fileNode");
-				//	diagramDefStmts.push(step.id + '-->' + output_name);
-				//});
+				_.forEach(appDetail.outputs, function(v) {
+					let output_name=(setting.wf_step_prefix + step.id + ':' + v.value.default).toLowerCase();
+					diagramDefStmts.push(output_name + '(' + v.value.default + ')');
+					diagramDefStmts.push("class " + output_name + " fileNode");
+					diagramDefStmts.push(step.id + '-->' + output_name);
+				});
 				_.forEach(appDetail.inputs, function(v) {
 					let ic=step.inputs[v.id];
-					if (ic) {
+					if (_.isPlainObject(ic)) {
 						v.value.default=(setting.wf_step_prefix + ic.step + ':' + ic.output_name).toLowerCase();
-						//diagramDefStmts.push(v.value.default + '(' + ic.output_name + ')');
-						//diagramDefStmts.push("class " + v.value.default + " fileNode");
-						//diagramDefStmts.push(ic.step + '-->' + v.value.default);
-						//diagramDefStmts.push(v.value.default + '-->' + step.id);
-						diagramDefStmts.push( ic.step + '-->|' + ic.output_name + '|' + step.id)
+						diagramDefStmts.push(v.value.default + '(' + ic.output_name + ')');
+						diagramDefStmts.push("class " + v.value.default + " fileNode");
+						diagramDefStmts.push(ic.step + '-->' + v.value.default);
+						diagramDefStmts.push(v.value.default + '-->' + step.id);
+						//diagramDefStmts.push( ic.step + '-->|' + ic.output_name + '|' + step.id)
+					} else if (ic) {
+						v.value.default=ic;
+						let input_name=_.last(v.value.default.split('/'));
+						diagramDefStmts.push(input_name + '(' + input_name + ')');
+						diagramDefStmts.push("class " + input_name + " fileNode");
+						diagramDefStmts.push(input_name + '-->' + step.id);
 					}
 					v.id=setting.wf_step_prefix + i + ':' + v.id;
 					if (v.value.required) {

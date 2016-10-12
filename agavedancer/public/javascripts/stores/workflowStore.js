@@ -138,7 +138,7 @@ const WorkflowStore=Reflux.createStore({
 			let output=_.find(wf.outputs, function(ov, ok) {
 				return _.endsWith(iv, ok);
 			});
-			step.inputs[ik]=output ? output : '';
+			step.inputs[ik]=output ? output : iv;
 		}.bind(this));
 		for (let output of jobOutputs) {
 			wf.outputs[output.path]={step: sid, output_name: output.name};
