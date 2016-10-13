@@ -598,7 +598,7 @@ sub prepareJob {
 	}
 
 	while (my ($k, $v)=each %{$step->{inputs}}) {
-		if ($v) {
+		if ($v && ref($v)) {
 			my $sf=$step_form->[$v->{step}];
 			$job_form{$k}='agave://' . $input_system . '/' . $sf->{archivePath} . '/' . $v->{output_name};
 		}
@@ -641,7 +641,7 @@ sub prepareJob {
 	eval {
 		database->quick_insert('job', {job_id => $job_id, app_id => $app_id, job_json => $job_json});
 		while (my ($k, $v)=each %{$step->{inputs}}) {
-			if ($v) {
+			if ($v && ref($v)) {
 				my $prev=$prev_job->[$v->{step}]{job_id};
 				my $row=database->quick_insert('nextstep', {prev => $prev, next => $job_id, input_name => $job_form{$k}});
 			}
