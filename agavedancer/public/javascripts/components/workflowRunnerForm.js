@@ -65,6 +65,7 @@ const WorkflowRunnerForm=React.createClass({
 	},
 
 	render: function() {
+		let wid=utilities.uuid();
 		let workflowStore=this.state.workflowStore;
 		let appsStore=this.state.appsStore;
 		let setting=this.state.setting;
@@ -133,6 +134,12 @@ const WorkflowRunnerForm=React.createClass({
 				name: '_workflow_json',
 				value: JSON.stringify(workflowStore.workflowDetail)
 			};
+			let workflowId={
+				type: 'hidden',
+				id: '_workflow_id',
+				name: '_workflow_id',
+				value: wid
+			};
 			let diagramDef=_.uniq(diagramDefStmts).join(';\n');
 			markup=(
 				<div>
@@ -143,6 +150,7 @@ const WorkflowRunnerForm=React.createClass({
 					{appsFieldsets}
 					<BaseInput data={emailInput} />
 					<BaseInput data={workflowJson} />
+					<BaseInput data={workflowId} />
 					<Button
 						bsStyle='primary'
 						value={diagramDef}

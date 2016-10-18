@@ -4,6 +4,8 @@ use Dancer ':syntax';
 #use Dancer::Plugin::MemcachedFast;
 use Agave::Client ();
 use Agave::Client::Client ();
+use Agave::Client::Exceptions ();
+use Try::Tiny;
 use Dancer::Plugin::Ajax;
 use Dancer::Plugin::Email;
 use Dancer::Plugin::Database;
@@ -248,7 +250,15 @@ sub browse_datastore {
 	$system='system/' . $system . '/';
 
 	my $io = $apif->io;
-	my $dir_list = $io->readdir('/' . $system . $path_to_read);
+	my $dir_list;
+	try {
+		$dir_list=$io->readdir('/' . $system . $path_to_read);
+	} catch {
+		if ($_->isa('Agave::Exceptions::HTTPError')) {
+		} else {
+			$_->rethrow;
+		}
+	};
 
 	to_json([{
 			is_root => $path_to_read eq $root ? 1 : 0,
@@ -279,7 +289,7 @@ sub browse_server {
 	);
 }
 
-ajax qr{/browse/?(.*)} => sub {
+get qr{/browse/?(.*)} => sub {
 	my ($path) = splat;
 	my $use_file_server=setting('use_file_server');
 	my $system;
@@ -385,6 +395,8 @@ get '/job/:id' => sub {
 	my $job_id = param("id");
 
 	my $job=retrieveJob($job_id);
+	$job->{job_id}=$job_id;
+	return to_json($job);
 	if ($job) {
 		return template 'job', {
 			job => $job,
@@ -454,6 +466,8 @@ ajax '/workflow/new' => sub {
 	my (@jobs, @step_form);
 	my $form = params();
 	my $wf=from_json($form->{'_workflow_json'});
+	my $wid=$form->{'_workflow_id'};
+	database->quick_insert('workflow', {workflow_id => $wid});
 	foreach my $step (@{$wf->{'steps'}}) {
 		my $app_id=$step->{appId};
 		my ($app) = $apps->find_by_id($app_id);
@@ -464,7 +478,7 @@ ajax '/workflow/new' => sub {
 			push @step_form, $job_form;
 		}
 	}
-	return to_json(\@jobs);
+	return to_json({workflow_id => $wid, jobs => \@jobs});
 };
 
 ajax '/job/new/:id' => sub {
@@ -638,8 +652,13 @@ sub prepareJob {
 
 	my $job_id=uuid();
 	my $job_json=to_json(\%job_form);
+	my $wid=$form->{'_workflow_id'};
+	my $data={job_id => $job_id, app_id => $app_id, job_json => $job_json};
+	if ($wid) {
+		$data->{workflow_id}=$wid;
+	}
 	eval {
-		database->quick_insert('job', {job_id => $job_id, app_id => $app_id, job_json => $job_json});
+		database->quick_insert('job', $data);
 		while (my ($k, $v)=each %{$step->{inputs}}) {
 			if ($v && ref($v)) {
 				my $prev=$prev_job->[$v->{step}]{job_id};

@@ -19,7 +19,8 @@ const JobsStore=Reflux.createStore({
 			jobDetail: {},
 			jobOutputs: {},
 			jobDetailCache: {},
-			wid: {}
+			wid: {},
+			workflow_id: {}
 		};
 	},
 
@@ -43,9 +44,13 @@ const JobsStore=Reflux.createStore({
 			transformRequest: function(data) { return data; }
 		}))
 		.then(function(res) {
+			let jobs=[];
 			wf.steps.map(function(step, i) {
-				this.state.jobs[submitNumber + i]=res.data[i];
+				let index=submitNumber + i;
+				this.state.jobs[index]=res.data.jobs[i];
+				jobs[i]=res.data.jobs[i].job_id;
 			}.bind(this));
+			this.state.workflow_id[res.data.workflow_id]=jobs;
 			this.complete();
 		}.bind(this))
 		.catch(function(error) {
