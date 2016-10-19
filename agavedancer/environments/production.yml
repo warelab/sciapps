@@ -18,7 +18,7 @@ route_cache: 1
 
 # production config
 agave_config: ".agave"
-host_url: "http://www.sciapps.org/"
+host_url: "http://www.sciapps.org"
 archive_system: 'brie.cshl.edu'
 archive_path: 'results'
 archive_home: '/agave_data'
