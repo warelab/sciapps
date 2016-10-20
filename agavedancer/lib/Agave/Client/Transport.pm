@@ -18,38 +18,27 @@ use HTTP::Request::Common qw(POST);
 use JSON ();
 use Data::Dumper;
 
-our $VERSION = '0.3.0';
+our $VERSION = '0.3.1';
 our $AGENT = "AgavePerlClient/$VERSION";
 use vars qw($VERSION $AGENT);
 
 {
     # these should be moved to a config file (or not?)
 
-    my $TIMEOUT = 60;
-
-    # Never subject to configuration
-    my $ZONE = 'iPlant Job Service';
-
-    # Define API endpoints
-    my $IO_ROOT = "files/v2";
-    my $IO_END = "$IO_ROOT";
-
-    #my $AUTH_ROOT = "v2/auth";
-    my $AUTH_END = "token";
-
-    my $APPS_END = "apps/v2";
-    my $JOBS_END = "jobs/v2";
-    my $CLIENTS_END = "clients/v2";
+    my $TIMEOUT = 30;
 
     my $TRANSPORT = 'https';
 
+    # Define API endpoints
     my %end_point = (
-            auth => $AUTH_END,
-            io => $IO_END,
-            apps => $APPS_END,
-            job  => $JOBS_END,
-            client => $CLIENTS_END,
+            auth => 'token',
+            io => 'files/v2',
+            apps => 'apps/v2',
+            job  => 'jobs/v2',
+            client => "clients/v2",
             metadata => 'meta/v2',
+            metadataschema => 'meta/v2',
+            postit => 'postits/v2',
         );
 
     sub _get_end_point {
@@ -166,7 +155,7 @@ use vars qw($VERSION $AGENT);
             if ($mref && $fault) {
                 Agave::Exceptions::HTTPError->throw(
                     code => $fault->{code},
-                    message => ($fault->{type} . ' ' . $fault->{message}) || 'do_get: error',
+                    message => ($fault->{type} || '') . ' ' . ($fault->{message} || '' ) || 'do_get: error',
                     content => $message,
                 );              
             }
@@ -319,6 +308,12 @@ use vars qw($VERSION $AGENT);
         unless ($END_POINT) {
             Agave::Exceptions::InvalidRequest->throw("Invalid endpoint $END_POINT.");
         }
+
+		if (%params && $params{_sub_end_point}) {
+			$END_POINT .= $params{_sub_end_point} =~ m|^/| 
+				? $params{_sub_end_point}
+				: '/' . $params{_sub_end_point};
+		}
         
         # Check for a request path
         unless (defined($path)) {
