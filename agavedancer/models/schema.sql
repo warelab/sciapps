@@ -23,6 +23,7 @@ create table job (
 	agave_id varchar(40),
 	app_id varchar(40) not null,
 	job_json text,
+	status varchar(40),
 	workflow_id varchar(40) references workflow(workflow_id)
 );
 

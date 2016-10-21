@@ -27,6 +27,11 @@ sub uuid {
 	return $s;
 }
 
+sub check_uuid {
+	my $id=shift;
+	$id=~/^[0-9a-f]{8,}-(?:[0-9a-f]{4,}-){2,}[0-9a-f]{3,}$/ ? 1 : 0;
+}
+
 # TODO - this needs work
 sub token_valid {
 	my $tk_expiration = session('token_expiration_at');
@@ -187,6 +192,16 @@ sub parse_ls {
 	\%result;
 };
 
+sub getAgaveClient {
+	check_login();
+
+	my $username = session('username');
+	Agave::Client->new(
+		username => $username,
+		token => session('token'),
+	);
+}
+
 #get '/' => sub {
 #	send_file 'index.html';
 #};
@@ -236,13 +251,7 @@ sub browse_datastore {
 	my ($path, $system)=@_;
 	$system||=setting('datastore_system');
 
-	check_login();
-
-	my $username = session('username');
-	my $apif = Agave::Client->new(
-		username => $username,
-		token => session('token'),
-	);
+	my $apif =getAgaveClient();
 
 	#my $root=$username;
 	my $root='';
@@ -306,7 +315,6 @@ ajax '/apps' => sub {
 	to_json($app_list);
 };
 
-
 get qr{/apps/?} => sub {
 	my $app_list=retrieveApps();
 
@@ -315,29 +323,15 @@ get qr{/apps/?} => sub {
 	};
 };
 
-sub retrieveApps {
-	check_login();
-
-	my $username = session('username');
-	my $apif = Agave::Client->new(
-		username => $username,
-		token => session('token'),
-	);
-
-	my $apps = $apif->apps;
-	my $app_list = [grep { ! $_->{isPublic} } ($apps->list)];
-	return $app_list;
-}
-
 ajax '/app/:id' => sub {
 	my $app_id = param("id");
-	my $app=retrieveApp($app_id);
+	my $app=retrieveApps($app_id);
 	to_json($app)
 };
 
 get '/app/:id' => sub {
 	my $app_id = param("id");
-	my $app=retrieveApp($app_id);
+	my $app=retrieveApps($app_id);
 	my ($inputs, $parameters) = ([], []);
 	if ($app) {
 		$inputs = $app->inputs;
@@ -351,18 +345,83 @@ get '/app/:id' => sub {
 	};
 };
 
-sub retrieveApp {
+sub retrieveApps {
 	my ($app_id)=@_;
-	check_login();
-	my $username = session('username');
-	my $api = Agave::Client->new(
-		user => $username,
-		token => session('token'),
-	);
+
+	my $api = getAgaveClient();
 
 	my $apps = $api->apps;
-	my ($app) = $apps->find_by_id($app_id); 
-	return $app;
+	my $return;
+	if ($app_id) {
+		($return)=grep {! $_->{isPublic} } $apps->find_by_id($app_id);
+	} else {
+		$return=[grep { ! $_->{isPublic} } ($apps->list)];
+	}
+	$return;
+}
+
+get '/schema/:id' => sub {
+	my $schema_id = param("id");
+
+	my $schema=retrieveSchema($schema_id);
+	return to_json($schema);
+};
+
+get '/schema' => sub {
+	my $schema=retrieveSchema();
+
+	return to_json($schema);
+};
+
+sub retrieveSchema {
+	my ($schema_id)=@_;
+
+	my $api = getAgaveClient();
+
+	my $meta = $api->schema;
+	$meta->list($schema_id);
+}
+
+get '/metadata/new' => sub {
+	my $json = param("json");
+	print STDERR $json . "\n";
+	return to_json({status => "successful"});
+};
+
+get '/metadata/:id' => sub {
+	my $metadata_id = param("id");
+
+	my $metadata=retrieveMetadata($metadata_id);
+	return to_json($metadata);
+};
+
+get '/metadata' => sub {
+	my $q=param("q");
+	my $metadata;
+	if ($q) {
+		$metadata=retrieveMetadataByQuery($q);
+	} else {
+		$metadata=retrieveMetadata();
+	}
+	return to_json($metadata);
+};
+
+sub retrieveMetadata {
+	my ($metadata_id)=@_;
+
+	my $api = getAgaveClient();
+
+	my $meta = $api->meta;
+	$meta->list($metadata_id);
+}
+
+sub retrieveMetadataByQuery {
+	my ($query)=@_;
+
+	my $api = getAgaveClient();
+
+	my $meta = $api->meta;
+	$meta->query($query);
 }
 
 #get '/jobs/?' => sub {
@@ -382,6 +441,15 @@ sub retrieveApp {
 # 		list => $job_list,
 #	};
 #};
+
+get '/job/status/:id' => sub {
+	my $job_id = param("id");
+	my $sql='SELECT * FROM JOB WHERE job_id = ? OR agave_id = ?';
+	my $sth=database->prepare_cached($sql);
+	$sth->execute($job_id, $job_id);
+	my ($job)=$sth->fetchrow_hashref("NAME_lc");
+	return to_json($job);
+};
 
 ajax '/job/:id' => sub {
 	my $job_id = param("id");
@@ -408,13 +476,7 @@ get '/job/:id' => sub {
 sub retrieveJob {
 	my ($job_id)=@_;
 
-	check_login();
-
-	my $username = session('username');
-	my $apif = Agave::Client->new(
-		username => $username,
-		token => session('token'),
-	);
+	my $apif = getAgaveClient();
 
 	my $job_ep = $apif->job;
 	my $row = database->quick_select('job', {job_id => $job_id});
@@ -435,14 +497,9 @@ sub retrieveJob {
 }
 
 get '/job/:id/remove' => sub {
-	check_login();
-
 	my $job_id = param("id");
-	my $username = session('username');
-	my $apif = Agave::Client->new(
-		username => $username,
-		token => session('token'),
-	);
+
+	my $apif = getAgaveClient();
 
 	my $job_ep = $apif->job;
 	my $row = database->quick_select('job', {job_id => $job_id});
@@ -452,15 +509,9 @@ get '/job/:id/remove' => sub {
 };
 
 ajax '/workflow/new' => sub {
-	check_login();
-
 	my @err = ();
 	my $app_id = param("id");
-	my $username = session('username');
-	my $apif = Agave::Client->new(
-		user => $username,
-		token => session('token'),
-	);
+	my $apif = getAgaveClient();
 	my $apps = $apif->apps;
 
 	my (@jobs, @step_form);
@@ -482,15 +533,10 @@ ajax '/workflow/new' => sub {
 };
 
 ajax '/job/new/:id' => sub {
-	check_login();
 
 	my @err = ();
 	my $app_id = param("id");
-	my $username = session('username');
-	my $apif = Agave::Client->new(
-		user => $username,
-		token => session('token'),
-	);
+	my $apif = getAgaveClient();
 
 	my $apps = $apif->apps;
 
@@ -506,15 +552,9 @@ ajax '/job/new/:id' => sub {
 };
 
 any ['get', 'post'] => '/job/new/:id' => sub {
-	check_login();
-
 	my @err = ();
 	my $app_id = param("id");
-	my $username = session('username');
-	my $apif = Agave::Client->new(
-		user => $username,
-		token => session('token'),
-	);
+	my $apif = getAgaveClient();
 
 	my $apps = $apif->apps;
 	my ($app) = $apps->find_by_id($app_id);
@@ -535,7 +575,7 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 		app_inputs => $app->inputs || [],
 		app_params => $app->parameters || [],
 		name => $app_id,
-		username => $username,
+		username => session('username'),
 		form => $form,
 	};
 };
@@ -692,7 +732,7 @@ sub submitJob {
 	if ($st) {
 		if ($st->{status} eq 'success') {
 			my $job = $st->{data};
-			database->quick_update('job', {job_id => $job_id}, {agave_id => $job->{id}});
+			database->quick_update('job', {job_id => $job_id}, {agave_id => $job->{id}}, status => 'PENDING');
 			return ($job);
 		} else {
 			print STDERR 'Error: ', $st->{message}, $/;
@@ -707,6 +747,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	
 	if ($params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED') {
 		next if $params->{message}=~/Attempt [12] to submit job/;
+		database->quick_update('job', {agave_id => $params->{id}}, {status => $params->{status}});
 		my $path=setting("archive_home") . '/' . $params->{archivePath};
 		if (-r $path . "/.email") {
 			open(EMAIL, $path . "/.email");
@@ -734,13 +775,8 @@ any ['get', 'post'] => '/notification/:id' => sub {
 sub submitNextJob {
 	my ($params)=@_;
 
-	check_login();
+	my $apif = getAgaveClient();
 
-	my $username = session('username');
-	my $apif = Agave::Client->new(
-		user => $username,
-		token => session('token'),
-	);
 	my $apps = $apif->apps;
 
 	my $prev=database->quick_select('job', {agave_id => $params->{id}});

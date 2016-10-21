@@ -17,6 +17,7 @@ const JobsStore=Reflux.createStore({
 			showJob: false,
 			jobs: [],
 			jobDetail: {},
+			jobStatus: {},
 			jobOutputs: {},
 			jobDetailCache: {},
 			wid: {},
@@ -195,6 +196,17 @@ const JobsStore=Reflux.createStore({
 			console.log(error);
 		})
 		.done();
+	},
+
+	checkJobStatus: function(jobId) {
+		let jobSatusPromise=Q(axios.get(setting.host_url + '/job/status/' + jobId, {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+			this.state.jobStatus[jobId]=res.data;
+			return res.data;
+		}.bind(this));
+		return jobStatusPromise;
 	},
 
 	resubmitJob: function(jobId) {
