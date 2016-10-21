@@ -204,6 +204,7 @@ const JobsStore=Reflux.createStore({
 		}))
 		.then(function(res) {
 			this.state.jobStatus[jobId]=res.data;
+			this.complete();
 			return res.data;
 		}.bind(this));
 		return jobStatusPromise;
