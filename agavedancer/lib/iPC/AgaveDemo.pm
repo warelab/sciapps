@@ -743,7 +743,7 @@ sub submitJob {
 	if ($st) {
 		if ($st->{status} eq 'success') {
 			my $job = $st->{data};
-			database->quick_update('job', {job_id => $job_id}, {agave_id => $job->{id}}, status => 'PENDING');
+			database->quick_update('job', {job_id => $job_id}, {agave_id => $job->{id}, status => 'PENDING'});
 			return ($job);
 		} else {
 			print STDERR 'Error: ', $st->{message}, $/;
