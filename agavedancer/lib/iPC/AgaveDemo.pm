@@ -448,6 +448,7 @@ ajax '/job/status/:id' => sub {
 	my $sth=database->prepare_cached($sql);
 	$sth->execute($job_id, $job_id);
 	my ($job)=$sth->fetchrow_hashref("NAME_lc") || {};
+	$sth->finish;
 	return to_json($job);
 };
 
@@ -457,6 +458,7 @@ get '/job/status/:id' => sub {
 	my $sth=database->prepare_cached($sql);
 	$sth->execute($job_id, $job_id);
 	my ($job)=$sth->fetchrow_hashref("NAME_lc") || {};
+	$sth->finish;
 	return to_json($job);
 };
 
