@@ -447,7 +447,7 @@ ajax '/job/status/:id' => sub {
 	my $sql='SELECT * FROM JOB WHERE job_id = ? OR agave_id = ?';
 	my $sth=database->prepare_cached($sql);
 	$sth->execute($job_id, $job_id);
-	my ($job)=$sth->fetchrow_hashref("NAME_lc");
+	my ($job)=$sth->fetchrow_hashref("NAME_lc") || {};
 	return to_json($job);
 };
 
@@ -456,7 +456,7 @@ get '/job/status/:id' => sub {
 	my $sql='SELECT * FROM JOB WHERE job_id = ? OR agave_id = ?';
 	my $sth=database->prepare_cached($sql);
 	$sth->execute($job_id, $job_id);
-	my ($job)=$sth->fetchrow_hashref("NAME_lc");
+	my ($job)=$sth->fetchrow_hashref("NAME_lc") || {};
 	return to_json($job);
 };
 
