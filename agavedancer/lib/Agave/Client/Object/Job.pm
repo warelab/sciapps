@@ -7,13 +7,13 @@ Agave::Client::Object::Job - The great new Agave::Client::Object::Job!
 
 =head1 VERSION
 
-Version 0.01
+Version 0.03
 
 =cut
 
 use overload '""' => sub { $_[0]->id; };
 
-our $VERSION = '0.01';
+our $VERSION = '0.03';
 
 =head1 SYNOPSIS
 
@@ -54,6 +54,12 @@ sub name {
 	return $self->{name};
 }
 
+
+sub owner {
+	my ($self) = @_;
+	return $self->{owner};
+}
+
 sub id {
 	my ($self) = @_;
 	return $self->{id};
@@ -88,7 +94,7 @@ sub shortDescription {
 sub parameters {
 	my ($self) = @_;
 	my $p = $self->{parameters};
-	wantarray ? @$p : $p;
+	wantarray ? %$p : $p;
 }
 
 
@@ -107,6 +113,24 @@ sub archive {
 	$self->{archive};
 }
 
+sub fullOutputPath {
+	my ($self) = @_;
+	return if $self->{archive};
+	
+	sprintf("agave://%s/%s", $self->executionSystem, $self->outputPath);
+}
+
+sub outputPath {
+	my ($self) = @_;
+	!$self->{archive} ? $self->{outputPath} : undef;
+}
+
+sub executionSystem {
+	my ($self) = @_;
+
+	$self->{executionSystem};
+}
+
 sub is_finished {
 	$_[0]->status =~ /^(?:FINISHED|KILLED|FAILED|STOPPED|ARCHIVING_FAILED)$/;
 }
@@ -117,8 +141,8 @@ sub is_successful {
 
 sub TO_JSON {
 	my $self = shift;
-	my $href = { map {$_ => $self->{$_}} keys %$self};
-	return $href;
+	return { map {$_ => $self->{$_}} keys %$self};
 }
+
 
 1; # End of Agave::Client::Object::Application

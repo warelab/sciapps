@@ -8,7 +8,7 @@ use base qw/Agave::Client::Base/;
 use Agave::Client::Object::Job ();
 use Agave::Client::Object::OutputFile ();
 use Try::Tiny;
-use File::Temp;
+use JSON ();
 
 use Data::Dumper;
 
@@ -54,6 +54,8 @@ Perhaps a little code snippet.
 sub submit_job {
 	my ($self, $application, %params) = @_;
 
+	#print STDERR  '$application: ', $application, $/;
+	#print STDERR  'ref $application: ', ref $application, $/;
 	unless ($application && ref($application) =~ /::Application/) {
 		print STDERR  "::submit_job: Invalid argument. Expecting Application object", $/;
 		return $self->_error("Invalid argument. Expecting Application object.");
@@ -91,7 +93,7 @@ sub submit_job {
 			#	$/;
 			#$available_options{$opt->{id}} = $opt;
 			if (defined $params{$opt->{id}} && $params{$opt->{id}} ne "") {
-				$post_content{$opt_group}{ $opt->{id} } = $params{$opt->{id}};
+				$post_content{ $opt->{id} } = $params{$opt->{id}};
 			}
 			elsif (defined $opt->{required} && $opt->{required}) {
 				$required_options{$opt->{id}} = $opt_group;
@@ -103,25 +105,19 @@ sub submit_job {
 		return $self->_error("Missing required argument(s)", \%required_options);
 	}
 
-	my $tmp = File::Temp->new();
-	my $filename=$tmp->filename;
-	print $tmp JSON->new->encode(\%post_content);
-	$tmp->close;
-
-	my %post_params=(
-		_content_type	=> 'form-data',
-		_body	=> {fileToUpload => [$filename]},
-	);
-
+	my $json = JSON->new->utf8;
 	my $resp = try {
-            $self->do_post('/', %post_params);
-        }
-        catch {
+			$self->do_post('/',
+					_content_type => 'application/json; charset=utf-8',
+					_body => $json->encode(\%post_content)
+				);
+		}
+		catch {
             if (ref($_) && $_->isa('Agave::Exceptions::HTTPError')) {
                 return {status => 'error', message => $_->code . ' ' . $_->message}
             }
 	        return $self->_error("JobEP: Unable to submit job." . (ref $_ ? $_->message : ''));
-        };
+	};
 	if (ref $resp) {
 		if ($resp->{id}) {
 			return { status => 'success', data => Agave::Client::Object::Job->new($resp) };

@@ -442,25 +442,24 @@ sub retrieveMetadataByQuery {
 #	};
 #};
 
-ajax '/job/status/:id' => sub {
-	my $job_id = param("id");
-	my $sql='SELECT * FROM JOB WHERE job_id = ? OR agave_id = ?';
-	my $sth=database->prepare_cached($sql);
-	$sth->execute($job_id, $job_id);
-	my ($job)=$sth->fetchrow_hashref("NAME_lc") || {};
-	$sth->finish;
-	return to_json($job);
+ajax '/job/status/' => sub {
+	my @job_ids = param_array("id");
+	my $jobs=checkJobStatus(@job_ids);
+	return to_json($jobs);
 };
 
-get '/job/status/:id' => sub {
-	my $job_id = param("id");
-	my $sql='SELECT * FROM JOB WHERE job_id = ? OR agave_id = ?';
+sub checkJobStatus {
+	my @job_ids = @_;
+	my $job_ids=join(',', map {"'$_'"} @job_ids);
+	my $sql='SELECT * FROM JOB WHERE job_id IN (' . join(',', ('?') x scalar(@job_ids)). ')';
 	my $sth=database->prepare_cached($sql);
-	$sth->execute($job_id, $job_id);
-	my ($job)=$sth->fetchrow_hashref("NAME_lc") || {};
+	$sth->execute(@job_ids);
+	my $jobs=$sth->fetchall_arrayref({job_id => 1, status => 1});;
 	$sth->finish;
-	return to_json($job);
-};
+	#$jobs->[0]{status}='FINISHED';
+	#$jobs->[1]{status}='FINISHED';
+	return $jobs;
+}
 
 ajax '/job/:id' => sub {
 	my $job_id = param("id");
@@ -529,14 +528,14 @@ ajax '/workflow/new' => sub {
 	my $form = params();
 	my $wf=from_json($form->{'_workflow_json'});
 	my $wid=$form->{'_workflow_id'};
-	database->quick_insert('workflow', {workflow_id => $wid});
+	database->quick_insert('workflow', {workflow_id => $wid, workflow_json => $wf});
 	foreach my $step (@{$wf->{'steps'}}) {
 		my $app_id=$step->{appId};
 		my ($app) = $apps->find_by_id($app_id);
 		my ($job_id, $job_form)=prepareJob($app, $form, $step, \@step_form, \@jobs);
 		my ($job, $err)=submitJob($apif, $app, $job_id, $job_form);
 		if ($job_id) {
-			push @jobs, {appId => $app_id, job_id => $job_id};
+			push @jobs, {appId => $app_id, job_id => $job_id, status => 'PENDING'};
 			push @step_form, $job_form;
 		}
 	}
@@ -544,7 +543,6 @@ ajax '/workflow/new' => sub {
 };
 
 ajax '/job/new/:id' => sub {
-
 	my @err = ();
 	my $app_id = param("id");
 	my $apif = getAgaveClient();
@@ -704,9 +702,10 @@ sub prepareJob {
 	my $job_id=uuid();
 	my $job_json=to_json(\%job_form);
 	my $wid=$form->{'_workflow_id'};
-	my $data={job_id => $job_id, app_id => $app_id, job_json => $job_json};
+	my $data={job_id => $job_id, app_id => $app_id, job_json => $job_json, status => 'PENDING'};
 	if ($wid) {
 		$data->{workflow_id}=$wid;
+		$data->{step_id}=$step->{id};
 	}
 	eval {
 		database->quick_insert('job', $data);
@@ -758,7 +757,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	
 	if ($params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED') {
 		next if $params->{message}=~/Attempt [12] to submit job/;
-		database->quick_update('job', {agave_id => $params->{id}}, {status => $params->{status}});
+		update_job_status($params);
 		my $path=setting("archive_home") . '/' . $params->{archivePath};
 		if (-r $path . "/.email") {
 			open(EMAIL, $path . "/.email");
@@ -782,6 +781,11 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	}
 	return;
 };
+
+sub update_job_status {
+	my ($params)=@_;
+	database->quick_update('job', {agave_id => $params->{id}}, {status => $params->{status}});
+}
 
 sub submitNextJob {
 	my ($params)=@_;

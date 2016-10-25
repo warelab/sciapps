@@ -16,6 +16,7 @@ const WorkflowStore=Reflux.createStore({
 	init: function() {
 		this.state={
 			setting: _config.setting,
+			showWorkflowDiagram: false,
 			workflowDetail: undefined,
 			workflowDetailCache: {},
 			workflows: {},
@@ -32,13 +33,13 @@ const WorkflowStore=Reflux.createStore({
 		this.trigger(this.state);
 	},
 
-	showWorkflowDiagram: function(workflowDiagramDef) {
-		this.state.workflowDiagramDef=workflowDiagramDef;
+	showWorkflowDiagram: function() {
+		this.state.showWorkflowDiagram=true;
 		this.complete();
 	},
 
 	hideWorkflowDiagram: function() {
-		this.state.workflowDiagramDef=undefined;
+		this.state.showWorkflowDiagram=false;
 		this.complete();
 	},
 

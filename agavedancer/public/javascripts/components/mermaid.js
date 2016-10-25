@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import ReactDOM from "react-dom";
 import {mermaidAPI} from 'mermaid';
 
 mermaidAPI.initialize({
@@ -37,12 +38,15 @@ const Mermaid=React.createClass({
 	},
 
 	renderDiagram: function(name, diagramDef) {
-		mermaidAPI.render(name, diagramDef, (svg) => {
+		//let svg=mermaidAPI.render(name, diagramDef, (svg) => {
 			//let w = window.open('', 'Workflow_Diagram');
 			//w.document.head.innerHTML='<link rel="stylesheet" type="text/css" href="' + window.location.origin + '/styles/mermaid.css" />';
 			//w.document.body.innerHTML = svg;
-			this.setState({html:svg});	
-		});
+			//this.setState({html:svg});	
+		//});
+		mermaidAPI.render(name, diagramDef, function(svg) {
+			this.setState({html:svg});
+		}.bind(this));
 	},
 
 	render: function() {

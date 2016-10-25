@@ -21,7 +21,7 @@ const JobsStore=Reflux.createStore({
 			jobOutputs: {},
 			jobDetailCache: {},
 			wid: {},
-			workflow_id: {}
+			workflow: {}
 		};
 	},
 
@@ -39,6 +39,7 @@ const JobsStore=Reflux.createStore({
 		wf.steps.map(function(step, i) {
 			this.state.jobs[submitNumber + i]={appId: step.appId};
 		}.bind(this));
+		this.state.workflow={};
 		this.complete();
 		Q(axios.post(setting.host_url + '/workflow/new', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -48,10 +49,15 @@ const JobsStore=Reflux.createStore({
 			let jobs=[];
 			wf.steps.map(function(step, i) {
 				let index=submitNumber + i;
-				this.state.jobs[index]=res.data.jobs[i];
-				jobs[i]=res.data.jobs[i].job_id;
+				let job=res.data.jobs[i];
+				this.state.jobs[index]=job;
+				this.state.jobStatus[job.job_id]=job.status;
+				jobs[i]=job.job_id;
 			}.bind(this));
-			this.state.workflow_id[res.data.workflow_id]=jobs;
+			this.state.workflow={
+				id: res.data.workflow_id,
+				jobs: jobs
+			};
 			this.complete();
 		}.bind(this))
 		.catch(function(error) {
@@ -70,7 +76,9 @@ const JobsStore=Reflux.createStore({
 			transformRequest: function(data) { return data; }
 		}))
 		.then(function(res) {
-			this.state.jobs[submitNumber]=res.data;
+			let job=res.data;
+			this.state.jobs[submitNumber]=job;
+			this.state.jobStatus[job.job_id]=job.status;
 			this.complete();
 		}.bind(this))
 		.catch(function(error) {
@@ -198,13 +206,18 @@ const JobsStore=Reflux.createStore({
 		.done();
 	},
 
-	checkJobStatus: function(jobId) {
+	checkJobStatus: function(jobIds) {
 		let setting=this.state.setting;
-		let jobStatusPromise=Q(axios.get(setting.host_url + '/job/status/' + jobId, {
+		let query=jobIds.map(function(jobId) {
+			return('id=' + jobId); 
+		}).join('&');
+		let jobStatusPromise=Q(axios.get(setting.host_url + '/job/status/?' + query, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))
 		.then(function(res) {
-			this.state.jobStatus[jobId]=res.data;
+			_.forEach(res.data, function(v) {
+				this.state.jobStatus[v.job_id]=v.status;
+			}.bind(this));
 			this.complete();
 			return res.data;
 		}.bind(this));

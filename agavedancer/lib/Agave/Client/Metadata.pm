@@ -92,7 +92,6 @@ our $VERSION = '0.10';
         my $uri = URI::Encode->new({encode_reserved => 1});
         my $path = $self->_path . '?q=' . $uri->encode($filter);
 
-        print STDERR  '** Q = ', $path , $/;
 	    return eval {$self->do_get($path);};
     }
 

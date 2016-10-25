@@ -10,7 +10,8 @@ create table user (
 drop table if exists workflow;
 create table workflow (
 	id integer primary key autoincrement,
-	workflow_id varchar(40) not null
+	workflow_id varchar(40) not null,
+	workflow_json text
 );
 
 drop index if exists workflow_id;
@@ -24,6 +25,7 @@ create table job (
 	app_id varchar(40) not null,
 	job_json text,
 	status varchar(40),
+	step_id integer,
 	workflow_id varchar(40) references workflow(workflow_id)
 );
 
