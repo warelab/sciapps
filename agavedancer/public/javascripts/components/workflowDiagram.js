@@ -34,9 +34,9 @@ const WorkflowDiagram=React.createClass({
 			let diagramDefStmts=['graph LR'];
 			steps.map(function(step, i) {
 				let showAppId=step.appId.replace(/\-[\.\d]+$/, '');
-				let appClass=1;
+				let appClass='Pending';
 				if (typeof jobs === 'object' && jobs[i] !== 'undefined' && jobStatus[jobs[i]] === 'FINISHED') {
-					appClass=2;
+					appClass='Finished';
 				}
 				diagramDefStmts.push(step.id + '[' + showAppId + ']; class ' + step.id + ' appsNode' + appClass);
 				let appId=step.appId;
@@ -75,8 +75,9 @@ const WorkflowDiagram=React.createClass({
 		let showWorkflowDiagram=this.state.workflowStore.showWorkflowDiagram;
 		let jobs=this.state.jobsStore.workflow.jobs;
 		let jobStatus=this.state.jobsStore.jobStatus;
-		let body='';
+		let body=<div />;
 		if (showWorkflowDiagram) {
+			console.log(jobStatus);
 			let workflowDiagramDef=this.buildWorkflowDiagramDef(this.state.workflowStore, this.state.appsStore, this.state.jobsStore);
 			body=<Mermaid diagramDef={workflowDiagramDef}/>;
 			if (typeof jobs === 'object') {

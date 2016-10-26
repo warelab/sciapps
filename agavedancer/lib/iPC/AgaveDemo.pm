@@ -456,8 +456,6 @@ sub checkJobStatus {
 	$sth->execute(@job_ids);
 	my $jobs=$sth->fetchall_arrayref({job_id => 1, status => 1});;
 	$sth->finish;
-	#$jobs->[0]{status}='FINISHED';
-	#$jobs->[1]{status}='FINISHED';
 	return $jobs;
 }
 
@@ -520,7 +518,6 @@ get '/job/:id/remove' => sub {
 
 ajax '/workflow/new' => sub {
 	my @err = ();
-	my $app_id = param("id");
 	my $apif = getAgaveClient();
 	my $apps = $apif->apps;
 

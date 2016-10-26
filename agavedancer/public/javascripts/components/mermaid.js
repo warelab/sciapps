@@ -4,14 +4,6 @@ import React from 'react';
 import ReactDOM from "react-dom";
 import {mermaidAPI} from 'mermaid';
 
-mermaidAPI.initialize({
-	cloneCssStyles: true,
-	flowchart: {
-		useMaxWidth: true,
-		htmlLabels: true
-	}
-});
-
 const Mermaid=React.createClass({
 	getDefaultProps: function() {
 		return {
@@ -21,6 +13,7 @@ const Mermaid=React.createClass({
 
 	getInitialState: function() {
 		return {
+			def: '',
 			html: 'Loading diagram...'
 		};
 	},
@@ -29,24 +22,18 @@ const Mermaid=React.createClass({
 		this.renderDiagram(this.props.name, this.props.diagramDef);
 	},
 
-	componentWillUnmount: function() {
-		this.setState({html: 'Loading diagram...'});
-	},
-
 	componentWillReceiveProps: function(nextProps) {
 		this.renderDiagram(nextProps.name, nextProps.diagramDef);
 	},
 
 	renderDiagram: function(name, diagramDef) {
-		//let svg=mermaidAPI.render(name, diagramDef, (svg) => {
-			//let w = window.open('', 'Workflow_Diagram');
-			//w.document.head.innerHTML='<link rel="stylesheet" type="text/css" href="' + window.location.origin + '/styles/mermaid.css" />';
-			//w.document.body.innerHTML = svg;
-			//this.setState({html:svg});	
-		//});
-		mermaidAPI.render(name, diagramDef, function(svg) {
-			this.setState({html:svg});
-		}.bind(this));
+		let element=ReactDOM.findDOMNode(this);
+		if (diagramDef !== this.state.def) {
+			element.innerHTML=null;
+			mermaidAPI.render(name, diagramDef, function(svg) {
+				this.setState({def: diagramDef, html: svg});
+			}.bind(this));
+		}
 	},
 
 	render: function() {
