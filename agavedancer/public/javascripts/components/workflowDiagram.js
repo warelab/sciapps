@@ -14,6 +14,12 @@ import Mermaid from './mermaid.js';
 const WorkflowDiagram=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore'), Reflux.connect(JobsStore, 'jobsStore'), Reflux.connect(AppsStore, 'appsStore')],
 
+	getDefaultProps: function() {
+		return {
+			timeout: 10000 
+		};
+	},
+
 	getInitialState: function() {
 		return {
 			setting: _config.setting
@@ -34,9 +40,9 @@ const WorkflowDiagram=React.createClass({
 			let diagramDefStmts=['graph LR'];
 			steps.map(function(step, i) {
 				let showAppId=step.appId.replace(/\-[\.\d]+$/, '');
-				let appClass='Pending';
-				if (typeof jobs === 'object' && jobs[i] !== 'undefined' && jobStatus[jobs[i]] === 'FINISHED') {
-					appClass='Finished';
+				let appClass='PENDING';
+				if (typeof jobs === 'object' && jobs[i] !== 'undefined' && jobStatus[jobs[i]] !== 'undefined') {
+					appClass=jobStatus[jobs[i]];
 				}
 				diagramDefStmts.push(step.id + '[' + showAppId + ']; class ' + step.id + ' appsNode' + appClass);
 				let appId=step.appId;
@@ -85,7 +91,7 @@ const WorkflowDiagram=React.createClass({
 					return jobStatus[j] !== 'FINISHED';
 				});
 				if (unfinished !== -1) {
-					setTimeout((jobs) => JobsActions.checkJobStatus(jobs), 10000, jobs); 
+					setTimeout((jobs) => JobsActions.checkJobStatus(jobs), this.props.timeout, jobs); 
 				}
 			}
 		}

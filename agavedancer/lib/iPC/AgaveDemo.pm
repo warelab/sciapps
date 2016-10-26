@@ -677,9 +677,13 @@ sub prepareJob {
 	my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}';
 	my $notifications=[
 	{
-		event	=> "FINISHED",
+		event	=> "ARCHIVING_FINISHED",
 		url		=> $host_url . $noteinfo,
-		},
+	},
+	{
+		event	=> "RUNNING",
+		url		=> $host_url . $noteinfo,
+	},
 	{
 		event	=> "FAILED",
 		url		=> $host_url . $noteinfo,
@@ -751,6 +755,10 @@ sub submitJob {
 
 any ['get', 'post'] => '/notification/:id' => sub {
 	my $params=params;
+	if ($params->{status} eq 'ARCHIVING_FINISHED') {
+		$params->{status}='FINISHED';
+	}
+	#print STDERR 'STATUS: ' . $params->{status} . "\n";
 	
 	if ($params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED') {
 		next if $params->{message}=~/Attempt [12] to submit job/;
