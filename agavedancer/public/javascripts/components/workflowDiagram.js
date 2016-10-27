@@ -52,6 +52,7 @@ const WorkflowDiagram=React.createClass({
 					let output_name=(setting.wf_step_prefix + step.id + ':' + value).toLowerCase();
 					diagramDefStmts.push(output_name + '(' + value + '); class ' + output_name + ' fileNode');
 					diagramDefStmts.push(step.id + '-->' + output_name);
+					diagramDefStmts.push('click ' + output_name + ' clickNode "Tooltip for a callback"');
 				});
 				_.forEach(appDetail.inputs, function(v) {
 					let value=v.value.default;

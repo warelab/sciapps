@@ -30,8 +30,9 @@ const Mermaid=React.createClass({
 		let element=ReactDOM.findDOMNode(this);
 		if (diagramDef !== this.state.def) {
 			element.innerHTML=null;
-			mermaidAPI.render(name, diagramDef, function(svg) {
+			mermaidAPI.render(name, diagramDef, function(svg, bindFunctions) {
 				this.setState({def: diagramDef, html: svg});
+				bindFunctions(element);
 			}.bind(this));
 		}
 	},
