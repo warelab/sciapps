@@ -218,6 +218,7 @@ const JobsStore=Reflux.createStore({
 			_.forEach(res.data, function(v) {
 				this.state.jobStatus[v.job_id]=v.status;
 			}.bind(this));
+			console.log(this.state.jobStatus);
 			this.complete();
 			return res.data;
 		}.bind(this));

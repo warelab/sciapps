@@ -83,7 +83,6 @@ const WorkflowDiagram=React.createClass({
 		let jobStatus=this.state.jobsStore.jobStatus;
 		let body=<div />;
 		if (showWorkflowDiagram) {
-			console.log(jobStatus);
 			let workflowDiagramDef=this.buildWorkflowDiagramDef(this.state.workflowStore, this.state.appsStore, this.state.jobsStore);
 			body=<Mermaid diagramDef={workflowDiagramDef}/>;
 			if (typeof jobs === 'object') {
