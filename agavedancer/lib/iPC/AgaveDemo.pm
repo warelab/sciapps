@@ -759,10 +759,10 @@ any ['get', 'post'] => '/notification/:id' => sub {
 		$params->{status}='FINISHED';
 	}
 	#print STDERR 'STATUS: ' . $params->{status} . "\n";
+	update_job_status($params);
 	
 	if ($params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED') {
 		next if $params->{message}=~/Attempt [12] to submit job/;
-		update_job_status($params);
 		my $path=setting("archive_home") . '/' . $params->{archivePath};
 		if (-r $path . "/.email") {
 			open(EMAIL, $path . "/.email");
