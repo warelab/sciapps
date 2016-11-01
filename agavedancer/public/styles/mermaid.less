@@ -1,3 +1,13 @@
+@border1: #13540c;
+@border2: #6eaa49;
+@appNodeColor: #FFF;
+
+.mermaid .label { color:#333}
+.mermaid .appsNodePENDING .label {color: @appNodeColor}
+.mermaid .appsNodeRUNNING .label {color: @appNodeColor}
+.mermaid .appsNodeFINISHED .label {color: @appNodeColor}
+.mermaid .appsNodeFAILED .label {color: @appNodeColor}
+
 .edgePath .path {
   stroke: #333333;
 }
@@ -5,14 +15,52 @@
 	color: #FF4500;
 }
 .appsNodePENDING rect {
-	fill: #fffac6;
+	fill: #f4c20d;
+	stroke: #f4880d;
+	stroke-width: 2px;
 }
 .appsNodeFINISHED rect {
-	fill: #bcf5a9;
+	fill: #3cba54;
+	stroke: #44ba3c;
+        stroke-width: 2px;
 }
 .appsNodeRUNNING rect {
-	fill: #728fce;
+	fill: #4885ed;
+	stroke: #48aeed;
+        stroke-width: 2px;
+}
+.appsNodeFAILED rect {
+        fill: #db3236;
+        stroke: #db3260;
+        stroke-width: 2px;
+}
+.appsNodePENDING text {
+        stroke:none;
+        font-family: 'trebuchet ms', verdana, arial;
+        font-size: 20px;
+}
+.appsNodeFINISHED text {
+        stroke:none;
+        font-family: 'trebuchet ms', verdana, arial;
+        font-size: 20px;
+}
+.appsNodeRUNNING text {
+	stroke:none; 
+	font-family: 'trebuchet ms', verdana, arial;
+	font-size: 20px;
+}
+.appsNodeFAILED text {
+        stroke:none;
+        font-family: 'trebuchet ms', verdana, arial;
+        font-size: 20px;
 }
 .fileNode rect {
-	fill: #FF4500;
+	fill: #FFFFFF;
+	stroke: @border2;
+        stroke-width: 2px;
+}
+.fileNode text {
+        stroke:none;
+        font-family: 'trebuchet ms', verdana, arial;
+        font-size: 18px;
 }
