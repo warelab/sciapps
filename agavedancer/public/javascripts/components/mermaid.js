@@ -31,7 +31,7 @@ const Mermaid=React.createClass({
 		if (diagramDef !== this.state.def) {
 			element.innerHTML=null;
 			mermaidAPI.render(name, diagramDef, function(svg, bindFunctions) {
-				this.setState({def: diagramDef, html: svg});
+				element.innerHTML=svg;
 				bindFunctions(element);
 			}.bind(this));
 		}
@@ -39,7 +39,7 @@ const Mermaid=React.createClass({
 
 	render: function() {
 		return (
-			<div className="mermaid" dangerouslySetInnerHTML={{__html: this.state.html}}></div>
+			<div className="mermaid" />
 		);
 	}
 });
