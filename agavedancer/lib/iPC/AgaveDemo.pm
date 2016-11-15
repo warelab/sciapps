@@ -442,6 +442,12 @@ sub retrieveMetadataByQuery {
 #	};
 #};
 
+ajax '/workflow/status/:id' => sub {
+	my $wfid=param('id');
+	my $jobs=checkWorkflowJobStatus($wfid);
+	return to_json($jobs);
+};
+
 ajax '/job/status/' => sub {
 	my @job_ids = param_array("id");
 	my $jobs=checkJobStatus(@job_ids);
@@ -458,6 +464,19 @@ sub checkJobStatus {
 	$sth->finish;
 	return $jobs;
 }
+
+sub checkWorkflowJobStatus {
+	my ($wfid)=@_;
+	my @jobs=database->quick_select('job', {workflow_id => $wfid}, {columns => [qw/job_id status/]});
+	return \@jobs;
+}
+
+ajax qr{/workflow/input/(.*)} => sub {
+	my ($fullpath)=splat;
+	my ($system, $path)=split /\//, $fullpath, 2;
+	my $input=database->quick_select('file_view', {system => $system, path => $path}) || {};
+	return to_json($input);
+};
 
 ajax '/job/:id' => sub {
 	my $job_id = param("id");
@@ -729,6 +748,7 @@ sub submitJob {
 	#print STDERR to_dumper($job_form) . "\n";
 	
 	return unless $job_id;
+
 	
 	my @row=database->quick_select('nextstep', {next => $job_id});
 	foreach my $row (@row) {
@@ -753,6 +773,17 @@ sub submitJob {
 	return;
 }
 
+sub resubmitJob {
+	my ($job_id)=@_;
+	my $apif = getAgaveClient();
+
+	my $apps = $apif->apps;
+	my $job=database->quick_select('job', {agave_id => $job_id}) || database->quick_select('job', {job_id => $job_id});
+	my $job_form=from_json($job->{job_json});
+	my ($app) = $apps->find_by_id($job->{app_id});
+	my ($res, $err)=submitJob($apif, $app, $job->{job_id}, $job_form);
+}
+
 any ['get', 'post'] => '/notification/:id' => sub {
 	my $params=params;
 	if ($params->{status} eq 'ARCHIVING_FINISHED') {
@@ -761,7 +792,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	#print STDERR 'STATUS: ' . $params->{status} . "\n";
 	update_job_status($params);
 	
-	if ($params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED') {
+	if ($params->{status} eq 'FINISHED') {
 		next if $params->{message}=~/Attempt [12] to submit job/;
 		my $path=setting("archive_home") . '/' . $params->{archivePath};
 		if (-r $path . "/.email") {
@@ -779,17 +810,23 @@ any ['get', 'post'] => '/notification/:id' => sub {
 			};
 			email $mail;
 		}
-		if ($params->{status} eq 'FINISHED') {
-			submitNextJob($params);
-			uncompress_result($params->{archivePath});
-		}
+	}
+	if ($params->{status} eq 'FINISHED') {
+		submitNextJob($params);
+		uncompress_result($params->{archivePath});
+	} elsif ($params->{status} eq 'FAILED') {
+		resubmitJob($params->{id});
 	}
 	return;
 };
 
 sub update_job_status {
 	my ($params)=@_;
-	database->quick_update('job', {agave_id => $params->{id}}, {status => $params->{status}});
+	my $data={status => $params->{status}};
+	if ($params->{status} eq 'FINISHED') {
+		$data->{agave_json}=to_json(retrieveJob($params->{id}));
+	}
+	database->quick_update('job', {agave_id => $params->{id}}, $data);
 }
 
 sub submitNextJob {

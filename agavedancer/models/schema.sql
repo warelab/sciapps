@@ -24,6 +24,7 @@ create table job (
 	agave_id varchar(40),
 	app_id varchar(40) not null,
 	job_json text,
+	agave_json text,
 	status varchar(40),
 	step_id integer,
 	workflow_id varchar(40) references workflow(workflow_id)
@@ -44,11 +45,67 @@ create table nextstep (
 	status integer default 0
 );
 
---drop index if exists nextstep_input_name;
---create index nextstep_input_name on nextstep(input_name);
-
 drop index if exists nextstep_prev;
 create index nextstep_prev on nextstep(prev);
 
 drop index if exists nextstep_next;
 create index nextstep_next on nextstep(next);
+
+drop table if exists organism;
+create table organism (
+	id integer primary key autoincrement,
+	organism_id varchar(40) not null,
+	name varchar(40) not null,
+	scientific_name text,
+	taxon_id integer(10) not null
+);
+
+insert into organism (organism_id, name, scientific_name, taxon_id) values ('2451521911501558246-242ac1111-0001-012', 'rice', 'Oryza sativa', 4530);
+
+drop index if exists organism_id;
+create index organism_id on organism(organism_id);
+
+drop table if exists line;
+create table line (
+	id integer primary key autoincrement,
+	line_id varchar(40) not null,
+	name varchar(40) not null,
+	organism varchar(40) not null references organism(organism_id),
+	url text
+);
+
+insert into line (line_id, name, organism, url) values ('7673478939677757926-242ac1111-0001-012', 'japonica Nipponbare', '2451521911501558246-242ac1111-0001-012', 'http://rice.plantbiology.msu.edu/');
+
+drop index if exists line_id;
+create index line_id on line(line_id);
+
+drop table if exists file;
+create table file (
+	id integer primary key autoincrement,
+	file_id varchar(40) not null,
+	system varchar(40),
+	path text,
+	source varchar(40),
+	line varchar(40) references line(line_id),
+	replicate varchar(40),
+	description text,
+	format varchar(40) not null,
+	type varchar(40) not null,
+	paired_end integer default 0,
+	paired_with varchar(40),
+	derived_from varchar(40),
+	controlled_by varchar(40)
+);
+
+insert into file (file_id, system, path, line, type, format, description) values ('9125563603084045850-242ac1111-0001-012', 'data.sciapps.org', 'example_data/maker/test_genome.fasta', '7673478939677757926-242ac1111-0001-012', 'Reference genome', 'fasta', 'A scaled-down genome (test_genome.fasta) that is comprised of the first 300kb of three chromosomes of rice');
+insert into file (file_id, system, path, line, type, format, description) values ('2098345582533939686-242ac1111-0001-012', 'data.sciapps.org', 'example_data/maker/mRNA.fasta', '7673478939677757926-242ac1111-0001-012', 'Annotation evidence', 'fasta', 'mRNA sequences from NCBI');
+insert into file (file_id, system, path, line, type, format, description) values ('7293065577372979686-242ac1111-0001-012', 'data.sciapps.org', 'example_data/maker/msu-irgsp-proteins.fasta', '7673478939677757926-242ac1111-0001-012', 'Annotation evidence', 'fasta', 'Publicly available annotated protein sequences of rice (MSU7.0 and IRGSP1.0)');
+insert into file (file_id, system, path, line, type, format, description) values ('5471780361112251930-242ac1111-0001-012', 'data.sciapps.org', 'example_data/maker/plant_repeats.fasta', '7673478939677757926-242ac1111-0001-012', 'Annotation evidence', 'fasta', 'A collection of plant repeats');
+
+drop index if exists file_id;
+create index file_id on file(file_id);
+
+drop view if exists file_view;
+create view file_view as 
+select file.system as system, file.path as path, line.name as line_name, organism.name as organism_name, organism.scientific_name as organism_scientific_name, organism.taxon_id as organism_taxon_id 
+from file join line on (file.line = line.line_id) join organism on (line.organism = organism.organism_id);

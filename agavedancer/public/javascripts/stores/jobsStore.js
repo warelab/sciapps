@@ -21,6 +21,9 @@ const JobsStore=Reflux.createStore({
 			jobOutputs: {},
 			jobDetailCache: {},
 			wid: {},
+			inputs: {},
+			fileDetail: {},
+			fileId: undefined,
 			workflow: {}
 		};
 	},
@@ -56,7 +59,8 @@ const JobsStore=Reflux.createStore({
 			}.bind(this));
 			this.state.workflow={
 				id: res.data.workflow_id,
-				jobs: jobs
+				jobs: jobs,
+				steps: []
 			};
 			this.complete();
 		}.bind(this))
@@ -129,6 +133,18 @@ const JobsStore=Reflux.createStore({
 			}.bind(this));
 		}
 		return jobPromise;
+	},
+
+	showFile: function(fileId) {
+		this.state.fileId=fileId;
+		this.complete();
+	},
+
+	hideFile: function() {
+		if (this.state.fileId !== undefined) {
+			this.state.fileId=undefined;
+			this.complete();
+		}
 	},
 
 	showJob: function(jobId) {
@@ -204,6 +220,38 @@ const JobsStore=Reflux.createStore({
 			console.log(error);
 		})
 		.done();
+	},
+
+	setWorkflowInputs: function(fileId, url) {
+		let setting=this.state.setting;
+		let path=url.replace('agave://', '');
+		let inputsPromise=Q(axios.get(setting.host_url + '/workflow/input/' + path, {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+			let input=res.data;
+			if (input.system !== undefined) {
+				this.state.inputs[fileId]=input;
+			}
+			return res.data;
+		}.bind(this))
+		return inputsPromise;
+	},
+
+	checkWorkflowJobStatus: function(wfId) {
+		let setting=this.state.setting;
+		let jobStatusPromise=Q(axios.get(setting.host_url + '/workflow/status/' + wfId, {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+			_.forEach(res.data, function(v) {
+				this.state.jobStatus[v.job_id]=v.status;
+			}.bind(this));
+			console.log(this.state.jobStatus);
+			this.complete();
+			return res.data;
+		}.bind(this));
+		return jobStatusPromise;
 	},
 
 	checkJobStatus: function(jobIds) {

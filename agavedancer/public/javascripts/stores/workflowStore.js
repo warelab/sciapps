@@ -19,7 +19,7 @@ const WorkflowStore=Reflux.createStore({
 			showWorkflowDiagram: false,
 			workflowDetail: undefined,
 			workflowDetailCache: {},
-			workflows: {},
+			build: {},
 			workflowDiagramDef: undefined
 		};
 		this.listenTo(JobsStore, this.setJobsStore);
@@ -40,6 +40,7 @@ const WorkflowStore=Reflux.createStore({
 
 	hideWorkflowDiagram: function() {
 		this.state.showWorkflowDiagram=false;
+		JobsActions.hideFile();
 		this.complete();
 	},
 
@@ -95,7 +96,7 @@ const WorkflowStore=Reflux.createStore({
 
 	buildWorkflow: function(wid, jobIds) {
 		if (wid && jobIds && jobIds.length > 0) {
-			this.state.workflows[wid]={
+			this.state.build[wid]={
 				id: wid, 
 				jobIds: jobIds,
 				jobs: {},
@@ -106,7 +107,7 @@ const WorkflowStore=Reflux.createStore({
 			};
 			JobsActions.setWorkflowJobOutputs(jobIds, wid);
 		} else if (wid) {
-			let workflow=this.state.workflows[wid];
+			let workflow=this.state.build[wid];
 			for (let jobId of workflow.jobIds) {
 				this._buildWfStep(wid, jobId);
 			}
@@ -116,7 +117,7 @@ const WorkflowStore=Reflux.createStore({
 	},
 
 	_jobsAreReady: function(wid, jobsStore) {
-		let workflow=this.state.workflows[wid];
+		let workflow=this.state.build[wid];
 		for (let jobId of workflow.jobIds) {
 			workflow.jobs[jobId]=jobsStore.jobDetailCache[jobId];
 			workflow.jobOutputs[jobId]=jobsStore.jobOutputs[jobId];
@@ -125,7 +126,7 @@ const WorkflowStore=Reflux.createStore({
 	},
 
 	_buildWfStep: function(wid, jobId) {
-		let wf=this.state.workflows[wid];
+		let wf=this.state.build[wid];
 		let sid=_.size(wf.steps);
 		let job=wf.jobs[jobId], jobOutputs=wf.jobOutputs[jobId];
 		let step={

@@ -10,6 +10,7 @@ import JobsActions from '../actions/jobsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import {Modal, Button} from 'react-bootstrap';
 import Mermaid from './mermaid.js';
+import FilesInfo from './filesInfo.js';
 
 const WorkflowDiagram=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore'), Reflux.connect(JobsStore, 'jobsStore'), Reflux.connect(AppsStore, 'appsStore')],
@@ -39,7 +40,10 @@ const WorkflowDiagram=React.createClass({
 
 	clickNodeFuncMap: function(id) {
 		let func=function() {
+			let input=this.state.jobsStore.inputs[id];
+			JobsActions.showFile(id);
 			console.log(id);
+			console.log(input);
 		}.bind(this);
 		return func;
 	},
@@ -82,13 +86,13 @@ const WorkflowDiagram=React.createClass({
 						diagramDefStmts.push('click ' + value + ' clickNode');
 						diagramDefStmts.push(ic.step + '-->' + value);
 						diagramDefStmts.push(value + '-->' + step.id);
-						//diagramDefStmts.push( ic.step + '-->|' + ic.output_name + '|' + step.id)
 					} else if (ic) {
-						value=ic;
-						let input_name=_.last(value.split('/'));
-						diagramDefStmts.push(input_name + '(' + input_name + ')');
-						diagramDefStmts.push("class " + input_name + " fileNode");
+						value=_.last(ic.split('/'));
+						let input_name=value.replace(/\W/g, '_').toLowerCase();
+						diagramDefStmts.push(input_name + '(' + value + '); class ' + input_name + ' fileNode');
+						diagramDefStmts.push('click ' + input_name + ' clickNode');
 						diagramDefStmts.push(input_name + '-->' + step.id);
+						JobsActions.setWorkflowInputs(input_name, ic);
 					}
 				});
 			});
@@ -99,20 +103,26 @@ const WorkflowDiagram=React.createClass({
 
 	render: function() {
 		let showWorkflowDiagram=this.state.workflowStore.showWorkflowDiagram;
-		let jobs=this.state.jobsStore.workflow.jobs;
-		let jobStatus=this.state.jobsStore.jobStatus;
+		let jobsStore=this.state.jobsStore;
+		let workflow=jobsStore.workflow;
+		let fileId=jobsStore.fileId;
+		let jobStatus=jobsStore.jobStatus;
 		let body=<div />;
+		let filesInfo=<div />;
 		if (showWorkflowDiagram) {
 			let workflowDiagramDef=this.buildWorkflowDiagramDef(this.state.workflowStore, this.state.appsStore, this.state.jobsStore);
 			body=<Mermaid diagramDef={workflowDiagramDef}/>;
-			if (typeof jobs === 'object') {
-				let unfinished=_.findIndex(jobs, function(j) {
+			if (typeof workflow.jobs === 'object') {
+				let unfinished=_.findIndex(workflow.jobs, function(j) {
 					return jobStatus[j] !== 'FINISHED';
 				});
 				if (unfinished !== -1) {
-					setTimeout((jobs) => JobsActions.checkJobStatus(jobs), this.props.timeout, jobs); 
+					setTimeout((wfId) => JobsActions.checkWorkflowJobStatus(wfId), this.props.timeout, workflow.id); 
 				}
 			}
+		}
+		if (fileId !== undefined) {
+			filesInfo=<FilesInfo fileId={fileId} />;
 		}
 
 		return (
@@ -122,6 +132,7 @@ const WorkflowDiagram=React.createClass({
 				</Modal.Header>
 				<Modal.Body>
 					{body}
+					{filesInfo}
 				</Modal.Body>
 				<Modal.Footer>
 					<Button onClick={this.hideWorkflowDiagram}>Close</Button>

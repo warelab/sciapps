@@ -6,6 +6,8 @@ const JobsActions=Reflux.createActions([
 	'listJobs',
 	'submitWorkflowJobs',
 	'submitJob',
+	'showFile',
+	'hideFile',
 	'showJob',
 	'hideJob',
 	'setJob',
@@ -13,7 +15,9 @@ const JobsActions=Reflux.createActions([
 	'setWorkflowJobOutputs',
 	'resetWorkflowJobs',
 	'showJobOutputs',
+	'setWorkflowInputs',
 	'checkJobStatus',
+	'checkWorkflowJobStatus',
 	'resubmitJob',
 	'resetResubmit'
 ]);
