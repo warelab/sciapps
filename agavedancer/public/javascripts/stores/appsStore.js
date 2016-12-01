@@ -109,7 +109,7 @@ const AppsStore=Reflux.createStore({
 		if (appDetail) {
 			appPromise=Q(appDetail);
 		} else {
-			appPromise=Q(axios.get('/app/' + appId, {
+			appPromise=Q(axios.get(setting.host_url + '/app/' + appId, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'}
 			}))
 			.then(function(res) {
