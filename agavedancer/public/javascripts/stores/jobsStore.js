@@ -15,6 +15,7 @@ const JobsStore=Reflux.createStore({
 			setting: _config.setting,
 			resubmit: false,
 			showJob: false,
+			showJobId: undefined,
 			jobs: [],
 			jobDetail: {},
 			jobStatus: {},
@@ -23,7 +24,6 @@ const JobsStore=Reflux.createStore({
 			wid: {},
 			inputs: {},
 			fileDetail: {},
-			fileId: undefined,
 			workflow: {}
 		};
 	},
@@ -118,33 +118,18 @@ const JobsStore=Reflux.createStore({
 		let jobDetail=this.state.jobDetailCache[jobId];
 		let setting=this.state.setting;
 		let jobPromise;
-		if (jobDetail) {
+		if (jobDetail && _.includes(['FINISHED','FAILED'], jobDetail.status)) {
 			jobPromise=Q(jobDetail);
 		} else {
 			jobPromise=Q(axios.get(setting.host_url + '/job/' + jobId, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			}))
 			.then(function(res) {
-				this.state.jobDetail=res.data;
-				if(_.includes(['FINISHED','FAILED'], res.data.status)) {
-					this.state.jobDetailCache[res.data.job_id]=res.data;
-				}
+				this.state.jobDetailCache[res.data.job_id]=res.data;
 				return res.data;
 			}.bind(this));
 		}
 		return jobPromise;
-	},
-
-	showFile: function(fileId) {
-		this.state.fileId=fileId;
-		this.complete();
-	},
-
-	hideFile: function() {
-		if (this.state.fileId !== undefined) {
-			this.state.fileId=undefined;
-			this.complete();
-		}
 	},
 
 	showJob: function(jobId) {
@@ -154,7 +139,8 @@ const JobsStore=Reflux.createStore({
 		}
 		let jobPromise=this.setJob(jobId);
 		jobPromise.then(function(jobDetail) {
-			this.state.jobDetail=jobDetail;
+			this.state.showJobId=jobId;
+			this.state.jobDetailCache[jobId]=jobDetail;
 			this.complete();
 		}.bind(this))
 		.catch(function(error) {
@@ -165,7 +151,7 @@ const JobsStore=Reflux.createStore({
 
 	hideJob: function() {
 		if (this.state.showJob) {
-			this.state.jobDetail={};
+			this.state.showJobId=undefined;
 			this.state.showJob=false;
 			this.complete();
 		}

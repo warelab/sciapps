@@ -109,7 +109,9 @@ const AppsStore=Reflux.createStore({
 		if (appDetail) {
 			appPromise=Q(appDetail);
 		} else {
-			appPromise=Q(axios.get('/assets/' + appId + '.json'))
+			appPromise=Q(axios.get('/app/' + appId, {
+				headers: {'X-Requested-With': 'XMLHttpRequest'}
+			}))
 			.then(function(res) {
 				this.state.appDetailCache[appId]=res.data;
 				return res.data;
@@ -132,6 +134,7 @@ const AppsStore=Reflux.createStore({
 	_showApp: function(appId) {
 		let appPromise=this.setApp(appId);
 		appPromise.then(function(appDetail) {
+			this.state.appDetailCache[appId]=appDetail;
 			this.state.appDetail=appDetail;
 			this.complete();
 		}.bind(this))

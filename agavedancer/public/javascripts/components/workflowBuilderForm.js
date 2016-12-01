@@ -15,8 +15,8 @@ const WorkflowBuilderForm=React.createClass({
 
 	getInitialState: function() {
 		return {
-			total: 3,
-			selects: [],
+			selectCount: 3,
+			wid: undefined,
 			setting: _config.setting,
 			onSubmit: false,
 			onValidate: false
@@ -25,7 +25,7 @@ const WorkflowBuilderForm=React.createClass({
 
 	componentDidUpdate: function(prevProps, prevState) {
 		let workflowStore=this.state.workflowStore;
-		let wf=workflowStore.workflows[this.state.wid];
+		let wf=this.state.wid ? workflowStore.build[this.state.wid] : undefined;
 		if (this.state.onSubmit && wf && wf.completed) {
 			let wfObj={
 				id:	wf.id,
@@ -38,7 +38,7 @@ const WorkflowBuilderForm=React.createClass({
 	},
 
 	componentWillUnmount: function() {
-		this.setState({selects: []});
+		this.setState({sselectCount: 3});
 	},
 
 	formName: 'workflowBuilderForm',
@@ -55,8 +55,7 @@ const WorkflowBuilderForm=React.createClass({
 	},
 
 	handleAddSteps: function() {
-		let total=this.state.total + 3;
-		this.setState({total: total});
+		this.setState({sselectCount: this.state.selectCount + 3});
 	},
 
 	buildSelectOptions: function(jobs) {
@@ -73,21 +72,19 @@ const WorkflowBuilderForm=React.createClass({
 	render: function() {
 		let jobsStore=this.state.jobsStore;
 		let onSubmit=this.state.onSubmit;
-		if (this.state.total > this.state.selects.length) {
-			let options=this.buildSelectOptions(jobsStore.jobs);
-			for (let i=this.state.selects.length; i < this.state.total; i++) {
-				let props={
-					name: i,
-					type: 'select',
-					label: 'Workflow Step ' + i
-				};
-				this.state.selects.push(<BaseInput key={i} data={props} options={options} isSelect={true} />);
-			}
-		}
+		let options=this.buildSelectOptions(jobsStore.jobs);
+		let selects=Array(this.state.selectCount).fill(1).map(function(v, i) {
+			let props={
+				name: i,
+				type: 'select',
+				label: 'Workflow Step ' + i
+			};
+			return(<BaseInput key={i} data={props} options={options} isSelect={true} />);
+		});
 
 		let markup=(
 			<form ref={this.formName} >
-				{this.state.selects}
+				{selects}
 				<ButtonToolbar>
 					<Button
 						bsStyle='primary'

@@ -4,6 +4,8 @@ import React from 'react';
 import Reflux from 'reflux';
 import _ from 'lodash';
 import {Panel, Button} from 'react-bootstrap';
+import AppsStore from '../stores/appsStore.js';
+import JobsStore from '../stores/jobsStore.js';
 import BaseInput from './baseInput.js';
 import AppsParam from './appsParam.js';
 import AppsInput from './appsInput.js';
@@ -11,6 +13,8 @@ import JobsActions from '../actions/jobsActions.js';
 import utilities from '../libs/utilities.js';
 
 const AppsForm=React.createClass({
+	mixins: [Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(JobsStore, 'jobsStore')],
+
 	getInitialState: function() {
 		return { onSubmit: false, onValidate: false, setting: _config.setting, required: {} };
 	},
@@ -36,7 +40,7 @@ const AppsForm=React.createClass({
 		this.setState({onSubmit: true, onValidate: true});
 		if(this.validateForm()) {
 			let formData=new FormData(this.refs[this.formName]);
-			JobsActions.submitJob(this.props.appDetail.id, formData);
+			JobsActions.submitJob(this.props.appId, formData);
 			this.setState({onValidate: false});
 		}
 		setTimeout(() => {
@@ -45,8 +49,8 @@ const AppsForm=React.createClass({
 	},
 
 	render: function() {
-		let appDetail=this.props.appDetail;
-		let jobDetail=this.props.jobDetail;
+		let appDetail=this.state.appsStore.appDetailCache[this.props.appId];
+		let jobDetail=this.state.jobsStore.jobDetailCache[this.props.jobId];
 		let resubmit=this.props.resubmit;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
 		let required=this.state.required={};

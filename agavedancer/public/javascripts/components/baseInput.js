@@ -42,9 +42,9 @@ const BaseInput=React.createClass({
 			data.checked=this.state.value;
 		}
 		if (isSelect) {
-			let optionsMarkup=options.map(function(option) {
+			let optionsMarkup=options.map(function(option, i) {
 				return(
-					<option key={option.optionValue} value={option.optionValue} >
+					<option key={i} value={option.optionValue} >
 						{option.optionChild}
 					</option>
 				);

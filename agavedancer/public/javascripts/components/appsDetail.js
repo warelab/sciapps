@@ -31,8 +31,8 @@ const AppsDetail=React.createClass({
 		if (appDetail.id) {
 			markup=(
 				<div>
-					<AppsForm appDetail={appDetail} jobDetail={jobDetail} resubmit={jobsStore.resubmit} />
-					<AppsInfo appDetail={appDetail} />
+					<AppsForm appId={appDetail.id} jobId={jobDetail.job_id} resubmit={jobsStore.resubmit} />
+					<AppsInfo appId={appDetail.id} />
 				</div>
 			);
 		} else {

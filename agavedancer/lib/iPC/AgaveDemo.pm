@@ -162,7 +162,7 @@ sub uncompress_result {
 
 sub parse_ls {
 	my ($ls, $file_root)=@_;
-	my $regex=qr#^$file_root/(.*):#;
+	my $regex=qr#^$file_root/?(.*):#;
 	my %result;
 	#shift @$ls;
 	my $path;
@@ -279,16 +279,15 @@ sub browse_datastore {
 
 sub browse_server {
 	my ($path)=@_;
-	my $server=setting("file_server");
-	my $file_root=setting("file_root");
-	my $file_user=setting("file_user");
-	my $bin=$FindBin::Bin;
 
 	my $root='';
 	my $path_to_read = $path ? $path : $root;
+	my $datastore_home=setting('datastore_home');
+	my $datastore_path=setting('datastore_path');
+	my $datastore_root="$datastore_home/$datastore_path";
 
-	my @ls=`sudo -u $file_user $bin/files-list.sh $server $file_root $path_to_read`;
-	my $dir_list=parse_ls(\@ls, $file_root);
+	my @ls=`ls -tlR $datastore_root`;
+	my $dir_list=parse_ls(\@ls, $datastore_root);
 
 	to_json([map +{
 			is_root => $_ eq $root ? 1 : 0,
@@ -347,15 +346,21 @@ get '/app/:id' => sub {
 
 sub retrieveApps {
 	my ($app_id)=@_;
-
-	my $api = getAgaveClient();
-
-	my $apps = $api->apps;
 	my $return;
-	if ($app_id) {
-		($return)=grep {! $_->{isPublic} } $apps->find_by_id($app_id);
+
+	my $appfile="public/assets/${app_id}.json";
+	if (-f $appfile && -r $appfile) {
+		my $json=`cat $appfile`;
+		$return=Agave::Client::Object::Application->new(from_json($json));
 	} else {
-		$return=[grep { ! $_->{isPublic} } ($apps->list)];
+		my $api = getAgaveClient();
+
+		my $apps = $api->apps;
+		if ($app_id) {
+			($return)=grep {! $_->{isPublic} } $apps->find_by_id($app_id);
+		} else {
+			$return=[grep { ! $_->{isPublic} } ($apps->list)];
+		}
 	}
 	$return;
 }
@@ -502,24 +507,32 @@ get '/job/:id' => sub {
 
 sub retrieveJob {
 	my ($job_id)=@_;
-
-	my $apif = getAgaveClient();
-
-	my $job_ep = $apif->job;
-	my $row = database->quick_select('job', {job_id => $job_id});
-	my $agave_id=$row ? $row->{'agave_id'} : $job_id;
+	my $agave_id=$job_id;
 	my $job;
-	my $retry=2;
-	do {
-		$job = eval { $job_ep->job_details($agave_id) };
-    if ($@) {
-			print STDERR $@, $/;
-			if ($@=~/token (?:expired|inactive)/i || $@=~/invalid credentials/i) {
-				return $@;
-			}
+
+	my $row = database->quick_select('job', {job_id => $job_id}) || database->quick_select('job', {agave_id => $job_id});
+	if ($row) {
+		if ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED') {
+			$job=Agave::Client::Object::Job->new(from_json($row->{agave_json}));
+		} elsif($row->{job_id} eq $job_id) {
+			$agave_id=$row->{'agave_id'};
 		}
-		$retry--;
-	} while (!$job && sleep(1) && $retry);
+	}
+	unless ($job) {
+		my $apif = getAgaveClient();
+		my $job_ep = $apif->job;
+		my $retry=2;
+		do {
+			$job = eval { $job_ep->job_details($agave_id) };
+    	if ($@) {
+				print STDERR $@, $/;
+				if ($@=~/token (?:expired|inactive)/i || $@=~/invalid credentials/i) {
+					return $@;
+				}
+			}
+			$retry--;
+		} while (!$job && sleep(1) && $retry);
+	}
 	return $job;
 }
 
@@ -685,10 +698,11 @@ sub prepareJob {
 
 	my ($result_folder)=map {my $t=$_; $t=~s/\W+/-/g; lc($t) . "-" . tempname()} ($app_id);
 	$archive_path.= "/" . $result_folder;
+	
 	my $archive_path_abs=$archive_home . "/" . $archive_path;
-	mkdir($archive_path_abs);
+	mkdir($archive_path_abs) or print STDERR "Error: can't mkdir $archive_path_abs, $!\n";
 	chmod(0775, $archive_path_abs);
-	open FH, ">", "$archive_path_abs/.htaccess" or print STDERR "Error: can't open  ${archive_path_abs}/.htaccess\n";
+	open FH, ">", "$archive_path_abs/.htaccess" or print STDERR "Error: can't open  ${archive_path_abs}/.htaccess, $!\n";
 	print FH "DirectoryIndex ../.index.php?dir=$result_folder\n";
 	close FH;
 
@@ -708,12 +722,13 @@ sub prepareJob {
 		url		=> $host_url . $noteinfo,
 	},
 	];
-	if (my $email = $form->{"_email"}) {
-		open FH, ">", "$archive_path_abs/.email" or print STDERR "Error: can't open  ${archive_path}/.email\n";
-		print FH $email;
-		close FH;
-	}
+	#if (my $email = $form->{"_email"}) {
+	#	open FH, ">", "$archive_path_abs/.email" or print STDERR "Error: can't open  ${archive_path}/.email, $!\n";
+	#	print FH $email;
+	#	close FH;
+	#}
 
+	$job_form{_email}=$form->{_email} || undef;
 	$job_form{archive}=1;
 	$job_form{archiveSystem}=$archive_system;
 	$job_form{archivePath}=$archive_path;
@@ -723,6 +738,7 @@ sub prepareJob {
 	my $job_json=to_json(\%job_form);
 	my $wid=$form->{'_workflow_id'};
 	my $data={job_id => $job_id, app_id => $app_id, job_json => $job_json, status => 'PENDING'};
+	print STDERR "CC|" . to_dumper(\%job_form) . "\n";
 	if ($wid) {
 		$data->{workflow_id}=$wid;
 		$data->{step_id}=$step->{id};
@@ -745,10 +761,8 @@ sub prepareJob {
 
 sub submitJob {
 	my ($apif, $app, $job_id, $job_form)=@_;
-	#print STDERR to_dumper($job_form) . "\n";
 	
 	return unless $job_id;
-
 	
 	my @row=database->quick_select('nextstep', {next => $job_id});
 	foreach my $row (@row) {
@@ -790,15 +804,14 @@ any ['get', 'post'] => '/notification/:id' => sub {
 		$params->{status}='FINISHED';
 	}
 	#print STDERR 'STATUS: ' . $params->{status} . "\n";
-	update_job_status($params);
+	updateJob($params);
 	
 	if ($params->{status} eq 'FINISHED') {
 		next if $params->{message}=~/Attempt [12] to submit job/;
-		my $path=setting("archive_home") . '/' . $params->{archivePath};
-		if (-r $path . "/.email") {
-			open(EMAIL, $path . "/.email");
-			my $email=do { local $/;  <EMAIL> };
-			close EMAIL;
+		my $job=database->quick_select('job', {agave_id => $params->{id}});
+		my $job_form=from_json($job->{job_json});
+
+		if (my $email=$job_form->{_email}) {
 			my $template_engine = engine 'template';
 			my $content=$template_engine->apply_renderer('job', {job => $params}); 
 			my $mail={
@@ -815,12 +828,12 @@ any ['get', 'post'] => '/notification/:id' => sub {
 		submitNextJob($params);
 		uncompress_result($params->{archivePath});
 	} elsif ($params->{status} eq 'FAILED') {
-		resubmitJob($params->{id});
+		#resubmitJob($params->{id});
 	}
 	return;
 };
 
-sub update_job_status {
+sub updateJob {
 	my ($params)=@_;
 	my $data={status => $params->{status}};
 	if ($params->{status} eq 'FINISHED') {

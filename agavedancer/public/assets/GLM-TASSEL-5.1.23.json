@@ -172,7 +172,7 @@
                 ]
             }, 
             "value": {
-                "default": "glm_allele.txt", 
+                "default": "GLM_allele.txt", 
                 "order": 0, 
                 "validator": null
             }
@@ -194,7 +194,7 @@
                 ]
             }, 
             "value": {
-                "default": "glm_stat.txt", 
+                "default": "GLM_stat.txt", 
                 "order": 0, 
                 "validator": null
             }

@@ -33,6 +33,10 @@ const WorkflowStore=Reflux.createStore({
 		this.trigger(this.state);
 	},
 
+	showNode: function() {
+		this.complete();
+	},
+
 	showWorkflowDiagram: function() {
 		this.state.showWorkflowDiagram=true;
 		this.complete();

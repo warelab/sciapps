@@ -19,20 +19,19 @@ route_cache: 1
 # production config
 agave_config: ".agave"
 host_url: "http://www.sciapps.org"
-archive_system: 'brie.cshl.edu'
-archive_path: 'results'
+archive_system: 'halcott.cshl.edu'
 archive_home: '/agave_data'
-input_system: 'brie.cshl.edu'
-input_path: 'inputs'
+archive_path: 'results'
+input_system: 'halcott.cshl.edu'
 input_home: '/agave_data'
+input_path: 'inputs'
+datastore_home: '/agave_data'
+datastore_path: 'example_data'
 output_url: 'http://data.sciapps.org'
 email: 'noreply@sciapps.org'
 upload_suffix: ".upload"
-wf_step_prefix: 'wf:step:'
+wf_step_prefix: 'wf_step_'
 maxRunTime: "96:00:00"
 datastore_system: 'data.sciapps.org'
 uncompress_suffix: '.open.tar.gz'
-file_server: 'brie7'
-file_root: '/wildcat'
-file_user: 'scopy'
 use_file_server: 1
