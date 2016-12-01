@@ -2,18 +2,18 @@
 
 To install, follow steps below
 
-git clone https://github.com/warelab/sciapps.git
+  1. git clone https://github.com/warelab/sciapps.git
 
-cd sciapps/agavedancer
+  2. cd sciapps/agavedancer
 
-npm install
+  3. npm install
 
-grunt
+  4. grunt
 
-sqlite3 database <models/schema.sql
+  5. sqlite3 database <models/schema.sql
 
-chmod 777 agavedancer
+  6. chmod 777 agavedancer
 
-chmod 777 agavedancer/database 
+  7. chmod 777 agavedancer/database 
 
-chmod 777 agavedancer/bin
+  8. chmod 777 agavedancer/bin
