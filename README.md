@@ -12,8 +12,9 @@ To install, follow steps below
 
   5. sqlite3 database <models/schema.sql
 
-  6. chmod 777 agavedancer
+  6. chmod 777 . database bin
 
-  7. chmod 777 agavedancer/database 
+  7. Restart apache
+    sudo /usr/sbin/apachectl configtest or sudo /usr/local/apache2/bin/apachectl configtest
+    sudo /usr/sbin/apachectl graceful or sudo /usr/local/apache2/bin/apachectl graceful
 
-  8. chmod 777 agavedancer/bin
