@@ -15,6 +15,8 @@ To install, follow steps below
   6. chmod 777 . database bin
 
   7. Restart apache
-    sudo /usr/sbin/apachectl configtest or sudo /usr/local/apache2/bin/apachectl configtest
-    sudo /usr/sbin/apachectl graceful or sudo /usr/local/apache2/bin/apachectl graceful
+    
+      sudo /usr/sbin/apachectl configtest or sudo /usr/local/apache2/bin/apachectl configtest    
+     
+      sudo /usr/sbin/apachectl graceful or sudo /usr/local/apache2/bin/apachectl graceful
 
