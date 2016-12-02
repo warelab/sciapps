@@ -55,7 +55,7 @@ const WorkflowBuilderForm=React.createClass({
 	},
 
 	handleAddSteps: function() {
-		this.setState({sselectCount: this.state.selectCount + 3});
+		this.setState({selectCount: this.state.selectCount + 3});
 	},
 
 	buildSelectOptions: function(jobs) {
