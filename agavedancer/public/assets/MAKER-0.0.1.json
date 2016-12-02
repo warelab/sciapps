@@ -241,48 +241,48 @@
     "outputs": [
         {
             "details": {
-                "description": "Output filename", 
-                "label": "maker_out"
-            }, 
-            "id": "output", 
+                "description": "GFF output filename",
+                "label": "Maker_gff_out"
+            },
+            "id": "maker_gff_output",
             "semantics": {
                 "fileTypes": [
                     "raw-0"
-                ], 
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
                 "ontology": [
                     "http://sswapmeet.sswap.info"
                 ]
-            }, 
+            },
             "value": {
-                "default": "my.all.gff.gz", 
-                "order": 0, 
+                "default": "my.all.gff.gz",
+                "order": 0,
                 "validator": null
             }
         },
         {
             "details": {
-                "description": "Maker jbrowse file", 
-                "label": "maker_jbrowse"
-            }, 
-            "id": "maker_jbrowse", 
+                "description": "Maker output folder",
+                "label": "Maker_output"
+            },
+            "id": "maker_output",
             "semantics": {
                 "fileTypes": [
                     "raw-0"
-                ], 
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
                 "ontology": [
                     "http://sswapmeet.sswap.info"
                 ]
-            }, 
+            },
             "value": {
-                "default": "maker.jbrowse", 
-                "order": 0, 
+                "default": "maker_output",
+                "order": 0,
                 "validator": null
             }
-        }
+        } 
     ], 
     "parallelism": "SERIAL", 
     "parameters": [
