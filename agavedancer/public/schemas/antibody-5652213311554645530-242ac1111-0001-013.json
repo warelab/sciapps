@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Antibody",
+  "description": "Schema for antibodies",
+  "type": "object",
+  "properties": {
+    "source": {
+        "$ref": "http://www.sciapps.org/schemas/source-5282249919087841766-242ac1111-0001-013.json"
+    },
+    "product_id": {
+	"title": "Product ID",
+        "description": "The product identifier provided by the originating lab or vendor.",
+	"type": "string"
+    },
+    "lot_id": {
+	"title": "Lot ID",
+	"description": "The lot identifier provided by the originating lab or vendor.",
+	"type": "string"
+    },
+    "host_organism": {
+	"$ref": "http://www.sciapps.org/schemas/organism-927891329186328090-242ac1111-0001-013.json"
+    }, 
+    "targets": {
+	"title": "Targets",
+        "items": {
+		"description": "The name of the gene whose expression or product is the intended goal of the antibody.",
+		"type": "string"
+        },
+        "type": "array"
+    },
+    "url": {
+	"format": "uri",
+	"title": "URL",
+	"description": "An external resource with additional information about the antibody.",
+	"type": "string"
+    }
+  },
+  "required": [
+    "product_id",
+    "lot_id",
+    "source",
+    "host_organism",
+    "targets"
+  ]
+}

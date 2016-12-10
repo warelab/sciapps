@@ -1,0 +1,19 @@
+{
+  "name": "Metadata for mRNA",
+  "value": {
+	"line": {
+		"name": "japonica Nipponbare",
+		"organism": {
+			"name": "rice",
+			"taxon_id": "4530",
+			"scientific_name": "Oryza sativa"
+		},
+		"url": "http://rice.plantbiology.msu.edu/"
+	},
+	"type": "Annotation evidence",
+	"format": "fasta",
+	"description": "mRNA sequences from NCBI"
+  },
+  "schemaId": "149126283550331366-242ac1111-0001-013",
+  "associationIds": "7411924850134225382-242ac113-0001-002"
+}

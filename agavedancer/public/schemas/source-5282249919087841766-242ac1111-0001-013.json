@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Source",
+  "description": "Schema for an originating lab or vendor.",
+  "type": "object",
+  "properties": {
+	"name": {
+            "title": "Name",
+            "type": "string",
+            "description": "The complete name of the originating lab or vendor. "
+        },
+	"url": {
+            "title": "URL",
+            "type": "string",
+            "description": "An external resource with additional information about the source.",
+            "format": "uri"
+        }
+  },
+  "required": [
+    "name"
+  ]
+}

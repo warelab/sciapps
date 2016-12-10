@@ -1,0 +1,20 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "line",
+    "type": "object",
+    "required": ["name", "organism"],
+    "properties": {
+       "name": {
+           "description": "A short unique name for the line (e.g. 'B73' or 'BTx623').", 
+           "title": "Common name", 
+           "type": "string" 
+        }, 
+        "organism": { "$ref": "http://www.sciapps.org/schemas/organism-927891329186328090-242ac1111-0001-013.json" },
+        "url": {
+            "title": "URL",
+            "description": "An external resource with additional information about the donor.",
+            "type": "string",
+            "format": "uri"
+        }
+    }
+}

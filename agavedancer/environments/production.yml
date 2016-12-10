@@ -8,13 +8,19 @@ log: "warning"
 logger: "file"
 
 # don't consider warnings critical
-warnings: 0
+warnings: 1
 
 # hide errors 
-show_errors: 0
+show_errors: 1
 
 # cache route resolution for maximum performance
 route_cache: 1
+
+# For debugging
+#log: "core"
+#logger: "console"
+#warnings: 1
+#show_errors: 1
 
 # production config
 agave_config: ".agave"

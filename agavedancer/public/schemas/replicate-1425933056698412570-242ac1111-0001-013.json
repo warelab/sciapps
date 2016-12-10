@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Replicate",
+  "description": "Schema for experimental replicates",
+  "type": "object",
+  "properties": {
+    "library": {
+        "$ref": "http://www.sciapps.org/schemas/library-3963606374641954330-242ac1111-0001-013.json" 
+    },
+    "antibody": {
+	"$ref": "http://www.sciapps.org/schemas/antibody-5652213311554645530-242ac1111-0001-013.json"
+    },
+    "biological_replicate_number": {
+        "title": "Biological replicate",
+        "description": "Data collection under the same methods using a different biological source, measuring the variability in the biological source.",
+        "type": "integer",
+        "default": 1
+    },
+    "technical_replicate_number": {
+        "title": "Technical replicate",
+        "description": "Data collection under the same methods using the same biological source, measuring the variability in the method.",
+        "type": "integer",
+        "default": 1
+    },
+    "experiment": {
+        "title": "UUID of the experiment",
+        "description": "The experiment the replicate belongs to.",
+        "type": "string"
+    }
+  },
+  "required": [
+    "library",
+    "experiment",
+    "biological_replicate_number",
+    "technical_replicate_number"
+  ]
+}
