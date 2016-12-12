@@ -19,4 +19,19 @@ To install, follow steps below
       sudo /usr/sbin/apachectl configtest or sudo /usr/local/apache2/bin/apachectl configtest    
      
       sudo /usr/sbin/apachectl graceful or sudo /usr/local/apache2/bin/apachectl graceful
+      
+  8. Add json files for new app
+  
+      Create json files inside sciapps/agavedancer/public/assets/
+      
+      Add tags for the app into agaveAppsList.json file
+      
+      Run live-server to test the apps before pushing to github
+      
+      git add .
+      
+      git commit
+      
+      git push origin master
+      
 
