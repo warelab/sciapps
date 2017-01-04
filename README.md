@@ -1,6 +1,6 @@
 # SciApps
 
-To install, follow steps below
+To install, follow steps below (for local install, skip step 7)
 
   1. git clone https://github.com/warelab/sciapps.git
 
@@ -20,14 +20,20 @@ To install, follow steps below
      
       sudo /usr/sbin/apachectl graceful or sudo /usr/local/apache2/bin/apachectl graceful
       
-  8. Add json files for new app
+  8. Add new app
   
-      Create json files inside sciapps/agavedancer/public/assets/
+      a. Develop app and test in Discovery Environment
       
-      Add tags for the app into agaveAppsList.json file
+      b. Copy json file into sciapps/agavedancer/public/assets/
       
-      Run live-server to test the apps before pushing to github
+      c. Add tags for the app into agaveAppsList.json file
+  
+      d. Update permission: apps-pems-update -v -u maizecode -p READ_EXECUTE $APP_ID
+  
+      e. Run live-server to test the apps before pushing to github
       
+  9. Publish to SciApps.org
+  
       git add .
       
       git commit
