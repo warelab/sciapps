@@ -29,8 +29,10 @@ To install, follow steps below (for local install, skip step 7)
       c. Add tags for the app into agaveAppsList.json file
   
       d. Update permission: apps-pems-update -v -u maizecode -p READ_EXECUTE $APP_ID
+      
+      e. cd to agavedancer and run 'grunt'
   
-      e. cd public and type `live-server` to test the apps before pushing to github
+      f. cd public and type `live-server` to test the apps before pushing to github
       
   9. Publish to SciApps.org
   
