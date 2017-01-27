@@ -30,7 +30,7 @@ To install, follow steps below (for local install, skip step 7)
   
       d. Update permission: apps-pems-update -v -u maizecode -p READ_EXECUTE $APP_ID
   
-      e. Run live-server to test the apps before pushing to github
+      e. cd public and type `live-server` to test the apps before pushing to github
       
   9. Publish to SciApps.org
   
