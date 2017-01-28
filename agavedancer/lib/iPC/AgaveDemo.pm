@@ -145,8 +145,9 @@ sub tempname {
 }
 
 sub cmp_maxRunTime {
-	s/://g foreach @_;
-	$_[0] <=> $_[1];
+	my @t=@_;
+	s/://g foreach @t;
+	$t[0] <=> $t[1];
 }
 
 sub uncompress_result {
@@ -286,7 +287,7 @@ sub browse_server {
 	my $datastore_path=setting('datastore_path');
 	my $datastore_root="$datastore_home/$datastore_path";
 
-	my @ls=`ls -tlR $datastore_root`;
+	my @ls=`ls -tlR $datastore_root/$path_to_read`;
 	my $dir_list=parse_ls(\@ls, $datastore_root);
 
 	to_json([map +{
@@ -512,7 +513,7 @@ sub retrieveJob {
 
 	my $row = database->quick_select('job', {job_id => $job_id}) || database->quick_select('job', {agave_id => $job_id});
 	if ($row) {
-		if ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED') {
+		if ($row->{status} eq 'FINISHED') {
 			$job=Agave::Client::Object::Job->new(from_json($row->{agave_json}));
 		} elsif($row->{job_id} eq $job_id) {
 			$agave_id=$row->{'agave_id'};
@@ -585,6 +586,7 @@ ajax '/job/new/:id' => sub {
 	if ($job_id && $job && $job->{id}) {
 		my $jobRef=retrieveJob($job_id);
 		$jobRef->{job_id}=$job_id;
+		database->quick_update('job', {job_id => $job_id}, {agave_json => to_json($jobRef)});
 		return to_json($jobRef);
 	}
 };
@@ -835,10 +837,10 @@ any ['get', 'post'] => '/notification/:id' => sub {
 
 sub updateJob {
 	my ($params)=@_;
-	my $data={status => $params->{status}};
-	if ($params->{status} eq 'FINISHED') {
-		$data->{agave_json}=to_json(retrieveJob($params->{id}));
-	}
+	my $data={
+		status => $params->{status}, 
+		agave_json => to_json(retrieveJob($params->{id}))
+	};
 	database->quick_update('job', {agave_id => $params->{id}}, $data);
 }
 
