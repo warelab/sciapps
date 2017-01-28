@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Schema for tissues",
+  "type": "object",
+  "properties": {
+    "line": { "$ref": "http://www.sciapps.org/schemas/line-1314860328447775206-242ac1111-0001-013.json" },
+    "tissue_type": {
+	"enum": [
+		"whole organism",
+		"root",
+		"shoot",
+		"ear",
+		"pollen",
+		"endo"
+	]
+    },
+    "description": {
+       "type": "string"
+    }
+  },
+  "required": [
+    "description",
+    "line",
+    "tissue_type"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+        "name": "Metadata for rice organism",
+        "value": {
+                "name": "Rice",
+                "taxon_id": "4530",
+                "scientific_name": "Oryza sativa"
+        },
+        "schemaId": "927891329186328090-242ac1111-0001-013",
+        "associationIds":  ""
+}

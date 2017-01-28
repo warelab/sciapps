@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Library",
+  "description": "Schema for sequencing libraries",
+  "type": "object",
+  "properties": {
+    "tissue": { "$ref": "http://www.sciapps.org/schemas/tissue-7807703122193083930-242ac1111-0001-013.json" },
+    "lab": {
+	"description": "Lab associated with the submission.",
+	"type": "string",
+	"title": "Lab"
+    },
+    "nucleic_acid_term_name": {
+	"description": "SO (Sequence Ontology) term best matching the molecule isolated to generate the library",
+	"enum": [
+		"DNA",
+		"RNA",
+		"polyadenylated mRNA",
+		"miRNA",
+		"protein"
+	],
+	"type": "string",
+	"title": "Molecule term"
+    },
+    "description": {
+       "type": "string"
+    }
+  },
+  "required": [
+    "tissue",
+    "nucleic_acid_term_term"
+  ]
+}

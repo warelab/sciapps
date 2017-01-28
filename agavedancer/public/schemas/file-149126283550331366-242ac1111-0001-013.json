@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "Schema for general file type",
+  "type": "object",
+  "required": [
+	"type",
+	"format"
+  ],
+  "properties": {
+    "source": {
+        "$ref": "http://www.sciapps.org/schemas/source-5282249919087841766-242ac1111-0001-013.json"
+    },
+    "line": {
+        "$ref": "http://www.sciapps.org/schemas/line-1314860328447775206-242ac1111-0001-013.json"
+    },
+    "replicate": {
+        "$ref": "http://www.sciapps.org/schemas/replicate-1425933056698412570-242ac1111-0001-013.json"
+    },
+    "description": {
+       "type": "string"
+    },
+    "format": {
+	"enum": [
+		"bam",
+		"bed",
+		"bigBed",
+		"bigWig",
+		"fasta",
+		"fastq",
+		"gff",
+		"gtf",
+		"hdf5",
+		"tsv",
+		"csv",
+		"sam",
+		"tar",
+		"vcf",
+		"wig"
+	],
+	"title": "File format",
+	"type": "string"
+    },
+    "type": {
+	"title": "Type",
+	"type": "string",
+	"description": "A description of the file's purpose or contents.",
+	"enum": [
+		"Raw data",
+		"Alignment",
+		"Signal",
+		"Quantification",
+		"Reference genome",
+		"Annotation evidence",
+		"Parameter file"
+	]
+    },
+    "paired_end": {
+	"title": "Paired End Identifier",
+	"enum": [
+		"1",
+		"2"
+	],
+	"type": "string",
+	"description": "Which pair the file belongs to (if paired end library)"
+    },
+    "paired_with": {
+	"title": "File pairing",
+	"type": "string",
+	"description": "UUID of the file that corresponds with this file."
+    },
+    "derived_from": {
+        "title": "Job uuid",
+        "type": "string",
+        "description": "The uuid of the job that produces this output file."
+    },
+    "controlled_by": {
+        "title": "UUID of the control file",
+        "type": "array",
+        "description": "The files that control this file. ",
+        "items": {
+                "type": "string"
+        },
+	"uniqueItems": true
+    }
+  },
+  "oneOf": [{
+	"required": ["line"]
+    }, {
+	"required": ["replicate"]
+    }
+  ]
+}
