@@ -24,9 +24,9 @@ To install, follow steps below (for local install, skip step 7)
   
       a. Develop app and test in Discovery Environment
       
-      b. Copy json file into sciapps/agavedancer/public/assets/
+      b. Copy json file into sciapps/agavedancer/public/assets/ (make sure to name it as $app_id-$version.json)
       
-      c. Add tags for the app into agaveAppsList.json file
+      c. Add the app and tags for the app into agaveAppsList.json file (tags is used to represent a category)
   
       d. Update permission: apps-pems-update -v -u maizecode -p READ_EXECUTE $APP_ID
       
