@@ -26,7 +26,7 @@ const JobsItem=React.createClass({
 
 	render: function() {
 		let appId=this.props.data.appId;
-		let displayName=this.props.index + ': ' + appId;
+		let displayName=(this.props.index + 1) + ': ' + appId;
 		let isSubmitting=undefined === this.props.data.job_id;
 		let setting=this.props.setting;
 		let outputs=this.props.outputs;
