@@ -97,7 +97,7 @@ const WorkflowDiagram=React.createClass({
 					let value=v.value.default;
 					let output_name=(setting.wf_step_prefix + step.id + ':' + value).replace(/\W/g, '_').toLowerCase();
 					diagramDefStmts.push(output_name + '(' + value + '); class ' + output_name + ' fileNode');
-					diagramDefStmts.push('click ' + output_name + ' clickFileNode');
+					//diagramDefStmts.push('click ' + output_name + ' clickFileNode');
 					diagramDefStmts.push(appNodeId + '-->' + output_name);
 				});
 				_.forEach(appDetail.inputs, function(v) {
@@ -107,7 +107,7 @@ const WorkflowDiagram=React.createClass({
 						let prevAppNodeId=(setting.wf_step_prefix + ic.step).replace(/\W/g, '_').toLowerCase();
 						value=(setting.wf_step_prefix + ic.step + ':' + ic.output_name).replace(/\W/g, '_').toLowerCase();
 						diagramDefStmts.push(value + '(' + ic.output_name + '); class ' + value + ' fileNode');
-						diagramDefStmts.push('click ' + value + ' clickFileNode');
+						//diagramDefStmts.push('click ' + value + ' clickFileNode');
 						diagramDefStmts.push(prevAppNodeId + '-->' + value);
 						diagramDefStmts.push(value + '-->' + appNodeId);
 					} else if (ic) {
