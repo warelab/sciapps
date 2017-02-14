@@ -14,7 +14,7 @@ const FilesInfo=React.createClass({
 		let markup=<div />;
 		let tbody
 		let keys=['line_name', 'organism_name', 'organism_scientific_name', 'organism_taxon_id'];
-		if (fileDetail.system) {
+		if (fileDetail.system !== undefined) {
 			tbody=keys.map(function (key) {
 				let label=key.replace(/_/g, ' ');
 				return (

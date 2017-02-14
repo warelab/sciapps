@@ -51,10 +51,12 @@ const WorkflowDiagram=React.createClass({
 	clickInputFileNodeFuncMap: function(id) {
 		let func=function() {
 			let input=this.state.jobsStore.inputs[id];
-			this.state.activeNode={id: id, type: 'file'};
-			WorkflowActions.showNode();
+			if (input !== undefined) {
+				this.state.activeNode={id: id, type: 'file'};
+				WorkflowActions.showNode();
+				console.log(input);
+			}
 			console.log(id);
-			console.log(input);
 		}.bind(this);
 		return func;
 	},
