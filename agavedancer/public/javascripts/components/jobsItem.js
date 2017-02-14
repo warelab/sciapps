@@ -4,6 +4,8 @@ import React from 'react';
 import JobsActions from '../actions/jobsActions.js';
 import {ListGroup, ListGroupItem, Button, ButtonToolbar, Panel} from 'react-bootstrap';
 
+var Glyphicon = require('react-bootstrap').Glyphicon;
+
 const JobsItem=React.createClass({
 	getInitialState: function() {
 		return {isOpen: false};
@@ -46,17 +48,16 @@ const JobsItem=React.createClass({
 
 		return (
 			<ListGroupItem>
-				{displayName}
-				<ButtonToolbar>
-					<Button key='status' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.showJob} >Status</Button>
-					<Button key='outputs' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.showJobOutputs} >Outputs</Button>
-					<Button key='resubmit' disabled={isSubmitting} bsSize='xsmall' bsStyle='info' onClick={isSubmitting ? null : this.resubmitJob} >Resubmit</Button>
-				</ButtonToolbar>
-				<Panel collapsible expanded={this.state.isOpen}>
-					<ListGroup>
-						{outputsItemNodes}
-					</ListGroup>
-				</Panel>
+		          <ButtonToolbar>
+                            <Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.resubmitJob} >{displayName}</Button>
+                            <Button key='status' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJob} ><Glyphicon glyph='play-circle' /></Button>
+                            <Button key='outputs' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJobOutputs} ><Glyphicon glyph='download-alt' /></Button>
+			  </ButtonToolbar>
+            		  <Panel collapsible expanded={this.state.isOpen}>
+				<ListGroup>
+					{outputsItemNodes}
+				</ListGroup>
+	        	  </Panel>
 			</ListGroupItem>
 		);
 	}

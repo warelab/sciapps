@@ -85,7 +85,7 @@ const AppsInput=React.createClass({
 				placeholder: 'or Enter URL',
 				buttonAfter: dataStoreButton, 
 				className: 'form-control',
-				wrapperClassName: 'col-xs-6',
+				wrapperClassName: 'col-xs-9',
 				onChange: this.handleTextChange
 			};
 			let fileProps={
@@ -94,7 +94,7 @@ const AppsInput=React.createClass({
 				value: this.state.fileValue,
 				type: 'file',
 				className: 'form-control',
-				wrapperClassName: 'col-xs-6',
+				wrapperClassName: 'col-xs-3',
 				onChange: this.handleFileChange
 			};
 			markup=(
