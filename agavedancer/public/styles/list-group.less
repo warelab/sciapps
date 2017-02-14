@@ -2,14 +2,13 @@
 // List groups
 // --------------------------------------------------
 
-
 // Base class
 //
 // Easily usable on <ul>, <ol>, or <div>.
 
 .list-group {
   // No need to set list-style: none; since .list-group-item is block level
-  margin-bottom: 5px;
+  margin-bottom: 1px;
   padding-left: 0; // reset padding because ul and ol
 }
 
@@ -21,11 +20,12 @@
 .list-group-item {
   position: relative;
   display: block;
-//  padding: 10px 15px;
+  padding: 0px 8px;
   // Place the border on the list items and negative margin up for better styling
   margin-bottom: -1px;
+  margin-left: 2px;
   background-color: @list-group-bg;
-//  border: 1px solid @list-group-border;
+  border: 0px solid @list-group-border;
 
   // Round the first and last items
   &:first-child {
@@ -63,6 +63,38 @@ button.list-group-item {
 button.list-group-item {
   width: 100%;
   text-align: left;
+  color: @link-color;
+  font-weight: normal;
+  border-radius: 0;
+
+  &,
+  &:active,
+  &.active,
+  &[disabled],
+  fieldset[disabled] & {
+    background-color: transparent;
+    .box-shadow(none);
+  }
+  &,
+  &:hover,
+  &:focus,
+  &:active {
+    border-color: transparent;
+  }
+  &:hover,
+  &:focus {
+    color: @link-hover-color;
+    text-decoration: @link-hover-decoration;
+    background-color: transparent;
+  }
+  &[disabled],
+  fieldset[disabled] & {
+    &:hover,
+    &:focus {
+      color: @btn-link-disabled-color;
+      text-decoration: none;
+    }
+  }
 }
 
 .list-group-item {
