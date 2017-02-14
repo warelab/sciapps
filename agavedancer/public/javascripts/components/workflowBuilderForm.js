@@ -62,7 +62,7 @@ const WorkflowBuilderForm=React.createClass({
 		let options=jobs.map(function(o, i) {
 			return {
 				optionValue: o.job_id,
-				optionChild: i + ': ' + o.appId
+				optionChild: (i + 1) + ': ' + o.appId
 			};
 		});
 		options.unshift({optionValue: '', optionChild: 'Select a job'});
@@ -77,7 +77,7 @@ const WorkflowBuilderForm=React.createClass({
 			let props={
 				name: i,
 				type: 'select',
-				label: 'Workflow Step ' + i
+				label: 'Workflow Step ' + (i + 1)
 			};
 			return(<BaseInput key={i} data={props} options={options} isSelect={true} />);
 		});
