@@ -70,7 +70,7 @@ const AppsInput=React.createClass({
 			markup=(<Input {...props} />);
 		} else {
 			let dataStoreButton=(
-				<Button onClick={this.handleDataStore} bsStyle={this.props.onValidate ? this.validateState() : 'default'} >DataStore</Button>
+				<Button onClick={this.handleDataStore} bsStyle={this.props.onValidate ? this.validateState() : 'default'} >or Browse DataStore</Button>
 			);
 			let props={
 				label: prefix + data.details.label,
@@ -82,10 +82,9 @@ const AppsInput=React.createClass({
 				name: data.id,
 				value: this.state.textValue,
 				type: 'text',
+                                buttonBefore: dataStoreButton,
 				placeholder: 'or Enter URL',
-				buttonAfter: dataStoreButton, 
 				className: 'form-control',
-				wrapperClassName: 'col-xs-9',
 				onChange: this.handleTextChange
 			};
 			let fileProps={
@@ -93,8 +92,7 @@ const AppsInput=React.createClass({
 				name: data.id + suffix,
 				value: this.state.fileValue,
 				type: 'file',
-				className: 'form-control',
-				wrapperClassName: 'col-xs-3',
+				className: 'wf-load-box',
 				onChange: this.handleFileChange
 			};
 			markup=(
