@@ -11,7 +11,7 @@ import JobsActions from '../actions/jobsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import _ from 'lodash';
 import utilities from '../libs/utilities.js';
-import {Panel, Button} from 'react-bootstrap';
+import {Panel, Button, ButtonToolbar} from 'react-bootstrap';
 
 const WorkflowRunnerForm=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(WorkflowStore, 'workflowStore')],
@@ -125,20 +125,22 @@ const WorkflowRunnerForm=React.createClass({
 			};
 			markup=(
 				<div>
-				<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>
-					Show Diagram
-				</Button>
 				<form ref={this.formName} >
 					{appsFieldsets}
 					<BaseInput data={emailInput} />
 					<BaseInput data={workflowJson} />
 					<BaseInput data={workflowId} />
+					<ButtonToolbar>
 					<Button
 						bsStyle='primary'
 						disabled={onSubmit}
 						onClick={onSubmit ? null : this.handleSubmit}>
-						{onSubmit ? 'Submitting...' : 'Submit Workflow'}
+						{onSubmit ? 'Submitting...' : 'Submit Workflow Jobs'}
 					</Button>
+					<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>
+                                        	Show Workflow Diagram
+                                	</Button>
+					</ButtonToolbar>
 				</form>
 				</div>
 			);

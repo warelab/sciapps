@@ -26,7 +26,7 @@ const WorkflowLoadBox=React.createClass({
 			type: 'file',
 			value: this.state.value,
 			className: 'wf-load-box',
-			label: 'Workflow json file',
+			label: 'Upload a workflow json file saved on your computer',
 			onChange: this.handleValueChange
 		}
 		let markup=(
