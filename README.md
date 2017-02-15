@@ -36,6 +36,12 @@ To install, follow steps below (for local install, skip step 7)
       
   9. Publish to SciApps.org (better to your own branch instead of master)
   
+      git stash (save local modifications)
+      
+      git pull (pull remote updates)
+      
+      git stash pop (combine)
+  
       git add .
       
       git commit
