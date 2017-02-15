@@ -7,7 +7,7 @@ const Welcome=React.createClass({
 		return(
 			<div className="welcome">
 			<div className="section">
-			<b>SciApps</b> is a web-based platform for executing scientific applications (apps), building/executing/sharing workflows, and supporting metadata management. All apps supported by this platform are built with the <a href="https://agaveapi.co/" target="_blank">Agave API</a>. To build a new app with the Agave API, please consult the <a href="https://github.com/iPlantCollaborativeOpenSource/iplant-agave-sdk" target="_blank">Agave app development guide</a>.
+			<b>SciApps</b> is a web-based platform for building, executing, & sharing scientific applications (apps) and workflows, and supporting metadata management. All apps supported by this platform are built with the <a href="https://agaveapi.co/" target="_blank">Agave API</a>. To build a new app with the Agave API, please consult the <a href="https://github.com/iPlantCollaborativeOpenSource/iplant-agave-sdk" target="_blank">Agave app development guide</a>.
 				<br /><br />
 			You can run any apps listed on the left column by following steps:<br />
 			</div>
