@@ -7,7 +7,7 @@ const Welcome=React.createClass({
 		return(
 			<div className="welcome">
 			<div className="section">
-			<b>SciApps</b> is a web-based platform for executing scientific applications (apps), and building, executing, and sharing workflows. All apps supported by this platform are built with the <a href="https://agaveapi.co/" target="_blank">Agave API</a>. To build a new app with the Agave API, please consult the <a href="https://github.com/iPlantCollaborativeOpenSource/iplant-agave-sdk" target="_blank">Agave app development guide</a>.
+			<b>SciApps</b> is a web-based platform for executing scientific applications (apps), building/executing/sharing workflows, and supporting metadata management. All apps supported by this platform are built with the <a href="https://agaveapi.co/" target="_blank">Agave API</a>. To build a new app with the Agave API, please consult the <a href="https://github.com/iPlantCollaborativeOpenSource/iplant-agave-sdk" target="_blank">Agave app development guide</a>.
 				<br /><br />
 			You can run any apps listed on the left column by following steps:<br />
 			</div>
@@ -15,10 +15,10 @@ const Welcome=React.createClass({
 			1. Click on the app name to bring up the app interface form<br />
 			2. Fill the form for required inputs<br />
 			<ul className="list">
-			<li>Upload from your computer</li>
-			<li>An URL</li>
-			<li>From our data store</li>
-			<li>Hold and drag the results file (in the right column) to the URL field</li>
+			<li>Uploading from your computer</li>
+			<li>A URL</li>
+			<li>CyVerse Data Store</li>
+			<li>Holding and dragging the results file from the right column to the URL field</li>
 			</ul>
 			</div>
 			<div className="section">
@@ -34,7 +34,7 @@ const Welcome=React.createClass({
 			</div>
 			<br />
 			<div>
-			This platform is utilizing infrastructure provided by the <a href="http://cyverse.org" target="_blank">CyVerse</a> project at Cold Spring Harbor Laboratory, with support from the <a href="http://nsf.gov" target="_blank">National Science Foundation</a>. 
+			This platform is built by the <a href="http://cyverse.org" target="_blank">CyVerse</a> team at Cold Spring Harbor Laboratory, with support from the <a href="http://nsf.gov" target="_blank">National Science Foundation</a>. 
 			</div>
 			</div>
 		)
