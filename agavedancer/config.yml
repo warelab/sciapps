@@ -49,3 +49,7 @@ plugins:
 #      - "127.0.0.1:11211"
 #    default_timeout: 1800
 #    namespace: "agaveapidemo:"
+
+output_url:
+  brie.cshl.edu: 'http://dev2.sciapps.org'
+  halcott.cshl.edu: 'http://data.sciapps.org'
