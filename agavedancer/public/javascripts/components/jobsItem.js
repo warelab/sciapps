@@ -49,9 +49,9 @@ const JobsItem=React.createClass({
 		return (
 			<ListGroupItem>
 		          <ButtonToolbar>
-                            <Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.resubmitJob} >{displayName}</Button>
-                            <Button key='status' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJob} ><Glyphicon glyph='play-circle' /></Button>
-                            <Button key='outputs' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJobOutputs} ><Glyphicon glyph='download-alt' /></Button>
+                            <Button key='outputs' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJobOutputs} >{displayName}</Button>
+                            <Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.resubmitJob} ><Glyphicon glyph='repeat' /></Button>
+                            <Button key='status' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJob} ><Glyphicon glyph='info-sign' /></Button>
 			  </ButtonToolbar>
             		  <Panel collapsible expanded={this.state.isOpen}>
 				<ListGroup>
