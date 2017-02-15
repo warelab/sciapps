@@ -48,4 +48,14 @@ To install, follow steps below (for local install, skip step 7)
       
       git push origin master
       
+      or
+      
+      git add .
+      
+      git commit
+      
+      git pull
+      
+      git push origin master
+      
 
