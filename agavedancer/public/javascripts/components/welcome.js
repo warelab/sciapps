@@ -7,7 +7,7 @@ const Welcome=React.createClass({
 		return(
 			<div className="welcome">
 			<div className="section">
-			<b>SciApps</b> is a web-based platform for sharing scientific applications (apps) and workflows. The web interface of the app is powered by the Agave API of the <a href="http://www.cyverse.org" target="_blank">CyVerse</a> project. To wrap your app with the Agave API, please consult the <a href="https://github.com/iPlantCollaborativeOpenSource/iplant-agave-sdk" target="_blank">Agave app development guide</a>.
+			<b>SciApps</b> is a web-based platform for executing scientific applications (apps), and building, executing, and sharing workflows. The platform is built on top of the Agave API of the <a href="http://www.cyverse.org" target="_blank">CyVerse</a> project. To build a new app with the Agave API, please consult the <a href="https://github.com/iPlantCollaborativeOpenSource/iplant-agave-sdk" target="_blank">Agave app development guide</a>.
 				<br /><br />
 			You can run any apps listed on the left column by following steps:<br />
 			</div>
@@ -24,7 +24,7 @@ const Welcome=React.createClass({
 			<div className="section">
 			3. Fill the form for required parameters<br />
 			4. Fill your email address to get notification on job completion (recommended)<br />
-			5. "Submit Job", job status and results show up in the right column (lost if refresh/close your browser)<br />
+			5. "Submit Job", job history will show up in the right column<br />
 			</div>
 			<br />
 			<div id="myimages">
