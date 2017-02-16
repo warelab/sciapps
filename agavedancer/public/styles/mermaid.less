@@ -2,7 +2,14 @@
 @border2: #6eaa49;
 @appNodeColor: #FFF;
 
-.mermaid .label { color:#333}
+.mermaid .label {
+  display: inline;
+  padding: .02em .06em .03em;
+  font-size: 81%;
+  font-weight: bold;
+  border-radius: .05em;
+  color:#333
+}
 .mermaid .appsNodePENDING .label {color: @appNodeColor}
 .mermaid .appsNodeRUNNING .label {color: @appNodeColor}
 .mermaid .appsNodeFINISHED .label {color: @appNodeColor}

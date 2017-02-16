@@ -2,7 +2,7 @@
 
 import React from 'react';
 import JobsActions from '../actions/jobsActions.js';
-import {ListGroup, ListGroupItem, Button, ButtonToolbar, Panel} from 'react-bootstrap';
+import {ListGroup, ListGroupItem, Button, ButtonToolbar, Tooltip, OverlayTrigger, Panel} from 'react-bootstrap';
 
 var Glyphicon = require('react-bootstrap').Glyphicon;
 
@@ -39,6 +39,10 @@ const JobsItem=React.createClass({
 		let jobId=this.props.data.job_id;
 		let outputsItemNodes='Loading ...';
 		let checkedGlyph=this.state.checked ? 'ok-circle' : 'ban-circle';
+		let tooltipout = (<Tooltip id="tooltipout">Display Outputs</Tooltip>)
+		let tooltipsta = (<Tooltip id="tooltipsta">Job Status</Tooltip>)
+		let tooltipres = (<Tooltip id="tooltipres">Relaunch Job</Tooltip>)
+		let tooltipadd = (<Tooltip id="tooltipadd">Add to Workflow Builder</Tooltip>)
 		if (outputs && outputs.length) {
 			outputsItemNodes=outputs.filter(function(item) {
 				let name='job-for-' + appId.toLowerCase().replace(/\W+/g, '-');
@@ -54,11 +58,19 @@ const JobsItem=React.createClass({
 
 		return (
 			<ListGroupItem>
-		          <ButtonToolbar>
-                            <Button key='outputs' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJobOutputs} >{displayName}</Button>
-                            <Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.resubmitJob} ><Glyphicon glyph='repeat' /></Button>
-                            <Button key='status' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJob} ><Glyphicon glyph='info-sign' /></Button>
-								<Button key='check' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
+				<ButtonToolbar>
+					<OverlayTrigger placement="bottom" overlay={tooltipout}>
+						<Button key='outputs' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJobOutputs} >{displayName}</Button>
+					</OverlayTrigger>
+					<OverlayTrigger placement="bottom" overlay={tooltipres}>
+			    	<Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.resubmitJob} ><Glyphicon glyph='repeat' /></Button>
+					</OverlayTrigger>
+					<OverlayTrigger placement="bottom" overlay={tooltipsta}>
+						<Button key='status' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJob} ><Glyphicon glyph='info-sign' /></Button>
+					</OverlayTrigger>
+					<OverlayTrigger placement="bottom" overlay={tooltipadd}>
+						<Button key='check' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
+					</OverlayTrigger>
 			  </ButtonToolbar>
             		  <Panel collapsible expanded={this.state.isOpen}>
 				<ListGroup>
