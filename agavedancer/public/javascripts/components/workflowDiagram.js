@@ -166,7 +166,7 @@ const WorkflowDiagram=React.createClass({
 			} else if (activeNode.type === 'apps') {
 				let id=activeNode.id.replace(setting.wf_step_prefix,'');
 				let appId=this.state.workflowStore.workflowDetail.steps[id].appId;
-				info=<AppsInfo appId={appId} />
+				info=<AppsInfo appId={appId} detailed={true} />
 			}
 		}
 

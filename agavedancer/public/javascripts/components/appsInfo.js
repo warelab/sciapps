@@ -11,9 +11,8 @@ const AppsInfo=React.createClass({
 
 	render: function() {
 		let appDetail=this.state.appsStore.appDetailCache[this.props.appId];
-		let jobDetail;
+		let app_info, jobDetail;
 		let header=appDetail.name + '(' + appDetail.version + '): ' + appDetail.longDescription; 
-		let app_info='info';
 		if (appDetail && undefined !== appDetail.name) {
 			if (this.props.jobId !== undefined) {
 				jobDetail==this.state.JobsStore.jobDetailCache[this.props.jobId];
@@ -35,8 +34,8 @@ const AppsInfo=React.createClass({
 			app_info=(
 				<Table striped condensed hover>
 					<tbody>
-						{inputsDetail}
-						{paramsDetail}
+						{this.props.detailed ? inputsDetail : null}
+						{this.props.detailed ? paramsDetail : null}
 						<tr><th><a href={appDetail.helpURI} target="_blank">Source</a></th><td></td></tr>
 					</tbody>
 				</Table>

@@ -37,7 +37,7 @@ const AppsBoolParam=React.createClass({
 
 	render: function() {
 		let data=this.props.data, markup;
-		let props=_.assign(_.pick(data, 'label'), {
+		let props=_.assign(_.pick(data, ['label', 'help']), {
 			wrapperClassName: 'wrapper'
 		});
 		let hiddenProps=_.assign(_.pick(data, ['name', 'key']), {
@@ -48,11 +48,11 @@ const AppsBoolParam=React.createClass({
 			<div>
 				<Input {...props} >
 					<Input {...hiddenProps} />
+					<ButtonGroup>
+						<Button bsStyle={this.state.value ? 'primary' : undefined} active={this.state.value ? true : false} onClick={this.handleBtn} >{this.TRUE}</Button>
+						<Button bsStyle={this.state.value ? undefined : 'warning'} active={this.state.value ? false : true} onClick={this.handleBtn} >{this.FALSE}</Button>
+					</ButtonGroup>
 				</Input>
-				<ButtonGroup>
-					<Button bsStyle={this.state.value ? 'primary' : undefined} active={this.state.value ? true : false} onClick={this.handleBtn} >{this.TRUE}</Button>
-					<Button bsStyle={this.state.value ? undefined : 'warning'} active={this.state.value ? false : true} onClick={this.handleBtn} >{this.FALSE}</Button>
-				</ButtonGroup>
 			</div>
 		);
 		return markup;

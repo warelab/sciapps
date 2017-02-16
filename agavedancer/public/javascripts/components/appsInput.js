@@ -74,6 +74,7 @@ const AppsInput=React.createClass({
 			);
 			let props={
 				label: prefix + data.details.label,
+				help: data.details.description,
 				bsStyle: this.props.onValidate ? this.validateState() : undefined,
 				wrapperClassName: 'wrapper'
 			};
@@ -82,7 +83,7 @@ const AppsInput=React.createClass({
 				name: data.id,
 				value: this.state.textValue,
 				type: 'text',
-                                buttonBefore: dataStoreButton,
+        buttonBefore: dataStoreButton,
 				placeholder: 'or Enter URL',
 				className: 'form-control',
 				onChange: this.handleTextChange
