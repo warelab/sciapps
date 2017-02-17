@@ -13,7 +13,10 @@
 				archive_home: '/agave_data',
 				datastore_system: 'data.sciapps.org',
 				host_url: 'http://dev1.sciapps.org',
-				output_url: 'http://dev2.sciapps.org',
+				output_url: {
+					"halcott.cshl.edu" : "http://data.sciapps.org",
+					"brie.cshl.edu" : "http://dev2.sciapps.org"
+				},
 				upload_suffix: '.upload',
 				wf_step_prefix: 'wf_step_'
 			}
