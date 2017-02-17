@@ -38,11 +38,12 @@ const JobsItem=React.createClass({
 		let outputs=this.props.outputs;
 		let jobId=this.props.data.job_id;
 		let outputsItemNodes='Loading ...';
-		let checkedGlyph=this.state.checked ? 'ok-circle' : 'ban-circle';
-		let tooltipout = (<Tooltip id="tooltipout">Display Outputs</Tooltip>)
-		let tooltipsta = (<Tooltip id="tooltipsta">Job Status</Tooltip>)
-		let tooltipres = (<Tooltip id="tooltipres">Relaunch Job</Tooltip>)
-		let tooltipadd = (<Tooltip id="tooltipadd">Add to Workflow Builder</Tooltip>)
+		let checkedGlyph=this.state.checked ? 'check' : 'unchecked';
+		let tooltipout = (<Tooltip id="tooltipout">Display Outputs</Tooltip>);
+		let tooltipsta = (<Tooltip id="tooltipsta">Job Status</Tooltip>);
+		let tooltipres = (<Tooltip id="tooltipres">Relaunch Job</Tooltip>);
+		let addedornot=this.state.checked ? 'Click to Remove' : 'Add to Workflow';
+		let tooltipadd = (<Tooltip id="tooltipadd">{addedornot}</Tooltip>);
 		if (outputs && outputs.length) {
 			outputsItemNodes=outputs.filter(function(item) {
 				let name='job-for-' + appId.toLowerCase().replace(/\W+/g, '-');
@@ -68,7 +69,7 @@ const JobsItem=React.createClass({
 					<OverlayTrigger placement="bottom" overlay={tooltipsta}>
 						<Button key='status' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJob} ><Glyphicon glyph='info-sign' /></Button>
 					</OverlayTrigger>
-					<OverlayTrigger placement="bottom" overlay={tooltipadd}>
+					<OverlayTrigger ref="overlay" placement="bottom" overlay={tooltipadd}>
 						<Button key='check' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
 					</OverlayTrigger>
 			  </ButtonToolbar>
