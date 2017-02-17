@@ -69,9 +69,9 @@ const JobsItem=React.createClass({
 					<OverlayTrigger placement="bottom" overlay={tooltipsta}>
 						<Button key='status' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJob} ><Glyphicon glyph='info-sign' /></Button>
 					</OverlayTrigger>
-					<OverlayTrigger ref="overlay" placement="bottom" overlay={tooltipadd}>
-						<Button key='check' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
-					</OverlayTrigger>
+                                        <OverlayTrigger placement="bottom" overlay={tooltipadd}>
+                                                <Button key='check' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
+                                        </OverlayTrigger>
 			  </ButtonToolbar>
             		  <Panel collapsible expanded={this.state.isOpen}>
 				<ListGroup>
