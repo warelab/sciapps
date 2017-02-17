@@ -4,6 +4,8 @@ import Reflux from 'reflux';
 
 const WorkflowActions=Reflux.createActions([
 	'showNode',
+	'showWorkflowLoadBox',
+	'hideWorkflowLoadBox',
 	'showWorkflowDiagram',
 	'hideWorkflowDiagram',
 	'showWorkflow',

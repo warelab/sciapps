@@ -17,6 +17,7 @@ const WorkflowStore=Reflux.createStore({
 		this.state={
 			setting: _config.setting,
 			showWorkflowDiagram: false,
+			showWorkflowLoadBox: false,
 			workflowDetail: undefined,
 			workflowDetailCache: {},
 			build: {},
@@ -34,6 +35,16 @@ const WorkflowStore=Reflux.createStore({
 	},
 
 	showNode: function() {
+		this.complete();
+	},
+	
+	showWorkflowLoadBox: function() {
+		this.state.showWorkflowLoadBox=true;
+		this.complete();
+	},
+
+	hideWorkflowLoadBox: function() {
+		this.state.showWorkflowLoadBox=false;
 		this.complete();
 	},
 

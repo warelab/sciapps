@@ -49,8 +49,9 @@ const Header=React.createClass({
 	},
 
 	showWorkflowRunner: function() {
-		WorkflowActions.hideWorkflow();
+		//WorkflowActions.hideWorkflow();
 		AppsActions.showPage('workflowRunner');
+		WorkflowActions.showWorkflowLoadBox();
 		let title="Running Scientific Workflows";
 		let url="/?page_id=workflowRunner";
 		if (typeof (history.pushState) !== "undefined") {

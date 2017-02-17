@@ -16,11 +16,11 @@ const WorkflowBuilder=React.createClass({
 	},
 
 	render: function() {
+		let header='Automatic workflow chains individual apps together.';
 		return (
-			<div className="welcome">
-			Automatic workflow chains individual apps together.<br />
-			<WorkflowBuilderForm />
-      </div>
+			<Panel header={header}>
+				<WorkflowBuilderForm />
+      </Panel>
 		);
 	}
 });

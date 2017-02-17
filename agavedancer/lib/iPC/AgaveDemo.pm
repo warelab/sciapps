@@ -229,10 +229,12 @@ get '/' => sub {
 	my $setting={map {$_ => setting($_)} @EXPORT_SETTINGS};
 
 	template 'index', {
-		app_id => $app_id,
-		page_id => $page_id,
-		wf_id	=> $wf_id,
-		setting => $setting,
+		config => to_json({
+			app_id => $app_id,
+			page_id => $page_id,
+			wf_id	=> $wf_id,
+			setting => $setting,
+		})
 	};
 };
 

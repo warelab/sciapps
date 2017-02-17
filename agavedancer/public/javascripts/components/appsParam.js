@@ -36,7 +36,8 @@ const AppsParam=React.createClass({
 			let prefix=param.value.required ? '*' : '';
 			props=_.assign(props, {
 				//placeholder: param.value.default,
-				label: prefix + param.details.label
+				label: prefix + param.details.label,
+				help: param.details.description
 			});
 			let addProps;
 			switch (param.value.type) {

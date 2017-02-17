@@ -38,7 +38,7 @@ input_home: '/agave_data'
 input_path: 'inputs'
 datastore_home: '/halcott'
 datastore_path: 'example_data'
-output_url: 'http://dev2.sciapps.org'
+#output_url: 'http://dev2.sciapps.org'
 email: 'noreply@sciapps.org'
 upload_suffix: ".upload"
 wf_step_prefix: 'wf_step_'
