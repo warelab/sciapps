@@ -12,7 +12,7 @@ const AppsInfo=React.createClass({
 	render: function() {
 		let appDetail=this.state.appsStore.appDetailCache[this.props.appId];
 		let app_info, jobDetail;
-		let header=appDetail.name + '(' + appDetail.version + '): ' + appDetail.longDescription; 
+		let header=appDetail.name + '(' + appDetail.version + '): ' + appDetail.longDescription + ' <a href="' + appDetail.helpURI + '" target="_blank">Source</a>'; 
 		if (appDetail && undefined !== appDetail.name) {
 			if (this.props.jobId !== undefined) {
 				jobDetail==this.state.JobsStore.jobDetailCache[this.props.jobId];
@@ -36,11 +36,15 @@ const AppsInfo=React.createClass({
 					<tbody>
 						{this.props.detailed ? inputsDetail : null}
 						{this.props.detailed ? paramsDetail : null}
-						<tr><th><a href={appDetail.helpURI} target="_blank">Source</a></th><td></td></tr>
+						<tr><th>{appDetail.name}({appDetail.version}): {appDetail.longDescription} (<a href={appDetail.helpURI} target="_blank">source</a>)</th><td></td></tr>
 					</tbody>
 				</Table>
 			);
 		}
+		header='More information';
+		app_info=(
+			<div>{appDetail.name}: {appDetail.longDescription} (<a href={appDetail.helpURI} target="_blank">Source</a>)</div>
+		);
 		return (
 			<Panel header={header}>
 				{app_info}
