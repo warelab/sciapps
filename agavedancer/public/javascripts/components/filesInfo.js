@@ -17,13 +17,14 @@ const FilesInfo=React.createClass({
 		if (fileDetail.system !== undefined) {
 			tbody=keys.map(function (key) {
 				let label=key.replace(/_/g, ' ');
+				let labelSize=label.length * 11;
 				return (
-					<tr key={key}><th>{label}:</th><td>{fileDetail[key]}</td></tr>
+					<tr key={key}><th width={labelSize}>{label}:</th><td>{fileDetail[key]}</td></tr>
 				);
 			});
 			let fileName=fileDetail['path'].replace(/.*\// ,'');
-			let link=fileDetail['system'] + '/' + fileDetail['path'];
-			tbody.push(<tr key={'source'}><th>source:</th><td>{link}</td></tr>);
+			let link='http://' + fileDetail['system'] + '/' + fileDetail['path'];
+			tbody.push(<tr key={'source'}><th><a href={link} target="_blank">Link to File</a></th><td></td></tr>);
 			markup=(
 				<Table striped condensed hover>
 					<tbody>
@@ -32,7 +33,12 @@ const FilesInfo=React.createClass({
 				</Table>
 			);
 		}
-		return markup;
+		let header='File information';
+		return (
+			<Panel header={header}>
+				{markup}
+			</Panel>
+		);
 	}
 });
 

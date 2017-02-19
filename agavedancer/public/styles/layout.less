@@ -12,7 +12,6 @@ html, body {
 }
 
 th {
-	font-weight: normal;
  	padding-right: 10px;
 }
 
@@ -92,17 +91,24 @@ th {
 	border-right: solid #999 1px;
 }
 
-.main .panel-default {
+.modal-body .table {
+	margin-bottom: 0;
+}
+
+.main .panel-default,
+.modal-body .panel-default {
 	border-color: #ffcc80;
 }
 
-.main .panel-heading {
+.main .panel-heading,
+.modal-body .panel-heading {
 	padding: 2px 9px;
 	font-size: 12px;
 	font-weight: bold;
 }
 
-.main .panel-default>.panel-heading {
+.main .panel-default>.panel-heading,
+.modal-body .panel-default>.panel-heading, {
 	background-color: #ffcc80;
 	border-color: #ffcc80;
 }
