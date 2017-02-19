@@ -15,7 +15,7 @@ const Welcome=React.createClass({
 			<ul className="list">
 			<li>Search,  or click on any Category then App name to bring up the App form</li>
 			<ul className="list">
-			<li>To add a new App, please follow the <a href="https://github.com/iPlantCollaborativeOpenSource/iplant-agave-sdk">App Building Guide</a></li>
+			<li>To add a new App, please follow the <a href="https://github.com/cyverse/cyverse-sdk" target="_blank">App Building Guide</a></li>
                         </ul>
 			<li>Fill the form for required inputs (from any sources listed below) and parameters</li>
 			<ul className="list">
