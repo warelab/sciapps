@@ -23,7 +23,7 @@ const FilesInfo=React.createClass({
 				);
 			});
 			let fileName=fileDetail['path'].replace(/.*\// ,'');
-			let link='http://' + fileDetail['system'] + '/' + fileDetail['path'];
+			let link='http://' + fileDetail['system'] + '/example_data/' + fileDetail['path'];
 			tbody.push(<tr key={'source'}><th><a href={link} target="_blank">Link to File</a></th><td></td></tr>);
 			markup=(
 				<Table striped condensed hover>
@@ -33,7 +33,7 @@ const FilesInfo=React.createClass({
 				</Table>
 			);
 		}
-		let header='File information';
+		let header='File information (' + fileDetail['path'].replace(/.*\// ,'') + ')';
 		return (
 			<Panel header={header}>
 				{markup}
