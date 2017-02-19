@@ -36,7 +36,7 @@ const Welcome=React.createClass({
 			</div>
 			<br />
 			<div>
-			This platform is built by the CyVerse team at Cold Spring Harbor Laboratory, supported by <a href="http://nsf.gov" target="_blank">National Science Foundation</a>. 
+			This platform is built by the CyVerse team at Cold Spring Harbor Laboratory. The CyVerse project is supported by <a href="http://nsf.gov" target="_blank">National Science Foundation</a> DBI-1265383. 
 			</div>
 			</div>
 		)
