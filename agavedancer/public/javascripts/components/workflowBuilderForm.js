@@ -3,11 +3,12 @@
 import React from 'react';
 import Reflux from 'reflux';
 import JobsStore from '../stores/jobsStore.js';
+import JobsActions from '../actions/jobsActions.js';
 import WorkflowStore from '../stores/workflowStore.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import BaseInput from './baseInput.js';
 import _ from 'lodash';
-import {Button, ButtonToolbar, Panel} from 'react-bootstrap';
+import {Button, ButtonToolbar, Input} from 'react-bootstrap';
 import utilities from '../libs/utilities.js';
 
 const WorkflowBuilderForm=React.createClass({
@@ -15,7 +16,6 @@ const WorkflowBuilderForm=React.createClass({
 
 	getInitialState: function() {
 		return {
-			selectCount: 3,
 			wid: undefined,
 			setting: _config.setting,
 			onSubmit: false,
@@ -27,76 +27,107 @@ const WorkflowBuilderForm=React.createClass({
 		let workflowStore=this.state.workflowStore;
 		let wf=this.state.wid ? workflowStore.build[this.state.wid] : undefined;
 		if (this.state.onSubmit && wf && wf.completed) {
-			let wfObj={
-				id:	wf.id,
-				name: 'test_wf',
-				steps: wf.steps
-			};
-			utilities.download('test.json', 'application/json;charset=utf-8', JSON.stringify(wfObj));
-			this.setState({ onSubmit: false, wid: undefined });
+			WorkflowActions.showWorkflow(wf.id);
+			WorkflowActions.showWorkflowDiagram();
+			this.setState({ onSubmit: false });
 		}
-	},
-
-	componentWillUnmount: function() {
-		this.setState({sselectCount: 3});
 	},
 
 	formName: 'workflowBuilderForm',
 
 	handleSubmit: function() {
+		let jobsStore=this.state.jobsStore;
 		let wid=utilities.uuid();
-		let form=this.refs[this.formName];
-		let jobIds=[];
-		for (let key of _.keys(form)) {
-			if (form[key].name && form[key].value && form[key].name.toString().length && form[key].value.toString().length) jobIds[form[key].name]=form[key].value;
-		}
 		this.setState({onSubmit: true, wid: wid});
-		WorkflowActions.buildWorkflow(wid, jobIds);
+		let wfName=this.refs[this.formName]['workflowName'].value;
+		WorkflowActions.buildWorkflow(wid, wfName);
 	},
 
-	handleAddSteps: function() {
-		this.setState({selectCount: this.state.selectCount + 3});
-	},
-
-	buildSelectOptions: function(jobs) {
-		let options=jobs.map(function(o, i) {
-			return {
-				optionValue: o.job_id,
-				optionChild: (i + 1) + ': ' + o.appId
+	handleDownload: function() {
+		let workflowStore=this.state.workflowStore;
+		let wf=this.state.wid ? workflowStore.build[this.state.wid] : undefined;
+		if (wf && wf.completed) {
+			let wfObj={
+				id:	wf.id,
+				name: wf.name,
+				steps: wf.steps
 			};
-		});
-		options.unshift({optionValue: '', optionChild: 'Select a job'});
-		return options;
+			utilities.download(wfObj.name + '.json', 'application/json;charset=utf-8', JSON.stringify(wfObj));
+		}
+	},
+
+	handleReset: function() {
+		JobsActions.removeWorkflowBuilderJobIndex();
+		this.setState({wid: undefined});
+	},
+
+	handleDiagram: function() {
+		WorkflowActions.showWorkflowDiagram();
 	},
 
 	render: function() {
 		let jobsStore=this.state.jobsStore;
 		let onSubmit=this.state.onSubmit;
-		let options=this.buildSelectOptions(jobsStore.jobs);
-		let selects=Array(this.state.selectCount).fill(1).map(function(v, i) {
-			let props={
-				name: i,
-				type: 'select',
-				label: 'Workflow Step ' + (i + 1)
-			};
-			return(<BaseInput key={i} data={props} options={options} isSelect={true} />);
+		let workflowBuilderJobs=jobsStore.workflowBuilderJobIndex
+		.map(function(v, i) { 
+			return v ? jobsStore.jobs[i] : undefined; 
 		});
+		let jobList='';
+		let jobCount=0;
+		workflowBuilderJobs.forEach(function(job, i) {
+			if (job !== undefined) {
+			 jobList+=(i+1) + ': ' + job.appId + "\n";
+			 jobCount++;
+			}
+		});
+		if (jobList === undefined) {
+			jobList='None';
+		}
+		let jobListInput={
+			name: 'jobList',
+			label: '*Selected Jobs (at least 2)',
+			type: 'textarea',
+			required: true,
+			readOnly: true,
+			rows: 6,
+			value: jobList
+		};
+		let nameInput={
+			name: 'workflowName',
+			label: '*Workflow Name',
+			required: true,
+			value: 'my_workflow',
+			type: 'text'
+		};
 
 		let markup=(
 			<form ref={this.formName} >
-				{selects}
+				<BaseInput data={jobListInput} onValidate={true} />
+				<BaseInput data={nameInput} onValidate={true} />
 				<ButtonToolbar>
 					<Button
 						bsStyle='primary'
-						disabled={onSubmit}
-						onClick={onSubmit ? null : this.handleSubmit}>
+						disabled={onSubmit || jobCount <2}
+						onClick={this.handleSubmit}>
 						{onSubmit ? 'Building...' : 'Build Workflow'}
 					</Button>
 					<Button
 						bsStyle='primary'
-						disabled={onSubmit}
-						onClick={onSubmit ? null : this.handleAddSteps}>
-						Add Steps
+						disabled={onSubmit || this.state.wid === undefined}
+						onClick={this.handleDownload}>
+						Download Workflow
+					</Button>
+					<Button
+						bsStyle='primary'
+						disabled={onSubmit || this.state.wid === undefined}
+						onClick={this.handleDiagram}>
+						View Diagram
+					</Button>
+					<Button
+						bsStyle='primary'
+						disabled={onSubmit || jobList.length === 0}
+						onClick={this.handleReset}>
+						Reset
 					</Button>
 				</ButtonToolbar>
 			</form>

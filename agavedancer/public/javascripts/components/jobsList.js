@@ -28,8 +28,9 @@ const JobsList=React.createClass({
 		if (jobs && jobs.length) {
 			jobsItemNodes = jobs.map(function (jobsItem, index) {
 				let outputs=jobOutputs[jobsItem.job_id];
+				let checked=jobsStore.workflowBuilderJobIndex[index];
 				return (
-					<JobsItem key={index} data={jobsItem} index={index} setting={setting} outputs={outputs} />
+					<JobsItem key={index} data={jobsItem} index={index} setting={setting} outputs={outputs} checked={checked}/>
 				);
 			});
 		}

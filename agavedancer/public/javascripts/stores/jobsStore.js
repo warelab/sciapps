@@ -6,6 +6,7 @@ import _ from 'lodash';
 import Q from 'q';
 import JobsActions from  '../actions/jobsActions.js';
 import AppsActions from  '../actions/appsActions.js';
+import WorkflowActions from  '../actions/workflowActions.js';
 
 const JobsStore=Reflux.createStore({
 	listenables: JobsActions,
@@ -17,6 +18,7 @@ const JobsStore=Reflux.createStore({
 			showJob: false,
 			showJobId: undefined,
 			jobs: [],
+			workflowBuilderJobIndex: [],
 			jobDetail: {},
 			jobStatus: {},
 			jobOutputs: {},
@@ -93,9 +95,16 @@ const JobsStore=Reflux.createStore({
 
 	setJobs: function(jobIds) {
 		let submitNumber=this.state.jobs.length;
+		let currentJobIds={};
+		this.state.jobs.forEach(function(job) {
+			currentJobIds[job.job_id]=true;
+		});
+
 		Q.all(jobIds.map(this.setJob)).done(function(jobs) {
 			_.forEach(jobs, function(job) {
-				this.state.jobs[submitNumber++]=this.state.jobDetailCache[job.id];
+				if (! currentJobIds[job.job_id]) {
+					this.state.jobs[submitNumber++]=this.state.jobDetailCache[job.job_id];
+				}
 			}.bind(this));
 			this.complete();
 		}.bind(this));
@@ -105,8 +114,9 @@ const JobsStore=Reflux.createStore({
 		Q.all(jobIds.map(this.setJob)).done(function(jobs) {
 			if (wid !== undefined) {
 				this.state.wid[wid]=true;
+				this.complete();
+				WorkflowActions.workflowJobsReady(wid, this.state.jobDetailCache, this.state.jobOutputs);
 			}
-			this.complete();
 		}.bind(this));
 	},
 
@@ -157,10 +167,14 @@ const JobsStore=Reflux.createStore({
 		}
 	},
 
-	setWorkflowJobOutputs: function(jobIds, wid) {
+	setWorkflowJobOutputs: function(wid) {
+		let jobIds=this.state.workflowBuilderJobIndex.map(function(v, i) {
+			return v ? this.state.jobs[i].job_id : undefined;
+		}.bind(this)).filter(function(v) {return v !== undefined});
 		Q.all(jobIds.map(this.setJobOutputs)).done(function(jobOutputs) {
 			if (wid !== undefined) {
 				this.state.wid[wid]=true;
+				WorkflowActions.workflowJobsReady(wid, jobIds, this.state.jobDetailCache, this.state.jobOutputs);
 			}
 			this.complete();
 		}.bind(this));
@@ -275,6 +289,20 @@ const JobsStore=Reflux.createStore({
 
 	resetResubmit: function() {
 		this.state.resubmit=false;
+		this.complete();
+	},
+
+	addWorkflowBuilderJobIndex: function(index) {
+		this.state.workflowBuilderJobIndex[index]=true;
+		this.complete();
+	},
+
+	removeWorkflowBuilderJobIndex: function(index) {
+		if (index !== undefined) {
+			delete this.state.workflowBuilderJobIndex[index];
+		} else {
+			this.state.workflowBuilderJobIndex=[];
+		}
 		this.complete();
 	}
 });

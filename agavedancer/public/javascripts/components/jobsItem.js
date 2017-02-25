@@ -2,13 +2,16 @@
 
 import React from 'react';
 import JobsActions from '../actions/jobsActions.js';
-import {ListGroup, ListGroupItem, Button, ButtonToolbar, Tooltip, OverlayTrigger, Panel} from 'react-bootstrap';
-
-var Glyphicon = require('react-bootstrap').Glyphicon;
+import {ListGroup, ListGroupItem, Button, ButtonToolbar, Tooltip, OverlayTrigger, Panel, Glyphicon} from 'react-bootstrap';
 
 const JobsItem=React.createClass({
 	getInitialState: function() {
 		return {isOpen: false, checked: false};
+	},
+
+	componentWillReceiveProps: function(nextProps) {
+		let checked=nextProps.checked;
+		this.setState({ checked: checked });
 	},
 
 	showJob: function() {
@@ -27,7 +30,12 @@ const JobsItem=React.createClass({
 	},
 
 	handleCheck: function() {
-		this.setState({ checked: !this.state.checked });
+		let checked=!this.state.checked;
+		if (checked) {
+			JobsActions.addWorkflowBuilderJobIndex(this.props.index);
+		} else {
+			JobsActions.removeWorkflowBuilderJobIndex(this.props.index);
+		}
 	},
 
 	render: function() {

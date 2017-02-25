@@ -4,8 +4,6 @@ import Reflux from 'reflux';
 import axios from 'axios';
 import _ from 'lodash';
 import Q from 'q';
-import AppsStore from './appsStore.js';
-import JobsStore from './jobsStore.js';
 import AppsActions from  '../actions/appsActions.js';
 import JobsActions from  '../actions/jobsActions.js';
 import WorkflowActions from  '../actions/workflowActions.js';
@@ -23,7 +21,7 @@ const WorkflowStore=Reflux.createStore({
 			build: {},
 			workflowDiagramDef: undefined
 		};
-		this.listenTo(JobsStore, this.setJobsStore);
+		//this.listenTo(JobsStore, this.setJobsStore);
 	},
 
 	getInitialState: function() {
@@ -89,11 +87,9 @@ const WorkflowStore=Reflux.createStore({
 		return workflowPromise;
 	},
 
-	setJobsStore: function(jobsStore) {
-		for (let wid of _.keys(jobsStore.wid)) {
-			this._jobsAreReady(wid, jobsStore);
-			JobsActions.resetWorkflowJobs(wid);
-		}
+	workflowJobsReady: function(wid, jobIds, jobDetailCache, jobOutputs) {
+		this._workflowJobsReady(wid, jobIds, jobDetailCache, jobOutputs);
+		JobsActions.resetWorkflowJobs(wid);
 	},
 
 	setWorkflowSteps: function(wfDetail) {
@@ -109,33 +105,36 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
-	buildWorkflow: function(wid, jobIds) {
-		if (wid && jobIds && jobIds.length > 0) {
+	buildWorkflow: function(wid, wfName) {
+		if (wid && wfName) {
 			this.state.build[wid]={
 				id: wid, 
-				jobIds: jobIds,
+				name: wfName,
+				jobIds: [],
 				jobs: {},
 				jobOutputs: {},
 				steps: [],
 				outputs: {},
 				completed: false
 			};
-			JobsActions.setWorkflowJobOutputs(jobIds, wid);
+			JobsActions.setWorkflowJobOutputs(wid);
 		} else if (wid) {
 			let workflow=this.state.build[wid];
 			for (let jobId of workflow.jobIds) {
 				this._buildWfStep(wid, jobId);
 			}
 			workflow.completed=true;
+			this.state.workflowDetailCache[workflow.id]=workflow;
 			this.complete();
 		}
 	},
 
-	_jobsAreReady: function(wid, jobsStore) {
+	_workflowJobsReady: function(wid, jobIds, jobDetailCache, jobOutputs) {
 		let workflow=this.state.build[wid];
+		workflow.jobIds=jobIds;
 		for (let jobId of workflow.jobIds) {
-			workflow.jobs[jobId]=jobsStore.jobDetailCache[jobId];
-			workflow.jobOutputs[jobId]=jobsStore.jobOutputs[jobId];
+			workflow.jobs[jobId]=jobDetailCache[jobId];
+			workflow.jobOutputs[jobId]=jobOutputs[jobId];
 		}
 		WorkflowActions.buildWorkflow(wid);
 	},
@@ -167,7 +166,6 @@ const WorkflowStore=Reflux.createStore({
 		let wf=JSON.parse(formData.get('_workflow_json'));
 		JobsActions.submitWorkflowJobs(wf, formData);
 	}
-
 });
 
 module.exports = WorkflowStore;

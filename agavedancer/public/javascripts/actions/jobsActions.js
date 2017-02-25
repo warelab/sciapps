@@ -19,7 +19,9 @@ const JobsActions=Reflux.createActions([
 	'checkJobStatus',
 	'checkWorkflowJobStatus',
 	'resubmitJob',
-	'resetResubmit'
+	'resetResubmit',
+	'addWorkflowBuilderJobIndex',
+	'removeWorkflowBuilderJobIndex'
 ]);
 
 module.exports = JobsActions;
