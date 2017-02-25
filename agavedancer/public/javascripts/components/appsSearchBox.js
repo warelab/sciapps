@@ -31,7 +31,7 @@ const AppsSearchBox=React.createClass({
 			value: this.state.value,
 			className: 'app-search-box',
 			standalone: true,
-			placeholder: 'Search apps',
+			placeholder: 'Search Apps',
 			onChange: this.handleValueChange
 		}
 		let markup=(

@@ -7,24 +7,26 @@ const Welcome=React.createClass({
 		return(
 			<div className="welcome">
 			<div className="section">
-			<b>SciApps</b> is the web front-end of a federated <a href="http://cyverse.org" target="_blank">CyVerse</a> system at <a href="http://cshl.edu" target="_blank">Cold Spring Harbor Laboratory</a>, and a web-based platform for building, executing, & sharing scientific applications (apps) and workflows, and supporting metadata management (under development). 
+			<b>SciApps</b> is the web front-end of a federated CyVerse system at Cold Spring Harbor Laboratory, and a web-based platform for building, executing, & sharing scientific applications (Apps) and workflows, and supporting metadata management. 
 				<br /><br />
-			You can run any apps listed on the left column by following steps:<br />
+			To build a workflow with Apps listed in the left panel, please follow steps below:<br />
 			</div>
 			<div className="section">
-			1. Click on the app name to bring up the app interface form<br />
-			2. Fill the form for required inputs<br />
+			<ul className="list">
+			<li>Search,  or click on any Category then App name to bring up the App form</li>
+			<ul className="list">
+			<li>To add a new App, please follow the <a href="https://github.com/cyverse/cyverse-sdk" target="_blank">App Building Guide</a></li>
+                        </ul>
+			<li>Fill the form for required inputs (from any sources listed below) and parameters</li>
 			<ul className="list">
 			<li>Uploading from your computer</li>
 			<li>A URL</li>
 			<li>CyVerse Data Store</li>
-			<li>Holding and dragging the results file from the right column to the URL field</li>
+			<li>Holding and dragging the results file URL from the right panel (History) to the URL field</li>
 			</ul>
-			</div>
-			<div className="section">
-			3. Fill the form for required parameters<br />
-			4. Fill your email address to get notification on job completion (recommended)<br />
-			5. "Submit Job", job history will show up in the right column<br />
+			<li>Submit Job, and job history will show up in the right panel</li>
+			<li>Select at least 2 jobs in the History panel to build an automated workflow</li>
+			</ul>
 			</div>
 			<br />
 			<div id="myimages">
@@ -34,7 +36,7 @@ const Welcome=React.createClass({
 			</div>
 			<br />
 			<div>
-			This platform is built by the <a href="http://cyverse.org" target="_blank">CyVerse</a> team at Cold Spring Harbor Laboratory, with support from the <a href="http://nsf.gov" target="_blank">National Science Foundation</a>. 
+			This platform is built by the CyVerse team at Cold Spring Harbor Laboratory. The CyVerse project is supported by <a href="http://nsf.gov" target="_blank">National Science Foundation</a> DBI-1265383. 
 			</div>
 			</div>
 		)
