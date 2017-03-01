@@ -16,11 +16,11 @@ const WorkflowBuilder=React.createClass({
 	},
 
 	render: function() {
-		let header='Automatic workflow chains individual apps together.';
+		let header='Workflow building form: chains jobs from the right (History) panel';
 		return (
 			<Panel header={header}>
 				<WorkflowBuilderForm />
-      </Panel>
+			</Panel>
 		);
 	}
 });
