@@ -147,6 +147,8 @@ const WorkflowDiagram=React.createClass({
 		let jobStatus=jobsStore.jobStatus;
 		let body=<div />;
 		let info=<div />;
+		let nodeClass="modal-lg";
+		let jobCount=0;
 		if (showWorkflowDiagram) {
 			let workflowDiagramDef=this.buildWorkflowDiagramDef(this.state.workflowStore, this.state.appsStore, this.state.jobsStore);
 			body=<Mermaid diagramDef={workflowDiagramDef}/>;
@@ -157,6 +159,9 @@ const WorkflowDiagram=React.createClass({
 				if (unfinished !== -1) {
 					setTimeout((wfId) => JobsActions.checkWorkflowJobStatus(wfId), this.props.timeout, workflow.id); 
 				}
+			}
+			if (this.state.workflowStore.workflowDetail) {
+				jobCount=this.state.workflowStore.workflowDetail.steps.length;
 			}
 		}
 		
@@ -169,9 +174,17 @@ const WorkflowDiagram=React.createClass({
 				info=<AppsInfo appId={appId} detailed={true} />
 			}
 		}
-
+		if (jobCount < 3) {
+			nodeClass="twoNodes";
+		} else if (jobCount < 4) {
+			nodeClass="threeNodes";
+		} else if (jobCount < 5) {
+			nodeClass="fourNodes";
+		} else if (jobCount < 6) {
+			nodeClass="fiveNodes";
+		}
 		return (
-			<Modal bsSize="large" show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
+			<Modal dialogClassName={nodeClass} show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
 				<Modal.Header closeButton>
 					<Modal.Title>Workflow Diagram</Modal.Title>
 				</Modal.Header>
