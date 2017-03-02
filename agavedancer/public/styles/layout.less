@@ -12,6 +12,11 @@ html, body {
 	overflow: hidden;
 }
 
+.row {
+	margin-left: 0;
+	margin-right: 0;
+}
+
 th {
  	padding-right: 10px;
 }
@@ -38,7 +43,6 @@ th {
 
 .leftbar {
 	padding: 0;
-	padding-left: 15px;
 	width: 16.5rem;
 	margin: 0;
 	background: #d7f4f4;
@@ -47,6 +51,10 @@ th {
 
 .leftbar .panel-group .panel {
 	border-radius: 0px;
+}
+
+.leftbar .panel-heading {
+	padding: 10px 10px;
 }
 
 .rightbar {
@@ -69,15 +77,15 @@ th {
 
 .rightbar .list-group-item {
 	margin-left: 0;
-	padding: 0 1px;
+	padding: 0 0;
 	word-wrap: break-word;
 }
 
 .rightbar .btn {
 	padding-left: 0px;
 	padding-right: 0px;
-	margin-left: -21px;
-	margin-right: 21px;
+	margin-left: -10px;
+	margin-right: 10px;
 	max-width: 145px;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -113,7 +121,7 @@ th {
 
 .main .panel-default>.panel-heading,
 .modal-body .panel-default>.panel-heading, {
-	background-color: #ffcc80;
+	background-color: #faebcc;
 	border-color: #ffcc80;
 }
 
