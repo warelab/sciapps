@@ -41,7 +41,7 @@ const App=React.createClass({
 				<Flex>
 					<Layout type="row">
 						<Fixed className="leftbar">
-              <Fixed className="apps-panel-header">Apps</Fixed>
+              						<Fixed className="apps-panel-header">Apps</Fixed>
 							<Fixed className="search-wrapper"><AppsSearchBox /></Fixed>
 							<AppsGroup />
 						</Fixed>

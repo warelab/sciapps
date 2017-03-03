@@ -24,8 +24,8 @@ const Welcome=React.createClass({
 			<li>CyVerse Data Store</li>
 			<li>Holding and dragging the results file URL from the right panel (History) to the URL field</li>
 			</ul>
-			<li>Submit Job, and job history will show up in the right panel</li>
-			<li>Select at least 2 jobs in the History panel to build an automated workflow</li>
+			<li>Submit Job, then job history will show up in the right panel</li>
+			<li>Select at least 2 jobs from the History panel, then click on Worflows/Build_a_workflow (top menu)</li>
 			</ul>
 			</div>
 			<br />
