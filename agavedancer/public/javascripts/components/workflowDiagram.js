@@ -12,6 +12,7 @@ import {Modal, Button} from 'react-bootstrap';
 import Mermaid from './mermaid.js';
 import FilesInfo from './filesInfo.js';
 import AppsInfo from './appsInfo.js';
+import utilities from '../libs/utilities.js';
 
 const WorkflowDiagram=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore'), Reflux.connect(JobsStore, 'jobsStore'), Reflux.connect(AppsStore, 'appsStore')],
@@ -136,6 +137,17 @@ const WorkflowDiagram=React.createClass({
 		return def;
 	},
 
+	handleDownload: function() {
+		let workflowStore=this.state.workflowStore;
+		let wf=workflowStore.workflowDetail;
+		let wfObj={
+			id:	wf.id,
+			name: wf.name,
+			steps: wf.steps
+		};
+		utilities.download(wfObj.name + '.json', 'application/json;charset=utf-8', JSON.stringify(wfObj));
+	},
+
 	render: function() {
 		let showWorkflowDiagram=this.state.workflowStore.showWorkflowDiagram;
 		let setting=this.state.setting;
@@ -180,6 +192,7 @@ const WorkflowDiagram=React.createClass({
 					{info}
 				</Modal.Body>
 				<Modal.Footer>
+					<Button onClick={this.handleDownload}>Download Workflow</Button>
 					<Button onClick={this.hideWorkflowDiagram}>Close</Button>
 				</Modal.Footer>
 			</Modal>

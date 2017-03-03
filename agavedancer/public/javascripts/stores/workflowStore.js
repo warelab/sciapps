@@ -105,11 +105,12 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
-	buildWorkflow: function(wid, wfName) {
+	buildWorkflow: function(wid, wfName, wfDesc) {
 		if (wid && wfName) {
 			this.state.build[wid]={
 				id: wid, 
 				name: wfName,
+				description: wfDesc || '',
 				jobIds: [],
 				jobs: {},
 				jobOutputs: {},

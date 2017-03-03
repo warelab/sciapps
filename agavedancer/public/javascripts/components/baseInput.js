@@ -22,7 +22,8 @@ const BaseInput=React.createClass({
 	},
 
 	handleChange: function(event) {
-		let nextValue=this.props.data.type === 'checkbox' ? ! this.state.value : event.target.value;
+		let currValue=this.state.value;
+		let nextValue=this.props.data.type === 'checkbox' ? ! currValue : event.target.value;
 		this.setState({value: nextValue});
 	},
 

@@ -19,7 +19,8 @@ const WorkflowBuilderForm=React.createClass({
 			wid: undefined,
 			setting: _config.setting,
 			onSubmit: false,
-			onValidate: false
+			onValidate: false,
+			formData: {}
 		}
 	},
 
@@ -36,23 +37,21 @@ const WorkflowBuilderForm=React.createClass({
 	formName: 'workflowBuilderForm',
 
 	handleSubmit: function() {
-		let jobsStore=this.state.jobsStore;
 		let wid=utilities.uuid();
-		this.setState({onSubmit: true, wid: wid});
-		let wfName=this.refs[this.formName]['workflowName'].value;
-		WorkflowActions.buildWorkflow(wid, wfName);
-	},
+		let form=this.refs[this.formName], formData={}, changed=false;;
+		['jobList', 'workflowName', 'workflowDesc'].forEach(function(n) {
+			if (form[n].value !== this.state.formData[n]) {
+				changed=true;
+			}
+			formData[n]=form[n].value;
+		}.bind(this));
 
-	handleDownload: function() {
-		let workflowStore=this.state.workflowStore;
-		let wf=this.state.wid ? workflowStore.build[this.state.wid] : undefined;
-		if (wf && wf.completed) {
-			let wfObj={
-				id:	wf.id,
-				name: wf.name,
-				steps: wf.steps
-			};
-			utilities.download(wfObj.name + '.json', 'application/json;charset=utf-8', JSON.stringify(wfObj));
+		if (changed) {
+			this.setState({onSubmit: true, wid: wid});
+			WorkflowActions.buildWorkflow(wid, formData['workflowName'], formData['workflowDesc']);
+			this.setState({ formData: formData });
+		} else {
+			WorkflowActions.showWorkflowDiagram();
 		}
 	},
 
@@ -99,29 +98,26 @@ const WorkflowBuilderForm=React.createClass({
 			value: 'my_workflow',
 			type: 'text'
 		};
+		let descInput={
+			name: 'workflowDesc',
+			label: 'Workflow Description',
+			required: false,
+			value: '',
+			type: 'textarea',
+			rows: 3
+		};
 
 		let markup=(
 			<form ref={this.formName} >
-				<BaseInput data={jobListInput} onValidate={true} />
-				<BaseInput data={nameInput} onValidate={true} />
+				<BaseInput ref={'jobListInput'} data={jobListInput} onValidate={true} />
+				<BaseInput ref={'nameInput'} data={nameInput} onValidate={true} />
+				<BaseInput ref={'descInput'} data={descInput} />
 				<ButtonToolbar>
 					<Button
 						bsStyle='primary'
 						disabled={onSubmit || jobCount <2}
 						onClick={this.handleSubmit}>
 						{onSubmit ? 'Building...' : 'Build Workflow'}
-					</Button>
-					<Button
-						bsStyle='primary'
-						disabled={onSubmit || this.state.wid === undefined}
-						onClick={this.handleDownload}>
-						Download Workflow
-					</Button>
-					<Button
-						bsStyle='primary'
-						disabled={onSubmit || this.state.wid === undefined}
-						onClick={this.handleDiagram}>
-						View Diagram
 					</Button>
 					<Button
 						bsStyle='primary'
