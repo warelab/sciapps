@@ -41,7 +41,7 @@ const AppsInfo=React.createClass({
 				</Table>
 			);
 		}
-		header='Tool information (' + appDetail.name + ' ' + appDetail.version + ')';
+		header='App information (' + appDetail.name + ' ' + appDetail.version + ')';
 		app_info=(
 			<div>{appDetail.name}: {appDetail.longDescription} (<a href={appDetail.helpURI} target="_blank">Source</a>)</div>
 		);

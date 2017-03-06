@@ -12,7 +12,7 @@ const FilesInfo=React.createClass({
 		let jobsStore=this.state.jobsStore;
 		let fileDetail=jobsStore.inputs[this.props.fileId];
 		let markup=<div />;
-		let tbody
+		let tbody;
 		let keys=['line_name', 'organism_name', 'organism_scientific_name', 'organism_taxon_id'];
 		if (fileDetail.system !== undefined) {
 			tbody=keys.map(function (key) {
