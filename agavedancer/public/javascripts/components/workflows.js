@@ -25,23 +25,13 @@ const Workflows=React.createClass({
 		return (
 			<div className="welcome">
 				<div className="section">
-				Automatic workflow chains individual apps together. The workflow avoids manual submission of each individual job, reduces data transfer among intermediate steps, and further optimizes computation through advanced workflow engines. The inputs-outputs relationship among subsequent steps is captured by following step 2 (described below).<br /><br />
-				The workflow is built by following steps:<br />
-				<ol className="list">
-					<li>Run each app used in the workflow at least once</li>
-					<li>Whenever possible, feed the outputs from the right column (History panel) as input for subsequent steps</li>
-					<li>Check whether outputs from each step are as expected; fix errors and repeat step 1 and 2 if not</li>
-				</ol>
-				<br />
-				Example workflows:<br />
+				<h5>Public workflows</h5>
+				Click on any workflow below will load both the pipeline (main panel) and data (History panel). Workflow diagram can be shown from the bottom of the main panel.
 				<ul className="list">
 					<li><a href="#" onClick={this.showWorkflowRunner}>Association</a></li>
 					<li><a href="#" onClick={this.showWorkflowRunner}>Annotation</a></li>
-					<li>Variant calling</li>
-					<li>Expression</li>
-					<li>Methylation</li>
-					<li>sRNA</li>
-					<li>Chip-seq</li>
+                                        <li><a href="#" onClick={this.showWorkflowRunner}>RNAseq</a></li>
+					<li>Chipseq (in progress)</li>
 				</ul>
 			</div>
 		</div>

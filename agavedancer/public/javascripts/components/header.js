@@ -64,7 +64,7 @@ const Header=React.createClass({
 
 	showWorkflows: function() {
 		AppsActions.showPage('workflows');
-		let title="Example Workflows";
+		let title="Public Workflows";
 		let url="/?page_id=workflows";
 		if (typeof (history.pushState) !== "undefined") {
 			let obj = { Title: title, Url: url };
@@ -91,7 +91,7 @@ const Header=React.createClass({
 					<NavDropdown eventKey='2' title="Workflows" id="nav-dropdown">
 						<MenuItem eventKey='2.1' onClick={this.showWorkflowBuilder}>Build a workflow</MenuItem>
 						<MenuItem eventKey='2.2' onClick={this.showWorkflowRunner}>Load a workflow</MenuItem>
-						<MenuItem eventKey='2.3' onClick={this.showWorkflows}>Example workflows</MenuItem>
+						<MenuItem eventKey='2.3' onClick={this.showWorkflows}>Public workflows</MenuItem>
 					</NavDropdown>
 					<NavItem eventKey='3' href='http://data.sciapps.org' target='_blank'>Data</NavItem>
 					<NavItem eventKey='4' href='http://ask.cyverse.org' target='_blank'>Help</NavItem>
