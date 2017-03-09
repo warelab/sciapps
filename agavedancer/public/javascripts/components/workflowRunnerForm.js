@@ -74,7 +74,8 @@ const WorkflowRunnerForm=React.createClass({
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
 		let required=this.state.required={};
 		if (workflowStore.workflowDetail && appsStore.wid[workflowStore.workflowDetail.id]) {
-			let steps=workflowStore.workflowDetail.steps;
+			let workflowDetail=workflowStore.workflowDetail;
+			let steps=workflowDetail.steps;
 			appsFieldsets=steps.map(function(step, i) {
 				let showAppId=step.appId.replace(/\-[\.\d]+$/, '');
 				let appId=step.appId;
@@ -111,11 +112,16 @@ const WorkflowRunnerForm=React.createClass({
 				placeholder: 'Enter email',
 				help: 'Optional Email for notification'
 			};
+			let runDetail=_.cloneDeep(workflowDetail);
+			runDetail.id=wid;
+			runDetail.steps.forEach(function(step) {
+				step.jobId=undefined;
+			});
 			let workflowJson={
 				type: 'hidden',
 				id: '_workflow_json',
 				name: '_workflow_json',
-				value: JSON.stringify(workflowStore.workflowDetail)
+				value: JSON.stringify(runDetail)
 			};
 			let workflowId={
 				type: 'hidden',

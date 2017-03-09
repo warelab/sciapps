@@ -560,7 +560,6 @@ ajax '/workflow/new' => sub {
 	my $form = params();
 	my $wf=from_json($form->{'_workflow_json'});
 	my $wid=$form->{'_workflow_id'};
-	database->quick_insert('workflow', {workflow_id => $wid, workflow_json => $wf});
 	foreach my $step (@{$wf->{'steps'}}) {
 		my $app_id=$step->{appId};
 		my ($app) = $apps->find_by_id($app_id);
@@ -571,7 +570,8 @@ ajax '/workflow/new' => sub {
 			push @step_form, $job_form;
 		}
 	}
-	return to_json({workflow_id => $wid, jobs => \@jobs});
+	database->quick_insert('workflow', {workflow_id => $wid, workflow_json => to_json($wf)});
+	return to_json({workflow_id => $wid, jobs => \@jobs, workflow => $wf});
 };
 
 ajax '/job/new/:id' => sub {
@@ -693,11 +693,18 @@ sub prepareJob {
 		}
 	}
 
-	while (my ($k, $v)=each %{$step->{inputs}}) {
+	foreach my $k (keys %{$step->{inputs}}) {
+		my $v=$step->{inputs}{$k};
 		if ($v && ref($v)) {
 			my $sf=$step_form->[$v->{step}];
 			$job_form{$k}='agave://' . $input_system . '/' . $sf->{archivePath} . '/' . $v->{output_name};
+		} else {
+			$step->{inputs}{$k}=$job_form{$k};
 		}
+	}
+	foreach my $k (keys %{$step->{parameters}}) {
+		my $v=$step->{parameters}{$k};
+		$step->{parameters}{$k}=$job_form{$k};
 	}
 
 	my ($result_folder)=map {my $t=$_; $t=~s/\W+/-/g; lc($t) . "-" . tempname()} ($app_id);
@@ -742,7 +749,6 @@ sub prepareJob {
 	my $job_json=to_json(\%job_form);
 	my $wid=$form->{'_workflow_id'};
 	my $data={job_id => $job_id, app_id => $app_id, job_json => $job_json, status => 'PENDING'};
-	print STDERR "CC|" . to_dumper(\%job_form) . "\n";
 	if ($wid) {
 		$data->{workflow_id}=$wid;
 		$data->{step_id}=$step->{id};

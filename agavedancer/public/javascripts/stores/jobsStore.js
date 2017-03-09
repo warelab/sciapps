@@ -61,9 +61,11 @@ const JobsStore=Reflux.createStore({
 			}.bind(this));
 			this.state.workflow={
 				id: res.data.workflow_id,
+				workflowDetail: res.data.workflow,
 				jobs: jobs,
 				steps: []
 			};
+			WorkflowActions.setWorkflow(res.data.workflow_id, res.data.workflow);
 			this.complete();
 		}.bind(this))
 		.catch(function(error) {
