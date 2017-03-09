@@ -78,7 +78,7 @@ const WorkflowDiagram=React.createClass({
 
 	truncate: function(s) {
 		if (s.length > 10)
-			return (s.substr(0,8)).concat("...");
+			return (s.substr(0,9)).concat(" ...");
 		else
 			return s;
 	},
@@ -185,15 +185,21 @@ const WorkflowDiagram=React.createClass({
 				info=<AppsInfo appId={appId} detailed={true} />
 			}
 		}
-		if (jobCount < 3) {
-			nodeClass="twoNodes";
-		} else if (jobCount < 4) {
-			nodeClass="threeNodes";
-		} else if (jobCount < 5) {
-			nodeClass="fourNodes";
-		} else if (jobCount < 6) {
-			nodeClass="fiveNodes";
+
+		switch (jobCount) {
+			case 2:
+				nodeClass="twoNodes";
+				break;
+			case 3:
+				nodeClass="threeNodes";
+				break;
+			case 4:
+				nodeClass="fourNodes";
+				break;
+			case 5:
+				nodeClass="fiveNodes";
 		}
+				
 		return (
 			<Modal dialogClassName={nodeClass} show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
 				<Modal.Header closeButton>
