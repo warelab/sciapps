@@ -479,10 +479,10 @@ sub checkWorkflowJobStatus {
 	return \@jobs;
 }
 
-ajax qr{/workflow/input/(.*)} => sub {
+ajax qr{/file/(.*)} => sub {
 	my ($fullpath)=splat;
 	my ($system, $path)=split /\//, $fullpath, 2;
-	my $input=database->quick_select('file_view', {system => $system, path => $path}) || {};
+	my $input=database->quick_select('file_view', {system => $system, path => $path}) || {system => $system, path => $path};
 	return to_json($input);
 };
 

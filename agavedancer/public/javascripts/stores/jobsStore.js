@@ -24,8 +24,7 @@ const JobsStore=Reflux.createStore({
 			jobOutputs: {},
 			jobDetailCache: {},
 			wid: {},
-			inputs: {},
-			fileDetail: {},
+			fileDetailCache: {},
 			workflow: {}
 		};
 	},
@@ -224,20 +223,27 @@ const JobsStore=Reflux.createStore({
 		.done();
 	},
 
-	setWorkflowInputs: function(fileId, url) {
+	setFile: function(fileId, url) {
 		let setting=this.state.setting;
 		let path=url.replace('agave://', '');
-		let inputsPromise=Q(axios.get(setting.host_url + '/workflow/input/' + path, {
-			headers: {'X-Requested-With': 'XMLHttpRequest'},
-		}))
-		.then(function(res) {
-			let input=res.data;
-			if (input.system !== undefined) {
-				this.state.inputs[fileId]=input;
+		let fileDetail=this.state.fileDetailCache[fileId];
+		let filePromise;
+		if (fileDetail) {
+			filePromise=Q(fileDetail);
+		} else {
+			filePromise=Q(axios.get(setting.host_url + '/file/' + path, {
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+			}))
+			.then(function(res) {
+				return res.data;
+			}.bind(this))
+		}
+		filePromise.then(function(data) {
+			if (! fileDetail && data.system) {
+				this.state.fileDetailCache[fileId]=data;
 			}
-			return res.data;
 		}.bind(this))
-		return inputsPromise;
+		return filePromise;
 	},
 
 	checkWorkflowJobStatus: function(wfId) {

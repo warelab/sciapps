@@ -51,11 +51,11 @@ const WorkflowDiagram=React.createClass({
 
 	clickInputFileNodeFuncMap: function(id) {
 		let func=function() {
-			let input=this.state.jobsStore.inputs[id];
-			if (input !== undefined) {
+			let file=this.state.jobsStore.fileDetailCache[id];
+			if (file !== undefined) {
 				this.state.activeNode={id: id, type: 'file'};
 				WorkflowActions.showNode();
-				console.log(input);
+				console.log(file);
 			}
 			console.log(id);
 		}.bind(this);
@@ -104,11 +104,17 @@ const WorkflowDiagram=React.createClass({
 				diagramDefStmts.push('click ' + appNodeId + ' clickAppsNode');
 				let appId=step.appId;
 				let appDetail=appsStore.appDetailCache[appId];
+				let jobDetail=step.jobId ? jobsStore.jobDetailCache[step.jobId] : undefined;
 				_.forEach(appDetail.outputs, function(v) {
 					let value=v.value.default;
-					let output_name=(setting.wf_step_prefix + step.id + ':' + value).replace(/\W/g, '_').toLowerCase();
+					let output_name=(jobDetail ? jobDetail.archiveSystem + '/' + jobDetail.archivePath + '/' : setting.wf_step_prefix + step.id + ':') + value;
+					let url=jobDetail ? output_name : undefined;
+					output_name=output_name.replace(/\W/g, '_').toLowerCase();
 					diagramDefStmts.push(output_name + '(' + that.truncate(value) + '); class ' + output_name + ' fileNode');
-					//diagramDefStmts.push('click ' + output_name + ' clickFileNode');
+					if (jobDetail) {
+						//JobsActions.setFile(output_name, url);
+						//diagramDefStmts.push('click ' + output_name + ' clickFileNode');
+					}
 					diagramDefStmts.push(appNodeId + '-->' + output_name);
 				});
 				_.forEach(appDetail.inputs, function(v) {
@@ -123,11 +129,12 @@ const WorkflowDiagram=React.createClass({
 						diagramDefStmts.push(value + '-->' + appNodeId);
 					} else if (ic) {
 						value=_.last(ic.split('/'));
-						let input_name=value.replace(/\W/g, '_').toLowerCase();
+						let url=ic.replace('agave://', '');
+						let input_name=url.replace(/\W/g, '_').toLowerCase();
 						diagramDefStmts.push(input_name + '(' + that.truncate(value) + '); class ' + input_name + ' fileNode');
 						diagramDefStmts.push('click ' + input_name + ' clickInputFileNode');
 						diagramDefStmts.push(input_name + '-->' + appNodeId);
-						JobsActions.setWorkflowInputs(input_name, ic);
+						JobsActions.setFile(input_name, url);
 					}
 				});
 			});
