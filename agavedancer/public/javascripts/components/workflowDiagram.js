@@ -31,8 +31,8 @@ const WorkflowDiagram=React.createClass({
 	},
 
 	componentWillMount: function() {
-		window.clickInputFileNode=function(id) {
-			let func=this.clickInputFileNodeFuncMap(id);
+		window.clickFileNode=function(id) {
+			let func=this.clickFileNodeFuncMap(id);
 			if (typeof func === 'function') {
 				func(id);
 			} else {
@@ -49,7 +49,7 @@ const WorkflowDiagram=React.createClass({
 		}.bind(this);
 	},
 
-	clickInputFileNodeFuncMap: function(id) {
+	clickFileNodeFuncMap: function(id) {
 		let func=function() {
 			let file=this.state.jobsStore.fileDetailCache[id];
 			if (file !== undefined) {
@@ -108,12 +108,12 @@ const WorkflowDiagram=React.createClass({
 				_.forEach(appDetail.outputs, function(v) {
 					let value=v.value.default;
 					let output_name=(jobDetail ? jobDetail.archiveSystem + '/' + jobDetail.archivePath + '/' : setting.wf_step_prefix + step.id + ':') + value;
-					let url=jobDetail ? output_name : undefined;
+					let url=output_name;
 					output_name=output_name.replace(/\W/g, '_').toLowerCase();
 					diagramDefStmts.push(output_name + '(' + that.truncate(value) + '); class ' + output_name + ' fileNode');
 					if (jobDetail) {
-						//JobsActions.setFile(output_name, url);
-						//diagramDefStmts.push('click ' + output_name + ' clickFileNode');
+						JobsActions.setFile(output_name, url);
+						diagramDefStmts.push('click ' + output_name + ' clickFileNode');
 					}
 					diagramDefStmts.push(appNodeId + '-->' + output_name);
 				});
@@ -122,17 +122,22 @@ const WorkflowDiagram=React.createClass({
 					let ic=step.inputs[v.id];
 					if (_.isPlainObject(ic)) {
 						let prevAppNodeId=(setting.wf_step_prefix + ic.step).replace(/\W/g, '_').toLowerCase();
-						value=(setting.wf_step_prefix + ic.step + ':' + ic.output_name).replace(/\W/g, '_').toLowerCase();
-						diagramDefStmts.push(value + '(' + that.truncate(ic.output_name) + '); class ' + value + ' fileNode');
-						//diagramDefStmts.push('click ' + value + ' clickFileNode');
-						diagramDefStmts.push(prevAppNodeId + '-->' + value);
-						diagramDefStmts.push(value + '-->' + appNodeId);
+						let prevJobDetail=steps[ic.step].jobId ? jobsStore.jobDetailCache[steps[ic.step].jobId] : undefined;
+						let input_name=(prevJobDetail ? prevJobDetail.archiveSystem + '/' + prevJobDetail.archivePath + '/' : setting.wf_step_prefix + ic.step + ':') + ic.output_name;
+						let url=input_name; 
+						input_name=input_name.replace(/\W/g, '_').toLowerCase();
+						//diagramDefStmts.push(value + '(' + that.truncate(ic.output_name) + '); class ' + value + ' fileNode');
+						//if (prevJobDetail) {
+							//diagramDefStmts.push('click ' + input_name + ' clickFileNode');
+						//}
+						//diagramDefStmts.push(prevAppNodeId + '-->' + input_name);
+						diagramDefStmts.push(input_name + '-->' + appNodeId);
 					} else if (ic) {
 						value=_.last(ic.split('/'));
 						let url=ic.replace('agave://', '');
 						let input_name=url.replace(/\W/g, '_').toLowerCase();
 						diagramDefStmts.push(input_name + '(' + that.truncate(value) + '); class ' + input_name + ' fileNode');
-						diagramDefStmts.push('click ' + input_name + ' clickInputFileNode');
+						diagramDefStmts.push('click ' + input_name + ' clickFileNode');
 						diagramDefStmts.push(input_name + '-->' + appNodeId);
 						JobsActions.setFile(input_name, url);
 					}

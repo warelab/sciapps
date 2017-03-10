@@ -7,9 +7,14 @@ import JobsStore from '../stores/jobsStore.js';
 
 const FilesInfo=React.createClass({
 	mixins: [Reflux.connect(JobsStore, 'jobsStore')],
+
+	getInitialState: function() {
+		return { setting: _config.setting };
+	},
 	
 	render: function() {
 		let jobsStore=this.state.jobsStore;
+		let setting=this.state.setting;
 		let fileDetail=jobsStore.fileDetailCache[this.props.fileId];
 		let markup=<div />;
 		let tbody=[];
@@ -25,7 +30,7 @@ const FilesInfo=React.createClass({
 				}
 			});
 			let fileName=fileDetail['path'].replace(/.*\// ,'');
-			let link='http://' + fileDetail['system'] + '/' + fileDetail['path'];
+			let link=setting.output_url[fileDetail['system']] + '/' + fileDetail['path'];
 			tbody.push(<tr key={'source'}><th><a href={link} target="_blank">Link to File</a></th><td></td></tr>);
 			markup=(
 				<Table striped condensed hover>
