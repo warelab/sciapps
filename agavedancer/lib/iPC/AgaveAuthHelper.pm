@@ -102,7 +102,7 @@ use iPC::User ();
 
 		if ($client) {
 			if ($user) { # we should always have a user
-				$client->{consumerSecret} = $user->password;
+				$client->{consumerSecret} = $user->consumerSecret;
 			}
 		}
 		else {
