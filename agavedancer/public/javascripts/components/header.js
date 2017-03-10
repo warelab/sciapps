@@ -95,6 +95,7 @@ const Header=React.createClass({
 					</NavDropdown>
 					<NavItem eventKey='3' href='http://data.sciapps.org' target='_blank'>Data</NavItem>
 					<NavItem eventKey='4' href='http://ask.cyverse.org' target='_blank'>Help</NavItem>
+					<NavItem eventKey='5' pullRight onClick={this.handleLogin}>{username ? 'Login as: ' + username : 'Login'}</NavItem>
 				</Nav>
 			</Navbar>
 		);

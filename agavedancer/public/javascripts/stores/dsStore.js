@@ -64,7 +64,7 @@ const DsStore=Reflux.createStore({
 			this.complete();
 		}
 		if (! cachedPath) {
-			axios.get(setting.host_url + '/browse/' + path, {
+			axios.get(setting.host_url + '/ils/' + path, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			})
 			.then(function(res) {

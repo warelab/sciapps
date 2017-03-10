@@ -2,6 +2,8 @@ package iPC::AgaveDemo;
 use Dancer ':syntax';
 
 #use Dancer::Plugin::MemcachedFast;
+use iPC::AgaveAuthHelper ();
+use iPC::User ();
 use Agave::Client ();
 use Agave::Client::Client ();
 use Agave::Client::Exceptions ();
@@ -161,6 +163,29 @@ sub uncompress_result {
 	}
 };
 
+sub parse_ils {
+	my ($ils, $datastore_root)=@_;
+	my $path=shift @$ils;
+	$path=~m#^$datastore_root/?(.*):#;
+	my @content;
+	my %result=($1 => \@content);
+	foreach my $line (@$ils) {
+		if ($line=~m#^\s+C\-\s+$datastore_root/(.*)#) {
+			push @content, +{
+				name	=> $1,
+				type	=> 'dir',	
+			};
+		} else {
+			my @f=split /\s+/, $line, 8;
+			push @content, +{
+				name => $f[7],
+				type => 'file',
+			};
+		}
+	}
+	\%result;
+}
+
 sub parse_ls {
 	my ($ls, $file_root)=@_;
 	my $regex=qr#^$file_root/?(.*):#;
@@ -238,6 +263,11 @@ get '/' => sub {
 	};
 };
 
+ajax '/login' => sub {
+	my $user=iPC::User->new({username => param('username')});
+	to_json({username => $user->username});
+};
+
 get '/logout' => sub {
 	session 'token' => '';
 	session 'logged_in' => 0;
@@ -249,6 +279,22 @@ get '/logout' => sub {
 #	my $settings={map {$_ => setting($_)} @EXPORT_SETTINGS};
 #	to_json($settings);
 #};
+
+ajax qr{/ils/?(.*)} => sub {
+	my ($path) = splat;
+	my $root='';
+	my $datastore_root=`export irodsEnvFile=/usr/share/httpd/irodsEnv;ipwd`;
+	my @ils=`export irodsEnvFile=/usr/share/httpd/irodsEnv;ils -l '$path'`;
+	chomp ($datastore_root, @ils);
+	my $dir_list=parse_ils(\@ils, $datastore_root);
+
+	to_json([map +{
+			is_root => $_ eq  $root ? 1 : 0,
+			path => $_,
+			list => $dir_list->{$_},
+		}, keys %$dir_list]
+	);
+};
 
 sub browse_datastore {
 	my ($path, $system)=@_;
@@ -314,6 +360,11 @@ get qr{/browse/?(.*)} => sub {
 
 ajax '/apps' => sub {
 	my $app_list=retrieveApps();
+	foreach (@$app_list) {
+		my $tag=$_->{isPublic} ? 'Public' : 'Private';
+		$_->{tags}||=[];
+		push @{$_->{tags}}, $tag;
+	}
 	to_json($app_list);
 };
 
@@ -349,23 +400,9 @@ get '/app/:id' => sub {
 
 sub retrieveApps {
 	my ($app_id)=@_;
-	my $return;
-
-	my $appfile="public/assets/${app_id}.json";
-	if (-f $appfile && -r $appfile) {
-		my $json=`cat $appfile`;
-		$return=Agave::Client::Object::Application->new(from_json($json));
-	} else {
-		my $api = getAgaveClient();
-
-		my $apps = $api->apps;
-		if ($app_id) {
-			($return)=grep {! $_->{isPublic} } $apps->find_by_id($app_id);
-		} else {
-			$return=[grep { ! $_->{isPublic} } ($apps->list)];
-		}
-	}
-	$return;
+	my $api = getAgaveClient();
+	my $apps = $api->apps;
+	my $return=$app_id ? $apps->find_by_id($app_id) : $apps->list
 }
 
 get '/schema/:id' => sub {
@@ -710,13 +747,6 @@ sub prepareJob {
 	my ($result_folder)=map {my $t=$_; $t=~s/\W+/-/g; lc($t) . "-" . tempname()} ($app_id);
 	$archive_path.= "/" . $result_folder;
 	
-	my $archive_path_abs=$archive_home . "/" . $archive_path;
-	mkdir($archive_path_abs) or print STDERR "Error: can't mkdir $archive_path_abs, $!\n";
-	chmod(0775, $archive_path_abs);
-	open FH, ">", "$archive_path_abs/.htaccess" or print STDERR "Error: can't open  ${archive_path_abs}/.htaccess, $!\n";
-	print FH "DirectoryIndex ../.index.php?dir=$result_folder\n";
-	close FH;
-
 	my $host_url=setting("host_url");
 	my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}';
 	my $notifications=[
@@ -733,11 +763,6 @@ sub prepareJob {
 		url		=> $host_url . $noteinfo,
 	},
 	];
-	#if (my $email = $form->{"_email"}) {
-	#	open FH, ">", "$archive_path_abs/.email" or print STDERR "Error: can't open  ${archive_path}/.email, $!\n";
-	#	print FH $email;
-	#	close FH;
-	#}
 
 	$job_form{_email}=$form->{_email} || undef;
 	$job_form{archive}=1;

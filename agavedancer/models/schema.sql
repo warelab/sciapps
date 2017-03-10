@@ -3,9 +3,10 @@ PRAGMA encoding = "UTF-8";
 drop table if exists user;
 create table user (
 	id integer primary key autoincrement,
-	name varchar(40) unique,
+	username varchar(40) unique,
 	consumer_secret varchar(40) not null
 );
+insert into user (username, consumer_secret) values ('maizecode','sIXnjqLfi0OfcYi5VdXBkqjywnca');
 
 drop table if exists workflow;
 create table workflow (

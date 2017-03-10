@@ -1,6 +1,9 @@
 'use strict';
 
 import Reflux from 'reflux';
+import axios from 'axios';
+import _ from 'lodash';
+import Q from 'q';
 import UserActions from  '../actions/userActions.js';
 
 const UserStore=Reflux.createStore({
@@ -8,6 +11,7 @@ const UserStore=Reflux.createStore({
 
 	init: function() {
 		this.state={
+			setting: _config.setting,
 			showLoginBox: false,
 			username: ''
 		};
@@ -21,9 +25,18 @@ const UserStore=Reflux.createStore({
 		this.trigger(this.state);
 	},
 
-	login: function(u, p) {
-		this.state.username=u;
-		this.hideLoginBox();
+	login: function(formData) {
+		let setting=this.state.setting;
+		Q(axios.post(setting.host_url + '/login', formData, {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+			transformRequest: function(data) { return data; }
+		}))
+		.then(function(res) {
+			if (res.data.username) {
+				this.state.username=res.data.username;
+				this.hideLoginBox();
+			}
+		}.bind(this));
 	},
 
 	logout: function() {

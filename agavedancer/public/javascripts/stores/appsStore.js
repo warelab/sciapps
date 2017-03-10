@@ -54,7 +54,9 @@ const AppsStore=Reflux.createStore({
 		if (apps.length) {
 			appPromise=Q(apps);
 		} else {
-			appPromise=Q(axios.get('/assets/agaveAppsList.json'))
+			appPromise=Q(axios.get(setting.host_url + '/apps', {
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+			}))
 			.then(function(res) {
 				this.state.appsCache=res.data;
 				return res.data;

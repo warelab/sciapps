@@ -10,14 +10,15 @@ import UserActions from  '../actions/userActions.js';
 const UserLoginBox=React.createClass({
 	mixins: [Reflux.connect(UserStore, 'userStore')],
 
+	formName: 'userLoginForm',
+
 	hideLoginBox: function() {
 		UserActions.hideLoginBox();
 	},
 
 	handleLogin: function() {
-		let u=this.refs.username.state.value;
-		let p=this.refs.password.state.value;
-		UserActions.login(u, p);
+		let formData=new FormData(this.refs[this.formName]);
+		UserActions.login(formData);
 	},
 
 	render: function() {
@@ -38,11 +39,14 @@ const UserLoginBox=React.createClass({
 					<Modal.Title>User Login</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
-					<BaseInput ref="username" data={usernameInput} />
-					<BaseInput ref="password" data={passwordInput} />
+					<form ref={this.formName}>
+						<BaseInput data={usernameInput} />
+						<BaseInput data={passwordInput} />
+					</form>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button bsStyle='primary' onClick={this.handleLogin}>Login</Button>
+					<Button bsStyle='primary' onClick={this.hideLoginBox}>Cancel</Button>
 				</Modal.Footer>
 			</Modal>
 		);
