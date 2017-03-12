@@ -41,3 +41,4 @@ maxRunTime: "96:00:00"
 datastore_system: 'data.sciapps.org'
 uncompress_suffix: '.open.tar.gz'
 use_file_server: 1
+irodsEnvFile: '/usr/share/httpd/irodsEnv'

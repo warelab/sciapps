@@ -9,6 +9,7 @@ const AppsActions=Reflux.createActions([
 	'showApp',
 	'hideApp',
 	'setApp',
+	'resetApps',
 	'setWorkflowApps',
 	'resetWorkflowApps',
 	'showPage'

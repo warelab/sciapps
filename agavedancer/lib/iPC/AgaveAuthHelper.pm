@@ -89,7 +89,7 @@ use iPC::User ();
 		
 		my $client_name = '_AGAVEWEB';
 
-		my ($user) = iPC::User->search(username => lc $u);
+		my $user = iPC::User->new({username => $u});
 		if ($purge) {
 			print STDERR '** ', __PACKAGE__, ' purging client ', 
 				$client_name, ' for user ', $u, $/;
@@ -109,7 +109,7 @@ use iPC::User ();
 			$client = $apic->create({name => $client_name});
 			if ($client) {
 				# store the secret;
-				$user->password( $client->{consumerSecret} );
+				$user->consumerSecret( $client->{consumerSecret} );
 				$user->update;
 			}
 		}

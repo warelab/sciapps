@@ -2,9 +2,10 @@
 
 require('../../styles/layout.less');
 
-
 import React from 'react';
 import Reflux from 'reflux';
+import UserStore from '../stores/userStore.js';
+import UserActions from  '../actions/userActions.js';
 import AppsActions from '../actions/appsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import {Layout, Fixed, Flex} from 'react-layout-pane';
@@ -20,8 +21,10 @@ import Header from './header.js';
 import UserLoginBox from './userLoginBox.js';
 
 const App=React.createClass({
+	mixins: [Reflux.connect(UserStore, 'userStore')],
 
 	componentDidMount: function () {
+		UserActions.checkLogin();
 		let app_id=_config.app_id, wf_id=_config.wf_id, page_id=_config.page_id || 'welcome';
 		if (wf_id) {
 			AppsActions.showPage('workflowRunner');
@@ -34,6 +37,7 @@ const App=React.createClass({
 	},
 
 	render: function () {
+		let user=this.state.userStore;
 		return (
 			<Layout type="column">
 				<Header />
@@ -41,19 +45,19 @@ const App=React.createClass({
 				<Flex>
 					<Layout type="row">
 						<Fixed className="leftbar">
-              						<Fixed className="apps-panel-header">Apps</Fixed>
+              <Fixed className="apps-panel-header">Apps</Fixed>
 							<Fixed className="search-wrapper"><AppsSearchBox /></Fixed>
-							<AppsGroup />
+							<AppsGroup user={user} />
 						</Fixed>
 						<Flex className="main">
-							<AppsDetail />
-							<DsDetail />
-							<WorkflowDiagram />
+							<AppsDetail user={user} />
+							<DsDetail user={user} />
+							<WorkflowDiagram user={user} />
 						</Flex>
 						<Fixed className="rightbar">
 							<Fixed className="apps-panel-header">History</Fixed>
-							<JobsList />
-							<JobsDetail />
+							<JobsList user={user} />
+							<JobsDetail user={user} />
 						</Fixed>
 					</Layout>
 				</Flex>

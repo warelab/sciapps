@@ -22,7 +22,7 @@ const DsDetail=React.createClass({
 		let dsFileNodes='Loading ...';
 		let targetPath=dsStore.dsItemPaths[dsStore.target];
 		let dsBtnValue=targetPath ? 'Select and Close' : 'Close';
-		if (dsDetail.list && dsDetail.list.length) {
+		if (dsDetail.list) {
 			dsFileNodes=dsDetail.list.sort(function (a,b) {
 				return a.type.localeCompare(b.type) || a.name.localeCompare(b.name); 
 			}).map(function(dsItem) {

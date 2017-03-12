@@ -16,7 +16,7 @@ use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/host_url output_url upload_suffix wf_step_prefix datastore_system archive_home/;
+our @EXPORT_SETTINGS=qw/host_url output_url upload_suffix wf_step_prefix datastore_system datastore_path archive_home/;
 
 sub uuid {
 	my $s='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
@@ -34,107 +34,52 @@ sub check_uuid {
 	$id=~/^[0-9a-f]{8,}-(?:[0-9a-f]{4,}-){2,}[0-9a-f]{3,}$/ ? 1 : 0;
 }
 
-# TODO - this needs work
 sub token_valid {
 	my $tk_expiration = session('token_expiration_at');
-	# if we don't have an expiration token
-	return 0 unless $tk_expiration;
-	
-	my $now = time();
-    if ($tk_expiration < $now) {
-        session 'logged_in' => undef;
-        return 0;
-    }
-	return 1;
+	my $return;
+
+	$tk_expiration && $tk_expiration > time() ? 1 : 0;
 }
 
-sub _build_client {
-	my ($u, $p)=@_;
-	my $apic = Agave::Client::Client->new({
-			username => $u,
-			password => $p,
+sub _login {
+	my ($args)=@_;
+	my $ah=iPC::AgaveAuthHelper->new({
+			username => $args->{username},
+			password => $args->{password},
 		}
 	);
-
-	my $client_name = 'AGAVEWEB';
-	$apic->client($client_name) || $apic->create({name => $client_name});
-}
-
-sub __build_client {
-	my ($u, $p, $purge)=@_;
-	my $client;
-	my $apic = Agave::Client::Client->new({
-			username => $u,
-			password => $p,
-		}
-	);
-
-	my $client_name = '_AGAVEWEB';
-	my $user;
-	if ($purge) {
-		print STDERR '** purging client ', $client_name, ' for user ', $u, "\n";
-		eval {$apic->delete($client_name)};
-		print STDERR  '** deleting: ', $@, "\n" if $@;
-	} else {
-		$client=$apic->client($client_name);
-	}
-	if ($client) {
-		$client->{consumerSecret} = $user->consumerSecret;
-	} else {
-		$client=$apic->create({name => $client_name});
-		$user->consumerSecret( $client->{consumerSecret} );
-		$user->update;
-	}
-	return $client;
-}
-
-sub _auth {
-	open(AGAVE, setting("appdir") . "/" . setting("agave_config"));
-	my $contents = do { local $/;  <AGAVE> };
-	close AGAVE;
-	my $agave=from_json($contents);
-
-	my $client = _build_client($agave->{username}, $agave->{password});
-	my $apio = eval {
-		Agave::Client->new(
-			username  => $agave->{username},
-			password  => $agave->{password},
-			apisecret => $agave->{consumerSecret},
-			apikey    => $client->{consumerKey},
-		)
-	};
-	if ($@) {
-		print STDERR 'auth failed: ', $@, $/;
-	}
-	return $apio;
-}
-
-sub auto_login {
-	my $err = "";
-	my $api = eval {_auth()};
-	if ($@) {
-    	print STDERR  "Error: ", $@, $/;
-	}
-
-	if ($api && $api->token) {
-    	debug "Token: " . $api->token . "\n";
-    	session 'username' => $api->{'user'};
-    	session 'token' => $api->token;
-    	session 'logged_in' => 1;
-    	session 'token_expiration_in' => $api->auth->token_expiration_in;
-    	session 'token_expiration_at' => $api->auth->token_expiration_at;
-	
+	my $api;
+	if ($ah and $api=$ah->api and $api->token) {
+		debug "Token: " . $api->token . "\n";
+    session 'username' => $api->{'user'};
+    session 'token' => $api->token;
+    session 'logged_in' => 1;
+    session 'token_expiration_in' => $api->auth->token_expiration_in;
+    session 'token_expiration_at' => $api->auth->token_expiration_at;
 		print STDERR "Delta: ", $api->auth->token_expiration_in, $/;
+	} else {
+		Agave::Exceptions::AuthFailed->throw('Invalid Credentials');
 	}
-	else {
-		$err .= "Invalid credentials."
-	}
+	1;
+}
+
+sub _logout {
+	session 'token' => '';
+	session 'logged_in' => 0;
+	session 'username'	=> '';
 }
 
 sub check_login {
-	unless(session('logged_in') && token_valid()) {
-		auto_login();
-	}
+	session('logged_in') && token_valid();
+}
+
+sub getAgaveClient {
+	my $username = session('username');
+	check_login() && $username ?
+	Agave::Client->new(
+		username => $username,
+		token => session('token'),
+	) : Agave::Exceptions::AuthFailed->throw('Invalid Credentials');
 }
 
 sub tempname {
@@ -171,8 +116,10 @@ sub parse_ils {
 	my %result=($1 => \@content);
 	foreach my $line (@$ils) {
 		if ($line=~m#^\s+C\-\s+$datastore_root/(.*)#) {
+			my $name=$1;
+			$name=~s/\s+$//;
 			push @content, +{
-				name	=> $1,
+				name	=> $name,
 				type	=> 'dir',	
 			};
 		} else {
@@ -218,16 +165,6 @@ sub parse_ls {
 	\%result;
 };
 
-sub getAgaveClient {
-	check_login();
-
-	my $username = session('username');
-	Agave::Client->new(
-		username => $username,
-		token => session('token'),
-	);
-}
-
 #get '/' => sub {
 #	send_file 'index.html';
 #};
@@ -247,44 +184,51 @@ options qr{/.*} => sub {
 
 };
 
+hook on_route_exception => sub {
+	my $exception = shift;
+	if ($exception->isa('Agave::Exceptions::AuthFailed')) {
+		halt(to_json({error => $_->error}));
+	} else {
+		$exception->rethrow;
+	}
+};
+
 get '/' => sub {
-	my $app_id = param("app_id");
-	my $page_id = param("page_id");
-	my $wf_id = param("wf_id");
-	my $setting={map {$_ => setting($_)} @EXPORT_SETTINGS};
+	my %config=map { $_ => param($_) } qw/app_id page_id wf_id/;
+	$config{setting}={map {$_ => setting($_)} @EXPORT_SETTINGS};
 
 	template 'index', {
-		config => to_json({
-			app_id => $app_id,
-			page_id => $page_id,
-			wf_id	=> $wf_id,
-			setting => $setting,
-		})
+		config => to_json(\%config),
 	};
 };
 
 ajax '/login' => sub {
-	my $user=iPC::User->new({username => param('username')});
-	to_json({username => $user->username});
+	my $result=_login({username => param('username'), password => param('password')}) ? {
+		username	=> session('username'),
+		logged_in => session('logged_in'),
+		token_expiration_at => session('token_expiration_at'),
+	} : { logged_in => 0 };
+	to_json($result);
 };
 
-get '/logout' => sub {
-	session 'token' => '';
-	session 'logged_in' => 0;
-
-	return redirect '/';
+ajax '/logout' => sub {
+	_logout();
+	#return redirect '/';
 };
-
-#ajax '/settings' => sub {
-#	my $settings={map {$_ => setting($_)} @EXPORT_SETTINGS};
-#	to_json($settings);
-#};
 
 ajax qr{/ils/?(.*)} => sub {
 	my ($path) = splat;
+	my $username=session('username');
+	unless (check_login() && $username) {
+		Agave::Exceptions::AuthFailed->throw('Invalid Credentials');
+	}
+	my $datastore_home=setting('datastore_home');
+	my $datastore_path=setting('datastore_path');
+	my $irodsEnvFile=setting('irodsEnvFile');
 	my $root='';
-	my $datastore_root=`export irodsEnvFile=/usr/share/httpd/irodsEnv;ipwd`;
-	my @ils=`export irodsEnvFile=/usr/share/httpd/irodsEnv;ils -l '$path'`;
+	my $datastore_root=join('/', $datastore_home, $username, $datastore_path);
+	my $fullPath=$datastore_root . '/' . $path;
+	my @ils=`export irodsEnvFile=$irodsEnvFile;ils -l '$fullPath'`;
 	chomp ($datastore_root, @ils);
 	my $dir_list=parse_ils(\@ils, $datastore_root);
 
@@ -300,7 +244,7 @@ sub browse_datastore {
 	my ($path, $system)=@_;
 	$system||=setting('datastore_system');
 
-	my $apif =getAgaveClient();
+	my $apif=getAgaveClient();
 
 	#my $root=$username;
 	my $root='';

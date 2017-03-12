@@ -29,8 +29,11 @@ const AppsInput=React.createClass({
 	},
 
 	handleDsStoreChange: function(dsStore) {
+		let setting=this.state.setting;
 		let dsItemPath=dsStore.dsItemPaths[this.props.data.id];
-		let dsItemUrl=dsItemPath ? 'agave://' + this.state.setting.datastore_system + '/example_data/' + dsItemPath : '';
+		let user=this.props.user;
+		//let dsItemUrl=dsItemPath ? 'agave://' + this.state.setting.datastore_system + '/example_data/' + dsItemPath : '';
+		let dsItemUrl=dsItemPath ? 'agave://' + setting.datastore_system + '/' + user.username + '/' + setting.datastore_path + '/' + dsItemPath : '';
 		if (dsItemUrl && dsItemUrl !== this.state.textValue) {
 			this.setState({
 				textValue: dsItemUrl 

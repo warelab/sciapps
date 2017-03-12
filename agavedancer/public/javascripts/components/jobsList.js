@@ -3,8 +3,8 @@
 import React from 'react';
 import Reflux from 'reflux';
 import _ from 'lodash';
-import JobsActions from '../actions/jobsActions.js';
 import JobsStore from '../stores/jobsStore.js';
+import JobsActions from  '../actions/jobsActions.js';
 import JobsItem from './jobsItem.js';
 import {ListGroup} from 'react-bootstrap';
 
@@ -15,8 +15,10 @@ const JobsList=React.createClass({
 		return { setting: _config.setting };
 	},
 
-	componentDidMount: function() {
-		JobsActions.listJobs();
+	componentWillReceiveProps: function(nextProps) {
+		if (! nextProps.user.logged_in && this.state.jobsStore.jobs.length) {
+			JobsActions.resetJobs();
+		}
 	},
 
 	render: function() {
@@ -25,7 +27,7 @@ const JobsList=React.createClass({
 		let jobs, jobOutputs, jobsItemNodes;
 		jobs=jobsStore.jobs;
 		jobOutputs=jobsStore.jobOutputs;
-		if (jobs && jobs.length) {
+		if (this.props.user.logged_in && jobs && jobs.length) {
 			jobsItemNodes = jobs.map(function (jobsItem, index) {
 				let outputs=jobOutputs[jobsItem.job_id];
 				let checked=jobsStore.workflowBuilderJobIndex[index];

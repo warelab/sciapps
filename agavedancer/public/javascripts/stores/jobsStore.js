@@ -37,6 +37,24 @@ const JobsStore=Reflux.createStore({
 		this.trigger(this.state);
 	},
 
+	_reset: function() {
+		this.state.showJobId=undefined;
+		this.state.jobs=[];
+		this.state.workflowBuilderJobIndex=[];
+		this.state.jobDetail={};
+		this.state.jobStatus={};
+		this.state.jobOutputs={};
+		this.state.jobDetailCache={};
+		this.state.wid={};
+		this.state.fileDetailCache={};
+		this.state.workflow={};
+	},
+
+	resetJobs: function() {
+		this._reset();
+		this.complete();
+	},
+
 	submitWorkflowJobs: function(wf, formData) {
 		let submitNumber=this.state.jobs.length;
 		let setting=this.state.setting;
@@ -50,6 +68,9 @@ const JobsStore=Reflux.createStore({
 			transformRequest: function(data) { return data; }
 		}))
 		.then(function(res) {
+			if (res.data.error) {
+				return;
+			}
 			let jobs=[];
 			wf.steps.map(function(step, i) {
 				let index=submitNumber + i;
@@ -83,6 +104,9 @@ const JobsStore=Reflux.createStore({
 			transformRequest: function(data) { return data; }
 		}))
 		.then(function(res) {
+			if (res.data.error) {
+				return;
+			}
 			let job=res.data;
 			this.state.jobs[submitNumber]=job;
 			this.state.jobStatus[job.job_id]=job.status;
@@ -103,7 +127,7 @@ const JobsStore=Reflux.createStore({
 
 		Q.all(jobIds.map(this.setJob)).done(function(jobs) {
 			_.forEach(jobs, function(job) {
-				if (! currentJobIds[job.job_id]) {
+				if (job && ! currentJobIds[job.job_id]) {
 					this.state.jobs[submitNumber++]=this.state.jobDetailCache[job.job_id];
 				}
 			}.bind(this));
@@ -136,6 +160,9 @@ const JobsStore=Reflux.createStore({
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			}))
 			.then(function(res) {
+				if (res.data.error) {
+					return;
+				}
 				this.state.jobDetailCache[res.data.job_id]=res.data;
 				return res.data;
 			}.bind(this));
@@ -196,6 +223,9 @@ const JobsStore=Reflux.createStore({
 				}))
 			})
 			.then(function(res) {
+				if (res.data.error) {
+					return;
+				}
 				let results=res.data[0].list.filter(function(result) {
 					return ! result.name.startsWith('.');
 				});
@@ -205,8 +235,12 @@ const JobsStore=Reflux.createStore({
 				return results;
 			})
 			.then(function(results) {
-				this.state.jobOutputs[jobId]=results;
-				return results;
+				if (results) {
+					this.state.jobOutputs[jobId]=results;
+					return results;
+				} else {
+					return;
+				}
 			}.bind(this));
 		}
 		return jobOutputsPromise;

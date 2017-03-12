@@ -54,10 +54,9 @@ const DsStore=Reflux.createStore({
 		//	path='/' + path;
 		//}
 
-		this.state.dsDetail.path=path;
 		let cachedPath=this.state.dsDetailCache[path];
 		if (cachedPath) {
-			this.state.dsDetail.list=cachedPath;
+			this.state.dsDetail=cachedPath;
 		}
 		if (! this.state.showDataStore || cachedPath) {
 			this.state.showDataStore=true;
@@ -68,6 +67,9 @@ const DsStore=Reflux.createStore({
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			})
 			.then(function(res) {
+				if (res.data.error) {
+					return;
+				}
 				for (let dsDetail of res.data) {
 					let filtered=dsDetail.list.filter(function(item) {
 						return ! item.name.startsWith('.');
@@ -76,9 +78,9 @@ const DsStore=Reflux.createStore({
 					if (! dsDetail.is_root) {
 						dsDetail.list.unshift({name: '..', type: 'dir'});
 					}
-					this.state.dsDetailCache[dsDetail.path]=dsDetail.list;
+					this.state.dsDetailCache[dsDetail.path]=dsDetail;
 				}
-				this.state.dsDetail.list=this.state.dsDetailCache[path];
+				this.state.dsDetail=this.state.dsDetailCache[path];
 				this.complete();
 			}.bind(this))
 			.catch(function(res) {

@@ -5,6 +5,7 @@ import Reflux from 'reflux';
 const UserActions=Reflux.createActions([
 	'login',
 	'logout',
+	'checkLogin',
 	'showLoginBox',
 	'hideLoginBox'
 ]);

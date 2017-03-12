@@ -23,10 +23,7 @@ const AppsStore=Reflux.createStore({
 			appsCache: [],
 			wid: {}
 		};
-		let func=function() {
-			this._listApps();
-		}.bind(this);
-		this._debouncedListApps=_.debounce(func, 200);
+		this.debouncedListApps=_.debounce((searhString) => { this.listApps(searhString) }, 200);
 	},
 
 	getInitialState: function() {
@@ -37,9 +34,15 @@ const AppsStore=Reflux.createStore({
 		this.trigger(this.state);
 	},
 
-	debouncedListApps: function(searchString) {
-		this.state.searchString=searchString;
-		this._debouncedListApps();
+	resetApps: function() {
+		this._reset();
+	},
+
+	_reset: function() {
+		this.state.apps=[];
+		this.state.appDetail={};
+		this.state.appDetailCache={};
+		this.complete();
 	},
 
 	listApps: function(searchString) {
@@ -58,14 +61,19 @@ const AppsStore=Reflux.createStore({
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			}))
 			.then(function(res) {
+				if (res.data.error) {
+					return;
+				}
 				this.state.appsCache=res.data;
 				return res.data;
 			}.bind(this));
 		}
 		appPromise.then(function(appsList) {
-			this.state.apps=appsList;
-			this.filterApps();
-			this.complete();
+			if (appsList) {
+				this.state.apps=appsList;
+				this.filterApps();
+				this.complete();
+			}
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
@@ -115,6 +123,9 @@ const AppsStore=Reflux.createStore({
 				headers: {'X-Requested-With': 'XMLHttpRequest'}
 			}))
 			.then(function(res) {
+				if (res.data.error) {
+					return;
+				}
 				this.state.appDetailCache[appId]=res.data;
 				return res.data;
 			}.bind(this));

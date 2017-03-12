@@ -4,9 +4,11 @@ drop table if exists user;
 create table user (
 	id integer primary key autoincrement,
 	username varchar(40) unique,
-	consumer_secret varchar(40) not null
+	consumer_secret varchar(40)
 );
-insert into user (username, consumer_secret) values ('maizecode','sIXnjqLfi0OfcYi5VdXBkqjywnca');
+insert into user (username) values ('maizecode');
+insert into user (username) values ('luj');
+insert into user (username) values ('lwang');
 
 drop table if exists workflow;
 create table workflow (

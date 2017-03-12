@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Reflux from 'reflux';
-import {Modal, Button} from 'react-bootstrap';
+import {Modal, Button, Label} from 'react-bootstrap';
 import BaseInput from './baseInput.js';
 import UserStore from '../stores/userStore.js';
 import UserActions from  '../actions/userActions.js';
@@ -33,6 +33,7 @@ const UserLoginBox=React.createClass({
 			name: 'password',
 			label: 'Password'
 		};
+		let error_label=this.state.userStore.error ? <div className="error">{this.state.userStore.error}</div> : '';
 		return(
 			<Modal show={showLoginBox} onHide={this.hideLoginBox}>
 				<Modal.Header closeButton>
@@ -43,6 +44,7 @@ const UserLoginBox=React.createClass({
 						<BaseInput data={usernameInput} />
 						<BaseInput data={passwordInput} />
 					</form>
+					{error_label}
 				</Modal.Body>
 				<Modal.Footer>
 					<Button bsStyle='primary' onClick={this.handleLogin}>Login</Button>

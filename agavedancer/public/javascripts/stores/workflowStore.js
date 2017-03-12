@@ -80,12 +80,17 @@ const WorkflowStore=Reflux.createStore({
 		} else {
 			workflowPromise=Q(axios.get('/assets/' + wfId + '.workflow.json'))
 			.then(function(res) {
+				if (res.data.error) {
+					return;
+				}
 				this.state.workflowDetailCache[wfId]=res.data;
 				return res.data;
 			}.bind(this));
 		}
 		workflowPromise.then(function(wfDetail) {
-			this.setWorkflowSteps(wfDetail);
+			if (wfDetail) {
+				this.setWorkflowSteps(wfDetail);
+			}
 		}.bind(this));
 		return workflowPromise;
 	},

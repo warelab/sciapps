@@ -3,7 +3,7 @@
 import Reflux from 'reflux';
 
 const JobsActions=Reflux.createActions([
-	'listJobs',
+	'resetJobs',
 	'submitWorkflowJobs',
 	'submitJob',
 	'showFile',

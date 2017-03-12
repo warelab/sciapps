@@ -68,7 +68,7 @@ const AppsForm=React.createClass({
 					if (useResubmit) {
 						resubmitValue=jobDetail.inputs[input.id];
 					}
-					return(<AppsInput key={appDetail.id + ':' + input.id} data={input} useResubmit={useResubmit} resubmitValue={resubmitValue} onValidate={onValidate} />);
+					return(<AppsInput key={appDetail.id + ':' + input.id} data={input} useResubmit={useResubmit} resubmitValue={resubmitValue} onValidate={onValidate} user={this.props.user} />);
 				}.bind(this));
 			}
 			if (appDetail.parameters &&  appDetail.parameters.length) {
@@ -81,7 +81,7 @@ const AppsForm=React.createClass({
 					if (useResubmit) {
 						resubmitValue=jobDetail.parameters[param.id];
 					}
-					return(<AppsParam key={appDetail.id + ':' + param.id} data={param} useResubmit={useResubmit} resubmitValue={resubmitValue} onValidate={onValidate} />);
+					return(<AppsParam key={appDetail.id + ':' + param.id} data={param} useResubmit={useResubmit} resubmitValue={resubmitValue} onValidate={onValidate} user={this.props.user} />);
 				}.bind(this));
 			}
 		}
