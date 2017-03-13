@@ -23,8 +23,11 @@ import UserLoginBox from './userLoginBox.js';
 const App=React.createClass({
 	mixins: [Reflux.connect(UserStore, 'userStore')],
 
+	componentWillMount: function() {
+		UserStore.login();
+	},
+
 	componentDidMount: function () {
-		UserActions.checkLogin();
 		let app_id=_config.app_id, wf_id=_config.wf_id, page_id=_config.page_id || 'welcome';
 		if (wf_id) {
 			AppsActions.showPage('workflowRunner');

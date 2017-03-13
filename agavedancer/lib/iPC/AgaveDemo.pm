@@ -64,9 +64,7 @@ sub _login {
 }
 
 sub _logout {
-	session 'token' => '';
-	session 'logged_in' => 0;
-	session 'username'	=> '';
+	session->destroy;
 }
 
 sub check_login {
@@ -203,16 +201,26 @@ get '/' => sub {
 };
 
 ajax '/login' => sub {
-	my $result=_login({username => param('username'), password => param('password')}) ? {
+	my ($username, $password)=(param('username'), param('password'));
+	if ($username && $password) {
+		_login({username => $username, password => $password}); 
+	}
+	unless( check_login() ) {
+		_logout();
+	}
+
+	my $result={
 		username	=> session('username'),
 		logged_in => session('logged_in'),
 		token_expiration_at => session('token_expiration_at'),
-	} : { logged_in => 0 };
+	};
+	print STDERR to_dumper($result);
 	to_json($result);
 };
 
 ajax '/logout' => sub {
 	_logout();
+	return to_json({logged_in => 0});
 	#return redirect '/';
 };
 

@@ -47,6 +47,9 @@ const UserStore=Reflux.createStore({
 		this.state.error='';
 		this.complete();
 		let setting=this.state.setting;
+		if (formData === undefined) {
+			formData=new FormData();
+		}
 		Q(axios.post(setting.host_url + '/login', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
