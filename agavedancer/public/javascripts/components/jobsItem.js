@@ -65,6 +65,11 @@ const JobsItem=React.createClass({
 			});
 		}
 
+		let emptymessage=(
+			<div style="display: block;">
+                        "Job history is empty. You can run a new job, load a workflow, or check our public workflows"
+                        </div>
+		);
 		return (
 			<ListGroupItem>
 				<ButtonToolbar>
