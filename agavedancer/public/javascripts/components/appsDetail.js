@@ -14,6 +14,7 @@ import Welcome from './welcome.js';
 import Workflows from './workflows.js';
 import WorkflowBuilder from './workflowBuilder.js';
 import WorkflowRunner from './workflowRunner.js';
+import Visual from './visual.js';
 
 const AppsDetail=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(JobsStore, 'jobsStore')],
@@ -48,6 +49,9 @@ const AppsDetail=React.createClass({
 					break;
 				case 'welcome':
 					markup=<Welcome />
+					break;
+				case 'visual':
+					markup=<Visual />
 					break;
 				default:
 					markup=<div />

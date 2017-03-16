@@ -74,6 +74,18 @@ const Header=React.createClass({
 		}
 	},
 
+	showVisual: function() {
+        	AppsActions.showPage('visual');
+        	let title="Visualization Apps";
+        	let url="/?page_id=visual";
+        	if (typeof (history.pushState) != "undefined") {
+            		let obj = { Title: title, Url: url };
+            		history.pushState(obj, obj.Title, obj.Url);
+        	} else {
+            		alert("Browser does not support HTML5.");
+        	}
+    	},
+
 	handleLogin: function(event) {
 		if ('Login' === event.target.textContent) {
 			UserActions.showLoginBox();
@@ -93,8 +105,9 @@ const Header=React.createClass({
 						<MenuItem eventKey='2.2' onClick={this.showWorkflowRunner}>Load a workflow</MenuItem>
 						<MenuItem eventKey='2.3' onClick={this.showWorkflows}>Public workflows</MenuItem>
 					</NavDropdown>
-					<NavItem eventKey='3' href='http://data.sciapps.org' target='_blank'>Data</NavItem>
-					<NavItem eventKey='4' href='http://ask.cyverse.org' target='_blank'>Help</NavItem>
+					<NavItem eventKey='3' onClick={this.showVisual}>Visualization</NavItem>
+					<NavItem eventKey='4' href='http://data.sciapps.org' target='_blank'>Data</NavItem>
+					<NavItem eventKey='5' href='http://ask.cyverse.org' target='_blank'>Help</NavItem>
 				</Nav>
 			</Navbar>
 		);
