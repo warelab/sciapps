@@ -11,7 +11,6 @@ const DsStore=Reflux.createStore({
 
 	init: function() {
 		this.state={
-			setting: _config.setting,
 			dsDetailCache: {}
 		};
 		this.resetState();
@@ -29,15 +28,19 @@ const DsStore=Reflux.createStore({
 		_.assign(this.state, {
 			showDataStore: false,
 			target: undefined,
+			type: '__public__',
 			dsDetail: {},
 			dsItemPaths: {}
 		});
 	},
 
-	showDataStore: function(path) {
-		let setting=this.state.setting;
+	showDataStore: function(showPath) {
+		let setting=_config.setting;
+		let path=showPath, type=this.state.type;
 		if (! path) {
-			path=this.state.dsDetail.path || '';
+			if (path === undefined) {
+				path=this.state.dsDetail.path || '';
+			}
 		} else {
 			if (path.endsWith('/')) {
 				path=path.slice(0,-1);
@@ -54,7 +57,7 @@ const DsStore=Reflux.createStore({
 		//	path='/' + path;
 		//}
 
-		let cachedPath=this.state.dsDetailCache[path];
+		let cachedPath=_.get(this.state.dsDetailCache, [type, path]);
 		if (cachedPath) {
 			this.state.dsDetail=cachedPath;
 		}
@@ -63,7 +66,8 @@ const DsStore=Reflux.createStore({
 			this.complete();
 		}
 		if (! cachedPath) {
-			axios.get(setting.host_url + '/ils/' + path, {
+			let typePath=type + ':' + path;
+			axios.get(setting.host_url + '/browse/' + typePath, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			})
 			.then(function(res) {
@@ -75,12 +79,12 @@ const DsStore=Reflux.createStore({
 						return ! item.name.startsWith('.');
 					});
 					dsDetail.list=filtered;
-					if (! dsDetail.is_root) {
-						dsDetail.list.unshift({name: '..', type: 'dir'});
-					}
-					this.state.dsDetailCache[dsDetail.path]=dsDetail;
+					//if (! dsDetail.is_root) {
+					//	dsDetail.list.unshift({name: '..', type: 'dir'});
+					//}
+					_.set(this.state.dsDetailCache, [type, dsDetail.path], dsDetail);
 				}
-				this.state.dsDetail=this.state.dsDetailCache[path];
+				this.state.dsDetail=_.get(this.state.dsDetailCache, [type, path]);
 				this.complete();
 			}.bind(this))
 			.catch(function(res) {
@@ -102,9 +106,8 @@ const DsStore=Reflux.createStore({
 	},
 
 	selectDataStoreItem: function(item) {
-		let path=this.state.dsDetail.path ? this.state.dsDetail.path + '/' : '';
-		path=item ? path + item : undefined;
-		this.state.dsItemPaths[this.state.target]=path;
+		let setting=_config.setting;
+		this.state.dsItemPaths[this.state.target]=item ? {type: this.state.type, path: this.state.dsDetail.path, name: item} : undefined;
 		this.complete();
 	},
 
@@ -115,6 +118,11 @@ const DsStore=Reflux.createStore({
 			this.state.dsItemPaths={};
 		}
 		this.complete();
+	},
+
+	changeSource: function(source) {
+		this.state.type=source;
+		this.showDataStore('');
 	},
 
 	resetDsDetail: function() {

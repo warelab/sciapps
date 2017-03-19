@@ -14,17 +14,13 @@ function toLocaleString(date) {
 const JobsDetail=React.createClass({
 	mixins: [Reflux.connect(JobsStore, 'jobsStore')],
 
-	getInitialState: function() {
-		return { setting: _config.setting };
-	},
-	
 	hideJob: function() {
 		JobsActions.hideJob();
 	},
 
 	render: function() {
 		let jobsStore=this.state.jobsStore;
-		let setting=this.state.setting;
+		let setting=_config.setting;
 		let jobDetail=jobsStore.jobDetailCache[jobsStore.showJobId];
 		let showJob=jobsStore.showJob;
 		let markup=<div />;

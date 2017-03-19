@@ -11,7 +11,6 @@ const UserStore=Reflux.createStore({
 
 	init: function() {
 		this.state={
-			setting: _config.setting,
 			showLoginBox: false,
 			username: '',
 			logged_in: false,
@@ -46,7 +45,7 @@ const UserStore=Reflux.createStore({
 	login: function(formData) {
 		this.state.error='';
 		this.complete();
-		let setting=this.state.setting;
+		let setting=_config.setting;
 		if (formData === undefined) {
 			formData=new FormData();
 		}
@@ -59,18 +58,25 @@ const UserStore=Reflux.createStore({
 				this.state.error=res.data.error;
 				this.complete();
 			} else if (res.data.logged_in) {
-				this.state.error='';
-				this.state.username=res.data.username;
-				this.state.logged_in=res.data.logged_in;
-				this.state.token_expiration_at=res.data.token_expiration_at;
+				this._updateUser(res.data);
 				this.hideLoginBox();
 			}
 		}.bind(this))
 		.done();
 	},
 
+	_updateUser: function(data) {
+		let setting=_config.setting;
+		this.state.error='';
+		this.state.username=data.username;
+		this.state.logged_in=data.logged_in;
+		this.state.token_expiration_at=data.token_expiration_at;
+		let path=setting.datastore['__user__'].path.replace('__user__', data.username);
+		setting.datastore['__user__'].path=path;
+	},
+
 	logout: function() {
-		let setting=this.state.setting;
+		let setting=_config.setting;
 		this._reset();
 		Q(axios.get(setting.host_url + '/logout', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},

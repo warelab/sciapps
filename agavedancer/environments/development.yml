@@ -36,16 +36,23 @@ archive_path: 'results'
 input_system: 'brie.cshl.edu'
 input_home: '/agave_data'
 input_path: 'inputs'
-#datastore_home: '/halcott'
-#datastore_path: 'example_data'
-datastore_home: '/iplant/home'
-datastore_path: 'sci_data'
 email: 'noreply@sciapps.org'
 upload_suffix: ".upload"
 wf_step_prefix: 'wf_step_'
 maxRunTime: "96:00:00"
-#datastore_system: 'data.sciapps.org'
-datastore_system: 'data.iplantcollaborative.org'
+datastore:
+  __user__: 
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: '__user__/sci_data'
+  __shared__:
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: 'shared'
+  __public__:
+    system: 'data.sciapps.org'
+    home: '/halcott'
+    path: 'example_data'
 uncompress_suffix: '.open.tar.gz'
 use_file_server: 1
 irodsEnvFile: '/usr/share/httpd/irodsEnv'

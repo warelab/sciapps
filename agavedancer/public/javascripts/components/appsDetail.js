@@ -28,7 +28,7 @@ const AppsDetail=React.createClass({
 		let jobsStore=this.state.jobsStore;
 		let jobDetail=jobsStore.jobDetail;
 		let markup;
-		if (appDetail.id) {
+		if (appDetail && appDetail.id) {
 			markup=(
 				<div>
 					<AppsForm appId={appDetail.id} jobId={jobDetail.job_id} resubmit={jobsStore.resubmit} user={this.props.user}/>

@@ -4,6 +4,7 @@ use Dancer ':syntax';
 #use Dancer::Plugin::MemcachedFast;
 use iPC::AgaveAuthHelper ();
 use iPC::User ();
+use iPC::Exceptions ();
 use Agave::Client ();
 use Agave::Client::Client ();
 use Agave::Client::Exceptions ();
@@ -16,7 +17,7 @@ use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/host_url output_url upload_suffix wf_step_prefix datastore_system datastore_path archive_home/;
+our @EXPORT_SETTINGS=qw/host_url output_url upload_suffix wf_step_prefix datastore archive_home/;
 
 sub uuid {
 	my $s='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
@@ -112,8 +113,9 @@ sub parse_ils {
 	$path=~m#^$datastore_root/?(.*):#;
 	my @content;
 	my %result=($1 => \@content);
+	$path=$datastore_root . ($1 ? '/' . $1 : '');
 	foreach my $line (@$ils) {
-		if ($line=~m#^\s+C\-\s+$datastore_root/(.*)#) {
+		if ($line=~m#^\s+C\-\s+$path/(.*)#) {
 			my $name=$1;
 			$name=~s/\s+$//;
 			push @content, +{
@@ -224,91 +226,104 @@ ajax '/logout' => sub {
 	#return redirect '/';
 };
 
-ajax qr{/ils/?(.*)} => sub {
-	my ($path) = splat;
+ajax qr{/browse/?(.*)} => sub {
+	my ($typePath) = splat;
 	my $username=session('username');
 	unless (check_login() && $username) {
 		Agave::Exceptions::AuthFailed->throw('Invalid Credentials');
 	}
-	my $datastore_home=setting('datastore_home');
-	my $datastore_path=setting('datastore_path');
-	my $irodsEnvFile=setting('irodsEnvFile');
-	my $root='';
-	my $datastore_root=join('/', $datastore_home, $username, $datastore_path);
-	my $fullPath=$datastore_root . '/' . $path;
-	my @ils=`export irodsEnvFile=$irodsEnvFile;ils -l '$fullPath'`;
-	chomp ($datastore_root, @ils);
-	my $dir_list=parse_ils(\@ils, $datastore_root);
-
-	to_json([map +{
-			is_root => $_ eq  $root ? 1 : 0,
-			path => $_,
-			list => $dir_list->{$_},
-		}, keys %$dir_list]
-	);
-};
-
-sub browse_datastore {
-	my ($path, $system)=@_;
-	$system||=setting('datastore_system');
-
-	my $apif=getAgaveClient();
-
-	#my $root=$username;
-	my $root='';
-	my $path_to_read = $path ? $path : $root;
-	$system='system/' . $system . '/';
-
-	my $io = $apif->io;
-	my $dir_list;
-	try {
-		$dir_list=$io->readdir('/' . $system . $path_to_read);
-	} catch {
-		if ($_->isa('Agave::Exceptions::HTTPError')) {
-		} else {
-			$_->rethrow;
-		}
-	};
-
-	to_json([{
-			is_root => $path_to_read eq $root ? 1 : 0,
-			path => $path_to_read,
-			list => $dir_list,
-		}]
-	);
-}
-
-sub browse_server {
-	my ($path)=@_;
-
-	my $root='';
-	my $path_to_read = $path ? $path : $root;
-	my $datastore_home=setting('datastore_home');
-	my $datastore_path=setting('datastore_path');
-	my $datastore_root="$datastore_home/$datastore_path";
-
-	my @ls=`ls -tlR $datastore_root/$path_to_read`;
-	my $dir_list=parse_ls(\@ls, $datastore_root);
-
-	to_json([map +{
-			is_root => $_ eq $root ? 1 : 0,
-			path => $_,
-			list => $dir_list->{$_},
-		}, keys %$dir_list]
-	);
-}
-
-get qr{/browse/?(.*)} => sub {
-	my ($path) = splat;
-	my $use_file_server=setting('use_file_server');
-	my $system;
-	if ($path=~m#system/([^\/]+)/(.*)#) {
-		$system=$1;
-		$path=$2;
-		$use_file_server=0;
+	my ($type, $path)=split /:/, $typePath, 2;
+	my $datastore=setting('datastore')->{$type};
+	unless ($datastore) {
+		iPC::Exceptions::InvalidRequest->throw('Invalid Datastore');
 	}
-	$use_file_server ? browse_server($path) : browse_datastore($path, $system);
+	my $datastore_home=$datastore->{home};
+	my $datastore_path=$datastore->{path};
+	my $datastore_system=$datastore->{system};
+	my $result={};
+	my $datastore_homepath=$datastore_home .'/' . $datastore_path;
+	if ($type eq '__user__') {
+		$datastore_homepath=~s/__user__/$username/;
+		$result=browse_ils($path, $datastore_homepath, $datastore_system);
+	} elsif ($type eq '__shared__') {
+		$result=browse_ils($path, $datastore_homepath, $datastore_system);
+	} elsif ($type eq '__public__') {
+		$result=browse_ls($path, $datastore_homepath, $datastore_system);
+	}
+	to_json($result);
 };
+
+sub browse_ils {
+	my ($path, $homepath, $system)=@_;
+	my $irodsEnvFile=setting('irodsEnvFile');
+	my $fullPath=$homepath . '/' . $path;
+	my @ils=`export irodsEnvFile=$irodsEnvFile;ils -l '$fullPath'`;
+	chomp (@ils);
+	my $dir_list=parse_ils(\@ils, $homepath);
+
+	[map +{
+			is_root	=> $_ ? 0 : 1,
+			path 	=> $_,
+			list 	=> $dir_list->{$_},
+		}, keys %$dir_list];
+};
+
+#sub browse_datastore {
+#	my ($path, $system)=@_;
+#	$system||=setting('datastore_system');
+#
+#	my $apif=getAgaveClient();
+#
+#	#my $root=$username;
+#	my $root='';
+#	my $path_to_read = $path ? $path : $root;
+#	$system='system/' . $system . '/';
+#
+#	my $io = $apif->io;
+#	my $dir_list;
+#	try {
+#		$dir_list=$io->readdir('/' . $system . $path_to_read);
+#	} catch {
+#		if ($_->isa('Agave::Exceptions::HTTPError')) {
+#		} else {
+#			$_->rethrow;
+#		}
+#	};
+#
+#	to_json([{
+#			is_root => $path_to_read eq $root ? 1 : 0,
+#			path => $path_to_read,
+#			list => $dir_list,
+#
+#		}]
+#	);
+#}
+
+sub browse_ls {
+	my ($path, $homepath, $system)=@_;
+	my $fullPath=$homepath . '/' . $path;
+
+	my @ls=`ls -tlR $fullPath`;
+	my $dir_list=parse_ls(\@ls, $homepath);
+
+	[map +{
+			is_root => $_ ? 0 : 1,
+			path => $_,
+			list => $dir_list->{$_},
+		}, keys %$dir_list];
+}
+
+#get qr{/browse/?(.*)} => sub {
+#	my ($path) = splat;
+#	my $use_file_server=setting('use_file_server');
+#	my $system;
+#	if ($path=~m#system/([^\/]+)/(.*)#) {
+#		$system=$1;
+#		$path=$2;
+#		$use_file_server=0;
+#	}
+#	$use_file_server ? browse_server($path) : browse_datastore($path, $system);
+#};
 
 ajax '/apps' => sub {
 	my $app_list=retrieveApps();

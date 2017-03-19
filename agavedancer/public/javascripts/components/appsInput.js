@@ -29,14 +29,15 @@ const AppsInput=React.createClass({
 	},
 
 	handleDsStoreChange: function(dsStore) {
-		let setting=this.state.setting;
+		let dsItemUrl='';
 		let dsItemPath=dsStore.dsItemPaths[this.props.data.id];
-		let user=this.props.user;
-		//let dsItemUrl=dsItemPath ? 'agave://' + this.state.setting.datastore_system + '/example_data/' + dsItemPath : '';
-		let dsItemUrl=dsItemPath ? 'agave://' + setting.datastore_system + '/' + user.username + '/' + setting.datastore_path + '/' + dsItemPath : '';
+		if (dsItemPath) {
+			let datastore=this.state.setting.datastore[dsItemPath.type];
+			dsItemUrl='agave://' + [datastore.system, datastore.path, (dsItemPath.path ? dsItemPath.path + '/' : '') + dsItemPath.name].join('/');
+		} 
 		if (dsItemUrl && dsItemUrl !== this.state.textValue) {
 			this.setState({
-				textValue: dsItemUrl 
+				textValue: dsItemUrl
 			});
 		}
 	},
