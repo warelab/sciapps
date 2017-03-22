@@ -6,6 +6,7 @@ use warnings;
 use Agave::Client ();
 use Agave::Client::Client ();
 use iPC::User ();
+use Data::Dumper; 
 
 {
 	# this might be a bit heavy
@@ -87,30 +88,31 @@ use iPC::User ();
 			debug => 0,
 		});	
 		
-		my $client_name = '_AGAVEWEB';
+		my $client_name = '_SciApps';
 
-		my $user = iPC::User->new({username => $u});
-		if ($purge) {
+		my $user = iPC::User->search({username => $u});
+		if ($purge || ! $user) {
 			print STDERR '** ', __PACKAGE__, ' purging client ', 
 				$client_name, ' for user ', $u, $/;
 			eval {$apic->delete($client_name);};
 			print STDERR  '** ', __PACKAGE__, ' deleting: ', $@, $/ if $@;
-		}
-		else {
+		} else {
 			$client = $apic->client( $client_name );
 		}
 
 		if ($client) {
-			if ($user) { # we should always have a user
-				$client->{consumerSecret} = $user->consumerSecret;
-			}
-		}
-		else {
+			$client->{consumerSecret} = $user->consumerSecret;
+		} else{
 			$client = $apic->create({name => $client_name});
 			if ($client) {
 				# store the secret;
-				$user->consumerSecret( $client->{consumerSecret} );
-				$user->update;
+				if ($user) {
+					$user->consumerSecret( $client->{consumerSecret} );
+					$user->update;
+				} else {
+					$user=iPC::User->new({username => $u, consumer_secret => $client->{consumerSecret}});
+					$user->save;
+				}
 			}
 		}
 
