@@ -5,6 +5,8 @@ import axios from 'axios';
 import _ from 'lodash';
 import Q from 'q';
 import UserActions from  '../actions/userActions.js';
+import AppsActions from  '../actions/appsActions.js';
+import JobsActions from  '../actions/jobsActions.js';
 
 const UserStore=Reflux.createStore({
 	listenables: UserActions,
@@ -82,6 +84,8 @@ const UserStore=Reflux.createStore({
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		})).done();
 		this.hideLoginBox();
+		AppsActions.resetApps();
+		JobsActions.resetJobs();
 	},
 
 	showLoginBox: function() {

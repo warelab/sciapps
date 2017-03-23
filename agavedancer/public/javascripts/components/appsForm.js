@@ -16,13 +16,13 @@ const AppsForm=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(JobsStore, 'jobsStore')],
 
 	getInitialState: function() {
-		return { onSubmit: false, onValidate: false, setting: _config.setting, required: {} };
+		return { onSubmit: false, onValidate: false, required: {} };
 	},
 
 	formName: 'agaveWebAppForm',
 
 	validateForm: function() {
-		let setting=this.state.setting;
+		let setting=_config.setting;
 		let required=_.keys(this.state.required);
 		let form=this.refs[this.formName];
 		let formdata={};

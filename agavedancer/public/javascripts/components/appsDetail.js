@@ -22,6 +22,10 @@ const AppsDetail=React.createClass({
 		dsActions.resetDsDetail();
 	},
 
+	componentWillUnmount: function() {
+		AppsActions.hideApp();
+	},
+
 	render: function() {
 		let appsStore=this.state.appsStore;
 		let appDetail=appsStore.appDetail;

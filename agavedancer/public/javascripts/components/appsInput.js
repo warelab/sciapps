@@ -12,7 +12,6 @@ const AppsInput=React.createClass({
 
 	getInitialState: function() {
 		return {
-			setting: _config.setting,
 			textValue: this.props.useResubmit ? this.props.resubmitValue : this.props.data.value.default,
 			fileValue: ''
 		};
@@ -29,10 +28,11 @@ const AppsInput=React.createClass({
 	},
 
 	handleDsStoreChange: function(dsStore) {
+		let setting=_config.setting;
 		let dsItemUrl='';
 		let dsItemPath=dsStore.dsItemPaths[this.props.data.id];
 		if (dsItemPath) {
-			let datastore=this.state.setting.datastore[dsItemPath.type];
+			let datastore=setting.datastore[dsItemPath.type];
 			dsItemUrl='agave://' + [datastore.system, datastore.path, (dsItemPath.path ? dsItemPath.path + '/' : '') + dsItemPath.name].join('/');
 		} 
 		if (dsItemUrl && dsItemUrl !== this.state.textValue) {
@@ -61,9 +61,10 @@ const AppsInput=React.createClass({
 	},
 
 	buildAgaveAppsInput: function() {
+		let setting=_config.setting;
 		let data=this.props.data;
 		let prefix=data.value.required ? '*' : '';
-		let suffix=this.state.setting['upload_suffix'] || '.upload';
+		let suffix=setting['upload_suffix'] || '.upload';
 		let markup;
 		if (! data.value.visible) {
 			let props={
