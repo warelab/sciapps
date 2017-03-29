@@ -74,28 +74,38 @@ const Header=React.createClass({
 		}
 	},
 
-	handleLogin: function(event) {
-		if ('Login' === event.target.textContent) {
-			UserActions.showLoginBox();
-		} else {
-			UserActions.logout();
-		}
+	handleLogin: function() {
+		UserActions.showLoginBox();
+	},
+
+	handleLogout: function() {
+		UserActions.logout();
 	},
 
 	render: function() {
-		let username=this.state.userStore.username;
+		let user=this.props.user;
+		let userMenu;
+		if (user.logged_in) {
+			userMenu=(
+				<NavDropdown eventKey='user' title={'Login as: ' + user.username} id="user-dropdown">
+					<MenuItem eventKey='logout' onSelect={this.handleLogout}>Logout</MenuItem>
+				</NavDropdown>
+			);
+		} else {
+			userMenu=(<NavItem eventKey='login' pullRight onSelect={this.handleLogin}>Login</NavItem>);
+		}
 		return (
 			<Navbar className="navbar">
 				<Nav>
-					<NavItem eventKey='1' onClick={this.showWelcome}>SciApps</NavItem>
-					<NavDropdown eventKey='2' title="Workflows" id="nav-dropdown">
-						<MenuItem eventKey='2.1' onClick={this.showWorkflowBuilder}>Build a workflow</MenuItem>
-						<MenuItem eventKey='2.2' onClick={this.showWorkflowRunner}>Load a workflow</MenuItem>
-						<MenuItem eventKey='2.3' onClick={this.showWorkflows}>Public workflows</MenuItem>
+					<NavItem eventKey='welcome' onSelect={this.showWelcome}>SciApps</NavItem>
+					<NavDropdown eventKey='Workflows' title="Workflows" id="nav-dropdown">
+						<MenuItem eventKey='showWorkflowBuilder' disabled={!user.logged_in} onSelect={this.showWorkflowBuilder}>Build a workflow</MenuItem>
+						<MenuItem eventKey='showWorkflowRunner' disabled={!user.logged_in} onSelect={this.showWorkflowRunner}>Load a workflow</MenuItem>
+						<MenuItem eventKey='showWorkflows' disabled={!user.logged_in} onSelect={this.showWorkflows}>Public workflows</MenuItem>
 					</NavDropdown>
-					<NavItem eventKey='3' href='http://data.sciapps.org' target='_blank'>Data</NavItem>
-					<NavItem eventKey='4' href='http://ask.cyverse.org' target='_blank'>Help</NavItem>
-					<NavItem eventKey='5' pullRight onClick={this.handleLogin}>{username ? 'Login as: ' + username : 'Login'}</NavItem>
+					<NavItem eventKey='data' href='http://data.sciapps.org' target='_blank'>Data</NavItem>
+					<NavItem eventKey='help' href='http://ask.cyverse.org' target='_blank'>Help</NavItem>
+					{userMenu}
 				</Nav>
 			</Navbar>
 		);

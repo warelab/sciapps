@@ -8,21 +8,13 @@ import AppsActions from  '../actions/appsActions.js';
 import JobsActions from  '../actions/jobsActions.js';
 import DsActions from  '../actions/dsActions.js';
 
+axios.defaults.withCredentials = true;
+
 const AppsStore=Reflux.createStore({
 	listenables: AppsActions,
 
 	init: function() {
-		this.state={
-			setting: _config.setting,
-			filtered: false,
-			searchString: '',
-			apps: [],
-			appDetail: {},
-			pageId: '',
-			appDetailCache: {},
-			appsCache: [],
-			wid: {}
-		};
+		this._resetState();
 		this.debouncedListApps=_.debounce((searhString) => { this.listApps(searhString) }, 200);
 	},
 
@@ -34,15 +26,22 @@ const AppsStore=Reflux.createStore({
 		this.trigger(this.state);
 	},
 
-	resetApps: function() {
-		this._reset();
+	resetState: function(pageId) {
+		this._resetState(pageId);
+		this.complete();
 	},
 
-	_reset: function() {
-		this.state.apps=[];
-		this.state.appDetail={};
-		this.state.appDetailCache={};
-		this.complete();
+	_resetState: function(pageId) {
+		this.state={
+			filtered: false,
+			searchString: '',
+			apps: [],
+			appDetail: {},
+			pageId: pageId || '',
+			appDetailCache: {},
+			appsCache: [],
+			wid: {}
+		};
 	},
 
 	listApps: function(searchString) {
@@ -52,12 +51,13 @@ const AppsStore=Reflux.createStore({
 
 	_listApps: function() {
 		let apps=this.state.appsCache;
-		let setting=this.state.setting;
+		let setting=_config.setting;
 		let appPromise;
 		if (apps.length) {
 			appPromise=Q(apps);
 		} else {
-			appPromise=Q(axios.get(setting.host_url + '/apps', {
+			//appPromise=Q(axios.get(setting.host_url + '/apps', {
+			appPromise=Q(axios.get('/apps', {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			}))
 			.then(function(res) {
@@ -114,12 +114,13 @@ const AppsStore=Reflux.createStore({
 
 	setApp: function(appId) {
 		let appDetail=this.state.appDetailCache[appId];
-		let setting=this.state.setting;
+		let setting= _config.setting;
 		let appPromise;
 		if (appDetail) {
 			appPromise=Q(appDetail);
 		} else {
-			appPromise=Q(axios.get(setting.host_url + '/app/' + appId, {
+			//appPromise=Q(axios.get(setting.host_url + '/app/' + appId, {
+			appPromise=Q(axios.get('/app/' + appId, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'}
 			}))
 			.then(function(res) {
@@ -128,7 +129,10 @@ const AppsStore=Reflux.createStore({
 				}
 				this.state.appDetailCache[appId]=res.data;
 				return res.data;
-			}.bind(this));
+			}.bind(this))
+			.catch(function(error) {
+				console.log(error);
+			});
 		}
 		return appPromise;
 	},

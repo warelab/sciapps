@@ -12,6 +12,7 @@ use Try::Tiny;
 use Dancer::Plugin::Ajax;
 use Dancer::Plugin::Email;
 use Dancer::Plugin::Database;
+use Dancer::Cookies;
 use File::Copy ();
 use Archive::Tar ();
 use FindBin;
@@ -65,7 +66,9 @@ sub _login {
 }
 
 sub _logout {
-	session->destroy;
+	#session 'token' => '';
+	#session 'logged_in' => 0;
+	session->destroy();
 }
 
 sub check_login {
@@ -74,11 +77,15 @@ sub check_login {
 
 sub getAgaveClient {
 	my $username = session('username');
-	check_login() && $username ?
-	Agave::Client->new(
-		username => $username,
-		token => session('token'),
-	) : Agave::Exceptions::AuthFailed->throw('Invalid Credentials');
+	my $check=check_login() && $username;
+	if ($check) {
+		Agave::Client->new(
+			username => $username,
+			token => session('token'),
+		)
+	} else {
+		Agave::Exceptions::AuthFailed->throw('Invalid Credentials');
+	}
 }
 
 sub tempname {
@@ -170,6 +177,13 @@ sub parse_ls {
 #};
 #
 
+hook 'before' => sub {
+	print STDERR to_dumper();
+	#print STDERR 'session_id|' . session('id') . "\n";
+	#print STDERR to_dumper(Dancer::Cookies->cookies);
+	#print STDERR to_dumper(session);
+};
+
 hook 'after' => sub {
 	my $response = shift;
 	$response->header('Access-Control-Allow-Origin' => '*');
@@ -178,8 +192,9 @@ hook 'after' => sub {
 options qr{/.*} => sub {
 	headers(
 		'Access-Control-Allow-Origin' => '*',
-		'Access-Control-Allow-Headers' => 'Origin, X-Requested-With, Content-Type, Accept',
+		'Access-Control-Allow-Headers' => 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
 		'Access-Control-Allow-Methods' => 'GET, POST, OPTIONS',
+		'Access-Control-Allow-Credentials' => 'true',
 	);
 
 };
@@ -189,7 +204,11 @@ hook on_route_exception => sub {
 	if ($exception->isa('Agave::Exceptions::AuthFailed')) {
 		halt(to_json({error => $_->error}));
 	} else {
-		$exception->rethrow;
+		if (ref($exception) eq 'scalar') {
+			iPC::Exceptions::InvalidRequest->throw($exception);
+		} else {
+			$exception->rethrow;
+		}
 	}
 };
 
@@ -207,23 +226,18 @@ ajax '/login' => sub {
 	if ($username && $password) {
 		_login({username => $username, password => $password}); 
 	}
-	unless( check_login() ) {
-		_logout();
-	}
 
 	my $result={
 		username	=> session('username'),
 		logged_in => session('logged_in'),
 		token_expiration_at => session('token_expiration_at'),
 	};
-	print STDERR to_dumper($result);
 	to_json($result);
 };
 
 ajax '/logout' => sub {
 	_logout();
 	return to_json({logged_in => 0});
-	#return redirect '/';
 };
 
 ajax qr{/browse/?(.*)} => sub {
@@ -232,7 +246,8 @@ ajax qr{/browse/?(.*)} => sub {
 	unless (check_login() && $username) {
 		Agave::Exceptions::AuthFailed->throw('Invalid Credentials');
 	}
-	my ($type, $path)=split /:/, $typePath, 2;
+	my ($type, $path)=split /\//, $typePath, 2;
+	$path||='';
 	my $datastore=setting('datastore')->{$type};
 	unless ($datastore) {
 		iPC::Exceptions::InvalidRequest->throw('Invalid Datastore');
@@ -244,17 +259,21 @@ ajax qr{/browse/?(.*)} => sub {
 	my $datastore_homepath=$datastore_home .'/' . $datastore_path;
 	if ($type eq '__user__') {
 		$datastore_homepath=~s/__user__/$username/;
-		$result=browse_ils($path, $datastore_homepath, $datastore_system);
+		$result=browse_ils($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__shared__') {
-		$result=browse_ils($path, $datastore_homepath, $datastore_system);
+		$result=browse_ils($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__public__') {
-		$result=browse_ls($path, $datastore_homepath, $datastore_system);
+		$result=browse_ls($path, $datastore_system, $datastore_homepath);
+	} elsif ($type eq '__system__') {
+		my ($system, $filepath)=split /\//, $path, 2;
+		$result=browse_files($filepath, $system);
 	}
+
 	to_json($result);
 };
 
 sub browse_ils {
-	my ($path, $homepath, $system)=@_;
+	my ($path, $system, $homepath)=@_;
 	my $irodsEnvFile=setting('irodsEnvFile');
 	my $fullPath=$homepath . '/' . $path;
 	my @ils=`export irodsEnvFile=$irodsEnvFile;ils -l '$fullPath'`;
@@ -268,39 +287,32 @@ sub browse_ils {
 		}, keys %$dir_list];
 };
 
-#sub browse_datastore {
-#	my ($path, $system)=@_;
-#	$system||=setting('datastore_system');
-#
-#	my $apif=getAgaveClient();
-#
-#	#my $root=$username;
-#	my $root='';
-#	my $path_to_read = $path ? $path : $root;
-#	$system='system/' . $system . '/';
-#
-#	my $io = $apif->io;
-#	my $dir_list;
-#	try {
-#		$dir_list=$io->readdir('/' . $system . $path_to_read);
-#	} catch {
-#		if ($_->isa('Agave::Exceptions::HTTPError')) {
-#		} else {
-#			$_->rethrow;
-#		}
-#	};
-#
-#	to_json([{
-#			is_root => $path_to_read eq $root ? 1 : 0,
-#			path => $path_to_read,
-#			list => $dir_list,
-#
-#		}]
-#	);
-#}
+sub browse_files {
+	my ($path, $system)=@_;
+	my $apif=getAgaveClient();
+
+	$system='system/' . $system . '/';
+
+	my $io = $apif->io;
+	my $dir_list;
+	try {
+		$dir_list=$io->readdir('/' . $system . $path);
+	} catch {
+		if ($_->isa('Agave::Exceptions::HTTPError')) {
+		} else {
+			$_->rethrow;
+		}
+	};
+
+	[{
+			is_root => $path ? 0 : 1,
+			path => $path,
+			list => $dir_list,
+		}];
+}
 
 sub browse_ls {
-	my ($path, $homepath, $system)=@_;
+	my ($path, $system, $homepath)=@_;
 	my $fullPath=$homepath . '/' . $path;
 
 	my @ls=`ls -tlR $fullPath`;
@@ -346,7 +358,8 @@ get qr{/apps/?} => sub {
 ajax '/app/:id' => sub {
 	my $app_id = param("id");
 	my $app=retrieveApps($app_id);
-	to_json($app)
+	#print STDERR to_dumper($app);
+	to_json($app);
 };
 
 get '/app/:id' => sub {
@@ -369,7 +382,7 @@ sub retrieveApps {
 	my ($app_id)=@_;
 	my $api = getAgaveClient();
 	my $apps = $api->apps;
-	my $return=$app_id ? $apps->find_by_id($app_id) : $apps->list
+	my $return = $app_id ? $apps->find_by_id($app_id) : $apps->list;
 }
 
 get '/schema/:id' => sub {
@@ -396,7 +409,6 @@ sub retrieveSchema {
 
 get '/metadata/new' => sub {
 	my $json = param("json");
-	print STDERR $json . "\n";
 	return to_json({status => "successful"});
 };
 

@@ -19,9 +19,11 @@ charset: "UTF-8"
 # simple: default and very basic template engine
 # template_toolkit: TT
 
-#session: 'YAML'
-session: 'cookie'
-session_cookie_key: '1{(b)a}sdf07234hjf0sdkflj12*&(@*az'
+session: 'YAML'
+#session: 'cookie'
+#session_cookie_key: '1{(b)a}sdf07234hjf0sdkflj12*&(@*az'
+#session: 'Storable'
+session_dir: '/tmp/dancer-sessions'
 
 #template: "simple"
 template: "template_toolkit"

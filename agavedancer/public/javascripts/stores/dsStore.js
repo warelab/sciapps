@@ -6,14 +6,13 @@ import _ from 'lodash';
 import Q from 'q';
 import DsActions from  '../actions/dsActions.js';
 
+axios.defaults.withCredentials = true;
+
 const DsStore=Reflux.createStore({
 	listenables: DsActions,
 
 	init: function() {
-		this.state={
-			dsDetailCache: {}
-		};
-		this.resetState();
+		this._resetState();
 	},
 
 	getInitialState: function() {
@@ -25,13 +24,19 @@ const DsStore=Reflux.createStore({
 	},
 
 	resetState: function() {
-		_.assign(this.state, {
+		this._resetState();
+		this.complete();
+	},
+
+	_resetState: function() {
+		this.state={
 			showDataStore: false,
 			target: undefined,
 			type: '__public__',
 			dsDetail: {},
+			dsDetailCache: {},
 			dsItemPaths: {}
-		});
+		};
 	},
 
 	showDataStore: function(showPath) {
@@ -57,21 +62,40 @@ const DsStore=Reflux.createStore({
 		//	path='/' + path;
 		//}
 
-		let cachedPath=_.get(this.state.dsDetailCache, [type, path]);
-		if (cachedPath) {
-			this.state.dsDetail=cachedPath;
-		}
-		if (! this.state.showDataStore || cachedPath) {
+		//if (! this.state.showDataStore || cachedPath) {
+		//	this.state.showDataStore=true;
+		//	this.complete();
+		//}
+		if (! this.state.showDataStore) {
 			this.state.showDataStore=true;
 			this.complete();
 		}
-		if (! cachedPath) {
-			let typePath=type + ':' + path;
-			axios.get(setting.host_url + '/browse/' + typePath, {
+		let dataStorePromise=this.setDataStore(type, path);
+		dataStorePromise.then(function(dsDetail) {
+			this.state.dsDetail=dsDetail;;
+			this.complete();
+		}.bind(this))
+		.catch(function(error) {
+			console.log(error);
+		})
+		.done();
+	},
+
+	setDataStore: function(type, path) {
+		let setting=_config.setting;
+		let cachedPath=_.get(this.state.dsDetailCache, [type, path]);
+		let dataStorePromise;
+		let typePath=type + '/' + path;
+		if (cachedPath) {
+			dataStorePromise=Q(cachedPath);
+		} else {
+			//axios.get(setting.host_url + '/browse/' + typePath, {
+			dataStorePromise=Q(axios.get('/browse/' + typePath, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
-			})
+			}))
 			.then(function(res) {
 				if (res.data.error) {
+					console.log(res.data.error);
 					return;
 				}
 				for (let dsDetail of res.data) {
@@ -84,13 +108,13 @@ const DsStore=Reflux.createStore({
 					//}
 					_.set(this.state.dsDetailCache, [type, dsDetail.path], dsDetail);
 				}
-				this.state.dsDetail=_.get(this.state.dsDetailCache, [type, path]);
-				this.complete();
+				return _.get(this.state.dsDetailCache, [type, path]);
 			}.bind(this))
 			.catch(function(res) {
 				console.log(res);
 			})
 		}
+		return dataStorePromise;
 	},
 
 	hideDataStore: function() {
@@ -107,7 +131,16 @@ const DsStore=Reflux.createStore({
 
 	selectDataStoreItem: function(item) {
 		let setting=_config.setting;
-		this.state.dsItemPaths[this.state.target]=item ? {type: this.state.type, path: this.state.dsDetail.path, name: item} : undefined;
+		if (item) {
+			let currPath=this.state.dsItemPaths[this.state.target];
+			if (currPath && currPath.type === this.state.type && currPath.path === this.state.dsDetail.path && currPath.name === item) {
+				this.state.dsItemPaths[this.state.target]='';
+			} else {
+				this.state.dsItemPaths[this.state.target]={type: this.state.type, path: this.state.dsDetail.path, name: item};
+			}
+		} else {
+			this.state.dsItemPaths[this.state.target]='';
+		}
 		this.complete();
 	},
 
@@ -115,6 +148,8 @@ const DsStore=Reflux.createStore({
 		if (target) {
 			delete this.state.dsItemPaths[target];
 		} else {
+			this.state.showDataStore=false;
+			this.state.target=undefined;
 			this.state.dsItemPaths={};
 		}
 		this.complete();
@@ -123,12 +158,7 @@ const DsStore=Reflux.createStore({
 	changeSource: function(source) {
 		this.state.type=source;
 		this.showDataStore('');
-	},
-
-	resetDsDetail: function() {
-		this.resetState();
 	}
-
 });
 
 module.exports = DsStore;

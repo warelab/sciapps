@@ -29,13 +29,16 @@ const AppsInput=React.createClass({
 
 	handleDsStoreChange: function(dsStore) {
 		let setting=_config.setting;
-		let dsItemUrl='';
+		let dsItemUrl;
 		let dsItemPath=dsStore.dsItemPaths[this.props.data.id];
 		if (dsItemPath) {
 			let datastore=setting.datastore[dsItemPath.type];
 			dsItemUrl='agave://' + [datastore.system, datastore.path, (dsItemPath.path ? dsItemPath.path + '/' : '') + dsItemPath.name].join('/');
-		} 
-		if (dsItemUrl && dsItemUrl !== this.state.textValue) {
+		} else if (dsItemPath === '') {
+			dsItemUrl='';
+		}
+		//if (dsItemUrl && dsItemUrl !== this.state.textValue) {
+		if (dsItemUrl !== undefined && dsItemUrl !== this.state.textValue) {
 			this.setState({
 				textValue: dsItemUrl
 			});

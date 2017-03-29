@@ -9,6 +9,7 @@ const DsActions=Reflux.createActions([
 	'selectDataStoreItem',
 	'clearDataStoreItem',
 	'changeSource',
+	'resetState',
 	'resetDsDetail'
 ]);
 

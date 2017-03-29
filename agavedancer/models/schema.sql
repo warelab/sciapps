@@ -6,9 +6,6 @@ create table user (
 	username varchar(40) unique,
 	consumer_secret varchar(40)
 );
-insert into user (username) values ('maizecode');
-insert into user (username) values ('luj');
-insert into user (username) values ('lwang');
 
 drop table if exists workflow;
 create table workflow (

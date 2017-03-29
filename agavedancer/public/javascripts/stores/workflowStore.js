@@ -8,20 +8,13 @@ import AppsActions from  '../actions/appsActions.js';
 import JobsActions from  '../actions/jobsActions.js';
 import WorkflowActions from  '../actions/workflowActions.js';
 
+axios.defaults.withCredentials = true;
+
 const WorkflowStore=Reflux.createStore({
 	listenables: WorkflowActions,
 	
 	init: function() {
-		this.state={
-			setting: _config.setting,
-			showWorkflowDiagram: false,
-			showWorkflowLoadBox: false,
-			workflowDetail: undefined,
-			workflowDetailCache: {},
-			build: {},
-			workflowDiagramDef: undefined
-		};
-		//this.listenTo(JobsStore, this.setJobsStore);
+		this._resetState();
 	},
 
 	getInitialState: function() {
@@ -30,6 +23,22 @@ const WorkflowStore=Reflux.createStore({
 
 	complete: function() {
 		this.trigger(this.state);
+	},
+
+	resetState: function() {
+		this._resetState();
+		this.complete();
+	},
+
+	_resetState: function() {
+		this.state={
+			showWorkflowDiagram: false,
+			showWorkflowLoadBox: false,
+			workflowDetail: undefined,
+			workflowDetailCache: {},
+			build: {},
+			workflowDiagramDef: undefined
+		};
 	},
 
 	showNode: function() {
@@ -72,11 +81,10 @@ const WorkflowStore=Reflux.createStore({
 			this.state.workflowDetailCache[wfId]=wfDetail;
 		}
 		let workflowDetail=this.state.workflowDetailCache[wfId];
-		let setting=this.state.setting;
+		let setting=_config.setting;
 		let workflowPromise;
 		if (workflowDetail) {
 			workflowPromise=Q(workflowDetail);
-
 		} else {
 			workflowPromise=Q(axios.get('/assets/' + wfId + '.workflow.json'))
 			.then(function(res) {
@@ -91,7 +99,10 @@ const WorkflowStore=Reflux.createStore({
 			if (wfDetail) {
 				this.setWorkflowSteps(wfDetail);
 			}
-		}.bind(this));
+		}.bind(this))
+		.catch(function(error) {
+			console.log(error);
+		});
 		return workflowPromise;
 	},
 

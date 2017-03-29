@@ -30,8 +30,29 @@ const Workflows=React.createClass({
 				<ul className="list">
 					<li><a href="#" onClick={this.showWorkflowRunner}>Association</a></li>
 					<li><a href="#" onClick={this.showWorkflowRunner}>Annotation</a></li>
-                                        <li><a href="#" onClick={this.showWorkflowRunner}>RNAseq</a></li>
+          <li><a href="#" onClick={this.showWorkflowRunner}>RNAseq</a></li>
 					<li>Chipseq (in progress)</li>
+				</ul><br />
+				<h5>Why building/using SciApps workflow</h5>
+				SciApps workflows are built on top of Agave API to leverage distributed compute and storage systems on the cloud. The backend is designed to provide convenience, increase performance, and ensure reproducibility.
+				<ul className="list">
+					<li>For convenience</li>
+						<ul className="list">
+							<li>Submitting multiple analysis jobs simultaneously</li>
+							<li>Data relationships, metadata, and real time job status are available on the workflow diagram</li> 
+							<li>Larger workflow can grow from existing workflows by chaining additional apps</li>
+							<li>Smaller workflow can be created from existing workflows by selecting less steps</li>
+						</ul>
+					<li>For performance</li>
+						<ul className="list">
+							<li>Jobs are running in parallel (jobs in a workflow will be submitted to cluster once inputs are ready (or dependency is clear))</li>
+							<li>Intermediate results are kept close to cluster (avoid unnecessary cross sites data transfer)</li>
+						</ul>
+					<li>For reproducibility</li>
+						<ul className="list">
+							<li>Workflow = pipeline + data (which means every re-run will create a new workflow)</li>
+							<li>Analysis of a workflow can be shared and completely reproduced with passing (and loading) a lightweight JSON file</li>
+						</ul>
 				</ul>
 			</div>
 		</div>

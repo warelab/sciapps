@@ -7,18 +7,16 @@ import Q from 'q';
 import UserActions from  '../actions/userActions.js';
 import AppsActions from  '../actions/appsActions.js';
 import JobsActions from  '../actions/jobsActions.js';
+import DsActions from  '../actions/dsActions.js';
+import WorkflowActions from  '../actions/workflowActions.js';
+
+axios.defaults.withCredentials = true;
 
 const UserStore=Reflux.createStore({
 	listenables: UserActions,
 
 	init: function() {
-		this.state={
-			showLoginBox: false,
-			username: '',
-			logged_in: false,
-			token_expiration_at: undefined,
-			error: ''
-		};
+		this._resetState();
 	},
 	
 	getInitialState: function() {
@@ -32,16 +30,24 @@ const UserStore=Reflux.createStore({
 	checkLogin: function() {
 		let result=this.state.logged_in && this.state.token_expiration_at > (Date.now() + 60e3);
 		if (! result) {
-			this._reset();
-			this.complete();
+			this.resetState();
 		}
 		return result;
 	},
 
-	_reset: function() {
-		this.state.username='';
-		this.state.logged_in=false;
-		this.state.token_expiration_at=undefined;
+	resetState: function() {
+		this._resetState();
+		this.complete();
+	},
+
+	_resetState: function() {
+		this.state={
+			showLoginBox: false,
+			username: '',
+			logged_in: false,
+			token_expiration_at: undefined,
+			error: ''
+		};
 	},
 
 	login: function(formData) {
@@ -51,7 +57,8 @@ const UserStore=Reflux.createStore({
 		if (formData === undefined) {
 			formData=new FormData();
 		}
-		Q(axios.post(setting.host_url + '/login', formData, {
+		//Q(axios.post(setting.host_url + '/login', formData, {
+		Q(axios.post('/login', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
 		}))
@@ -64,6 +71,9 @@ const UserStore=Reflux.createStore({
 				this.hideLoginBox();
 			}
 		}.bind(this))
+		.catch(function(error) {
+				console.log(error);
+		})
 		.done();
 	},
 
@@ -79,13 +89,26 @@ const UserStore=Reflux.createStore({
 
 	logout: function() {
 		let setting=_config.setting;
-		this._reset();
-		Q(axios.get(setting.host_url + '/logout', {
+		this._resetState();
+		//Q(axios.get(setting.host_url + '/logout', {
+		Q(axios.get('/logout', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
-		})).done();
-		this.hideLoginBox();
-		AppsActions.resetApps();
-		JobsActions.resetJobs();
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				this.state.error=res.data.error;
+				this.complete();
+			}
+		})
+		.catch(function(error) {
+				console.log(error);
+		})
+		.done();
+		this.resetState();
+		AppsActions.resetState('welcome');
+		JobsActions.resetState();
+		WorkflowActions.resetState();
+		DsActions.resetState();
 	},
 
 	showLoginBox: function() {

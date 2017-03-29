@@ -17,7 +17,7 @@ const JobsList=React.createClass({
 
 	componentWillReceiveProps: function(nextProps) {
 		if (! nextProps.user.logged_in && this.state.jobsStore.jobs.length) {
-			JobsActions.resetJobs();
+			JobsActions.resetState();
 		}
 	},
 

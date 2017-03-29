@@ -53,6 +53,10 @@ datastore:
     system: 'data.sciapps.org'
     home: '/halcott'
     path: 'example_data'
+  __system__:
+    system: ''
+    home: ''
+    path: ''
 uncompress_suffix: '.open.tar.gz'
 use_file_server: 1
 irodsEnvFile: '/usr/share/httpd/irodsEnv'

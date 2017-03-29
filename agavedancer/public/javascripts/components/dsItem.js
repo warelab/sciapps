@@ -56,7 +56,17 @@ const DsItem=React.createClass({
 		let data=this.props.data;
 		let isFile=data.type === 'file';
 		let typeGlyph=isFile ? 'file' : 'folder-close';
-		let markup=<ListGroupItem><Button bsSize='medium' bsStyle='link' onClick={this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button><Glyphicon glyph={typeGlyph} /><Button bsStyle='link' onClick={isFile ? null : this.handleDblClick}>{isFile ? data.name : data.name + '/'}</Button></ListGroupItem>
+		let markup=(
+			<ListGroupItem>
+				<Button bsSize='medium' bsStyle='link' onClick={this.handleCheck} >
+					<Glyphicon glyph={checkedGlyph} />
+				</Button>
+				<Glyphicon glyph={typeGlyph} />
+				<Button bsStyle='link' onClick={isFile ? null : this.handleDblClick}>
+					{isFile ? data.name : data.name + '/'}
+				</Button>
+			</ListGroupItem>
+		);
 		return markup;
 	}
 });

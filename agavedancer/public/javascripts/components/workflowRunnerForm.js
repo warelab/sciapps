@@ -20,7 +20,6 @@ const WorkflowRunnerForm=React.createClass({
 		return {
 			onSubmit: false,
 			onValidate: false,
-			setting: _config.setting,
 			required: {}
 		}
 	},
@@ -34,12 +33,13 @@ const WorkflowRunnerForm=React.createClass({
 
 	componentWillUnmount: function() {
 		WorkflowActions.hideWorkflow();
+		AppsActions.resetWorkflowApps();
 	},
 
 	formName: 'workflowRunnerForm',
 
 	validateForm: function() {
-		let setting=this.state.setting;
+		let setting=_config.setting;
 		let required=_.keys(this.state.required);
 		let form=this.refs[this.formName];
 		let formdata={};
@@ -69,7 +69,7 @@ const WorkflowRunnerForm=React.createClass({
 		let wid=utilities.uuid();
 		let workflowStore=this.state.workflowStore;
 		let appsStore=this.state.appsStore;
-		let setting=this.state.setting;
+		let setting=_config.setting;
 		let markup=<div />, appsFieldsets;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
 		let required=this.state.required={};

@@ -19,7 +19,7 @@ const AppsDetail=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(JobsStore, 'jobsStore')],
 
 	componentDidUpdate: function(prevProps, prevState) {
-		dsActions.resetDsDetail();
+		dsActions.clearDataStoreItem();
 	},
 
 	componentWillUnmount: function() {
@@ -32,7 +32,9 @@ const AppsDetail=React.createClass({
 		let jobsStore=this.state.jobsStore;
 		let jobDetail=jobsStore.jobDetail;
 		let markup;
-		if (appDetail && appDetail.id) {
+		if (! this.props.user.logged_in) {
+			markup=<Welcome />
+		} else if (appDetail && appDetail.id) {
 			markup=(
 				<div>
 					<AppsForm appId={appDetail.id} jobId={jobDetail.job_id} resubmit={jobsStore.resubmit} user={this.props.user}/>
