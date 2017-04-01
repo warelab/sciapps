@@ -1,0 +1,487 @@
+{
+  "id": "Winnow-0.9.2u1",
+  "name": "Winnow",
+  "icon": null,
+  "uuid": "2575517750151802395-e0bd34dffff8de6-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 8,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "24:00:00",
+  "defaultQueue": "normal",
+  "version": "0.9.2",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://pods.iplantcollaborative.org/wiki/display/atmman/Validate+Workflow+v0.7",
+  "label": "Winnow",
+  "owner": "spt6655",
+  "shortDescription": "A Python-compatible known truth testing tool for genome wide association studies.",
+  "longDescription": "Winnow is basically a tool that evaluates other tools. Winnow requires output from a GWAS tool after analyzing a data set. Given the \"known truth\" of the original data set, Winnow outputs a series of fit statistics to determine the validity of the GWAS tool and whether or not it was truly useful in analyzing the data.",
+  "tags": [
+    "python",
+    "gwas",
+    "winnow"
+  ],
+  "ontology": [],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/Winnow-0.9.2u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper09.sh",
+  "testPath": "test09.sh",
+  "checkpointable": true,
+  "lastModified": "2015-10-28T09:12:02.000-05:00",
+  "modules": [
+    "purge",
+    "load TACC",
+    "load python/2.7.3-epd-7.3.2"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "Class",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/spt6655/applications/winnow-0.5/test/kt.ote"
+      },
+      "details": {
+        "label": "Known-truth file name",
+        "description": "Specifies the \"known-truth\" file for the data group you are analyzing",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "Text-0"
+        ]
+      }
+    },
+    {
+      "id": "Folder",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": [
+          "agave://data.iplantcollaborative.org/spt6655/applications/winnow-0.5/test/OutputPLINK"
+        ]
+      },
+      "details": {
+        "label": "Folder for collected GWAS results",
+        "description": "The folder containing the aggregated GWAS results you wish to analyze",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "verbose",
+      "value": {
+        "visible": false,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 1,
+        "validator": null
+      },
+      "details": {
+        "label": "Verbose mode",
+        "description": "Triggers verbose mode for the program's execution",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:bool"
+        ]
+      }
+    },
+    {
+      "id": "beta",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "validator": null
+      },
+      "details": {
+        "label": "Name of effect size column",
+        "description": "Specifies a string for the name of the estimated SNP effect size column in input files (if needed)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "kttype",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "OTE",
+        "enum_values": [
+          {
+            "OTE": "Only significant SNPs and effects listed"
+          },
+          {
+            "FGS": "All SNPs and effects listed"
+          }
+        ]
+      },
+      "details": {
+        "label": "Type of known-truth file",
+        "description": "Allows one to specify the type of known truth file, either OTE (only truth and effect) or FGS (full genome set)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs: string"
+        ]
+      }
+    },
+    {
+      "id": "save-p",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0,
+        "validator": null
+      },
+      "details": {
+        "label": "Save original p-values",
+        "description": "Option for saving the original p-values in a separate file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:bool"
+        ]
+      }
+    },
+    {
+      "id": "seper",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "whitespace",
+        "enum_values": [
+          {
+            "whitespace": "File is whitespace-delimited"
+          },
+          {
+            "comma": "File is comma-delimited"
+          }
+        ]
+      },
+      "details": {
+        "label": "Value delimiter in input files",
+        "description": "Denotes the way values are separated in the input file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "Pvaladjust",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "None",
+        "enum_values": [
+          {
+            "None": "P-values from GWAS output will remain as is"
+          },
+          {
+            "bonferroni": "One-step Bonferroni adjustment"
+          },
+          {
+            "sidak": "One step Sidak adjustment"
+          },
+          {
+            "holm-sidak": "Step down method with Sidak adjustments"
+          },
+          {
+            "holm": "Step down method with Bonferroni adjustments"
+          },
+          {
+            "simes-hochberg": "Step up method (for independent statistics)"
+          },
+          {
+            "hommel": "Closed method based on Simes tests (non-negatively associated statistics only)"
+          },
+          {
+            "fdr_bh": "Benjamini-Hochberg method for false discovery rate control (non-negatively associated or independent statistics only)"
+          },
+          {
+            "fdr_by": "Benjamini-Yekutieli method for false discovery rate control"
+          },
+          {
+            "fdr_tsbh": "Two-stage FDR control (non-negatively associated or independent statistics only)"
+          },
+          {
+            "fdr_tsby": "Two-stage FDR control"
+          }
+        ]
+      },
+      "details": {
+        "label": "P-value adjustment (if any)",
+        "description": "Denotes the preferred type of p-value adjustment for the Winnow analysis",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "threshold",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0.05,
+        "validator": null
+      },
+      "details": {
+        "label": "Significance threshold value",
+        "description": "A value used for determining the threshold on certain classification metrics (between 0 and 1)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs: decimal"
+        ]
+      }
+    },
+    {
+      "id": "kttypeseper",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "whitespace",
+        "enum_values": [
+          {
+            "whitespace": "File is whitespace-delimited"
+          },
+          {
+            "comma": "File is comma-delimited"
+          }
+        ]
+      },
+      "details": {
+        "label": "Delimiter in known-truth file",
+        "description": "Describes the delimitation in the known-truth file (either comma or whitespace)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "covar",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "validator": null
+      },
+      "details": {
+        "label": "Covariate column (if any)",
+        "description": "Denotes the name of the covariate column from the GWAS output, if the data includes covariates",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "SNP",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 1,
+        "enquote": false,
+        "default": "SNP",
+        "validator": null
+      },
+      "details": {
+        "label": "Name for the SNP column in input files",
+        "description": "A name for the SNP column in the input file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "Score",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 2,
+        "enquote": false,
+        "default": "P",
+        "validator": null
+      },
+      "details": {
+        "label": "Name for p-value column in input files",
+        "description": "Name for the p-value column in the input file (e.g. p-value)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs: string"
+        ]
+      }
+    },
+    {
+      "id": "Filename",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 3,
+        "enquote": false,
+        "default": "MyResults",
+        "validator": null
+      },
+      "details": {
+        "label": "Name for output file",
+        "description": "Specifies the name for the Winnow output file (without file extension)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs: string"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/Winnow-0.9.2u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/Winnow-0.9.2u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%222575517750151802395-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/spt6655"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/Winnow-0.9.2u1/pems"
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "id": "RefSeqMash-0.0.1u1",
+  "name": "RefSeqMash",
+  "icon": null,
+  "uuid": "1145286837802233370-242ac118-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "12:00:00",
+  "defaultQueue": "serial",
+  "version": "0.0.1",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0997-x",
+  "label": "RefSeqMash",
+  "owner": "kyclark",
+  "shortDescription": "RefSeqMash",
+  "longDescription": "Use MinHash to compare samples to RefSeq genomes",
+  "tags": [
+    "refseq",
+    "identification",
+    "metagenome"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/RefSeqMash-0.0.1u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "template.sh",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2016-08-15T06:53:53.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "QUERY_DIR",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Directory of input files (FASTA, BAM)",
+        "description": "",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-bam"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/RefSeqMash-0.0.1u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/RefSeqMash-0.0.1u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%221145286837802233370-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/kyclark"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/RefSeqMash-0.0.1u1/pems"
+    }
+  }
+}

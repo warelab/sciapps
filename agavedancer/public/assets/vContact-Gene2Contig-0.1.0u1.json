@@ -1,0 +1,186 @@
+{
+  "id": "vContact-Gene2Contig-0.1.0u1",
+  "name": "vContact-Gene2Contig",
+  "icon": null,
+  "uuid": "3126420291112473061-e0bd34dffff8de6-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "02:00:00",
+  "defaultQueue": "serial",
+  "version": "0.1.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://github.com/geeklhem/vcontact",
+  "label": "vContact-Gene2Contig",
+  "owner": "bbolduc-iplant-2015",
+  "shortDescription": "vContact Gene2Contig Maker",
+  "longDescription": "vContact Gene2Contig is a tool that creates the gene-to-contig mapping file required for vContact-PCs and vContact.",
+  "tags": [
+    "iVirus",
+    "Metagenomics",
+    "vContact",
+    "Utility"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/vContact-Gene2Contig-0.1.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.template",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2016-01-08T16:14:22.000-06:00",
+  "modules": [
+    "purge",
+    "load TACC"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "proteins",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/shared/iplantcollaborative/example_data/vcontact/MetaGeneMark_Input.faa"
+      },
+      "details": {
+        "label": "Proteins file",
+        "description": "File containing proteins.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-fasta"
+        ],
+        "fileTypes": [
+          "TEXT-0",
+          "FASTA-0",
+          "RAW-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "annotations",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Keep 'description' field with contig names",
+        "description": "Keep 'description' field associated with contig names for MetaGeneMark parsing",
+        "argument": "--keep-descriptions",
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "outputPrefix",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "proteins.csv",
+        "validator": null
+      },
+      "details": {
+        "label": "Output filename",
+        "description": "Prefix for output files",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "sourceType",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "MetaGeneMark",
+        "enum_values": [
+          {
+            "VIRSorter": "VirSorter (VIRSorter_prots.fasta)"
+          },
+          {
+            "Prodigal": "Prodigal"
+          },
+          {
+            "MetaGeneMark": "MetaGeneMark (Nucleotide or Protein)"
+          }
+        ]
+      },
+      "details": {
+        "label": "Input source type",
+        "description": "The source type of the proteins file.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/vContact-Gene2Contig-0.1.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/vContact-Gene2Contig-0.1.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%223126420291112473061-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/bbolduc-iplant-2015"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/vContact-Gene2Contig-0.1.0u1/pems"
+    }
+  }
+}

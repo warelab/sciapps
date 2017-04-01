@@ -1,0 +1,110 @@
+{
+  "id": "mrbayes3.2.6-1.0.0u1",
+  "name": "mrbayes3.2.6",
+  "icon": null,
+  "uuid": "8987580260706488806-242ac118-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": null,
+  "version": "1.0.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://mrbayes.sourceforge.net/manual.php",
+  "label": "MrBayes 3.2.6 (parallel) on CyverseUK",
+  "owner": "erikvdbergh",
+  "shortDescription": "MrBayes 3.2.6 (parallel)",
+  "longDescription": "MrBayes 3.2.6 (parallel)",
+  "tags": [
+    "testing",
+    "CyVerse UK"
+  ],
+  "ontology": [],
+  "executionType": "CLI",
+  "executionSystem": "cyverseUK-Batch2",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/mrbayes3.2.6-1.0.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.sh",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2017-02-28T07:26:18.000-06:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "batch_file",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/home/erikvdbergh/testdata/mrbayes/primates.bb"
+      },
+      "details": {
+        "label": "MrBayes Nexus file (make sure you use 12 chains in total!)",
+        "description": "Nexus file with MrBayes batch block. It is important to have 12 chains total or your job won't run; The number of chains is nruns multiplied by nchains. E.g. \"nruns=1 nchains=12\" or \"nruns=3 nchains=4\"",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "sequences",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/home/erikvdbergh/testdata/mrbayes/primates.nex"
+      },
+      "details": {
+        "label": "Alignment Nexus file",
+        "description": "Nexus file with aligned sequences",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    }
+  ],
+  "parameters": [],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/mrbayes3.2.6-1.0.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/cyverseUK-Batch2"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/mrbayes3.2.6-1.0.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%228987580260706488806-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/erikvdbergh"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/mrbayes3.2.6-1.0.0u1/pems"
+    }
+  }
+}

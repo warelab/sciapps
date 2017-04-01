@@ -1,0 +1,809 @@
+{
+  "id": "GSNAP-07.23.15u2",
+  "name": "GSNAP",
+  "icon": null,
+  "uuid": "648206701393079835-e0bd34dffff8de6-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "47:56:00",
+  "defaultQueue": "normal",
+  "version": "07.23.15",
+  "revision": 2,
+  "isPublic": true,
+  "helpURI": "https://github.com/julian-gehring/GMAP-GSNAP",
+  "label": "GSNAP",
+  "owner": "rogerab",
+  "shortDescription": "Spliced alignment tool",
+  "longDescription": "GSNAP, a multithreaded, gapped mapper for ESTs",
+  "tags": [
+    "aligner",
+    "NGS",
+    "EST",
+    "SAM"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/sequenceServices/SequenceServices"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/GSNAP-07.23.15u2.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "gsnap_wrapper3.sh",
+  "testPath": "../test/gsnap_wrapper2.sh",
+  "checkpointable": true,
+  "lastModified": "2015-10-29T14:12:15.000-05:00",
+  "modules": [
+    "purge",
+    "load TACC",
+    "load irods"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "seqFolder",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "sequence folder:",
+        "description": "Folder of sequence files in fastq or fasta",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "directory"
+        ]
+      }
+    },
+    {
+      "id": "reference",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 2,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "reference",
+        "description": "Sequence file in fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "reference_data",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 3,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "reference indexes",
+        "description": "Index files previously created",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "anno_path",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 4,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "To use known splicing, input an annotation file in gtf format",
+        "description": "splicing annotation file (splicesites or introns)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "snpsMap",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 5,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "For tolerance to SNPs, input a SNPs file in vcf format",
+        "description": "Provides tolerance to known SNPs",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": []
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "indx",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 1,
+        "enquote": false,
+        "default": "index",
+        "validator": ""
+      },
+      "details": {
+        "label": "index name",
+        "description": "give a name to the genome index if you want to reuse it",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "seqmode",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 2,
+        "enquote": false,
+        "default": "unpaired",
+        "enum_values": [
+          {
+            "unpaired": "unpaired"
+          },
+          {
+            "paired": "paired"
+          }
+        ]
+      },
+      "details": {
+        "label": "paired or unpaired",
+        "description": "Is this paired or unpaired mapping?",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "orientation",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 3,
+        "enquote": false,
+        "default": "FR",
+        "enum_values": [
+          {
+            "FR": "forward-reverse"
+          },
+          {
+            "RF": "reverse-forward"
+          },
+          {
+            "FF": "forward-forward"
+          }
+        ]
+      },
+      "details": {
+        "label": "read pair orientation",
+        "description": "For paired reads, how are they oriented?",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "cmetMap",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 4,
+        "enquote": false,
+        "default": "",
+        "enum_values": [
+          {
+            "": "C-methylation mapping off"
+          },
+          {
+            "yes": "Turn on C-methylation sensitive mapping"
+          }
+        ]
+      },
+      "details": {
+        "label": "C-methylation sensitive mapping",
+        "description": "Turn on C-methylation sensitive mapping?",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "atoiMap",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 5,
+        "enquote": false,
+        "default": "",
+        "enum_values": [
+          {
+            "": "A-to-I sensitive mapping off"
+          },
+          {
+            "yes": "Turn on Adenosine to Inosine conversion-sensitive mapping"
+          }
+        ]
+      },
+      "details": {
+        "label": "Adenosine to Inosine conversion-sensitive mapping",
+        "description": "A to I conversion-sensitive mapping",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "splicemode",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 6,
+        "enquote": false,
+        "default": "splicesites",
+        "enum_values": [
+          {
+            "splicesites": "use splicesites (default setting when annotation file provided)"
+          },
+          {
+            "introns": "use introns (annotation file required)"
+          }
+        ]
+      },
+      "details": {
+        "label": "use splicesites or introns to map with known splicing",
+        "description": "For using known splicing, analyse by splicesites or by introns?",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "novelSplicing",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 7,
+        "enquote": false,
+        "default": "1",
+        "enum_values": [
+          {
+            "1": "Look for novel splicing"
+          },
+          {
+            "0": "No novel splicing, known splicing only"
+          }
+        ]
+      },
+      "details": {
+        "label": "novel splicing on/off",
+        "description": "Look for novel splicing (compatible with known splicing)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "gunZip",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 8,
+        "enquote": false,
+        "default": "",
+        "enum_values": [
+          {
+            "": "Reads are not gzipped"
+          },
+          {
+            "YES": "Unzip gzipped reads"
+          }
+        ]
+      },
+      "details": {
+        "label": "Unzip reads",
+        "description": "Uncompress gzipped read files",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "maxMismatch",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 9,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "maximum mismatch",
+        "description": "Set a maximum allowed mismatch (default is calculated by formula)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "adapterStrip",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 10,
+        "enquote": false,
+        "default": "",
+        "enum_values": [
+          {
+            "": "adapter trimming off"
+          },
+          {
+            "paired": "turn on adapter trimming for paired reads"
+          }
+        ]
+      },
+      "details": {
+        "label": "Trim adapter sequence",
+        "description": "Automatically trim adapter sequences from paired reads",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "indelPenalty",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 11,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Indel penalty",
+        "description": "Set a penalty for indels, default is 2",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "gmapTrigger",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 12,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Gmap trigger",
+        "description": "Set a minimum score to trigger GMAP pair mapping",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "stranded",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 13,
+        "enquote": false,
+        "default": "NOT",
+        "enum_values": [
+          {
+            "NOT": "Not-Stranded mapping (default setting)"
+          },
+          {
+            "STRANDED": "Stranded (for cmet or atoi sensitive mapping)"
+          }
+        ]
+      },
+      "details": {
+        "label": "strand-dependent mapping",
+        "description": "Map to either strand or use strand-dependent-mapping?",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "quality",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 14,
+        "enquote": false,
+        "default": "sanger",
+        "enum_values": [
+          {
+            "sanger": "sanger (ASCII 33-126)"
+          },
+          {
+            "illumina": "illumina (ASCII 64-126)"
+          }
+        ]
+      },
+      "details": {
+        "label": "quality format",
+        "description": "Select the appropriate quality format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "nPaths",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 15,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Maximum number of paths to print",
+        "description": "Set the maximum number of matches per read",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "nonExcess",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 16,
+        "enquote": false,
+        "default": "",
+        "enum_values": [
+          {
+            "": "Print all results"
+          },
+          {
+            "QuietExcessive": "Don't print results for reads that exceed the path limit"
+          }
+        ]
+      },
+      "details": {
+        "label": "Skip reads with excessive hits",
+        "description": "Don't print results for reads with excessive number of hits",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readGroupID",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 17,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "read group ID",
+        "description": "Set a read group ID for the SAM file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readGroupName",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 18,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "read group name",
+        "description": "Set a read group name for the SAM file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readGroupLibrary",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 19,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "read group library",
+        "description": "Set a read group library name for the SAM file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readGroupPlatform",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 20,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "read group platform",
+        "description": "Set a read group platform for the SAM file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/GSNAP-07.23.15u2"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/GSNAP-07.23.15u2/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%22648206701393079835-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/rogerab"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/GSNAP-07.23.15u2/pems"
+    }
+  }
+}

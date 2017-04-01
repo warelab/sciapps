@@ -1,0 +1,15 @@
+fid1=fopen('agaveAppsList2.json', 'r');
+fid2=fopen('agaveAppsList.json', 'w');
+
+while 1
+    tline=fgetl(fid1);
+    if ~ischar(tline), break; end
+    if length(strfind(tline, '['))>0 | 
+            | length(strfind(tline, '"id"'))>0 | length(strfind(tline, '"tags"'))>0 | length(strfind(tline, '"version"'))>0 ...
+            | length(strfind(tline, '"_links"'))>0 | length(strfind(tline, '"self"'))>0 | length(strfind(tline, '"href"'))>0
+        fprintf(fid2, '%s\n', tline);
+    end
+end
+
+fclose(fid1);
+fclose(fid2);

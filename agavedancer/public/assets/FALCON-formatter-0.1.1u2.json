@@ -1,0 +1,97 @@
+{
+  "id": "FALCON-formatter-0.1.1u2",
+  "name": "FALCON-formatter",
+  "icon": null,
+  "uuid": "6623368989339488741-242ac1116-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "02:00:00",
+  "defaultQueue": "serial",
+  "version": "0.1.1",
+  "revision": 2,
+  "isPublic": true,
+  "helpURI": "https://github.com/zyndagj/FALCON-formatter",
+  "label": "FALCON-formatter",
+  "owner": "gzynda",
+  "shortDescription": "Format input for use with FALCON",
+  "longDescription": null,
+  "tags": [
+    "FALCON",
+    "FASTQ",
+    "FASTA"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/FALCON-formatter-0.1.1u2.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "FALCON-formatter.template",
+  "testPath": "FALCON-formatter.test",
+  "checkpointable": false,
+  "lastModified": "2016-03-24T13:08:07.000-05:00",
+  "modules": [
+    "intel",
+    "python/2.7.9"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "input",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select a fastq/a file or folder to format for use with FALCON",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/text/X-multiFasta",
+          "http://sswapmeet.sswap.info/mime/text/X-multiFastq"
+        ],
+        "fileTypes": [
+          "text-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/FALCON-formatter-0.1.1u2"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/FALCON-formatter-0.1.1u2/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%226623368989339488741-242ac1116-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/gzynda"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/FALCON-formatter-0.1.1u2/pems"
+    }
+  }
+}

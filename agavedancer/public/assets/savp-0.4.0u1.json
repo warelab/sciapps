@@ -1,0 +1,336 @@
+{
+  "id": "savp-0.4.0u1",
+  "name": "savp",
+  "icon": null,
+  "uuid": "3065052764590510566-242ac115-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 24,
+  "defaultMemoryPerNode": 64,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "24:00:00",
+  "defaultQueue": "normal",
+  "version": "0.4.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://www.broadinstitute.org/gatk",
+  "label": "Single Animal Variant Pipeline",
+  "owner": "jcarson",
+  "shortDescription": "Detect variants in bam",
+  "longDescription": "GATK realign and real, then up to 3 variant callers",
+  "tags": [
+    "variants",
+    "NGS"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "lonestar5.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/savp-0.4.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "savp.template",
+  "testPath": "test-savp.sh",
+  "checkpointable": false,
+  "lastModified": "2016-04-15T14:20:51.000-05:00",
+  "modules": [
+    "load python/2.7.11",
+    "load gatk/3.5.0"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "inputBam",
+      "value": {
+        "validator": ".bam$",
+        "visible": true,
+        "required": true,
+        "order": 1,
+        "enquote": false,
+        "default": "foo.bam"
+      },
+      "details": {
+        "label": "The BAM file to variant call",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-bam"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "inputBamBai",
+      "value": {
+        "validator": ".bam.bai$",
+        "visible": true,
+        "required": true,
+        "order": 2,
+        "enquote": false,
+        "default": "foo.bam.bai"
+      },
+      "details": {
+        "label": "The index of the same BAM file.  Base names must match.",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-bai"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "referenceBundle",
+      "value": {
+        "validator": ".tar$",
+        "visible": true,
+        "required": true,
+        "order": 3,
+        "enquote": false,
+        "default": "ref.tar"
+      },
+      "details": {
+        "label": "Reference .tar w/ (.fa .dict .fa.{.amb .ann .bwt .fai .pac .sa})",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-tar"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "knownVariants",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 4,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Known variants - optional; skips BaseRecalibrator if blank",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-vcf"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "regionName",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 1,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Region name - optional; processes complete .bam if blank",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "runUnifiedGenotyper",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "bool",
+        "order": 2,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "GATK UnifiedGenotyper variant caller",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "runPlatypus",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "bool",
+        "order": 3,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "Platypus CallVariants",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "runMpileup",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "bool",
+        "order": 4,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Samtools mpileup/vcfutils variant caller; WARNING: INEFFICIENT",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "cleanupInputs",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "bool",
+        "order": 99,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "Do not copy input files to output directory",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "cleanupIntermediates",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "bool",
+        "order": 100,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "Do not copy intermediate temporary files to output directory",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/savp-0.4.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/lonestar5.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/savp-0.4.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%223065052764590510566-242ac115-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/jcarson"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/savp-0.4.0u1/pems"
+    }
+  }
+}

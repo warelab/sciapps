@@ -1,0 +1,281 @@
+{
+  "id": "Picard_preprocess-1.98u1",
+  "name": "Picard_preprocess",
+  "icon": null,
+  "uuid": "8354220462137404955-e0bd34dffff8de6-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 12,
+  "defaultMemoryPerNode": 24,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "47:59:59",
+  "defaultQueue": "normal",
+  "version": "1.98",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://broadinstitute.github.io/picard/",
+  "label": "Picard preprocess",
+  "owner": "luj",
+  "shortDescription": "Picard preprocess for variant calling",
+  "longDescription": "",
+  "tags": [
+    "aligner",
+    "NGS",
+    "PICARD"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/Picard_preprocess-1.98u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.sh",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2015-11-24T17:10:26.000-06:00",
+  "modules": [
+    "purge",
+    "load TACC",
+    "load irods"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "samdir",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select the directory of SAM/BAM files to be processed",
+        "description": "Directory containing the SAM?BAM files for preprocess",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-sam",
+          "http://sswapmeet.sswap.info/mime/application/X-bam"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "sam",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 2,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Or select a SAM/BAM file to be processed",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-sam",
+          "http://sswapmeet.sswap.info/mime/application/X-bam"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "rgid",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 3,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Read Group ID (ID tag) (Not for directory input)",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "rgsm",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 4,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Read Group Sample Name (SM tag) (Not for directory input)",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "rgpu",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 5,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Read Group platform unit (Not for directory input)",
+        "description": "like run barcode, etc.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "rgpl",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 6,
+        "enquote": false,
+        "default": "Illumina",
+        "validator": ""
+      },
+      "details": {
+        "label": "Read Group Platform (PL tag)",
+        "description": "Such as illumina, solid, 454, pacbio, helicos",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "rglb",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 7,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Read Group Library (LB tag) (Not for directory input)",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "output",
+      "value": {
+        "validator": "picard_preprocess_output$",
+        "order": 0,
+        "default": "picard_preprocess_output"
+      },
+      "details": {
+        "label": "directory of output bam files",
+        "description": ""
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-bam"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/Picard_preprocess-1.98u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/Picard_preprocess-1.98u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%228354220462137404955-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/luj"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/Picard_preprocess-1.98u1/pems"
+    }
+  }
+}

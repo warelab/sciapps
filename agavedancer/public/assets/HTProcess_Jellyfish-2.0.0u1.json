@@ -1,0 +1,201 @@
+{
+  "id": "HTProcess_Jellyfish-2.0.0u1",
+  "name": "HTProcess_Jellyfish",
+  "icon": null,
+  "uuid": "0001431368320425-5056a550b8-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 3,
+  "defaultMaxRunTime": "23:56:00",
+  "defaultQueue": "normal",
+  "version": "2.0.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://pods.iplantcollaborative.org/wiki/display/DEapps/HTProcess_Jellyfish-2.0.0",
+  "label": "HTprocess_jellyfish",
+  "owner": "rogerab",
+  "shortDescription": "Jellyfish, kmer counter",
+  "longDescription": "Jellyfish, to determine kmer coverage for sequence files",
+  "tags": [
+    "kmer counter",
+    "kmer",
+    "kmer coverage",
+    "assembly"
+  ],
+  "ontology": [
+    "genome assembly",
+    "genomics",
+    "sequencing"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/rb-HTProcess_Jellyfish-2.0.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "HTprocess_jellyfish.sh",
+  "testPath": "../test/jellyfish_wrapper2.sh",
+  "checkpointable": false,
+  "lastModified": "2015-05-11T13:18:40.000-05:00",
+  "modules": [
+    "purge",
+    "load TACC",
+    "load R"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "Input_Dir",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Input the HTProcess_Reads here",
+        "description": "HTProcess_Reads directory, the output from HTProcess-prepare_directories_and_run_fastqc",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "directory"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "kmer1",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "21",
+        "validator": null
+      },
+      "details": {
+        "label": "Set the first kmer setting",
+        "description": "kmer setting for kmer counting",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string",
+          "integer"
+        ]
+      }
+    },
+    {
+      "id": "kmer2",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 1,
+        "enquote": false,
+        "default": 0,
+        "validator": "[0-9]+"
+      },
+      "details": {
+        "label": "Set the second kmer setting",
+        "description": "A second (optional) kmer setting",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "kmer3",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 2,
+        "enquote": false,
+        "default": 0,
+        "validator": "[0-9]+"
+      },
+      "details": {
+        "label": "Set the third kmer setting",
+        "description": "third optional kmer setting for jellyfish",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "jellyfish_summary.html",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "jellyfish_summary.html"
+      },
+      "details": {
+        "label": "jellyfish output summary",
+        "description": "output as self-contained html page"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/"
+        ],
+        "fileTypes": []
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/HTProcess_Jellyfish-2.0.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/HTProcess_Jellyfish-2.0.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%220001431368320425-5056a550b8-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/rogerab"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/HTProcess_Jellyfish-2.0.0u1/pems"
+    }
+  }
+}

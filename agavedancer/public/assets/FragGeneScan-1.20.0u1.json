@@ -1,0 +1,202 @@
+{
+  "id": "FragGeneScan-1.20.0u1",
+  "name": "FragGeneScan",
+  "icon": null,
+  "uuid": "5481989669647543835-e0bd34dffff8de6-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "01:00:00",
+  "defaultQueue": "serial",
+  "version": "1.20.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://omics.informatics.indiana.edu/FragGeneScan/",
+  "label": "FragGeneScan",
+  "owner": "bbolduc-iplant-2015",
+  "shortDescription": "FragGeneScan finds genes in short reads or complete genomes.",
+  "longDescription": "FragGeneScan is an application for finding (fragmented) genes in short reads or complete genomes.",
+  "tags": [
+    "iVirus",
+    "Gene Finding",
+    "Metagenomics"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/FragGeneScan-1.20.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.template",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2016-01-08T15:13:46.000-06:00",
+  "modules": [
+    "purge",
+    "load TACC"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "seqFile",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/shared/iplantcollaborative/example_data/fraggenescan/NC_000913.fna"
+      },
+      "details": {
+        "label": "Sequence file",
+        "description": "Fasta-formatted sequence file containing either sequencing reads or a complete genome.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0",
+          "FASTA-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "complete",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "1",
+        "enum_values": [
+          {
+            "1": "Yes"
+          },
+          {
+            "0": "No"
+          }
+        ]
+      },
+      "details": {
+        "label": "Complete genome?",
+        "description": "Are the sequences complete genomes?.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "train",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "complete",
+        "enum_values": [
+          {
+            "complete": "Complete genomic sequences or short sequence reads without sequencing error"
+          },
+          {
+            "sanger_5": "Sanger sequencing reads with ~ 0.5% error rate"
+          },
+          {
+            "sanger_10": "Sanger sequencing reads with ~ 1.0% error rate"
+          },
+          {
+            "454_5": "454 pyrosequencing reads with ~ 0.5% error rate"
+          },
+          {
+            "454_10": "454 pyrosequencing reads with ~ 1.0% error rate"
+          },
+          {
+            "454_30": "454 pyrosequencing reads with ~ 3.0% error rate"
+          },
+          {
+            "illumina_5": "Illumina sequencing reads with ~ 0.5% error rate"
+          },
+          {
+            "illumina_10": "Illumina sequencing reads with ~ 1.0% error rate"
+          }
+        ]
+      },
+      "details": {
+        "label": "Gene calling model",
+        "description": "Gene calling model to use.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "outputFile",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "output",
+        "validator": null
+      },
+      "details": {
+        "label": "Output file name",
+        "description": "Output file name",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/FragGeneScan-1.20.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/FragGeneScan-1.20.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%225481989669647543835-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/bbolduc-iplant-2015"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/FragGeneScan-1.20.0u1/pems"
+    }
+  }
+}

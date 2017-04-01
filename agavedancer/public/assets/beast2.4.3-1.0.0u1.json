@@ -1,0 +1,86 @@
+{
+  "id": "beast2.4.3-1.0.0u1",
+  "name": "beast2.4.3",
+  "icon": null,
+  "uuid": "3028176519196381671-242ac119-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": null,
+  "version": "1.0.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://beast2.org/tutorials/",
+  "label": "Beast 2.4.3 (with Beagle) on CyverseUK",
+  "owner": "erikvdbergh",
+  "shortDescription": "Beast 2.4.3 (with Beagle)",
+  "longDescription": "Beast 2.4.3 (with Beagle)",
+  "tags": [
+    "testing",
+    "CyVerse UK"
+  ],
+  "ontology": [],
+  "executionType": "CLI",
+  "executionSystem": "cyverseUK-Batch2",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/beast2.4.3-1.0.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.sh",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2017-03-23T10:55:41.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "xml_file",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/home/erikvdbergh/testdata/beast2/primates.xml"
+      },
+      "details": {
+        "label": "BEAST2 XML file",
+        "description": "XML file with sequences and options for BEAST2, see CyVerse wiki for examples",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    }
+  ],
+  "parameters": [],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/beast2.4.3-1.0.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/cyverseUK-Batch2"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/beast2.4.3-1.0.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%223028176519196381671-242ac119-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/erikvdbergh"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/beast2.4.3-1.0.0u1/pems"
+    }
+  }
+}

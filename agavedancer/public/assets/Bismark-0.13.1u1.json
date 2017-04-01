@@ -1,0 +1,297 @@
+{
+  "id": "Bismark-0.13.1u1",
+  "name": "Bismark",
+  "icon": null,
+  "uuid": "0001423515543581-5056a550b8-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 12,
+  "defaultMemoryPerNode": 24,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "12:00:00",
+  "defaultQueue": "normal",
+  "version": "0.13.1",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://pods.iplantcollaborative.org/wiki/display/DEapps/Bismark",
+  "label": "Bismark",
+  "owner": "luj",
+  "shortDescription": "Bismark Bisulfite Mapper",
+  "longDescription": "Bismark is a program to map bisulfite treated sequencing reads to a genome of interest and perform methylation calls in a single step",
+  "tags": [
+    "bismark",
+    "methylation",
+    "bisulfite sequence"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/luj-Bismark-0.13.1u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.sh",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2015-07-02T19:25:16.000-05:00",
+  "modules": [
+    "purge",
+    "load TACC",
+    "load irods"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "genome_dir",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select prepared Genome directory:",
+        "description": "Directory containing the prepared genome data",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-fasta"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "input1",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 2,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select fastq file 1:",
+        "description": "Single-end or first of paired-end fastq file for sequence alignment",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-fastq"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "input2",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 3,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select fastq file 2:",
+        "description": "Second of paired-end fastq file for sequence alignment",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-fastq"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "mismatch",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 4,
+        "enquote": false,
+        "default": "1",
+        "enum_values": [
+          {
+            "0": "0"
+          },
+          {
+            "1": "1"
+          },
+          {
+            "2": "2"
+          },
+          {
+            "3": "3"
+          }
+        ]
+      },
+      "details": {
+        "label": "Maximum mismatch:",
+        "description": "Maximum mismatch allowed in alignment",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "length",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 5,
+        "enquote": false,
+        "default": 40,
+        "validator": ""
+      },
+      "details": {
+        "label": "Read length:",
+        "description": "Length of the sequencing reads",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "qual",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 6,
+        "enquote": false,
+        "default": "phred33",
+        "enum_values": [
+          {
+            "phred33": "phred33"
+          },
+          {
+            "phred64": "phred64"
+          }
+        ]
+      },
+      "details": {
+        "label": "Quality score type:",
+        "description": "Type of quality score: phred33 or phred64",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "bismark_output.txt",
+      "value": {
+        "validator": "bismark_output.txt",
+        "order": 0,
+        "default": "bismark_output.txt"
+      },
+      "details": {
+        "label": "bismark output txt",
+        "description": ""
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/text/plain"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "bismark_output.sam",
+      "value": {
+        "validator": "bismark_output.sam",
+        "order": 0,
+        "default": "bismark_output.sam"
+      },
+      "details": {
+        "label": "bismark output sam",
+        "description": ""
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-sam"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/Bismark-0.13.1u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/Bismark-0.13.1u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%220001423515543581-5056a550b8-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/luj"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/Bismark-0.13.1u1/pems"
+    }
+  }
+}

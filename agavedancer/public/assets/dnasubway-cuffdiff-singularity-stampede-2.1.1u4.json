@@ -1,0 +1,2093 @@
+{
+  "id": "dnasubway-cuffdiff-singularity-stampede-2.1.1u4",
+  "name": "dnasubway-cuffdiff-singularity-stampede",
+  "icon": null,
+  "uuid": "8151853834399051290-242ac117-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "24:00:00",
+  "defaultQueue": "normal",
+  "version": "2.1.1",
+  "revision": 4,
+  "isPublic": true,
+  "helpURI": "http://cufflinks.cbcb.umd.edu/",
+  "label": "DNASubway Cuffdiff",
+  "owner": "vaughn",
+  "shortDescription": "Find significant changes in transcript expression, splicing, and promoter use.",
+  "longDescription": null,
+  "tags": [
+    "next-gen",
+    "assembly",
+    "rnaseq",
+    "greenline",
+    "dnasubway"
+  ],
+  "ontology": [
+    "http://edamontology.org/topic_0091",
+    "http://edamontology.org/operation_3742"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/dnasubway-cuffdiff-singularity-stampede-2.1.1u4.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrap-cuffdiff.sh",
+  "testPath": "test-cuffdiff.sh",
+  "checkpointable": false,
+  "lastModified": "2016-12-16T12:29:19.000-06:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "query1",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": "smckay/cuffdiff_test/gtf/WT_rep2_transcipts.gtf"
+      },
+      "details": {
+        "label": "A transcripts.gtf file produced by cufflinks",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "GTF-2.2"
+        ]
+      }
+    },
+    {
+      "id": "query2",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": "smckay/cuffdiff_test/gtf/WT_rep2_transcipts.gtf"
+      },
+      "details": {
+        "label": "A transcripts.gtf file produced by cufflinks",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "GTF-2.2"
+        ]
+      }
+    },
+    {
+      "id": "query3",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "A transcripts.gtf file produced by cufflinks",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "GTF-2.2"
+        ]
+      }
+    },
+    {
+      "id": "query4",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "A transcripts.gtf file produced by cufflinks",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "GTF-2.2"
+        ]
+      }
+    },
+    {
+      "id": "query5",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "A transcripts.gtf file produced by cufflinks",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "GTF-2.2"
+        ]
+      }
+    },
+    {
+      "id": "query6",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "A transcripts.gtf file produced by cufflinks",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "GTF-2.2"
+        ]
+      }
+    },
+    {
+      "id": "query7",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "A transcripts.gtf file produced by cufflinks",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "GTF-2.2"
+        ]
+      }
+    },
+    {
+      "id": "query8",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "A transcripts.gtf file produced by cufflinks",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "GTF-2.2"
+        ]
+      }
+    },
+    {
+      "id": "query9",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "A transcripts.gtf file produced by cufflinks",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "GTF-2.2"
+        ]
+      }
+    },
+    {
+      "id": "query10",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "A transcripts.gtf file produced by cufflinks",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "GTF-2.2"
+        ]
+      }
+    },
+    {
+      "id": "query11",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "A transcripts.gtf file produced by cufflinks",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "GTF-2.2"
+        ]
+      }
+    },
+    {
+      "id": "query12",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "A transcripts.gtf file produced by cufflinks",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "GTF-2.2"
+        ]
+      }
+    },
+    {
+      "id": "sam1_f1",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "smckay/cuffdiff_test/WT_rep1.bam"
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 1",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam1_f2",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 3",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam1_f3",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 3",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam1_f4",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 3",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam2_f1",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "smckay/cuffdiff_test/hy5_rep1.bam"
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam2_f2",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam2_f3",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam2_f4",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam3_f1",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam3_f2",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam3_f3",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam3_f4",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam4_f1",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam4_f2",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam4_f3",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam4_f4",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam5_f1",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam5_f2",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam5_f3",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam5_f4",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam6_f1",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam6_f2",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam6_f3",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam6_f4",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam7_f1",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam7_f2",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam7_f3",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam7_f4",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam8_f1",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam8_f2",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam8_f3",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam8_f4",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam9_f1",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam9_f2",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam9_f3",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam9_f4",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam10_f1",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam10_f2",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam10_f3",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "sam10_f4",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "RNA reads aligned with TopHat 4",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Alignment"
+        ],
+        "fileTypes": [
+          "BAM-0.1.2",
+          "SAM-0.1.2"
+        ]
+      }
+    },
+    {
+      "id": "ref_gtf",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": "/shared/iplant_DNA_subway/genomes/arabidopsis_thaliana/annotation.gtf"
+      },
+      "details": {
+        "label": "Reference annotation",
+        "description": "A transcript annotation file produced by cufflinks, cuffcompare, or other source.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Annotation"
+        ],
+        "fileTypes": [
+          "GTF-2.2",
+          "GFF-3.0"
+        ]
+      }
+    },
+    {
+      "id": "mask_gtf",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Mask annotation file",
+        "description": "Tells CuffDiff to ignore all reads that could have come from transcripts in this GTF file.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Annotation"
+        ],
+        "fileTypes": [
+          "GTF-2.2",
+          "GFF-3.0"
+        ]
+      }
+    },
+    {
+      "id": "ref_seq",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": "/shared/iplant_DNA_subway/genomes/arabidopsis_thaliana/genome.fas"
+      },
+      "details": {
+        "label": "Genome FASTA file",
+        "description": "Tells CuffDiff to run its new bias detection and correction algorithm which can significantly improve accuracy of transcript abundance estimates.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Annotation"
+        ],
+        "fileTypes": [
+          "FASTA-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "fdr",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0.05,
+        "validator": null
+      },
+      "details": {
+        "label": "False discovery rate used in testing",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:double"
+        ]
+      }
+    },
+    {
+      "id": "libraryType",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "fr-unstranded",
+        "validator": null
+      },
+      "details": {
+        "label": "Library type",
+        "description": "ff-firststrand|ff-secondstrand|ff-unstranded|fr-firststrand|fr-secondstrand|fr-unstranded|transfrags",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "species",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "false",
+        "validator": null
+      },
+      "details": {
+        "label": "Species Name",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "upperQuartileNorm",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Perform upper-quartile normalization",
+        "description": "CuffDiff normalizes by the upper quartile of the number of fragments mapping to individual loci instead of the total number of sequenced fragments.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "refGTF",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "Provide Cuffmerge a reference GTF",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "labels",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "validator": null
+      },
+      "details": {
+        "label": "Comma-separated labels for SAM files 1-n",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "skipCuffmerge",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Skip Cuffmerge",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:bool"
+        ]
+      }
+    },
+    {
+      "id": "totalHitsNorm",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Use total hits to calculate FPKM",
+        "description": "CuffDiff counts all fragments, including those not compatible with any reference transcript, towards the number of mapped hits used in the FPKM denominator.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "poissonDispersion",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Don't fit fragment counts for overdispersion",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "fragLenMean",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 200,
+        "validator": null
+      },
+      "details": {
+        "label": "Average fragment length (unpaired reads only)",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "minAlignmentCount",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 10,
+        "validator": null
+      },
+      "details": {
+        "label": "Minimum alignment count",
+        "description": "Minimum number of alignments in a locus for testing",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "jobName",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "tophat",
+        "validator": null
+      },
+      "details": {
+        "label": "job name",
+        "description": "the name of the itinerant tophat job",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "treatAsTimeSeries",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Treat samples as an ordered time series",
+        "description": "Tells CuffDiff to treat SAM files 1-n as a time series",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "compatibleHitsNorm",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "Use annotation-compatible hits to calculate FPKM",
+        "description": "CuffDiff counts only those fragments compatible with some reference transcript towards the number of mapped hits used in the FPKM denominator.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "fragLenStdev",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 80,
+        "validator": null
+      },
+      "details": {
+        "label": "Fragment length standard deviation (unpaired reads only)",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "multiReadCorrect",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Perform multiply-matched read correction",
+        "description": "Tells CuffDiff to do an initial estimation procedure to more accurately weight reads mapping to multiple locations in the genome.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "min_isoform_Fraction",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0.1,
+        "validator": null
+      },
+      "details": {
+        "label": "Minimum isoform fraction",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:decimal"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/dnasubway-cuffdiff-singularity-stampede-2.1.1u4"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/dnasubway-cuffdiff-singularity-stampede-2.1.1u4/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%228151853834399051290-242ac117-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/vaughn"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/dnasubway-cuffdiff-singularity-stampede-2.1.1u4/pems"
+    }
+  }
+}

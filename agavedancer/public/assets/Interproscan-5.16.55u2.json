@@ -1,0 +1,151 @@
+{
+  "id": "Interproscan-5.16.55u2",
+  "name": "Interproscan",
+  "icon": null,
+  "uuid": "4576771092652748315-e0bd34dffff8de6-0001-005",
+  "parallelism": "PARALLEL",
+  "defaultProcessorsPerNode": 128,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 8,
+  "defaultMaxRunTime": null,
+  "defaultQueue": "normal",
+  "version": "5.16.55",
+  "revision": 2,
+  "isPublic": true,
+  "helpURI": "http://www.ebi.ac.uk/Tools/pfa/iprscan/",
+  "label": "InterProScan Sequence Search",
+  "owner": "vaughn",
+  "shortDescription": "InterProScan is a tool that combines different protein signature recognition methods into one resource.",
+  "longDescription": null,
+  "tags": [
+    "Annotation",
+    "Protein functional analysis",
+    "EMBL-EBI"
+  ],
+  "ontology": [],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/Interproscan-5.16.55u2.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "iprscan.bashx",
+  "testPath": "test/test.sh",
+  "checkpointable": false,
+  "lastModified": "2015-12-16T13:11:03.000-06:00",
+  "modules": [
+    "purge",
+    "load TACC",
+    "load perl/5.16.2",
+    "load python/2.7.9",
+    "load launcher/2.0"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "query",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Fasta file containing all peptide sequences to annotate",
+        "description": "This file should contain no more than ~100,000 peptide sequences",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-fasta"
+        ],
+        "fileTypes": [
+          "fasta-0",
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "goterms",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 1,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "Annotate each peptide with Gene Ontology information",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "pathways",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 2,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "Annotate each peptide with biological pathway information",
+        "description": "--pathways",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/Interproscan-5.16.55u2"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/Interproscan-5.16.55u2/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%224576771092652748315-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/vaughn"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/Interproscan-5.16.55u2/pems"
+    }
+  }
+}

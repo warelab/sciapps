@@ -1,0 +1,279 @@
+{
+  "id": "MACS-1.4.2u1",
+  "name": "MACS",
+  "icon": null,
+  "uuid": "3862062148097863195-e0bd34dffff8de6-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": "normal",
+  "version": "1.4.2",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://pods.iplantcollaborative.org/wiki/display/DEapps/MACS",
+  "label": "MACS",
+  "owner": "lwang",
+  "shortDescription": "MACS: Model-based Analysis of ChIP-Seq (MACS) on short reads",
+  "longDescription": "MACS: Model-based Analysis of ChIP-Seq (MACS) on short reads",
+  "tags": [
+    "Chip-Seq",
+    "short reads",
+    "nucleotides",
+    "protein binding"
+  ],
+  "ontology": [],
+  "executionType": "HPC",
+  "executionSystem": "stampede-05152014-1518-lwang",
+  "deploymentPath": "/api/v2/apps/MACS-1.4.2u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "macs_wrapper.sh",
+  "testPath": "macs_test_wrapper.sh",
+  "checkpointable": false,
+  "lastModified": "2015-08-03T16:22:48.000-05:00",
+  "modules": [
+    "purge",
+    "load TACC",
+    "load python"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "t",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select treatment file:",
+        "description": "Chip-Seq treatment file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "c",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select control file:",
+        "description": "Chip-Seq control file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": []
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "n",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "MACS_in_iPlant",
+        "validator": null
+      },
+      "details": {
+        "label": "Experiment name:",
+        "description": "Specify the name of the analysis",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "p",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0.00001,
+        "validator": null
+      },
+      "details": {
+        "label": "P_value cutoff: ",
+        "description": "P_value cutoff for peak detection",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:float"
+        ]
+      }
+    },
+    {
+      "id": "f",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 1,
+        "enquote": false,
+        "default": "auto",
+        "validator": null
+      },
+      "details": {
+        "label": "Input format: ",
+        "description": "Specify the format of the input read files",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "g",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 2,
+        "enquote": false,
+        "default": 2700000000,
+        "validator": null
+      },
+      "details": {
+        "label": "Effective genome size: ",
+        "description": "Specify the effective genome size",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "s",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 4,
+        "enquote": false,
+        "default": 25,
+        "validator": null
+      },
+      "details": {
+        "label": "Tag size: ",
+        "description": "Specify the tag size",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "bw",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 5,
+        "enquote": false,
+        "default": 300,
+        "validator": null
+      },
+      "details": {
+        "label": "Band width: ",
+        "description": "Specify the band width",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/MACS-1.4.2u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede-05152014-1518-lwang"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/MACS-1.4.2u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%223862062148097863195-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/lwang"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/MACS-1.4.2u1/pems"
+    }
+  }
+}

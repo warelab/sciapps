@@ -1,0 +1,218 @@
+{
+  "id": "Muscle-hpc-3.8.31u1",
+  "name": "Muscle-hpc",
+  "icon": null,
+  "uuid": "7936487270345010715-e0bd34dffff8de6-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "24:00:00",
+  "defaultQueue": null,
+  "version": "3.8.31",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://www.drive5.com/muscle/",
+  "label": "MUSCLE-hpc",
+  "owner": "rwalls",
+  "shortDescription": "Multiple sequence alignment by log-expectation",
+  "longDescription": "MUSCLE is a program for creating multiple alignments of amino acid or nucleotide sequences.",
+  "tags": [
+    "msa",
+    "multiple sequence alignment",
+    "fasta",
+    "phylogenetics",
+    "alignment"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/Muscle-hpc-3.8.31u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "muscle-hpc-3.8.31-wrapper.sh",
+  "testPath": "test/muscle-3.8.31-test_wrapper.sh",
+  "checkpointable": false,
+  "lastModified": "2015-10-29T21:26:04.000-05:00",
+  "modules": [
+    "purge",
+    "load TACC",
+    "load irods"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "stdin",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "name of input file with non-aligned sequences in FASTA format",
+        "description": "input file name",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/text/X-multiFasta"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "arguments",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Command line options",
+        "description": "Command line arguments (other than output format) and their arguments; see http://www.drive5.com/muscle/muscle_userguide3.8.html",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "format",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "-fastaout",
+        "enum_values": [
+          {
+            "-fastaout": "FASTA"
+          },
+          {
+            "-phyiout": "PHYINT"
+          },
+          {
+            "-physout": "PHYSEQ"
+          },
+          {
+            "-clwout": "CLUSTAL"
+          },
+          {
+            "-msfout": "MSF"
+          },
+          {
+            "-htmlout": "HTML"
+          }
+        ]
+      },
+      "details": {
+        "label": "Aligned sequence output type",
+        "description": "select the format of alignment",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "outname",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "output.aln",
+        "validator": ""
+      },
+      "details": {
+        "label": "Output file name",
+        "description": "Name for output file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "stdout",
+      "value": {
+        "validator": "",
+        "order": 0,
+        "default": "output.aln"
+      },
+      "details": {
+        "label": "Output File",
+        "description": "Aligned sequences"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/text/X-multiFasta"
+        ],
+        "fileTypes": []
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/Muscle-hpc-3.8.31u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/Muscle-hpc-3.8.31u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%227936487270345010715-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/rwalls"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/Muscle-hpc-3.8.31u1/pems"
+    }
+  }
+}

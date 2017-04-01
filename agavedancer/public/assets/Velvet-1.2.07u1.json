@@ -1,0 +1,302 @@
+{
+  "id": "Velvet-1.2.07u1",
+  "name": "Velvet",
+  "icon": null,
+  "uuid": "1552578586481913370-242ac118-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "12:00:00",
+  "defaultQueue": "serial",
+  "version": "1.2.07",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://www.ebi.ac.uk/~zerbino/velvet/",
+  "label": "Velvet",
+  "owner": "kyclark",
+  "shortDescription": "Velvet assembler",
+  "longDescription": "Velvet assembler",
+  "tags": [
+    "velvet",
+    "assembler",
+    "assembly"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/Velvet-1.2.07u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "stampede/velvet-template.sh",
+  "testPath": "stampede/test-velvet.sh",
+  "checkpointable": false,
+  "lastModified": "2016-08-15T06:53:44.000-05:00",
+  "modules": [
+    "velvet"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "IN_DIR",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Directory of input files (FASTA/Q, SAM, ELAND, GERALD)",
+        "description": "",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-bam"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "HASH_SIZE",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 1,
+        "enquote": false,
+        "default": "31",
+        "validator": ""
+      },
+      "details": {
+        "label": "Hash size",
+        "description": "Odd-number, size of hash (kmer)",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "COV_CUTOFF",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 2,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Coverage cutoff",
+        "description": "Removal of low coverage nodes AFTER tour bus or allow the system to infer it",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "INS_LENGTH",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 3,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Insert length",
+        "description": "expected distance between two paired end reads (default: no read pairing)",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "READ_TRKG",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 4,
+        "enquote": false,
+        "default": "no",
+        "enum_values": [
+          {
+            "no": "no"
+          },
+          {
+            "yes": "yes"
+          }
+        ]
+      },
+      "details": {
+        "label": "Read Tracking",
+        "description": "Tracking of short read positions in assembly",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "MIN_CONTIG_LGTH",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 5,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Min. Contig Length",
+        "description": "Minimum contig length exported to contigs.fa file (default: hash length * 2)",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "AMOS_FILE",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 6,
+        "enquote": false,
+        "default": "no",
+        "enum_values": [
+          {
+            "no": "no"
+          },
+          {
+            "yes": "yes"
+          }
+        ]
+      },
+      "details": {
+        "label": "AMOS File",
+        "description": "Export assembly to AMOS file (default: no)",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "EXP_COV",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 7,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Expected coverage",
+        "description": "Expected coverage of unique regions or allow the system to infer it",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "LONG_COV_CUTOFF",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 8,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Long Coverage Cutoff",
+        "description": "removal of nodes with low long-read coverage AFTER tour bus (default: no removal)",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/Velvet-1.2.07u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/Velvet-1.2.07u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%221552578586481913370-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/kyclark"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/Velvet-1.2.07u1/pems"
+    }
+  }
+}

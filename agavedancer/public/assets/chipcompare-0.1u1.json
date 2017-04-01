@@ -1,0 +1,204 @@
+{
+  "id": "chipcompare-0.1u1",
+  "name": "chipcompare",
+  "icon": null,
+  "uuid": "3649601866232360475-e0bd34dffff8de6-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "08:00:00",
+  "defaultQueue": "serial",
+  "version": "0.1",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://github.com/wonaya/genomic_tools",
+  "label": "chipcompare",
+  "owner": "jawon",
+  "shortDescription": "Generate empirical p-value for two overlapping ChIP datasets",
+  "longDescription": "",
+  "tags": [
+    "ChIP",
+    "NGS",
+    "bedGraph"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/jawon-chipcompare-0.1u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "chipcompare.template",
+  "testPath": "test_chipcompare.sh",
+  "checkpointable": false,
+  "lastModified": "2015-09-30T13:12:25.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "input1",
+      "value": {
+        "validator": "([^\s]+(\.(?i)(broadPeak))$)",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "input1.broadPeak"
+      },
+      "details": {
+        "label": "Non-permuted broadPeak)",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-bed"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "input2",
+      "value": {
+        "validator": "([^\s]+(\.(?i)(broadPeak))$)",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "input2.broadPeak"
+      },
+      "details": {
+        "label": "Permuated broadPeak",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-bed"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "mappable",
+      "value": {
+        "validator": "([^\s]+(\.(?i)(bed))$)",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "mappable.bed"
+      },
+      "details": {
+        "label": "Non-mappable regions of genome",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-bed"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "fai",
+      "value": {
+        "validator": "([^\s]+(\.(?i)(fai))$)",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "genome.fa.fai"
+      },
+      "details": {
+        "label": "Genome fasta index",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-bed"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "perm",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 1,
+        "enquote": false,
+        "default": 1000,
+        "validator": ""
+      },
+      "details": {
+        "label": "number of permutation cycles to run",
+        "description": null,
+        "argument": "--permutate_n ",
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/chipcompare-0.1u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/chipcompare-0.1u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%223649601866232360475-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/jawon"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/chipcompare-0.1u1/pems"
+    }
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "id": "genomethreader-stampede-1.6.5u2",
+  "name": "genomethreader-stampede",
+  "icon": null,
+  "uuid": "6994155640900611610-242ac116-0001-005",
+  "parallelism": "PARALLEL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 4,
+  "defaultMaxRunTime": "04:00:00",
+  "defaultQueue": "normal",
+  "version": "1.6.5",
+  "revision": 2,
+  "isPublic": true,
+  "helpURI": "https://pods.iplantcollaborative.org/wiki/display/DEapps/gth",
+  "label": "Genome Threader (Stampede)",
+  "owner": "vaughn",
+  "shortDescription": "Computes gene structure predictions",
+  "longDescription": "GenomeThreader is a software tool to compute gene structure predictions",
+  "tags": [
+    "gene prediction",
+    "nucleotides",
+    "proteins"
+  ],
+  "ontology": [],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/genomethreader-stampede-1.6.5u2.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper-launcher.sh",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2016-07-22T16:31:16.000-05:00",
+  "modules": [
+    "purge",
+    "load TACC",
+    "load launcher/1.4"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "licenseFile",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "License File:",
+        "description": "File containing license ",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "text"
+        ]
+      }
+    },
+    {
+      "id": "inputProtein",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Protein Sequences:",
+        "description": "Sequence file in multiple fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "inputGenomic",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Genomic Sequences:",
+        "description": "Sequence file in multiple fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "outputName",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "output.txt",
+        "validator": ""
+      },
+      "details": {
+        "label": "Result file",
+        "description": "text file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/Sequences"
+        ]
+      }
+    },
+    {
+      "id": "splitSize",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 10,
+        "validator": ""
+      },
+      "details": {
+        "label": "Split Sequence File Size:",
+        "description": "This splits the input genomic seq into smaller files of specified size in MB",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "speciesName",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Species Name",
+        "description": "Use GTH allowed species Names",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/genomethreader-stampede-1.6.5u2"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/genomethreader-stampede-1.6.5u2/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%226994155640900611610-242ac116-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/vaughn"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/genomethreader-stampede-1.6.5u2/pems"
+    }
+  }
+}

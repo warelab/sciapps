@@ -1,0 +1,1310 @@
+{
+  "id": "cyverseUK-tuxedosuite-2.1.0u1",
+  "name": "cyverseUK-tuxedosuite",
+  "icon": null,
+  "uuid": "1009155343019741671-242ac119-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": null,
+  "version": "2.1.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://link.springer.com/protocol/10.1007%2F978-1-4939-3167-5_18",
+  "label": "Tuxedo suite PE up to 4 conditions",
+  "owner": "rosysnake",
+  "shortDescription": "Tuxedo suite of tools to assess levels of differential expression between up to 4 separate conditions. The Tuxedo suite: Tophat2>Cufflinks>Cuffmerge>Cuffdiff>CummRbund. http://www.nature.com/nprot/journal/v7/n3/full/nprot.2012.016.html 
+workflow v1.0
+",
+  "longDescription": "This workflow carries out differential expression analysis using the Tuxedo suite of tools. In this workflow: TopHat v2.0.9,  Cufflinks package (including Cuffmerge and Cuffdiff) v2.2.1 and CummeRbund 2.4.1-1.
+Input files required: 
+1) Paired end sequencing RNA-seq reads for each condition/replicate
+2) A reference genome in Fasta format OR select reference genome hosted on iPlant from drop down menu
+3) A genome annotation file in GFF3 or GTF2 format (http://cole-trapnell-lab.github.io/cufflinks/file_formats/) OR select annotation hosted on iPlant from drop down menu
+4) OPTIONAL- GTF masking file (containing transcripts to be ignored)
+General settings: 
+The tool settings in the app below can be changed but are set as the default values (as dictated by each program in the workflow). If you are using the Tuxedo suite of tools for the first time we recommend using the default values in the first instance. 
+Program manuals:
+Tophat https://ccb.jhu.edu/software/tophat/manual.shtml
+ Cufflinks-Cuffdiff http://cole-trapnell-lab.github.io/cufflinks/manual/
+CummeRbund http://compbio.mit.edu/cummeRbund/manual_2_0.html
+",
+  "tags": [
+    "CyverseUK"
+  ],
+  "ontology": [
+    "http://edamontology.org/operation_3198",
+    "http://edamontology.org/operation_0315",
+    "http://edamontology.org/operation_3680",
+    "http://edamontology.org/operation_3258",
+    "http://edamontology.org/topic_0099",
+    "http://edamontology.org/topic_3308"
+  ],
+  "executionType": "CLI",
+  "executionSystem": "cyverseUK-Batch2",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/cyverseUK-tuxedosuite-2.1.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.sh",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2017-03-23T10:54:54.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "input1",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": [
+          ""
+        ]
+      },
+      "details": {
+        "label": "Condition 1- Left Read File(s)",
+        "description": "Enter the left reads (R1) for all condition 1 replicates",
+        "argument": "-input1 ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "input2",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": [
+          ""
+        ]
+      },
+      "details": {
+        "label": "Condition 1- Right Read File(s)",
+        "description": "Enter the Right reads (R2) for all condition 1 replicates",
+        "argument": "-input2 ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "input3",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": [
+          ""
+        ]
+      },
+      "details": {
+        "label": "Condition 2- Left Read File(s)",
+        "description": "Enter the left reads (R1) for all condition 2 replicates",
+        "argument": "-input3 ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "input4",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": [
+          ""
+        ]
+      },
+      "details": {
+        "label": "Condition 2- Right Read File(s)",
+        "description": "Enter the left reads (R2) for all condition 2 replicates in the same sample order as for R1",
+        "argument": "-input4 ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "input5",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "Condition 3- Left Read File(s)",
+        "description": "Enter the left reads (R1) for all condition 3 replicates in the same sample order as for R1",
+        "argument": "-input5 ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": -1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "input6",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "Condition 3- Right Read File(s)",
+        "description": "Enter the right reads (R2) for all condition 3 replicates in the same sample order as for R1",
+        "argument": "-input6 ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": -1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "input7",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "Condition 4- Left Read File(s)",
+        "description": "Enter the left reads (R1) for all condition 4 replicates in the same sample order as for R1",
+        "argument": "-input7 ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": -1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "input8",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "Condition 4- Right Read File(s)",
+        "description": "Enter the right reads (R2) for all condition 4 replicates in the same sample order as for R1",
+        "argument": "-input8 ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": -1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "refgen",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Reference genome (FASTA)",
+        "description": "Reference genome for aligning reads",
+        "argument": "-indx ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "refann",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "Reference annotation (GFF3/GTF)",
+        "description": "Reference annotation for aligning reads in GTF or GFF3 format",
+        "argument": "-gtf ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "maskfile_links",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "Masking file",
+        "description": "Cufflinks - Masking file containing transcripts to be ignored (GTF)",
+        "argument": "-o ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "maskfile_diff",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "Masking file",
+        "description": "Cuffdiff - Masking file containing transcripts to be ignored (GTF)",
+        "argument": "-E ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "usegtf",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "Use reference annotation GTF",
+        "description": "Cufflinks will use transcripts found in the annotation file (gtf) as a basis for the assembly of transcripts",
+        "argument": "-n ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "minintron_cufflinks",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 50,
+        "validator": null
+      },
+      "details": {
+        "label": "Min intron length",
+        "description": "Minimum intron length",
+        "argument": "-z ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "libtype",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "fr-unstranded",
+        "enum_values": [
+          {
+            "fr-unstranded": "fr-unstranded"
+          },
+          {
+            "fr-firststrand": "fr-firststrand"
+          },
+          {
+            "fr-secondstrand": "fr-secondstrand"
+          }
+        ]
+      },
+      "details": {
+        "label": "libtype",
+        "description": "Select the library type that was used to construct your RNA-seq",
+        "argument": "-e ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "lab3",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "condition_3",
+        "validator": null
+      },
+      "details": {
+        "label": "Condition 3 label (for R plots, use underscore instead of spaces between words)",
+        "description": "Enter an identifier for this condition - **Use _ instead of spaces** e.g. 2_hours",
+        "argument": "-lab3 ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "mintransfrag",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 10,
+        "validator": null
+      },
+      "details": {
+        "label": "Transfrag treshold",
+        "description": "Minimum number of fragments needed for new transfrags",
+        "argument": "-x ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "transfraggap_diff",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "Ref seq bias correction",
+        "description": "Cuffdiff - Fragment bias correction using reference sequence",
+        "argument": "-D ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "testfdr",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0.05,
+        "validator": null
+      },
+      "details": {
+        "label": "Testing FDR",
+        "description": "False discovery rate used in testing",
+        "argument": "-H ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "stdev",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "validator": "^[0-9]+.?[0-9]*$"
+      },
+      "details": {
+        "label": "Mate-pair inner distance standard deviation",
+        "description": "The standard deviation for the distribution on inner distances between mate pairs",
+        "argument": "-b ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "trimfrac",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0.1,
+        "validator": null
+      },
+      "details": {
+        "label": "Trimming - average coverage fraction",
+        "description": "Fraction of average coverage below which to trim 3' end",
+        "argument": "-B ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "isofrac",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0.1,
+        "validator": null
+      },
+      "details": {
+        "label": "Isoform fraction",
+        "description": "Minimum isoform fraction",
+        "argument": "-s ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "maxalign",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 20,
+        "validator": null
+      },
+      "details": {
+        "label": "Maximum alignments",
+        "description": "Maximum number of alignments to be allowed",
+        "argument": "-j ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "indpre",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "index_name",
+        "validator": null
+      },
+      "details": {
+        "label": "Index file prefix (excluding suffix)",
+        "description": "Enter the prefix you would like your index files to have (excluding the suffix)",
+        "argument": "-indpre ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "lab1",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "condition_1",
+        "validator": null
+      },
+      "details": {
+        "label": "Condition 1 label (for R plots, use underscore instead of spaces between words)",
+        "description": "Enter an identifier for this condition - **Use _ instead of spaces** e.g. 2_hours",
+        "argument": "-lab1 ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "userescue",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Use rescue method",
+        "description": "Use rescue method for multi-reads",
+        "argument": "-p ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "lab4",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "condition_4",
+        "validator": null
+      },
+      "details": {
+        "label": "Condition 4 label (for R plots, use underscore instead of spaces between words)",
+        "description": "Enter an identifier for this condition - **Use _ instead of spaces** e.g. 2_hours",
+        "argument": "-lab4 ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "junctionalpha",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0.001,
+        "validator": null
+      },
+      "details": {
+        "label": "Junction filter alpha",
+        "description": "Alpha for junction binomial test filter",
+        "argument": "-v ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "sensitivity",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "3",
+        "enum_values": [
+          {
+            "4": "Very sensitive (slowest)"
+          },
+          {
+            "3": "Sensitive (slower)"
+          },
+          {
+            "2": "Less Sensitive (faster)"
+          },
+          {
+            "1": "Least sensitive (fastest)"
+          }
+        ]
+      },
+      "details": {
+        "label": "sensitivity",
+        "description": "Select the speed/sensitivity of alignment/mapping",
+        "argument": "-f ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "userescuecd",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Use rescue method",
+        "description": "Cuffdiff - Use rescue method for multi-reads",
+        "argument": "-F ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "termexonmax",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 8,
+        "validator": null
+      },
+      "details": {
+        "label": "Terminal exon bp limit",
+        "description": "Number of terminal exon bp to tolerate in introns",
+        "argument": "-y ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "minanchor",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 8,
+        "validator": null
+      },
+      "details": {
+        "label": "Minimum anchor length",
+        "description": "TopHat will report junctions spanned by reads with at least this many bases on each side of the junction (-a)",
+        "argument": "-i ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "transfraggap",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 50,
+        "validator": null
+      },
+      "details": {
+        "label": "Transfrag max gap size",
+        "description": "Maximum gap size to fill between transfrags",
+        "argument": "-C ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "normalhits",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "",
+        "enum_values": [
+          {
+            "": "Count hits compatible with reference RNAs only for normalization"
+          },
+          {
+            "-I": "Count all hits for normalization"
+          }
+        ]
+      },
+      "details": {
+        "label": "Select normalization hits",
+        "description": "Select hits to use for normalization",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "minreadlength",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 20,
+        "validator": null
+      },
+      "details": {
+        "label": "Minimum length",
+        "description": "Minimum length of read segments",
+        "argument": "-m ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "intraintrtresh",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0.15,
+        "validator": null
+      },
+      "details": {
+        "label": "Intra-intronic transcript treshold",
+        "description": "Supress intra-intronic transcripts below this level",
+        "argument": "-t ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "mixalign",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Mixed alignments",
+        "description": "No mixed alignments",
+        "argument": "-d ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "lab2",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "condition_2",
+        "validator": null
+      },
+      "details": {
+        "label": "Condition 2 label (for R plots, use underscore instead of spaces between words)",
+        "description": "Enter an identifier for this condition - **Use _ instead of spaces** e.g. 2_hours",
+        "argument": "-lab2 ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "maxit",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "validator": "^[0-9]+$"
+      },
+      "details": {
+        "label": "Maximum iterations",
+        "description": "Maximum iterations allowed for MLE calculation",
+        "argument": "-Q ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "fastqscale",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": " ",
+        "enum_values": [
+          {
+            " ": "Sanger (PHRED33)"
+          },
+          {
+            "-g": "Illumina 1.3-1.8 (PHRED64)"
+          },
+          {
+            " ": "Illumina 1.9 (PHRED33)"
+          },
+          {
+            "-g": "Solexa1.3 (PHRED64)"
+          }
+        ]
+      },
+      "details": {
+        "label": "fastqscale",
+        "description": "Select a scale for quality in FASTQ files",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "anchfrac",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0.09,
+        "validator": null
+      },
+      "details": {
+        "label": "Small anchor fraction",
+        "description": "Small anchor fraction",
+        "argument": "-w ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "testalign",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 10,
+        "validator": null
+      },
+      "details": {
+        "label": "Min. testing alignments",
+        "description": "Minimum number of alignments in a locus for testing",
+        "argument": "-G ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "insertsize",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 50,
+        "validator": null
+      },
+      "details": {
+        "label": "Mate-pair inner distance",
+        "description": "Select the \"Insert\" size, the distance between the sequenced forward and reverse reads",
+        "argument": "-a ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "trimcovavg",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 10,
+        "validator": null
+      },
+      "details": {
+        "label": "Trimming - minimum average coverage",
+        "description": "Minimum average coverage required to attempt 3' trimming",
+        "argument": "-A ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "minintron_tophat",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 70,
+        "validator": null
+      },
+      "details": {
+        "label": "The minimum intron length",
+        "description": "The minimum intron length. TopHat will ignore donor/acceptor pairs closer than this many bases apart (-i)",
+        "argument": "-k ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "maxintron_tophat",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 50000,
+        "validator": null
+      },
+      "details": {
+        "label": "The maximum intron length",
+        "description": "The maximum intron length. When searching for junctions ab initio, TopHat will ignore donor/acceptor pairs farther than this many bases apart, except when such a pair is supported by a split segment alignment of a long read (-I)",
+        "argument": "-l ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "idpre",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "CUFF",
+        "validator": null
+      },
+      "details": {
+        "label": "Prefix id",
+        "description": "Transcript prefix id",
+        "argument": "-q ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "maxintron_cufflinks",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 300000,
+        "validator": null
+      },
+      "details": {
+        "label": "Max intron length",
+        "description": "Maximum intron length",
+        "argument": "-u ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "discalign",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Discordant alignments?",
+        "description": "No discordant alignments",
+        "argument": "-c ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/cyverseUK-tuxedosuite-2.1.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/cyverseUK-Batch2"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/cyverseUK-tuxedosuite-2.1.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%221009155343019741671-242ac119-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/rosysnake"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/cyverseUK-tuxedosuite-2.1.0u1/pems"
+    }
+  }
+}

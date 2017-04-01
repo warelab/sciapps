@@ -1,0 +1,147 @@
+{
+  "id": "Bismark_Methylation_Extractor-0.15.0u1",
+  "name": "Bismark_Methylation_Extractor",
+  "icon": null,
+  "uuid": "1498816871330288101-242ac115-0001-005",
+  "parallelism": "PARALLEL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 3,
+  "defaultMaxRunTime": "12:00:00",
+  "defaultQueue": "normal",
+  "version": "0.15.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://www.bioinformatics.babraham.ac.uk/projects/bismark/",
+  "label": "bismark_methylation_extractor",
+  "owner": "jawon",
+  "shortDescription": "Methylation extractor using Bismark aligned BAM",
+  "longDescription": "",
+  "tags": [
+    "Bisulfite",
+    "methylation"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/Bismark_Methylation_Extractor-0.15.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "test.template",
+  "testPath": "test_bme.sh",
+  "checkpointable": false,
+  "lastModified": "2016-02-29T10:25:44.000-06:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "bam",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "bam.bam"
+      },
+      "details": {
+        "label": "Bismark aligned BAM",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-bam"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "fasta",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "genome.fasta"
+      },
+      "details": {
+        "label": "Genome in Fasta format",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-fasta"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "paired",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "bool",
+        "order": 1,
+        "enquote": false,
+        "default": false,
+        "validator": ""
+      },
+      "details": {
+        "label": "The aligned file is mapped with paired-end reads",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/Bismark_Methylation_Extractor-0.15.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/Bismark_Methylation_Extractor-0.15.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%221498816871330288101-242ac115-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/jawon"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/Bismark_Methylation_Extractor-0.15.0u1/pems"
+    }
+  }
+}

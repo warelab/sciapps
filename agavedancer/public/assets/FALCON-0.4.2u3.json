@@ -1,0 +1,620 @@
+{
+  "id": "FALCON-0.4.2u3",
+  "name": "FALCON",
+  "icon": null,
+  "uuid": "4713644697670783461-242ac113-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": null,
+  "version": "0.4.2",
+  "revision": 3,
+  "isPublic": true,
+  "helpURI": "https://github.com/PacificBiosciences/FALCON/wiki/Manual",
+  "label": "FALCON (Small Genomes)",
+  "owner": "gzynda",
+  "shortDescription": "A set of tools for fast aligning long reads for consensus and assembly",
+  "longDescription": null,
+  "tags": [
+    "PacBio",
+    "assembly"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "CLI",
+  "executionSystem": "workflow.stampdede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/FALCON-0.4.2u3.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "falcon.template",
+  "testPath": "falcon_test.sh",
+  "checkpointable": false,
+  "lastModified": "2016-03-14T13:26:23.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "fastas",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select a folder of PacBio fasta files for assembly",
+        "description": "Format your data with FALCON-formatter if you are unsure about the format of your data.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/text/X-multiFasta"
+        ],
+        "fileTypes": [
+          "text-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "READ_TYPE",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "raw",
+        "enum_values": [
+          {
+            "raw": "raw"
+          },
+          {
+            "preads": "preads"
+          }
+        ]
+      },
+      "details": {
+        "label": "Input type",
+        "description": "Choose raw for uncorrected fasta files, or preads if you are using the corrected preads from a previous FALCON run.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "EC_LEN",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 12000,
+        "validator": null
+      },
+      "details": {
+        "label": "EC - The minimum length for primary reads",
+        "description": "All reads longer than 12,000 basepairs (bp) are corrected. Depending on the distribution of read lengths in your data, you may want to set this value lower for older protocols, and higher for future protocols.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "EC_DB_MIN",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 1,
+        "enquote": false,
+        "default": 500,
+        "validator": null
+      },
+      "details": {
+        "label": "EC - Minimum read length for pre-assembly",
+        "description": "Align reads longer than 500bp to the primary (12,000bp) reads for consensus correction. Depending on the quality of your run, you may want to set this lower if the bulk of your reads are smaller than 500bp.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "EC_K_OCCUR",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 2,
+        "enquote": false,
+        "default": 16,
+        "validator": null
+      },
+      "details": {
+        "label": "EC - Maximum number of occurrences for a k-mer in a block during pre-assembly",
+        "description": "If a k-mer occurs more than 16 times in a 200 megabase block, that k-mer is no longer used for seeding. This essentially masks low-complexity regions. This is a difficult parameter to choose and may require tuning since daligner finds the optimal k.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "EC_E",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 3,
+        "enquote": false,
+        "default": 0.7,
+        "validator": null
+      },
+      "details": {
+        "label": "EC - Minimum sequence correlation rate during pre-assembly",
+        "description": "Only use alignments with greater than 70% correlation for consensus correction. Lowering this value could lead towards over-correction, and raising it may lead to reads that are uncorrected.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:float"
+        ]
+      }
+    },
+    {
+      "id": "EC_ALN_LEN",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 4,
+        "enquote": false,
+        "default": 1000,
+        "validator": null
+      },
+      "details": {
+        "label": "EC - Minimum local alignment length during pre-assembly",
+        "description": "Require that the local alignment between the primary and secondary reads reads be at least 1000 bp. This should ideally be less than or equal to the \"Minimum read length for pre-assembly\".",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "EC_KMATCH",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 5,
+        "enquote": false,
+        "default": 35,
+        "validator": null
+      },
+      "details": {
+        "label": "EC - Minimum k-mer base matches for pre-assembly",
+        "description": "The primary and secondary reads must share a 35 bp contiguous run of k-mers for alignment. Lowering this will significantly increase computation time. Increasing it assumes you have at least one large stretch of perfect identity.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "FS_IDT",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 10,
+        "enquote": false,
+        "default": 0.7,
+        "validator": null
+      },
+      "details": {
+        "label": "FC - Minimum identity for correction",
+        "description": "Require sequences have a minimum alignment identity of 0.7 to be used for correction. Set this lower if you expect many indels in your data.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:float"
+        ]
+      }
+    },
+    {
+      "id": "FS_MIN_COV",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 11,
+        "enquote": false,
+        "default": 4,
+        "validator": null
+      },
+      "details": {
+        "label": "FC - Minimum coverage for consensus",
+        "description": "Require at least 4 reads to break the consensus.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "FS_MAX_READ",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 12,
+        "enquote": false,
+        "default": 200,
+        "validator": null
+      },
+      "details": {
+        "label": "FC - Maximum reads for consensus",
+        "description": "For every primary read, use the 200 longest alignments for consensus correction. The maximum value for this setting is currently 400.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "OV_LEN",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 20,
+        "enquote": false,
+        "default": 12000,
+        "validator": null
+      },
+      "details": {
+        "label": "OV - The minimum primary read length for overlap",
+        "description": "All reads longer than 12,000 basepairs (bp) are candidates for final overlap. Depending on the distribution of read lengths in your data, you may want to set this value lower for older protocols, and higher for future protocols.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "OV_DB_MIN",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 21,
+        "enquote": false,
+        "default": 500,
+        "validator": null
+      },
+      "details": {
+        "label": "OV - Minimum read length for overlap",
+        "description": "Align reads longer than 500bp to the primary (12,000bp) reads for overlap assembly. Depending on the quality of your run, you may want to set this lower if the bulk of your reads are smaller than 500bp.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "OV_K_OCCUR",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 22,
+        "enquote": false,
+        "default": 32,
+        "validator": null
+      },
+      "details": {
+        "label": "OV - Maximum number of occurrences for a k-mer in a block during overlap",
+        "description": "If a k-mer occurs more than 32 times in a 200 megabase block, that k-mer is no longer used for seeding. This essentially masks low-complexity regions. This is a difficult parameter to choose and may require tuning since daligner finds the optimal k.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "OV_E",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 23,
+        "enquote": false,
+        "default": 0.96,
+        "validator": null
+      },
+      "details": {
+        "label": "OV - Minimum sequence correlation rate during overlap",
+        "description": "Only use alignments with greater than 96% correlation for overlap assembly. Lowering this value could lead an over-connected string-graph, but may be necessary for reads with high error rates.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:float"
+        ]
+      }
+    },
+    {
+      "id": "OV_ALN_LEN",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 24,
+        "enquote": false,
+        "default": 500,
+        "validator": null
+      },
+      "details": {
+        "label": "OV - Minimum local alignment length during overlap",
+        "description": "Require that the local alignment between the primary and secondary reads reads be at least 500 bp. This should ideally be less than or equal to the \"Minimum read length for overlap\".",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "OV_KMATCH",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 25,
+        "enquote": false,
+        "default": 60,
+        "validator": null
+      },
+      "details": {
+        "label": "OV - Minimum k-mer base matches for overlap",
+        "description": "The primary and secondary reads must share a 60 bp contiguous run of k-mers for alignment. Lowering this will significantly increase computation time. Increasing it assumes you have at least one large stretch of perfect identity.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "OF_MAX_DIFF",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 30,
+        "enquote": false,
+        "default": 100,
+        "validator": null
+      },
+      "details": {
+        "label": "OF - Maximum difference in strand coverage",
+        "description": "An overlap is not used for assembly if the difference in coverage between the 5' and 3' strands exceeds 100.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "OF_MAX_COV",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 31,
+        "enquote": false,
+        "default": 100,
+        "validator": null
+      },
+      "details": {
+        "label": "OF - Maximum strand coverage",
+        "description": "Do not use a read for overlap if there are more than 100 reads aligned to either the 5' or 3' strands.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "OF_MIN_COV",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 32,
+        "enquote": false,
+        "default": 20,
+        "validator": null
+      },
+      "details": {
+        "label": "OF - Minimum strand coverage",
+        "description": "Require minimum overlap depth of 20 reads on either the 5' or 3' strands.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "OF_BESTN",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 33,
+        "enquote": false,
+        "default": 10,
+        "validator": null
+      },
+      "details": {
+        "label": "OF - Number of best overlaps to output",
+        "description": "Only use the 10 best overlaps.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/FALCON-0.4.2u3"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/workflow.stampdede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/FALCON-0.4.2u3/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%224713644697670783461-242ac113-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/gzynda"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/FALCON-0.4.2u3/pems"
+    }
+  }
+}

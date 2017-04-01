@@ -1,0 +1,561 @@
+{
+  "id": "MikadoUtil-1.0.0u1",
+  "name": "MikadoUtil",
+  "icon": null,
+  "uuid": "8948578659126088166-242ac118-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": null,
+  "version": "1.0.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://mikado.readthedocs.io/en/latest/",
+  "label": null,
+  "owner": "rosysnake",
+  "shortDescription": "Identification of expressed loci from RNA-Seq data 
+ Collection of utilities for managing GTF/GFF files.",
+  "longDescription": "Identification of expressed loci from RNA-Seq data 
+ Collection of utilities for managing GTF/GFF files.",
+  "tags": [
+    "CyverseUK"
+  ],
+  "ontology": [
+    "http://edamontology.org/operation_0362",
+    "http://edamontology.org/operation_0264",
+    "http://edamontology.org/operation_0436",
+    "http://edamontology.org/operation_0433",
+    "http://edamontology.org/topic_3512",
+    "http://edamontology.org/topic_3320"
+  ],
+  "executionType": "CLI",
+  "executionSystem": "cyverseUK-Batch2",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/MikadoUtil-1.0.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "util_wrapper-1.0.0b10.sh",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2017-02-28T11:22:31.000-06:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "gtf",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "AWK_GTF: gtf file",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "gf",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "CONVERT: gtf file",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "id_file",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "GREP: id file",
+        "description": "ID file (format: mrna_id, gene_id - tab separated)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "gff",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "GREP/STATS: GFF file",
+        "description": "The GFF file to parse.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "xml",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "MERGE_BLAST: xml",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "ann",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "TRIM: Reference GTF/GFF output file.",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "out_format",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "enum_values": [
+          {
+            "bed12": "bed12"
+          },
+          {
+            "gtf": "gtf"
+          },
+          {
+            "gff3": "gff3"
+          }
+        ]
+      },
+      "details": {
+        "label": "CONVERT: output format",
+        "description": null,
+        "argument": "--out-format ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "region",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "validator": "^\w*:\d*\.{2}\d*$"
+      },
+      "details": {
+        "label": "AWK_GTF: region",
+        "description": "Region defined as a string like <chrom>:<start>..<end>",
+        "argument": "--region ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "as_gtf",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "TRIM: as gtf",
+        "description": "Flag. If set, the output will be in GTF rather than GFF3 format.",
+        "argument": "--as-gtf ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "genes",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "GREP: genes",
+        "description": "Flag. If set, the program expects as ids only a list of genes, and will exclude/include all the transcripts children of the selected genes.",
+        "argument": "--genes ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "max_len",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0,
+        "validator": "^\d*$"
+      },
+      "details": {
+        "label": "TRIM: max length",
+        "description": "Maximal length of trimmed terminal exons",
+        "argument": "--max_length ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "start",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0,
+        "validator": "^\d*$"
+      },
+      "details": {
+        "label": "AWK_GTF: start",
+        "description": null,
+        "argument": "--start ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "grep_v",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "GREP: v option",
+        "description": "Exclude from the gff all the records in the id file.",
+        "argument": "-v ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "chromosome",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "validator": null
+      },
+      "details": {
+        "label": "AWK_GTF: chromosome",
+        "description": "May be set as an alternative to --region",
+        "argument": "--chrom ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "verbose",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "MERGE_BLAST: verbose",
+        "description": null,
+        "argument": "--verbose ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "end",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0,
+        "validator": "^\d*$"
+      },
+      "details": {
+        "label": "AWK_GTF: end",
+        "description": null,
+        "argument": "--end ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "pos_arg",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "enum_values": [
+          {
+            "awk_gtf ": "awk_gtf "
+          },
+          {
+            "convert ": "convert "
+          },
+          {
+            "grep ": "grep "
+          },
+          {
+            "stats ": "stats "
+          },
+          {
+            "trim ": "trim "
+          },
+          {
+            "merge_blast ": "merge_blast "
+          }
+        ]
+      },
+      "details": {
+        "label": "utilities",
+        "description": "awk_gtf 	 Script to retrieve specific feature slices from a GTF file. 
+ convert 	 Script to do GTF <-> GFF3 > BED12 conversions. 
+ grep 	 Script to extract specific models from GFF/GTF files. 
+ stats 	 GFF/GTF statistics script. It will compute median/average length of RNAs, exons, CDS features, etc. 
+ trim 	 Script to remove up to N bps from terminal exons in an annotation file. 
+ merge_blast 	 Script to merge together multiple BLAST XML files. It also converts them on the fly if they are in ASN/compressed XML.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "as",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "AWK_GTF: Assume sorted",
+        "description": null,
+        "argument": "--assume-sorted ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "only_coding",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "STATS: only coding",
+        "description": null,
+        "argument": "--only-coding ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/MikadoUtil-1.0.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/cyverseUK-Batch2"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/MikadoUtil-1.0.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%228948578659126088166-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/rosysnake"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/MikadoUtil-1.0.0u1/pems"
+    }
+  }
+}

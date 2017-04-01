@@ -1,0 +1,136 @@
+{
+  "id": "docker-r-demo-0.1.0u2",
+  "name": "docker-r-demo",
+  "icon": null,
+  "uuid": "0001404166796189-5056a550b8-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": null,
+  "version": "0.1.0",
+  "revision": 2,
+  "isPublic": true,
+  "helpURI": "http://docker.io",
+  "label": "Demo R app",
+  "owner": "dooley",
+  "shortDescription": "Demo R app running as a Docker container.",
+  "longDescription": "Demo R app running as a Docker container.",
+  "tags": [
+    "demo",
+    "docker",
+    "iwsg"
+  ],
+  "ontology": [],
+  "executionType": "CLI",
+  "executionSystem": "docker.iplantcollaborative.org",
+  "deploymentPath": "/api/v2/apps/docker-r-demo-0.1.0u2.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.sh",
+  "testPath": "test/test.sh",
+  "checkpointable": false,
+  "lastModified": "2014-06-30T17:19:56.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "appBundle",
+      "value": {
+        "validator": "([^\s]+(\.(?i)(zip|gz|tgz|tar.gz|bz2|rar))$)",
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "Random file",
+        "description": "Some random compressed file to upload",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "dockerImage",
+      "value": {
+        "visible": false,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "agaveapi/iwsg-r-demo",
+        "validator": null
+      },
+      "details": {
+        "label": "Image name",
+        "description": "Container image from the Docker central repo or name of the image created by building the dockerFile",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "unpackInputs",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Unpack input files",
+        "description": "If true, any compressed input files will be expanded prior to execution on the remote system.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/docker-r-demo-0.1.0u2"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/docker.iplantcollaborative.org"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/docker-r-demo-0.1.0u2/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%220001404166796189-5056a550b8-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/dooley"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/docker-r-demo-0.1.0u2/pems"
+    }
+  }
+}

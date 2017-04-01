@@ -1,0 +1,85 @@
+{
+  "id": "AlphaSim-1.04u1",
+  "name": "AlphaSim",
+  "icon": null,
+  "uuid": "4855838830643057126-242ac118-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 4,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": "normal",
+  "version": "1.04",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://www.alphagenes.roslin.ed.ac.uk/wp-content/uploads/Manual/index.html",
+  "label": "AlphaSim",
+  "owner": "swb5075",
+  "shortDescription": "Genetic data simulation, configured specifically to generate a large number of SNPs and a maize genotype",
+  "longDescription": "AlphaSim is a software package for simulating sequence, genotypic, phenotypic, and pedigree data in a wide range of population types (e.g., animal breeding, plant breeding, human genetics, natural populations).",
+  "tags": [],
+  "ontology": [],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/AlphaSim-1.04u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.sh",
+  "testPath": "AlphaSimTest.sh",
+  "checkpointable": false,
+  "lastModified": "2016-08-25T16:02:42.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "specificationFile",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "AlphaSimSpec.txt"
+      },
+      "details": {
+        "label": "AlphaSim specification file",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "Text-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/AlphaSim-1.04u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/AlphaSim-1.04u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%224855838830643057126-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/swb5075"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/AlphaSim-1.04u1/pems"
+    }
+  }
+}

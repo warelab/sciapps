@@ -1,0 +1,214 @@
+{
+  "id": "MEGAHIT-1.0.4u1",
+  "name": "MEGAHIT",
+  "icon": null,
+  "uuid": "2309413056408392166-242ac118-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "12:00:00",
+  "defaultQueue": "serial",
+  "version": "1.0.4",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://www.ncbi.nlm.nih.gov/pubmed/25609793",
+  "label": "MEGAHIT",
+  "owner": "kyclark",
+  "shortDescription": "MEGAHIT assembler",
+  "longDescription": "Megahit assembler",
+  "tags": [
+    "megahit",
+    "assembler",
+    "assembly"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/MEGAHIT-1.0.4u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "stampede/megahit-template.sh",
+  "testPath": "stampede/test-megahit.sh",
+  "checkpointable": false,
+  "lastModified": "2016-08-15T06:55:14.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "IN_DIR",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Directory of input files (FASTA/Q)",
+        "description": "",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-bam"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "MIN_COUNT",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 1,
+        "enquote": false,
+        "default": "2",
+        "validator": ""
+      },
+      "details": {
+        "label": "Minimum count",
+        "description": "Minimum multiplicity for filtering (k_min+1)-mers",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "K_MIN",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 2,
+        "enquote": false,
+        "default": "21",
+        "validator": ""
+      },
+      "details": {
+        "label": "K minimum",
+        "description": "Minimum kmer size (<= 255), must be odd number",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "K_MAX",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 3,
+        "enquote": false,
+        "default": "99",
+        "validator": ""
+      },
+      "details": {
+        "label": "K maximum",
+        "description": "Maximum kmer size (<= 255), must be odd number",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "K_STEP",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 4,
+        "enquote": false,
+        "default": "20",
+        "validator": null
+      },
+      "details": {
+        "label": "K step",
+        "description": "Increment of kmer size of each iteration (<= 28), must be even number",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "K_LIST",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 5,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "K list",
+        "description": "Comma-separated list of kmer size (all must be odd, in the range 15-255, increment <= 28); override --k-min, --k-max and --k-step",
+        "argument": "",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/MEGAHIT-1.0.4u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/MEGAHIT-1.0.4u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%222309413056408392166-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/kyclark"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/MEGAHIT-1.0.4u1/pems"
+    }
+  }
+}

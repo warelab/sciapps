@@ -1,0 +1,110 @@
+{
+  "id": "RidgePredict-1.1u1",
+  "name": "RidgePredict",
+  "icon": null,
+  "uuid": "7880809719676726810-242ac118-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 4,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": "normal",
+  "version": "1.1",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": null,
+  "label": "RidgePredict",
+  "owner": "ksierrac",
+  "shortDescription": "Phenotype Value Prediction",
+  "longDescription": "Predict missing Phenotype values from given PED file",
+  "tags": [],
+  "ontology": [],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/RidgePredict-1.1u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.sh",
+  "testPath": "testRidgePredict.sh",
+  "checkpointable": false,
+  "lastModified": "2016-09-06T08:55:30.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "inputPed",
+      "value": {
+        "validator": ".ped$",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "example.ped"
+      },
+      "details": {
+        "label": "PED file",
+        "description": "A PED file with missing Phenotype Values",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "outputPed",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "validator": null
+      },
+      "details": {
+        "label": "Output",
+        "description": "The predicted phenotype values",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/RidgePredict-1.1u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/RidgePredict-1.1u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%227880809719676726810-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/ksierrac"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/RidgePredict-1.1u1/pems"
+    }
+  }
+}

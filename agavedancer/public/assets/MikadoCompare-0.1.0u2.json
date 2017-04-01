@@ -1,0 +1,274 @@
+{
+  "id": "MikadoCompare-0.1.0u2",
+  "name": "MikadoCompare",
+  "icon": null,
+  "uuid": "1103817319213240806-242ac118-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": null,
+  "version": "0.1.0",
+  "revision": 2,
+  "isPublic": true,
+  "helpURI": "http://mikado.readthedocs.io/en/latest/",
+  "label": null,
+  "owner": "rosysnake",
+  "shortDescription": "Identification of expressed loci from RNA-Seq data 
+ Tool to define the spec/sens of predictions vs. references.",
+  "longDescription": "Identification of expressed loci from RNA-Seq data 
+ Tool to define the spec/sens of predictions vs. references.",
+  "tags": [],
+  "ontology": [
+    "http://edamontology.org/operation_0362",
+    "http://edamontology.org/operation_0264",
+    "http://edamontology.org/operation_0436",
+    "http://edamontology.org/operation_0433",
+    "http://edamontology.org/topic_3512",
+    "http://edamontology.org/topic_3320"
+  ],
+  "executionType": "CLI",
+  "executionSystem": "cyverseUK-Batch2",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/MikadoCompare-0.1.0u2.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "compare_wrapper.sh",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2017-02-01T11:08:33.000-06:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "reference",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Genome FASTA file",
+        "description": "Reference annotation file. By def, an index will be crated and saved with the suffix .midx",
+        "argument": "--reference ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "prediction",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "Prediction annotation file",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "targets",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "--prediction ",
+        "enum_values": [
+          {
+            "--prediction ": "--prediction "
+          },
+          {
+            "--self ": "--self "
+          },
+          {
+            "--internal ": "--internal "
+          }
+        ]
+      },
+      "details": {
+        "label": "targets",
+        "description": "Select --prediction if prediction file was provided. 
+ --self= Flag. If set, the reference will be compared with itself. Useful for understanding how the reference transcripts interact with each other. 
+ --internal= Flag. If set, for each gene with more than one transcript isoform each will be compared to the others. Useful for understanding the structural relationships between the transcripts in each gene. 
+ --index= Flag. If set, compare will stop after having generated the GFF index for the reference.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "lenient",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "lenient",
+        "description": "If set, exonic statistics will be calculated leniently in the TMAP as well - ie they will consider an exon as match even if only the internal junction has been recovered.",
+        "argument": "--lenient ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "exclude_utr",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "esclude utr",
+        "description": "Flag. If set, reference and prediction transcripts will be stripped of their UTRs (if they are coding).",
+        "argument": "--exclude-utr ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "distance",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 2000,
+        "validator": "^\d*$"
+      },
+      "details": {
+        "label": "distance",
+        "description": "Maximum distance for a transcript to be considered a polymerase run-on. Default: 2000",
+        "argument": "--distance ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "verbose",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "verbose",
+        "description": null,
+        "argument": "--verbose ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "protein_coding",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "protein coding",
+        "description": "Flag. If set, only transcripts with a CDS (both in reference and prediction) will be considered.",
+        "argument": "--protein-coding ",
+        "showArgument": true,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/MikadoCompare-0.1.0u2"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/cyverseUK-Batch2"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/MikadoCompare-0.1.0u2/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%221103817319213240806-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/rosysnake"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/MikadoCompare-0.1.0u2/pems"
+    }
+  }
+}

@@ -1,0 +1,186 @@
+{
+  "id": "VirSorter-1.0.4u1",
+  "name": "VirSorter",
+  "icon": null,
+  "uuid": "663434456863993370-242ac118-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "08:00:00",
+  "defaultQueue": "serial",
+  "version": "1.0.4",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://peerj.com/articles/985",
+  "label": "VirSorter",
+  "owner": "kyclark",
+  "shortDescription": "mining viral signal from microbial genomic data",
+  "longDescription": "A tool designed to detect viral signal in different types of microbial sequence data in both a reference-dependent and reference-independent manner, leveraging probabilistic models and extensive virome data to maximize detection of novel viruses.",
+  "tags": [
+    "viral",
+    "virus",
+    "contamination",
+    "microbe",
+    "genome"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/VirSorter-1.0.4u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "stampede/template-virsorter.sh",
+  "testPath": "stampede/test-virsorter.sh",
+  "checkpointable": false,
+  "lastModified": "2016-08-15T06:54:04.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "INPUT",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "FASTA files to compare",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "OPT_SEQ",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Custom phage sequence",
+        "description": "Additional viral sequence to be used as reference (optional)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "DB_CHOICE",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "RefSeqDB",
+        "enum_values": [
+          {
+            "RefSeqDB": "RefSeqDB"
+          },
+          {
+            "ViromeDB": "ViromeDB"
+          }
+        ]
+      },
+      "details": {
+        "label": "Reference Database",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "VIROME",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "no",
+        "enum_values": [
+          {
+            "no": "no"
+          },
+          {
+            "yes": "yes"
+          }
+        ]
+      },
+      "details": {
+        "label": "Virome decontamination",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/VirSorter-1.0.4u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/VirSorter-1.0.4u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%22663434456863993370-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/kyclark"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/VirSorter-1.0.4u1/pems"
+    }
+  }
+}

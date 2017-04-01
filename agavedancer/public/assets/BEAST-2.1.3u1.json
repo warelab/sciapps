@@ -1,0 +1,149 @@
+{
+  "id": "BEAST-2.1.3u1",
+  "name": "BEAST",
+  "icon": null,
+  "uuid": "0001424493343968-5056a550b8-0001-005",
+  "parallelism": "PARALLEL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "23:59:30",
+  "defaultQueue": "gpu",
+  "version": "2.1.3",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://www.beast2.org/wiki/index.php/Main_Page",
+  "label": "BEAST2, Bayesian Evolutionary Analysis by Sampling Trees",
+  "owner": "rwalls",
+  "shortDescription": "Requires an xml input file from BEAUti 2.1.3",
+  "longDescription": "BEAST 2 for Bayesian MCMC analysis of molecular sequences",
+  "tags": [
+    "phylogeny",
+    "bayesian",
+    "MCMC"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/BEAST-2.1.3u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "beast213_wrapper.sh",
+  "testPath": "test/beast213-test.sh",
+  "checkpointable": true,
+  "lastModified": "2015-02-20T22:35:43.000-06:00",
+  "modules": [
+    "TACC",
+    "irods",
+    "cuda",
+    "gcc",
+    "mvapich2"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "inputxml",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Input XML file from BEAUti 2.1.3:",
+        "description": "The XML file must be from the corresponding version (2.1.3) of BEAUti",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/XML"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "options",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 1,
+        "enquote": false,
+        "default": "-beagle_gpu",
+        "validator": ""
+      },
+      "details": {
+        "label": "Enter any BEAST options, separated by spaces:",
+        "description": "Be sure to include the dash. This application is optimized for GPU, so -beagle_gpu should work best, but you can also try just -beagle or add other options.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "trees",
+      "value": {
+        "validator": "",
+        "order": 0,
+        "default": "([^\s]+(\.(?i)(trees)$"
+      },
+      "details": {
+        "label": "trees",
+        "description": "Read into Tree Annotator for summarizing."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/applications/X-nexus"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/BEAST-2.1.3u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/BEAST-2.1.3u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%220001424493343968-5056a550b8-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/rwalls"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/BEAST-2.1.3u1/pems"
+    }
+  }
+}

@@ -1,0 +1,1360 @@
+{
+  "id": "AllpathsLG_stampede-48777u1",
+  "name": "AllpathsLG_stampede",
+  "icon": null,
+  "uuid": "0001413258780674-5056a550b8-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 32,
+  "defaultMemoryPerNode": 999,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "47:56:00",
+  "defaultQueue": "largemem",
+  "version": "48777",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://pods.iplantcollaborative.org/wiki/display/DEapps/AllpathsLG",
+  "label": "AllpathsLG",
+  "owner": "rogerab",
+  "shortDescription": "AllpathsLG, genome assembler",
+  "longDescription": "Genome assembler",
+  "tags": [
+    "NGS",
+    "BGI",
+    "Illumina",
+    "assembler"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/sequenceServices/SequenceServices"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/AllpathsLG_stampede-48777u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "allpaths_wrapperA.sh",
+  "testPath": "../test/allpaths_testwrapper.sh",
+  "checkpointable": true,
+  "lastModified": "2014-10-13T22:53:00.000-05:00",
+  "modules": [
+    "load TACC",
+    "load picard",
+    "load allpathslg"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "reads1_1",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 1,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "reads1_1",
+        "description": "Sequence file in fastq or fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "reads1_2",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 2,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "reads1_2",
+        "description": "Sequence file in fastq or fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "reads2_1",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 3,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "reads2_1",
+        "description": "Sequence file in fastq or fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "reads2_2",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 4,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "reads2_2",
+        "description": "Sequence file in fastq or fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "reads3_1",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 5,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "reads3_1",
+        "description": "Sequence file in fastq or fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "reads3_2",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 6,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "reads3_2",
+        "description": "Sequence file in fastq or fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "reads4_1",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 7,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "reads4_1",
+        "description": "Sequence file in fastq or fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "reads4_2",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 8,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "reads4_2",
+        "description": "Sequence file in fastq or fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "reads5_1",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 9,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "reads5_1",
+        "description": "Sequence file in fastq or fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "reads5_2",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 10,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "reads5_2",
+        "description": "Sequence file in fastq or fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": -1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "libName1",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 1,
+        "enquote": false,
+        "default": "library1",
+        "validator": ""
+      },
+      "details": {
+        "label": "library1 name",
+        "description": "name is required for every library entered",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "avg_ins1",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 2,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "average insert size, library 1",
+        "description": "paired-end spacing",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "delta1",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 3,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "delta for avg_ins1, library 1",
+        "description": "typically about 20 per cent",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readStart1",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 4,
+        "enquote": false,
+        "default": "0",
+        "validator": ""
+      },
+      "details": {
+        "label": "start read at base, library 1",
+        "description": "set distance from start to include",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readEnd1",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 5,
+        "enquote": false,
+        "default": "0",
+        "validator": ""
+      },
+      "details": {
+        "label": "end read at base, library 1",
+        "description": "set distance from end to include",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "format1",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 6,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "sequence format, library 1",
+        "description": "fragment or jumping",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "libName2",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 7,
+        "enquote": false,
+        "default": "library2",
+        "validator": ""
+      },
+      "details": {
+        "label": "library name, library 2",
+        "description": "name is required for every library entered",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "avg_ins2",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 8,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "average insert size, library 2",
+        "description": "paired end spacing",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "delta2",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 9,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "delta for avg_ins2, library 2",
+        "description": "typically about 20 per cent",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "format2",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 10,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "sequence format, library 2",
+        "description": "fragment or jumping",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readStart2",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 11,
+        "enquote": false,
+        "default": "0",
+        "validator": ""
+      },
+      "details": {
+        "label": "start read at base, library 2",
+        "description": "set distance from start to include",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readEnd2",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 12,
+        "enquote": false,
+        "default": "0",
+        "validator": ""
+      },
+      "details": {
+        "label": "end read at base, library 2",
+        "description": "set distance from end to include",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "libName3",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 13,
+        "enquote": false,
+        "default": "library3",
+        "validator": ""
+      },
+      "details": {
+        "label": "library 3 name",
+        "description": "name is required for every library entered",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "avg_ins3",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 14,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "average insert size, library 3",
+        "description": "paired-end spacing",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "delta3",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 15,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "delta for avg_in3",
+        "description": "typically about 20 per cent",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "format3",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 16,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "sequence file format, library 3",
+        "description": "fragment or jumping",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readStart3",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 17,
+        "enquote": false,
+        "default": "0",
+        "validator": ""
+      },
+      "details": {
+        "label": "start read at base, library 3",
+        "description": "set distance from start to include",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readEnd3",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 18,
+        "enquote": false,
+        "default": "0",
+        "validator": ""
+      },
+      "details": {
+        "label": "end read at base, library 3",
+        "description": "set distance from end to include",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "libName4",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 19,
+        "enquote": false,
+        "default": "library4",
+        "validator": ""
+      },
+      "details": {
+        "label": "library 4 name",
+        "description": "name is required for every library entered",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "avg_ins4",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 20,
+        "enquote": false,
+        "default": "0",
+        "validator": ""
+      },
+      "details": {
+        "label": "average insert size, library 4",
+        "description": "paired-end spacing",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "delta4",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 21,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "delta for avg_ins4",
+        "description": "typically about 20 per cent",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "format4",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 22,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "sequence file format, library 4",
+        "description": "fragment or jumping",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "reverse_seq4",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 23,
+        "enquote": false,
+        "default": "0",
+        "validator": ""
+      },
+      "details": {
+        "label": "read orientations, library 4",
+        "description": "0 or 1",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readStart4",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 24,
+        "enquote": false,
+        "default": "0",
+        "validator": ""
+      },
+      "details": {
+        "label": "start read at base, library 4",
+        "description": "set distance from start to include",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readEnd4",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 25,
+        "enquote": false,
+        "default": "0",
+        "validator": ""
+      },
+      "details": {
+        "label": "end read at base, library 4",
+        "description": "set distance from end to include",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "libName5",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 26,
+        "enquote": false,
+        "default": "library5",
+        "validator": ""
+      },
+      "details": {
+        "label": "library 5 name",
+        "description": "name is required for every library entered",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "avg_ins5",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 27,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "average insert size, library 5",
+        "description": "paired-end spacing",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "delta5",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 28,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "delta for avg_ins5",
+        "description": "typically about 20 per cent",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "format5",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 29,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "sequence file format, library 5",
+        "description": "fragment or jumping",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "reverse_seq5",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 30,
+        "enquote": false,
+        "default": "0",
+        "validator": ""
+      },
+      "details": {
+        "label": "read orientations, library 5",
+        "description": "0 or 1",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readStart5",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 31,
+        "enquote": false,
+        "default": "0",
+        "validator": ""
+      },
+      "details": {
+        "label": "start read at base, library 5",
+        "description": "set distance from start to include",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "readEnd5",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 32,
+        "enquote": false,
+        "default": "0",
+        "validator": ""
+      },
+      "details": {
+        "label": "end read at base, library 5",
+        "description": "set distance from end to include",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "PHRED64",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 33,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "PHRED 64",
+        "description": "Enter yes for PHRED 64 quality scale",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "forcePhred",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 34,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "forcePhred",
+        "description": "Enter yes to override Phred scale",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "ploidy",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 35,
+        "enquote": false,
+        "default": "1",
+        "validator": ""
+      },
+      "details": {
+        "label": "ploidy",
+        "description": "enter a ploidy value,1 or 2",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "Options1",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 36,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Options 1",
+        "description": "Additional Options 1",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "Options2",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 37,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Options 2",
+        "description": "Additional Options 2",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "Options3",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 38,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Options 3",
+        "description": "Additional Options 3",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "AllpathsLGOutput",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "genome.scf.fasta"
+      },
+      "details": {
+        "label": "Output File",
+        "description": "The name of the output file."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/AllpathsLG_stampede-48777u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/AllpathsLG_stampede-48777u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%220001413258780674-5056a550b8-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/rogerab"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/AllpathsLG_stampede-48777u1/pems"
+    }
+  }
+}

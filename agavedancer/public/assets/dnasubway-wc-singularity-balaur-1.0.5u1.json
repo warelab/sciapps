@@ -1,0 +1,89 @@
+{
+  "id": "dnasubway-wc-singularity-balaur-1.0.5u1",
+  "name": "dnasubway-wc-singularity-balaur",
+  "icon": null,
+  "uuid": "5349118162539254246-242ac117-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 4,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "00:10:00",
+  "defaultQueue": "dolanlc",
+  "version": "1.0.5",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://dnasubway.org/",
+  "label": "DNASubway Word Count",
+  "owner": "ghiban",
+  "shortDescription": "Counts words. Nuff 'said",
+  "longDescription": null,
+  "tags": [
+    "core-utils"
+  ],
+  "ontology": [],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/dnasubway-wc-singularity-balaur-1.0.5u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrap-wc.sh",
+  "testPath": "test-wc.sh",
+  "checkpointable": false,
+  "lastModified": "2016-12-16T12:34:34.000-06:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "input",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/ghiban/tmp/4_WT_GTGAAA_L001_R1_001-fixed.fastq"
+      },
+      "details": {
+        "label": "Plain text file",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/util/Sequence"
+        ],
+        "fileTypes": [
+          "text-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/dnasubway-wc-singularity-balaur-1.0.5u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/dnasubway-wc-singularity-balaur-1.0.5u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%225349118162539254246-242ac117-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/ghiban"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/dnasubway-wc-singularity-balaur-1.0.5u1/pems"
+    }
+  }
+}

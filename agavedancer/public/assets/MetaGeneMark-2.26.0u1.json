@@ -1,0 +1,211 @@
+{
+  "id": "MetaGeneMark-2.26.0u1",
+  "name": "MetaGeneMark",
+  "icon": null,
+  "uuid": "3077409279308983835-e0bd34dffff8de6-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "02:00:00",
+  "defaultQueue": "serial",
+  "version": "2.26.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://exon.gatech.edu/meta_gmhmmp_instructions.html",
+  "label": "MetaGeneMark",
+  "owner": "bbolduc-iplant-2015",
+  "shortDescription": "Ab initio gene identification in metagenomic sequences.",
+  "longDescription": "MetaGeneMark is an application for finding genes in metagenomic sequences.",
+  "tags": [
+    "iVirus",
+    "Gene Prediction",
+    "Metagenomics"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/MetaGeneMark-2.26.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.template",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2016-01-08T15:14:42.000-06:00",
+  "modules": [
+    "purge",
+    "load TACC"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "seqFile",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/shared/iplantcollaborative/example_data/fraggenescan/NC_000913.fna"
+      },
+      "details": {
+        "label": "Sequence file",
+        "description": "Fasta-formatted sequence file containing metagenomic data, either reads or contigs.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-fasta"
+        ],
+        "fileTypes": [
+          "TEXT-0",
+          "FASTA-0",
+          "RAW-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "rbs",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Use RBS for gene start prediction",
+        "description": null,
+        "argument": "-r",
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "outputFile",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "genes",
+        "validator": null
+      },
+      "details": {
+        "label": "Output file name",
+        "description": "Output file name, will have *.gff extension added",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "gene_overlap",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "Gene overlap are allowed or prohibited",
+        "description": null,
+        "argument": "-p",
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "strand_pred",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": ".",
+        "enum_values": [
+          {
+            "d": "Forward"
+          },
+          {
+            "r": "Reverse"
+          },
+          {
+            ".": "Both"
+          }
+        ]
+      },
+      "details": {
+        "label": "Strand prediction",
+        "description": "What strand(s) to predict genes.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/MetaGeneMark-2.26.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/MetaGeneMark-2.26.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%223077409279308983835-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/bbolduc-iplant-2015"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/MetaGeneMark-2.26.0u1/pems"
+    }
+  }
+}

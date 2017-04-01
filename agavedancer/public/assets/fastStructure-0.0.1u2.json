@@ -1,0 +1,362 @@
+{
+  "id": "fastStructure-0.0.1u2",
+  "name": "fastStructure",
+  "icon": null,
+  "uuid": "0001433435959807-5056a550b8-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": "parallel",
+  "version": "0.0.1",
+  "revision": 2,
+  "isPublic": true,
+  "helpURI": "http://rajanil.github.io/fastStructure/",
+  "label": "FastStructure 1.0",
+  "owner": "lwang",
+  "shortDescription": "Inferring population structure from large SNP genotype data",
+  "longDescription": "fastStructure is an algorithm for inferring population structure from large SNP genotype data. It is based on a variational Bayesian framework for posterior inference and is written in Python2.x",
+  "tags": [
+    "GWAS",
+    "Population"
+  ],
+  "ontology": [],
+  "executionType": "HPC",
+  "executionSystem": "cshl-compute-00",
+  "deploymentPath": "/api/v2/apps/fastStructure-0.0.1u2.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "faststructure_wrapper.sh",
+  "testPath": "faststructure_test_wrapper.sh",
+  "checkpointable": false,
+  "lastModified": "2015-07-02T19:26:21.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "input",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select folder containing input data",
+        "description": "Path to input files",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "popfile",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select file with known categorical labels",
+        "description": "Optional for generating Distruct plot",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": []
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "format",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "bed",
+        "enum_values": [
+          {
+            "bed": "plink bed"
+          },
+          {
+            "str": "structure"
+          }
+        ]
+      },
+      "details": {
+        "label": "Select format of input file",
+        "description": "Format of input file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "prefix",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 1,
+        "enquote": false,
+        "default": "",
+        "validator": null
+      },
+      "details": {
+        "label": "Enter the prefix of input files",
+        "description": "prefix of bed file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "K",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 2,
+        "enquote": false,
+        "default": 5,
+        "validator": null
+      },
+      "details": {
+        "label": "Enter maximum number of populations to test",
+        "description": "Maximum number of populations",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "tol",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 3,
+        "enquote": false,
+        "default": 0.000001,
+        "validator": null
+      },
+      "details": {
+        "label": "Enter convergence criterion",
+        "description": "Convergence criterion",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:float"
+        ]
+      }
+    },
+    {
+      "id": "prior",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 4,
+        "enquote": false,
+        "default": "simple",
+        "enum_values": [
+          {
+            "simple": "simple"
+          },
+          {
+            "logistic": "logistic"
+          }
+        ]
+      },
+      "details": {
+        "label": "Select choice of prior",
+        "description": "Choice of prior",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "cv",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 5,
+        "enquote": false,
+        "default": 0,
+        "validator": null
+      },
+      "details": {
+        "label": "Enter number of test sets for cross-validation",
+        "description": "0 implies no CV step",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "seed",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 6,
+        "enquote": false,
+        "default": 100,
+        "validator": null
+      },
+      "details": {
+        "label": "Enter seed for random number generator",
+        "description": "Manually specify seed",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "title",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 7,
+        "enquote": false,
+        "default": "",
+        "validator": null
+      },
+      "details": {
+        "label": "Enter a title for the Distruct plot",
+        "description": "Optional for generating a Distruct plot",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "out",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "output"
+      },
+      "details": {
+        "label": "Folder containing output data",
+        "description": "Output files"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/fastStructure-0.0.1u2"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/cshl-compute-00"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/fastStructure-0.0.1u2/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%220001433435959807-5056a550b8-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/lwang"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/fastStructure-0.0.1u2/pems"
+    }
+  }
+}

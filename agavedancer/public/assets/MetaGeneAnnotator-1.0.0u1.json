@@ -1,0 +1,127 @@
+{
+  "id": "MetaGeneAnnotator-1.0.0u1",
+  "name": "MetaGeneAnnotator",
+  "icon": null,
+  "uuid": "336315390751871461-242ac11d-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "01:00:00",
+  "defaultQueue": "serial",
+  "version": "1.0.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://metagene.nig.ac.jp/",
+  "label": "MetaGeneAnnotator",
+  "owner": "bbolduc-iplant-2015",
+  "shortDescription": "MetaGene is a gene-finding program, applicable to fragmented genomic sequences, such as metagenomic data",
+  "longDescription": "MetaGeneAnnotator is a gene-finding program for prokaryote and phage. Anonymous and fragmented genomic sequences (longer than 60 bp) can be accepted",
+  "tags": [
+    "iVirus",
+    "Gene Finding",
+    "Metagenomics"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/MetaGeneAnnotator-1.0.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.template",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2016-03-09T16:05:22.000-06:00",
+  "modules": [
+    "purge",
+    "load TACC"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "seqFile",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/shared/iplantcollaborative/example_data/metageneannotator/NC_000913.fna"
+      },
+      "details": {
+        "label": "Sequence file",
+        "description": "Fasta-formatted sequence file containing either sequencing reads or a complete genome.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0",
+          "FASTA-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "treatment",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "Multiple",
+        "enum_values": [
+          {
+            "Multiple": "Sequences are individually treated"
+          },
+          {
+            "Single": "Sequences are treated as a unit"
+          }
+        ]
+      },
+      "details": {
+        "label": "Sequence Treatment",
+        "description": "Are sequences treated as a unit or individually",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/MetaGeneAnnotator-1.0.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/MetaGeneAnnotator-1.0.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%22336315390751871461-242ac11d-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/bbolduc-iplant-2015"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/MetaGeneAnnotator-1.0.0u1/pems"
+    }
+  }
+}

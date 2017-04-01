@@ -1,0 +1,143 @@
+{
+  "id": "ClusterGenomes-1.1.0u1",
+  "name": "ClusterGenomes",
+  "icon": null,
+  "uuid": "1366670279498404326-242ac117-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "12:00:00",
+  "defaultQueue": "normal",
+  "version": "1.1.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://bitbucket.org/MAVERICLab/stampede-clustergenomes",
+  "label": "Cluster Genomes (beta)",
+  "owner": "bbolduc-iplant-2015",
+  "shortDescription": "ClusterGenomes clusters genomes.",
+  "longDescription": "ClusterGenomes is a perl-powered script that clusters genomes.",
+  "tags": [
+    "iVirus",
+    "Metagenomics"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/ClusterGenomes-1.1.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.template",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2017-01-09T12:04:33.000-06:00",
+  "modules": [
+    "purge",
+    "load TACC"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "fasta",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/shared/iVirus/ExampleData/ClusterGenomes"
+      },
+      "details": {
+        "label": "FASTA file of genomes to cluster",
+        "description": "FASTA-formatted sequence file containing sequences to be clustered.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0",
+          "FASTA-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "coverage",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "80",
+        "validator": null
+      },
+      "details": {
+        "label": "Coverage (0-100)",
+        "description": "Coverage",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "identity",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "95",
+        "validator": null
+      },
+      "details": {
+        "label": "Identity (0-100)",
+        "description": "Identity",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/ClusterGenomes-1.1.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/ClusterGenomes-1.1.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%221366670279498404326-242ac117-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/bbolduc-iplant-2015"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/ClusterGenomes-1.1.0u1/pems"
+    }
+  }
+}

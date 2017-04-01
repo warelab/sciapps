@@ -1,0 +1,602 @@
+{
+  "id": "Trimmomatic-0.36.0u1",
+  "name": "Trimmomatic",
+  "icon": null,
+  "uuid": "6626939439533387290-242ac117-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "12:00:00",
+  "defaultQueue": "normal",
+  "version": "0.36.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://dx.doi.org/10.17504/protocols.io.gvybw7w",
+  "label": "Trimmomatic",
+  "owner": "bbolduc-iplant-2015",
+  "shortDescription": "A flexible read trimming tool for Illumina NGS data.",
+  "longDescription": "A flexible read trimming tool for Illumina NGS data.",
+  "tags": [
+    "iVirus",
+    "Quality Control",
+    "Metagenomics"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/Trimmomatic-0.36.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.template",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2017-01-09T12:08:37.000-06:00",
+  "modules": [
+    "purge",
+    "load TACC"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "readFile1",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/shared/iplantcollaborative/example_data/trimmomatic/Raw_reads_1.fq"
+      },
+      "details": {
+        "label": "Reads file (for paired or unpaired)",
+        "description": "FASTQ reads file, either compressed (gzipped, *.gz) or uncompressed.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0",
+          "FASTA-0"
+        ]
+      }
+    },
+    {
+      "id": "readFile2",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/shared/iplantcollaborative/example_data/trimmomatic/Raw_reads_2.fq"
+      },
+      "details": {
+        "label": "Reads file (ONLY USE FOR PAIRED END)",
+        "description": "FASTQ reads file, either compressed (gzipped, *.gz) or uncompressed.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0",
+          "FASTA-0"
+        ]
+      }
+    },
+    {
+      "id": "adapterFasta",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/shared/iplantcollaborative/example_data/trimmomatic/TruSeq3-PE.fa"
+      },
+      "details": {
+        "label": "Illumina adapter file",
+        "description": "FASTA file with adapter and other illumina-specific sequences to trim the reads data.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0",
+          "FASTA-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "requiredQuality",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 20,
+        "validator": "[0-9]*"
+      },
+      "details": {
+        "label": "Window Size",
+        "description": "The average quality required.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "phredType",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "phred33",
+        "enum_values": [
+          {
+            "phred33": "PHRED+33 (more common)"
+          },
+          {
+            "phred64": "PHRED+64"
+          }
+        ]
+      },
+      "details": {
+        "label": "Phred Quality Score",
+        "description": "Quality score encoding used by the input sequences",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "pairedOut1",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "output.fastq",
+        "validator": null
+      },
+      "details": {
+        "label": "Output File 1",
+        "description": "Name of trimmed reads output file (of paired file 1 or unpaired file)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "palindromeClipThres",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 30,
+        "validator": "[0-9]*"
+      },
+      "details": {
+        "label": "Palindrome Clip Threshold",
+        "description": "How accurate the match between the two 'adapter ligated' reads must be for PE palindrome read alignment.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "cropLen",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0,
+        "validator": "[0-9]*"
+      },
+      "details": {
+        "label": "Read Crop Length",
+        "description": "Cut the read to a specified length.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "simpleClipThres",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 10,
+        "validator": "[0-9]*"
+      },
+      "details": {
+        "label": "Simple Clip Threshold",
+        "description": "How accurate the match between any adapter etc. sequence must be against a read.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "leadingQuality",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 3,
+        "validator": "[0-9]*"
+      },
+      "details": {
+        "label": "Leading Quality",
+        "description": "Cut bases off the start of a read, if below a threshold quality.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "mode",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "paired",
+        "enum_values": [
+          {
+            "paired": "Paired End"
+          },
+          {
+            "unpaired": "Single End (unpaired)"
+          }
+        ]
+      },
+      "details": {
+        "label": "Paired End or Single End Mode",
+        "description": "Whether paired end files or a single unpaired file will be trimmed. Unpaired will ignore 2nd file.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "trailingQuality",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 3,
+        "validator": "[0-9]*"
+      },
+      "details": {
+        "label": "Trailing Quality",
+        "description": "Cut bases off the end of a read, if below a threshold quality",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "unPairedOut1",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "unpaired_output1.fastq",
+        "validator": null
+      },
+      "details": {
+        "label": "Unpaired Output 1",
+        "description": "Name of unpaired reads file 1 (paired end mode only).",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "headCropLen",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0,
+        "validator": "[0-9]*"
+      },
+      "details": {
+        "label": "Read Head Crop Length",
+        "description": "Cut the specified number of bases from the start of the read.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "unPairedOut2",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "unpaired_output2.fastq",
+        "validator": null
+      },
+      "details": {
+        "label": "Unpaired Output 2",
+        "description": "Name of unpaired reads file 2 (paired end mode only).",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "windowSize",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 4,
+        "validator": "[0-9]*"
+      },
+      "details": {
+        "label": "Window Size",
+        "description": "The number of bases to average across.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "seedMisMatches",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 2,
+        "validator": "[0-9]*"
+      },
+      "details": {
+        "label": "Seed Mismatches",
+        "description": "the maximum mismatch count which will still allow a full match to be performed.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "trimLog",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "trimmomatic_trim.log",
+        "validator": null
+      },
+      "details": {
+        "label": "Log file name",
+        "description": "Name of the log file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "minLen",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 50,
+        "validator": "[0-9]*"
+      },
+      "details": {
+        "label": "Minimum Read Length",
+        "description": "The minimum length of reads to be kept",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    },
+    {
+      "id": "pairedOut2",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "output2.fastq",
+        "validator": null
+      },
+      "details": {
+        "label": "Output File 2",
+        "description": "Name of trimmed reads output file 2 (paired end mode only)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/Trimmomatic-0.36.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/Trimmomatic-0.36.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%226626939439533387290-242ac117-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/bbolduc-iplant-2015"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/Trimmomatic-0.36.0u1/pems"
+    }
+  }
+}

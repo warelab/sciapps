@@ -1,0 +1,172 @@
+{
+  "id": "gapcloser-1.12.0u1",
+  "name": "gapcloser",
+  "icon": null,
+  "uuid": "0001422642971882-5056a550b8-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 32,
+  "defaultMemoryPerNode": 999,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "47:56:00",
+  "defaultQueue": "largemem",
+  "version": "1.12.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://pods.iplantcollaborative.org/wiki/display/DEapps/gapcloser",
+  "label": "Gapcloser 1.12",
+  "owner": "rogerab",
+  "shortDescription": "assembly gap reducer",
+  "longDescription": "Extra module with Soapdenovo2",
+  "tags": [
+    "assembler",
+    "NGS",
+    "Illumina",
+    "BGI"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/sequenceServices/SequenceServices"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/gapcloser-1.12.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "gapcloser_wrapper.sh",
+  "testPath": "../test/gapcloser_testwrapper.sh",
+  "checkpointable": false,
+  "lastModified": "2015-05-20T11:45:47.000-05:00",
+  "modules": [
+    "purge",
+    "load TACC",
+    "load irods"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "inputDirectory",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Soapdenovo Output Directory",
+        "description": "Directory of sequence files",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "max_rd_len",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "maximum read length",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "overlapParam",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "25",
+        "validator": ""
+      },
+      "details": {
+        "label": "overlap param(<=31)",
+        "description": "required overlap",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "GapCloserOutput",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "SoapdenovoOut_gapcloser.fa"
+      },
+      "details": {
+        "label": "Output File",
+        "description": "The name of the output file."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/gapcloser-1.12.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/gapcloser-1.12.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%220001422642971882-5056a550b8-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/rogerab"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/gapcloser-1.12.0u1/pems"
+    }
+  }
+}

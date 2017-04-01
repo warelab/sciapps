@@ -1,0 +1,372 @@
+{
+  "id": "Puma-1.0u1",
+  "name": "Puma",
+  "icon": null,
+  "uuid": "4583732105472184806-242ac118-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 4,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": "normal",
+  "version": "1.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1003101",
+  "label": "Puma",
+  "owner": "ksierrac",
+  "shortDescription": "Puma (Penalized Unified Multiple-locus Association) is a penalized maximum likelihood regression method.",
+  "longDescription": "Puma comprises a family of statistical methods designed to identify weak associations in genome-wide association studies that are not detectable by conventional statistical methods. Puma uses a regularized multiple regression in a penalized maximum likelihood framework using a generalized linear model in order to simultaneously consider tens to hundreds of thousands of genetic markers in a single statistical model.",
+  "tags": [],
+  "ontology": [],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/Puma-1.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "puma_wrapper.sh",
+  "testPath": "puma_test.sh",
+  "checkpointable": false,
+  "lastModified": "2016-09-06T08:53:11.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "tped",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "../data/X_test.tped"
+      },
+      "details": {
+        "label": "Genotype TPED",
+        "description": "Puma takes genotypes in the widely used TPED format of Plink and genotypes must be coded as 1 or 2. Convert a Plink genotype file to this format using options: --transpose --recode12",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "tfam",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "../data/X_test.tfam"
+      },
+      "details": {
+        "label": "Phenotype TFAM",
+        "description": "Phenotype data and sex data are read from TFAM files generated with Plink options",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    },
+    {
+      "id": "covariates",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": null
+      },
+      "details": {
+        "label": "Covariate TXT",
+        "description": "Covariates are stored in a text file where each row is an individual and each space-delimited column is a covariate. A mean term is included by default.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": []
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "regression",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "validator": null
+      },
+      "details": {
+        "label": "Regression Model",
+        "description": "Specify regression model as either LINEAR or LOGISTIC.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "nthreads",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0,
+        "validator": null
+      },
+      "details": {
+        "label": "Number of threads",
+        "description": "Number of threads used to run in parallel. Defaults to machine default.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "screen_p_value",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 0.01,
+        "validator": null
+      },
+      "details": {
+        "label": "Screen P Value",
+        "description": "Marginal p-values below which markers are passed to method.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "sma",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Single Marker Analysis",
+        "description": "If set, performs only standard single marker analysis.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "restrictedPathSearch",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Restricted path search",
+        "description": "1 dimensional path search for non-convex penalties.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "pML_restarts",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 0,
+        "enquote": false,
+        "default": 100,
+        "validator": null
+      },
+      "details": {
+        "label": "pML Restarts",
+        "description": "Number of posterior modes explored.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "sex",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "flag",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Sex Covariate",
+        "description": "If --tfam is used, this includes sex as a covariate.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "penalty",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "validator": null
+      },
+      "details": {
+        "label": "Penalty Methods to Run",
+        "description": "Space delimited list of methods to run, select from: LASSO ALASSO LOG NEG MCP VBAY.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "name",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "validator": null
+      },
+      "details": {
+        "label": "Name for Results",
+        "description": "Name to be appended to results files.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "results",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "validator": null
+      },
+      "details": {
+        "label": "Results Folder",
+        "description": "Specify folder where results are saved. Defaults to local folder.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/Puma-1.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/Puma-1.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%224583732105472184806-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/ksierrac"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/Puma-1.0u1/pems"
+    }
+  }
+}

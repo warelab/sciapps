@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Reflux from 'reflux';
-import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap';
+import {Navbar, Nav, NavItem, NavDropdown, MenuItem, Glyphicon} from 'react-bootstrap';
 import UserLoginBox from './userLoginBox.js';
 import AppsActions from '../actions/appsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
@@ -87,14 +87,14 @@ const Header=React.createClass({
 		return (
 			<Navbar className="navbar">
 				<Nav>
-					<NavItem eventKey='1' onClick={this.showWelcome}>SciApps</NavItem>
-					<NavDropdown eventKey='2' title="Workflows" id="nav-dropdown">
-						<MenuItem eventKey='2.1' onClick={this.showWorkflowBuilder}>Build a workflow</MenuItem>
-						<MenuItem eventKey='2.2' onClick={this.showWorkflowRunner}>Load a workflow</MenuItem>
-						<MenuItem eventKey='2.3' onClick={this.showWorkflows}>Public workflows</MenuItem>
+					<NavItem eventKey='1' onClick={this.showWelcome}><Glyphicon glyph='home' /> SciApps</NavItem>
+					<NavDropdown eventKey='2' title={<span><Glyphicon glyph="link" /> Workflows</span>} id="nav-dropdown">
+						<MenuItem eventKey='2.1' onClick={this.showWorkflowBuilder}><Glyphicon glyph='wrench' /> Build a workflow</MenuItem>
+						<MenuItem eventKey='2.2' onClick={this.showWorkflowRunner}><Glyphicon glyph='cloud-upload' /> Load a workflow</MenuItem>
+						<MenuItem eventKey='2.3' onClick={this.showWorkflows}><Glyphicon glyph='th-list' /> Public workflows</MenuItem>
 					</NavDropdown>
-					<NavItem eventKey='3' href='http://data.sciapps.org' target='_blank'>Data</NavItem>
-					<NavItem eventKey='4' href='http://ask.cyverse.org' target='_blank'>Help</NavItem>
+					<NavItem eventKey='3' href='http://data.sciapps.org' target='_blank'><Glyphicon glyph='th' /> Data</NavItem>
+					<NavItem eventKey='4' href='http://ask.cyverse.org' target='_blank'><Glyphicon glyph='question-sign' /> Help</NavItem>
 				</Nav>
 			</Navbar>
 		);

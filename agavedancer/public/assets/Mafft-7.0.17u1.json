@@ -1,0 +1,119 @@
+{
+  "id": "Mafft-7.0.17u1",
+  "name": "Mafft",
+  "icon": null,
+  "uuid": "4646347918030934501-e0bd34dffff8de6-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "23:56:00",
+  "defaultQueue": "normal",
+  "version": "7.0.17",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://mafft.cbrc.jp/alignment/software/manual/manual.html",
+  "label": "Mafft",
+  "owner": "rogerab",
+  "shortDescription": "Mafft, multi-sequence aligner",
+  "longDescription": "A very, very basic version of Mafft",
+  "tags": [
+    "aligner",
+    "NGS",
+    "multi-sequence",
+    "rPlant"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/sequenceServices/SequenceServices"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/rb-Mafft-7.0.17u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "mafft_wrapper.sh",
+  "testPath": "../test/mafftrun.sh",
+  "checkpointable": false,
+  "lastModified": "2015-09-27T08:32:51.000-05:00",
+  "modules": [
+    "purge",
+    "load TACC",
+    "load mafft/7.017"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "input_seq",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Input sequences",
+        "description": "fasta format sequence file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [],
+  "outputs": [
+    {
+      "id": "mafft_out.fa",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "mafft_out.fa"
+      },
+      "details": {
+        "label": "Mafft output file",
+        "description": "The output file."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/Mafft-7.0.17u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/Mafft-7.0.17u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%224646347918030934501-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/rogerab"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/Mafft-7.0.17u1/pems"
+    }
+  }
+}

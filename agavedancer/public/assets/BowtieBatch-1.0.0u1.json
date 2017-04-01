@@ -1,0 +1,571 @@
+{
+  "id": "BowtieBatch-1.0.0u1",
+  "name": "BowtieBatch",
+  "icon": null,
+  "uuid": "7281254479895719450-242ac117-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "12:00:00",
+  "defaultQueue": "normal",
+  "version": "1.0.0",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://protocols.io/view/mapping-metagenomic-reads-to-reference-sequences-c-gv2bw8e",
+  "label": "BowtieBatch",
+  "owner": "bbolduc-iplant-2015",
+  "shortDescription": "BowtieBatch aligns reads from entire directories.",
+  "longDescription": "BowtieBatch is a python-powered wrapper for Bowtie2 and Samtools. It will execute Bowtie2/Samtools on an entire directory of reads files.",
+  "tags": [
+    "iVirus",
+    "Gene Mapping",
+    "Metagenomics"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/BowtieBatch-1.0.0u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.template",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2017-01-09T12:22:40.000-06:00",
+  "modules": [
+    "purge",
+    "load TACC"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "input_db",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/shared/iplantcollaborative/example_data/bowtiedirbatch/NC_000913.fna"
+      },
+      "details": {
+        "label": "Reference file with FASTA-formatted sequences.",
+        "description": "FASTA-formatted sequence file containing sequences/references reads are to be aligned against.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0",
+          "FASTA-0"
+        ]
+      }
+    },
+    {
+      "id": "reads_dir",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/shared/iplantcollaborative/example_data/bowtiedirbatch/NC_000913.fna"
+      },
+      "details": {
+        "label": "Directory with reads.",
+        "description": "Directory containing the reads files to be aligned.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "read_types",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "mixed",
+        "enum_values": [
+          {
+            "paired": "Reads to be aligned are paired."
+          },
+          {
+            "unpaired": "Reads to be aligned are unpaired."
+          },
+          {
+            "mixed": "Reads to be aligned include both paired and unpaired."
+          }
+        ]
+      },
+      "details": {
+        "label": "Read type",
+        "description": "Paired or unpaired reads?",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "local_presets",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "sensitive-local",
+        "enum_values": [
+          {
+            "very-fast-local": "very-fast-local: -D 5 -R 1 -N 0 -L 25 -i S,1,2.00"
+          },
+          {
+            "fast-local": "fast-local: -D 10 -R 2 -N 0 -L 22 -i S,1,1.75"
+          },
+          {
+            "sensitive-local": "sensitive-local: -D 15 -R 2 -N 0 -L 20 -i S,1,0.75 (default)"
+          },
+          {
+            "very-sensitive-local": "very-sensitive-local: -D 20 -R 3 -N 0 -L 20 -i S,1,0.50"
+          }
+        ]
+      },
+      "details": {
+        "label": "Local alignment presets",
+        "description": "Local alignment presets. Only used if local alignment is selected.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "logFile",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "bowtie2-read-mapping.log",
+        "validator": null
+      },
+      "details": {
+        "label": "Log file name",
+        "description": "Log file name",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "trim3",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "0",
+        "validator": null
+      },
+      "details": {
+        "label": "Trim 3' bases.",
+        "description": "Trim X bases from 3'/right end of reads.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "input_fmt",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "fastq",
+        "enum_values": [
+          {
+            "fastq": "FASTQ (*.fastq)"
+          },
+          {
+            "fasta": "FASTA"
+          },
+          {
+            "fq": "FASTQ (*.fq)"
+          }
+        ]
+      },
+      "details": {
+        "label": "File extension.",
+        "description": "File format of reads to be aligned.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "dist",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "1",
+        "validator": null
+      },
+      "details": {
+        "label": "Levenshtein distance between filenames. See documentation. 1 paired/unpaired only. 3 mixed.",
+        "description": "Levenshtein distance between filenames. 1 for paired or unpaired only, 2-3 for mixed.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "alignment_type",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "end-to-end",
+        "enum_values": [
+          {
+            "end-to-end": "Entire read must align."
+          },
+          {
+            "local": "Local region of read must align."
+          }
+        ]
+      },
+      "details": {
+        "label": "Local or global alignment",
+        "description": "Whether the entire read must align (end-to-end) or only a local region (local)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "non_deterministic",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Use non-deterministic method.",
+        "description": "Bowtie 2 will use the current time to re-initialize the pseudo-random number generator. Useful when the input consists of many identical reads",
+        "argument": "--non-deterministic",
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "merge_results",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Merge results",
+        "description": "If enabled, and if multiple reads are supplied, combine the bowtie2 results into one file.",
+        "argument": "--merge-results",
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "minFragLen",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "0",
+        "validator": null
+      },
+      "details": {
+        "label": "Minimum fragment length.",
+        "description": "Minimum fragment length.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "interleaved",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Interleaved files.",
+        "description": "If enabled, will treat each file as INTERLEAVED and process them as paired files.",
+        "argument": "--interleaved",
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "end_to_end_presets",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "sensitive",
+        "enum_values": [
+          {
+            "very-fast": "very-fast: -D 5 -R 1 -N 0 -L 22 -i S,0,2.50"
+          },
+          {
+            "fast": "fast: -D 10 -R 2 -N 0 -L 22 -i S,0,2.50"
+          },
+          {
+            "sensitive": "sensitive: -D 15 -R 2 -N 0 -L 22 -i S,1,1.15 (default)"
+          },
+          {
+            "very-sensitive": "very-sensitive: -D 20 -R 3 -N 0 -L 20 -i S,1,0.50"
+          }
+        ]
+      },
+      "details": {
+        "label": "End-to-end alignment presets",
+        "description": "End-to-end alignment presets. Only used if end-to-end alignment is selected.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "keep_sam",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 0,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Keep SAM files.",
+        "description": "If enabled, SAM files will be preserved during BAM file generation.",
+        "argument": "--keep-sam",
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "merge_name",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "bowtie2-run.sam",
+        "validator": null
+      },
+      "details": {
+        "label": "Merged file name",
+        "description": "Merged file name. Only used if merge-results is used.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "trim5",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "0",
+        "validator": null
+      },
+      "details": {
+        "label": "Trim 5' bases.",
+        "description": "Trim X bases from 5'/left end of reads.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    },
+    {
+      "id": "maxFragLen",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "2000",
+        "validator": null
+      },
+      "details": {
+        "label": "Maximum fragment length.",
+        "description": "Maximum fragment length.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": []
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/BowtieBatch-1.0.0u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/BowtieBatch-1.0.0u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%227281254479895719450-242ac117-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/bbolduc-iplant-2015"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/BowtieBatch-1.0.0u1/pems"
+    }
+  }
+}

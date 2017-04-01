@@ -1,0 +1,141 @@
+{
+  "id": "vContact_PCs-0.1.60u1",
+  "name": "vContact_PCs",
+  "icon": null,
+  "uuid": "3559637631163044326-242ac117-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "12:00:00",
+  "defaultQueue": "normal",
+  "version": "0.1.60",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://www.protocols.io/view/preparing-data-for-vcontact-from-proteins-cyverse-gwdbxa6",
+  "label": "vcontact_pcs",
+  "owner": "bbolduc-iplant-2015",
+  "shortDescription": "vContact PC-profiles generator",
+  "longDescription": "vContact_pcs is a tool that creates protein clusters using BLASTP/MCL. The output can be fed directly into vContact.",
+  "tags": [
+    "iVirus",
+    "boilerplate"
+  ],
+  "ontology": [],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/vContact_PCs-0.1.60u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.template",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2017-01-09T12:05:24.000-06:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "blastp",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "orfs.self.tab.blastp"
+      },
+      "details": {
+        "label": "BLASTP results file",
+        "description": "All-vs-All BLASTP file exported in tab-delimited format.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0"
+        ]
+      }
+    },
+    {
+      "id": "contig2protein",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "contig2protein.tsv"
+      },
+      "details": {
+        "label": "Contig and protein info file",
+        "description": "File containing association between each protein and each contig. One contig per protein. Can optionally have keywords. TSV format.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "outprefix",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "pcs_output",
+        "validator": null
+      },
+      "details": {
+        "label": "Output file prefix",
+        "description": "Prefix for output files",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/vContact_PCs-0.1.60u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/vContact_PCs-0.1.60u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%223559637631163044326-242ac117-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/bbolduc-iplant-2015"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/vContact_PCs-0.1.60u1/pems"
+    }
+  }
+}

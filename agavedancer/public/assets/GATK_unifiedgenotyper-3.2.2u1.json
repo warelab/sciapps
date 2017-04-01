@@ -1,0 +1,322 @@
+{
+  "id": "GATK_unifiedgenotyper-3.2.2u1",
+  "name": "GATK_unifiedgenotyper",
+  "icon": null,
+  "uuid": "8372259324780604955-e0bd34dffff8de6-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 12,
+  "defaultMemoryPerNode": 24,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "47:59:59",
+  "defaultQueue": "normal",
+  "version": "3.2.2",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "https://www.broadinstitute.org/gatk/index.php",
+  "label": "GATK UnifiedGenotyper",
+  "owner": "luj",
+  "shortDescription": "GATK UnifiedGenotyper is a multiple-sample, technology-aware SNP and indel caller",
+  "longDescription": "",
+  "tags": [
+    "aligner",
+    "NGS",
+    "variant caller",
+    "gatk_unifiedgenotyper"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/GATK_unifiedgenotyper-3.2.2u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrapper.sh",
+  "testPath": "test.sh",
+  "checkpointable": false,
+  "lastModified": "2015-11-24T17:10:25.000-06:00",
+  "modules": [
+    "purge",
+    "load TACC",
+    "load irods"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "bamdir",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select directory of the preprocessed bam file(s)",
+        "description": "The directory of preprocessed .bam file(s) (sorted, deduped, RG info added)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-bam"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "bam",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 2,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Or select a preprocessed bam file",
+        "description": "A preprocessed .bam file (sorted, deduped, RG info added)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-bam"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "genome",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 3,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select the reference genome sequence fasta file",
+        "description": "The reference genome sequence in fasta format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-fasta"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "intervals",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 4,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Limit analysis to samtools-style intervals listed in the file",
+        "description": "The intervals should be in samtools-style, e.g. chr1 or chr1:100-200",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/text/Plain"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "dbsnp",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 5,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "dbSNP file (optional)",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-vcf"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "glm",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 6,
+        "enquote": false,
+        "default": "BOTH",
+        "enum_values": [
+          {
+            "BOTH": "BOTH"
+          },
+          {
+            "SNP": "SNP"
+          },
+          {
+            "INDEL": "INDEL"
+          }
+        ]
+      },
+      "details": {
+        "label": "Genotype likelihoods calculation model to employ",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "min_call",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 7,
+        "enquote": false,
+        "default": 30,
+        "validator": ""
+      },
+      "details": {
+        "label": "Minimum confidence threshold at which variants should be called",
+        "description": "The confidence is in phred-scale",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:decimal"
+        ]
+      }
+    },
+    {
+      "id": "min_emit",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 8,
+        "enquote": false,
+        "default": 30,
+        "validator": ""
+      },
+      "details": {
+        "label": "Minimum confidence threshold at which variants should be emitted",
+        "description": "The confidence is in phred-scale",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:decimal"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "vcfOut",
+      "value": {
+        "validator": "gatk_unifiedgenotyper_output.vcf$",
+        "order": 0,
+        "default": "gatk_unifiedgenotyper_output.vcf"
+      },
+      "details": {
+        "label": "vcf output",
+        "description": ""
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-vcf"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/GATK_unifiedgenotyper-3.2.2u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/GATK_unifiedgenotyper-3.2.2u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%228372259324780604955-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/luj"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/GATK_unifiedgenotyper-3.2.2u1/pems"
+    }
+  }
+}

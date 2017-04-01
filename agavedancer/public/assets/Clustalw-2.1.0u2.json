@@ -1,0 +1,254 @@
+{
+  "id": "Clustalw-2.1.0u2",
+  "name": "Clustalw",
+  "icon": null,
+  "uuid": "5672198795481584101-e0bd34dffff8de6-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "23:56:00",
+  "defaultQueue": "normal",
+  "version": "2.1.0",
+  "revision": 2,
+  "isPublic": true,
+  "helpURI": "http://http://www.clustal.org/clustal2",
+  "label": "ClustalW",
+  "owner": "rogerab",
+  "shortDescription": "Multiple alignment of nucleic acid and protein sequences",
+  "longDescription": "Multiple alignment of nucleic acid and protein sequences",
+  "tags": [
+    "msa",
+    "multiple sequence alignment"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/agave/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "/api/v2/apps/Clustalw-2.1.0u2.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "clustalw_wrapper.sh",
+  "testPath": "../test/testwrap.sh",
+  "checkpointable": false,
+  "lastModified": "2015-10-26T14:03:56.000-05:00",
+  "modules": [
+    "purge",
+    "load TACC",
+    "load irods",
+    "load intel/13.0.2.146",
+    "load clustalw2/2.1"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "inputFasta",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Input path with filename",
+        "description": "(non-aligned) FASTA sequences to be aligned",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/text/X-multiFasta"
+        ],
+        "fileTypes": [
+          "FASTA-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "format",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 1,
+        "enquote": false,
+        "default": "CLUSTAL",
+        "enum_values": [
+          {
+            "CLUSTAL": "CLUSTALW2"
+          },
+          {
+            "FASTA": "FASTA"
+          },
+          {
+            "PHYLIP": "PHYINT"
+          },
+          {
+            "NEXUS": "NEXUS"
+          },
+          {
+            "GCG": "GCG"
+          },
+          {
+            "GDE": "GDE"
+          },
+          {
+            "PIR": "PIR"
+          }
+        ]
+      },
+      "details": {
+        "label": "Output data type",
+        "description": "Output data type",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "T",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 2,
+        "enquote": false,
+        "default": "DNA",
+        "enum_values": [
+          {
+            "DNA": "DNA"
+          },
+          {
+            "PROTEIN": "PROTEIN"
+          }
+        ]
+      },
+      "details": {
+        "label": "Nucleotide or Amino Acid",
+        "description": "Nucleotide or Amino Acid",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "outname",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 3,
+        "enquote": false,
+        "default": "clustalw2.aln",
+        "validator": null
+      },
+      "details": {
+        "label": "Output Alignment Name",
+        "description": "If not specified will be clustalw2.aln",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/agave/apps/arguments"
+        ]
+      }
+    },
+    {
+      "id": "arguments",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 4,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "more program arguments and options",
+        "description": "Command line arguments and their arguments",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/plant/apps/arguments"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "outputFile",
+      "value": {
+        "validator": "",
+        "order": 0,
+        "default": "clustalw2.fa"
+      },
+      "details": {
+        "label": "Output file",
+        "description": "Aligned, FASTA sequences"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/text/X-multiFasta",
+          "http://sswapmeet.sswap.info/agave/io/IPlantData"
+        ],
+        "fileTypes": []
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/Clustalw-2.1.0u2"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/Clustalw-2.1.0u2/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%225672198795481584101-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/rogerab"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/Clustalw-2.1.0u2/pems"
+    }
+  }
+}

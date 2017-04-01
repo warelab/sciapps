@@ -1,0 +1,123 @@
+{
+  "id": "dnasubway-tophat-refprep-singularity-stampede-2.0.11.1u1",
+  "name": "dnasubway-tophat-refprep-singularity-stampede",
+  "icon": null,
+  "uuid": "1895280141674212890-242ac118-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 12,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "12:00:00",
+  "defaultQueue": "normal",
+  "version": "2.0.11.1",
+  "revision": 1,
+  "isPublic": true,
+  "helpURI": "http://tophat.cbcb.umd.edu/",
+  "label": "DNASubway TopHat Reference Builder",
+  "owner": "vaughn",
+  "shortDescription": "Index reference files; bundle into archive tarball",
+  "longDescription": "Index reference using samtools faidx, bowtie2-build, and CreateSequenceDictionary. Bundles all files into a tarball.",
+  "tags": [
+    "next-gen",
+    "aligner",
+    "rnaseq",
+    "dnasubway",
+    "greenline"
+  ],
+  "ontology": [
+    "http://edamontology.org/topic_0091",
+    "http://edamontology.org/operation_3211"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "stampede.tacc.utexas.edu",
+  "deploymentPath": "${foundation.service.apps.default.public.dir}/dnasubway-tophat-refprep-singularity-stampede-2.0.11.1u1.zip",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "wrap-tophat-refprep.sh",
+  "testPath": "test-tophat-refprep.sh",
+  "checkpointable": false,
+  "lastModified": "2016-11-28T14:26:09.000-06:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "referenceFasta",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": "agave://data.iplantcollaborative.org/shared/iplant_DNA_subway/genomes/arabidopsis_thaliana/genome.fas"
+      },
+      "details": {
+        "label": "Reference fasta",
+        "description": "",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/mime/application/X-fasta"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "cleanupParameter",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "bool",
+        "order": 100,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "Do not copy input and intermediate files to archive directory",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    }
+  ],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/dnasubway-tophat-refprep-singularity-stampede-2.0.11.1u1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/stampede.tacc.utexas.edu"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/dnasubway-tophat-refprep-singularity-stampede-2.0.11.1u1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%221895280141674212890-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/vaughn"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/dnasubway-tophat-refprep-singularity-stampede-2.0.11.1u1/pems"
+    }
+  }
+}
