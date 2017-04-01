@@ -207,28 +207,6 @@
         }, 
         {
             "details": {
-                "description": "Prefix", 
-                "label": "Prefix of output filename"
-            }, 
-            "id": "export", 
-            "semantics": {
-                "fileTypes": [
-                    "raw-0"
-                ], 
-                "maxCardinality": 1, 
-                "minCardinality": 0, 
-                "ontology": [
-                    "xs:string"
-                ]
-            }, 
-            "value": {
-                "default": "MLM", 
-                "order": 0, 
-                "validator": null
-            }
-        }, 
-        {
-            "details": {
                 "description": "mlm1", 
                 "label": "mlm1"
             }, 

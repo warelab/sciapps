@@ -116,7 +116,7 @@
                 ]
             }, 
             "value": {
-                "default": "mlmm_trait.txt", 
+                "default": "mlmm_m_trait.txt", 
                 "order": 0, 
                 "validator": null
             }
