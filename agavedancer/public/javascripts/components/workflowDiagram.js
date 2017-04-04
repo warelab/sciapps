@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Reflux from 'reflux';
+import Q from 'q';
 import _ from 'lodash';
 import AppsStore from '../stores/appsStore.js';
 import JobsStore from '../stores/jobsStore.js';
@@ -19,14 +20,14 @@ const WorkflowDiagram=React.createClass({
 
 	getDefaultProps: function() {
 		return {
+			onSave: false,
 			timeout: 10000 
 		};
 	},
 
 	getInitialState: function() {
 		return {
-			activeNode: {},
-			setting: _config.setting
+			activeNode: {}
 		}
 	},
 
@@ -85,7 +86,7 @@ const WorkflowDiagram=React.createClass({
 
 	buildWorkflowDiagramDef: function(workflowStore, appsStore, jobsStore) {
 		let that=this;
-		let setting=this.state.setting;
+		let setting=_config.setting;
 		let jobs=jobsStore.workflow.jobs;
 		let jobStatus=jobsStore.jobStatus;
 		let def;
@@ -151,82 +152,95 @@ const WorkflowDiagram=React.createClass({
 	handleDownload: function() {
 		let workflowStore=this.state.workflowStore;
 		let wf=workflowStore.workflowDetail;
-		let wfObj={
-			id:	wf.id,
-			name: wf.name,
-			steps: wf.steps
-		};
-		utilities.download(wfObj.name + '.json', 'application/json;charset=utf-8', JSON.stringify(wfObj));
+		utilities.download(wfObj.name + '.json', 'application/json;charset=utf-8', JSON.stringify(wf));
+	},
+
+	handleSave: function() {
+		this.setState({onSave: true});
+		let workflowStore=this.state.workflowStore;
+		let wf=workflowStore.workflowDetail;
+		WorkflowActions.saveWorkflow(wf);
+		Q.delay(1500).then(function() {
+			this.setState({onSave: false});
+		}.bind(this));
 	},
 
 	render: function() {
 		let showWorkflowDiagram=this.state.workflowStore.showWorkflowDiagram;
-		let setting=this.state.setting;
+		let setting=_config.setting;
 		let jobsStore=this.state.jobsStore;
 		let worflowStore=this.state.workflowStore;
 		let workflow=jobsStore.workflow;
 		let activeNode=this.state.activeNode;
 		let fileId=jobsStore.fileId;
 		let jobStatus=jobsStore.jobStatus;
+		let markup=<div />;
 		let body=<div />;
 		let info=<div />;
 		let nodeClass="modal-lg";
 		let jobCount=0;
+		let workflowDetail=this.state.workflowStore.workflowDetail;
 		if (showWorkflowDiagram) {
 			let workflowDiagramDef=this.buildWorkflowDiagramDef(this.state.workflowStore, this.state.appsStore, this.state.jobsStore);
 			body=<Mermaid diagramDef={workflowDiagramDef}/>;
 			if (typeof workflow.jobs === 'object') {
-				let unfinished=_.findIndex(workflow.jobs, function(j) {
-					return jobStatus[j] !== 'FINISHED';
+				let unfinished=_.find(workflow.jobs, function(job) {
+					return jobStatus[job] !== 'FINISHED';
 				});
-				if (unfinished !== -1) {
+				if (unfinished) {
 					setTimeout((wfId) => JobsActions.checkWorkflowJobStatus(wfId), this.props.timeout, workflow.id); 
 				}
 			}
-			if (this.state.workflowStore.workflowDetail) {
-				jobCount=this.state.workflowStore.workflowDetail.steps.length;
+			if (workflowDetail) {
+				jobCount=workflowDetail.steps.length;
 			}
-		}
 		
-		if (activeNode.id !== undefined) {
-			if (activeNode.type === 'file') {
-				info=<FilesInfo fileId={activeNode.id} />;
-			} else if (activeNode.type === 'apps') {
-				let id=activeNode.id.replace(setting.wf_step_prefix,'');
-				let appId=this.state.workflowStore.workflowDetail.steps[id].appId;
-				info=<AppsInfo appId={appId} detailed={true} />
+			if (activeNode.id !== undefined) {
+				if (activeNode.type === 'file') {
+					info=<FilesInfo fileId={activeNode.id} />;
+				} else if (activeNode.type === 'apps') {
+					let id=activeNode.id.replace(setting.wf_step_prefix,'');
+					let appId=this.state.workflowStore.workflowDetail.steps[id].appId;
+					info=<AppsInfo appId={appId} detailed={true} />
+				}
 			}
-		}
 
-		switch (jobCount) {
-			case 2:
-				nodeClass="twoNodes";
-				break;
-			case 3:
-				nodeClass="threeNodes";
-				break;
-			case 4:
-				nodeClass="fourNodes";
-				break;
-			case 5:
-				nodeClass="fiveNodes";
+			switch (jobCount) {
+				case 2:
+					nodeClass="twoNodes";
+					break;
+				case 3:
+					nodeClass="threeNodes";
+					break;
+				case 4:
+					nodeClass="fourNodes";
+					break;
+				case 5:
+					nodeClass="fiveNodes";
+			}
+
+			let saveBtnTxt=this.state.onSave ? 'Saving' : 'Save Workflow';
+			if (workflowDetail && _.find(worflowStore.workflows, {workflow_id: workflowDetail.id})) {
+				saveBtnTxt='Saved';
+			}
+			markup=(
+				<Modal dialogClassName={nodeClass} show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
+					<Modal.Header closeButton>
+						<Modal.Title>Workflow Diagram</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						{body}
+						{info}
+					</Modal.Body>
+					<Modal.Footer>
+						<Button onClick={this.handleDownload}>Download Workflow</Button>
+						<Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave}>{saveBtnTxt}</Button>
+						<Button onClick={this.hideWorkflowDiagram}>Close</Button>
+					</Modal.Footer>
+				</Modal>
+			);
 		}
-				
-		return (
-			<Modal dialogClassName={nodeClass} show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
-				<Modal.Header closeButton>
-					<Modal.Title>Workflow Diagram</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					{body}
-					{info}
-				</Modal.Body>
-				<Modal.Footer>
-					<Button onClick={this.handleDownload}>Download Workflow</Button>
-					<Button onClick={this.hideWorkflowDiagram}>Close</Button>
-				</Modal.Footer>
-			</Modal>
-		);
+		return markup;
 	}
 });
 

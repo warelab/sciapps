@@ -27,14 +27,6 @@ const UserStore=Reflux.createStore({
 		this.trigger(this.state);
 	},
 
-	checkLogin: function() {
-		let result=this.state.logged_in && this.state.token_expiration_at > (Date.now() + 60e3);
-		if (! result) {
-			this.resetState();
-		}
-		return result;
-	},
-
 	resetState: function() {
 		this._resetState();
 		this.complete();
@@ -44,13 +36,39 @@ const UserStore=Reflux.createStore({
 		this.state={
 			showLoginBox: false,
 			username: '',
+			firstName: '',
+			lastName: '',
+			email: '',
 			logged_in: false,
-			token_expiration_at: undefined,
 			error: ''
 		};
 	},
 
-	login: function(formData) {
+	setUser: function() {
+		let setting=_config.setting;
+		Q(axios.get('/user', {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				if (res.data.error.startsWith('InvalidCredentials')) {
+					this.logout();
+				}
+				console.log(res.data.error);
+			} else if (res.data.logged_in) {
+				this._updateUser(res.data);
+				WorkflowActions.listWorkflow();
+				AppsActions.debouncedListApps();
+				this.complete();
+			}
+		}.bind(this))
+		.catch(function(error) {
+			console.log(error);
+		})
+		.done();
+	},
+
+	_login: function(formData) {
 		this.state.error='';
 		this.complete();
 		let setting=_config.setting;
@@ -64,6 +82,9 @@ const UserStore=Reflux.createStore({
 		}))
 		.then(function(res) {
 			if (res.data.error) {
+				let show=this.state.showLoginBox;
+				this._resetState();
+				this.state.showLoginBox=show;
 				this.state.error=res.data.error;
 				this.complete();
 			} else if (res.data.logged_in) {
@@ -79,32 +100,18 @@ const UserStore=Reflux.createStore({
 
 	_updateUser: function(data) {
 		let setting=_config.setting;
-		this.state.error='';
-		this.state.username=data.username;
-		this.state.logged_in=data.logged_in;
-		this.state.token_expiration_at=data.token_expiration_at;
+		_.assign(this.state, data);
 		let path=setting.datastore['__user__'].path.replace('__user__', data.username);
 		setting.datastore['__user__'].path=path;
 	},
 
 	logout: function() {
-		let setting=_config.setting;
+		this._logout();
+		this.complete();
+	},
+
+	_logout: function() {
 		this._resetState();
-		//Q(axios.get(setting.host_url + '/logout', {
-		Q(axios.get('/logout', {
-			headers: {'X-Requested-With': 'XMLHttpRequest'},
-		}))
-		.then(function(res) {
-			if (res.data.error) {
-				this.state.error=res.data.error;
-				this.complete();
-			}
-		})
-		.catch(function(error) {
-				console.log(error);
-		})
-		.done();
-		this.resetState();
 		AppsActions.resetState('welcome');
 		JobsActions.resetState();
 		WorkflowActions.resetState();

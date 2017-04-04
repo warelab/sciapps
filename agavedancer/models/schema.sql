@@ -3,19 +3,40 @@ PRAGMA encoding = "UTF-8";
 drop table if exists user;
 create table user (
 	id integer primary key autoincrement,
-	username varchar(40) unique,
+	username varchar(40) unique not null,
 	consumer_secret varchar(40)
 );
+
+drop index if exists username;
+create index username on user(username);
 
 drop table if exists workflow;
 create table workflow (
 	id integer primary key autoincrement,
-	workflow_id varchar(40) not null,
-	workflow_json text
+	workflow_id varchar(40) unique not null,
+	name varchar(40),
+	desc text,
+	json text
 );
 
 drop index if exists workflow_id;
 create index workflow_id on workflow(workflow_id);
+
+drop table if exists user_workflow;
+create table user_workflow (
+	id integer primary key autoincrement,
+	workflow_id varchar(40) references workflow(workflow_id),
+	username varchar(40) references user(username),
+	unique(workflow_id, username)
+);
+
+drop index if exists username_workflow;
+create index username_workflow on user_workflow(username);
+
+drop view if exists user_workflow_view;
+create view user_workflow_view as 
+select workflow.workflow_id as workflow_id, workflow.name as name, workflow.desc as desc, workflow.json as json, user_workflow.username as username
+from workflow join user_workflow on (workflow.workflow_id = user_workflow.workflow_id);
 
 drop table if exists job;
 create table job (

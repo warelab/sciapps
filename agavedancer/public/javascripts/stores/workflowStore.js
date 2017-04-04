@@ -36,6 +36,7 @@ const WorkflowStore=Reflux.createStore({
 			showWorkflowLoadBox: false,
 			workflowDetail: undefined,
 			workflowDetailCache: {},
+			workflows: [],
 			build: {},
 			workflowDiagramDef: undefined
 		};
@@ -66,14 +67,33 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
-	showWorkflow: function(wfId) {
-		this.setWorkflow(wfId);
+	showWorkflow: function(wfId, wfDetail) {
+		this.setWorkflow(wfId, wfDetail);
 		this.complete();
 	},
 
 	hideWorkflow: function() {
 		this.state.workflowDetail=undefined;
 		this.complete();
+	},
+
+	listWorkflow: function() {
+		Q(axios.get('/workflow', {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				console.log(res.data.error);
+				return;
+			}
+			this.state.workflows=res.data;
+			this.complete();
+			return res.data;
+		}.bind(this))
+		.catch(function(error) {
+			console.log(error);
+		})
+		.done();
 	},
 
 	setWorkflow: function(wfId, wfDetail) {
@@ -89,6 +109,7 @@ const WorkflowStore=Reflux.createStore({
 			workflowPromise=Q(axios.get('/assets/' + wfId + '.workflow.json'))
 			.then(function(res) {
 				if (res.data.error) {
+					console.log(res.data.error);
 					return;
 				}
 				this.state.workflowDetailCache[wfId]=res.data;
@@ -106,19 +127,63 @@ const WorkflowStore=Reflux.createStore({
 		return workflowPromise;
 	},
 
-	workflowJobsReady: function(wid, jobIds, jobDetailCache, jobOutputs) {
-		this._workflowJobsReady(wid, jobIds, jobDetailCache, jobOutputs);
-		JobsActions.resetWorkflowJobs(wid);
+	saveWorkflow: function(wf) {
+		let formData=new FormData();
+		formData.append('_workflow_id', wf.id);
+		formData.append('_workflow_name',  wf.name);
+		formData.append('_workflow_desc',  wf.description);
+		formData.append('_workflow_json',  JSON.stringify(wf));
+
+		Q(axios.post('/workflow/new', formData, {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+			transformRequest: function(data) { return data; }
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				console.log(res.data.error);
+				return;
+			} else if (res.data.status === 'success') {
+				this.state.workflows.push(res.data.data);
+			}
+		}.bind(this))
+		.catch(function(error) {
+				console.log(error);
+		})
+		.done();
+	},
+
+	deleteWorkflow: function(wfid) {
+		Q(axios.get('/workflow/' + wfid + '/delete', {
+			headers: {'X-Requested-With': 'XMLHttpRequest'}
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				console.log(res.data.error);
+				return;
+			} else if (res.data.status === 'success') {
+				_.remove(this.state.workflows, {workflow_id: wfid});
+				this.complete();
+			}
+		}.bind(this))
+		.catch(function(error) {
+				console.log(error);
+		})
+		.done();
+	},
+
+	workflowJobsReady: function(wfid, jobIds, jobDetailCache, jobOutputs) {
+		this._workflowJobsReady(wfid, jobIds, jobDetailCache, jobOutputs);
+		JobsActions.resetWorkflowJobs(wfid);
 	},
 
 	setWorkflowSteps: function(wfDetail) {
 		this.state.workflowDetail=wfDetail;
-		let appIds=_.values(wfDetail.steps).map(function(o) {
+		let appIds=_.uniq(_.values(wfDetail.steps).map(function(o) {
 			return o.appId;
-		});
-		let jobIds=_.values(wfDetail.steps).map(function(o) {
+		}));
+		let jobIds=_.uniq(_.values(wfDetail.steps).map(function(o) {
 			return o.jobId;
-		}).filter(function(o){return o});
+		}).filter(function(o){return o}));
 		AppsActions.setWorkflowApps(appIds, wfDetail.id);
 		JobsActions.setJobs(jobIds);
 		this.complete();

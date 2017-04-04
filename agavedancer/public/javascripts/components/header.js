@@ -6,11 +6,9 @@ import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap';
 import UserLoginBox from './userLoginBox.js';
 import AppsActions from '../actions/appsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
-import UserStore from '../stores/userStore.js';
 import UserActions from  '../actions/userActions.js';
 
 const Header=React.createClass({
-	mixins: [Reflux.connect(UserStore, 'userStore')],
 
 	showWelcome: function() {
 		AppsActions.showPage('welcome');
@@ -74,37 +72,58 @@ const Header=React.createClass({
 		}
 	},
 
+	showUserWorkflows: function() {
+		AppsActions.showPage('userWorkflows');
+	},
+
 	handleLogin: function() {
-		UserActions.showLoginBox();
+		//UserActions.showLoginBox();
+		//UserActions.login();
+		window.location = '/login';
 	},
 
 	handleLogout: function() {
 		UserActions.logout();
+		window.location = '/logout';
 	},
 
 	render: function() {
 		let user=this.props.user;
-		let userMenu;
+		let userGreeting, userMenu, workflowMenu;
+		let workflowMenuItem=[
+			<MenuItem key='showWorkflowBuilder' eventKey='showWorkflowBuilder' disabled={!user.logged_in} onSelect={this.showWorkflowBuilder}>Build a workflow</MenuItem>,
+			<MenuItem key='showWorkflowRunner' eventKey='showWorkflowRunner' disabled={!user.logged_in} onSelect={this.showWorkflowRunner}>Load a workflow</MenuItem>,
+			<MenuItem key='showWorkflows' eventKey='showWorkflows' disabled={!user.logged_in} onSelect={this.showWorkflows}>Public workflows</MenuItem>
+		];
 		if (user.logged_in) {
-			userMenu=(
-				<NavDropdown eventKey='user' title={'Login as: ' + user.username} id="user-dropdown">
-					<MenuItem eventKey='logout' onSelect={this.handleLogout}>Logout</MenuItem>
-				</NavDropdown>
+			userGreeting=<NavItem eventKey='greeting'>Hi, {user.firstName}!</NavItem>;
+			userMenu=<NavItem eventKey='logout' pullRight onSelect={this.handleLogout}>Logout</NavItem>;
+			//userMenu=(
+			//	<NavDropdown eventKey='user' title={'Login as: ' + user.username} id="user-dropdown">
+			//		<MenuItem eventKey='logout' onSelect={this.handleLogout}>Logout</MenuItem>
+			//	</NavDropdown>
+			//);
+
+			workflowMenuItem.push(
+				<MenuItem key='workflowDivder' eventKey='workflowDivder' divider />,
+				<MenuItem key='userWorkflows' eventKey='userWorkflows' onSelect={this.showUserWorkflows}>My Workflows</MenuItem>
 			);
 		} else {
 			userMenu=(<NavItem eventKey='login' pullRight onSelect={this.handleLogin}>Login</NavItem>);
 		}
+		workflowMenu=(
+			<NavDropdown eventKey='workflows' title="Workflows" id="nav-dropdown">
+				{workflowMenuItem}
+			</NavDropdown>
+		);
 		return (
 			<Navbar className="navbar">
 				<Nav>
 					<NavItem eventKey='welcome' onSelect={this.showWelcome}>SciApps</NavItem>
-					<NavDropdown eventKey='Workflows' title="Workflows" id="nav-dropdown">
-						<MenuItem eventKey='showWorkflowBuilder' disabled={!user.logged_in} onSelect={this.showWorkflowBuilder}>Build a workflow</MenuItem>
-						<MenuItem eventKey='showWorkflowRunner' disabled={!user.logged_in} onSelect={this.showWorkflowRunner}>Load a workflow</MenuItem>
-						<MenuItem eventKey='showWorkflows' disabled={!user.logged_in} onSelect={this.showWorkflows}>Public workflows</MenuItem>
-					</NavDropdown>
+					{workflowMenu}
 					<NavItem eventKey='data' href='http://data.sciapps.org' target='_blank'>Data</NavItem>
 					<NavItem eventKey='help' href='http://ask.cyverse.org' target='_blank'>Help</NavItem>
+					{userGreeting}
 					{userMenu}
 				</Nav>
 			</Navbar>

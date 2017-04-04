@@ -100,11 +100,19 @@ const AppsStore=Reflux.createStore({
 	},
 
 	setWorkflowApps: function(appIds, wid) {
-		Q.all(appIds.map(this.setApp)).done(function(apps) {
+		let funcs=appIds.map(function(appId) {
+			return function() {
+				return this.setApp(appId).then(function(app) {
+					return app;
+				}.bind(this));
+			}.bind(this);
+		}.bind(this));
+
+		funcs.reduce(Q.when, Q(1)).then(function() {
 			if (wid !== undefined) {
 				this.state.wid[wid]=true;
+				this.complete();
 			}
-			this.complete();
 		}.bind(this));
 	},
 

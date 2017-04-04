@@ -11,12 +11,6 @@ import {PanelGroup} from 'react-bootstrap';
 const AppsGroup=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore')],
 
-	componentDidMount: function() {
-		if (this.props.user.logged_in) {
-			AppsActions.debouncedListApps();
-		}
-	},
-
 	componentWillReceiveProps: function(nextProps) {
 		if(nextProps.user.logged_in && !this.state.appsStore.apps.length) {
 			AppsActions.debouncedListApps();

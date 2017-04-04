@@ -3,6 +3,7 @@
 import React from 'react';
 import Reflux from 'reflux';
 import _ from 'lodash';
+import Q from 'q';
 import {Panel, Button} from 'react-bootstrap';
 import AppsStore from '../stores/appsStore.js';
 import JobsStore from '../stores/jobsStore.js';
@@ -43,9 +44,12 @@ const AppsForm=React.createClass({
 			JobsActions.submitJob(this.props.appId, formData);
 			this.setState({onValidate: false});
 		}
-		setTimeout(() => {
+		Q.delay(1500).then(function() {
 			this.setState({onSubmit: false});
-		}, 1500);
+		}.bind(this));
+		//setTimeout(() => {
+		//	this.setState({onSubmit: false});
+		//}, 1500);
 	},
 
 	render: function() {

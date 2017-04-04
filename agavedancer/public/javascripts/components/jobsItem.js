@@ -65,12 +65,7 @@ const JobsItem=React.createClass({
 			});
 		}
 
-		let emptymessage=(
-			<div style="display: block;">
-				"Job history is empty. You can run a new job, load a workflow, or check our public workflows"
-			</div>
-		);
-		return (
+		let markup=(
 			<ListGroupItem>
 				<ButtonToolbar>
 					<OverlayTrigger placement="bottom" overlay={tooltipout}>
@@ -86,13 +81,14 @@ const JobsItem=React.createClass({
 						<Button key='check' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
 					</OverlayTrigger>
 			  </ButtonToolbar>
-					<Panel collapsible expanded={this.state.isOpen}>
-				<ListGroup>
-					{outputsItemNodes}
-				</ListGroup>
-	        	  </Panel>
+				<Panel collapsible expanded={this.state.isOpen}>
+					<ListGroup>
+						{outputsItemNodes}
+					</ListGroup>
+				</Panel>
 			</ListGroupItem>
 		);
+		return markup;
 	}
 });
 

@@ -1,46 +1,39 @@
 package iPC::AgaveDemo;
-use Dancer ':syntax';
 
-#use Dancer::Plugin::MemcachedFast;
-use iPC::AgaveAuthHelper ();
-use iPC::User ();
-use iPC::Exceptions ();
-use Agave::Client ();
-use Agave::Client::Client ();
-use Agave::Client::Exceptions ();
-use Try::Tiny;
+use warnings;
+use strict;
+
+use Dancer ':syntax';
 use Dancer::Plugin::Ajax;
 use Dancer::Plugin::Email;
 use Dancer::Plugin::Database;
+use Dancer::Plugin::Auth::CAS;
 use Dancer::Cookies;
+use Dancer::Response;
+use Dancer::Exception qw(:all);
+use iPC::AgaveAuthHelper ();
+use iPC::User ();
+use iPC::Addon ();
+use iPC::Utils ();
+use Agave::Client ();
+use Agave::Client::Client ();
 use File::Copy ();
 use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
 our @EXPORT_SETTINGS=qw/host_url output_url upload_suffix wf_step_prefix datastore archive_home/;
+our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError/;
 
-sub uuid {
-	my $s='xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
-	my $f=sub {
-		my $r=rand()*16|0;
-		my $v=$_[0] eq 'x' ? $r : ($r&0x3|0x8);
-		return sprintf("%x", $v);
-	};
-	$s=~s/[xy]/$f->($&)/ge;
-	return $s;
-}
-
-sub check_uuid {
-	my $id=shift;
-	$id=~/^[0-9a-f]{8,}-(?:[0-9a-f]{4,}-){2,}[0-9a-f]{3,}$/ ? 1 : 0;
+foreach my $exception (@EXCEPTIONS) {
+	register_exception($exception, message_pattern => "$exception: %s");
 }
 
 sub token_valid {
+	my $token=session('token');
 	my $tk_expiration = session('token_expiration_at');
-	my $return;
 
-	$tk_expiration && $tk_expiration > time() ? 1 : 0;
+	$token && $tk_expiration && $tk_expiration > time() ? 1 : 0;
 }
 
 sub _login {
@@ -60,47 +53,54 @@ sub _login {
     session 'token_expiration_at' => $api->auth->token_expiration_at;
 		print STDERR "Delta: ", $api->auth->token_expiration_in, $/;
 	} else {
-		Agave::Exceptions::AuthFailed->throw('Invalid Credentials');
+		raise 'InvalidCredentials' => 'agave login falied';
 	}
 	1;
 }
 
 sub _logout {
-	#session 'token' => '';
-	#session 'logged_in' => 0;
 	session->destroy();
 }
 
-sub check_login {
-	session('logged_in') && token_valid();
+sub agave_login {
+	open(AGAVE, setting("appdir") . "/" . setting("agave_config"));
+	my $contents = do { local $/;  <AGAVE> };
+	close AGAVE;
+	my $agave=from_json($contents);
+
+	my $ah=iPC::AgaveAuthHelper->new({
+			username => $agave->{username},
+			password => $agave->{password},
+		}
+	);
+	my $api;
+	if ($ah and $api=$ah->api and $api->token) {
+		debug "Token: " . $api->token . "\n";
+    session 'username' => $api->{'user'};
+    session 'token' => $api->token;
+    session 'token_expiration_in' => $api->auth->token_expiration_in;
+    session 'token_expiration_at' => $api->auth->token_expiration_at;
+		print STDERR "Delta: ", $api->auth->token_expiration_in, $/;
+	} else {
+		raise 'InvalidCredentials' => 'agave login falied';
+	}
+	1;
 }
 
-sub getAgaveClient {
-	my $username = session('username');
-	my $check=check_login() && $username;
-	if ($check) {
-		Agave::Client->new(
-			username => $username,
-			token => session('token'),
-		)
-	} else {
-		Agave::Exceptions::AuthFailed->throw('Invalid Credentials');
+sub check_agave_login {
+	unless (token_valid()) {
+		agave_login();
 	}
 }
 
-sub tempname {
-	my @CHARS = (qw/
-		A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
-		a b c d e f g h i j k l m n o p q r s t u v w x y z
-		0 1 2 3 4 5 6 7 8 9 _
-	/);
-	join("", map { $CHARS[ int( rand( @CHARS ) ) ] } (1 .. 10));
-}
+sub getAgaveClient {
+	check_agave_login();
 
-sub cmp_maxRunTime {
-	my @t=@_;
-	s/://g foreach @t;
-	$t[0] <=> $t[1];
+	my $username = session('username');
+	Agave::Client->new(
+		username => $username,
+		token => session('token'),
+	);
 }
 
 sub uncompress_result {
@@ -114,74 +114,33 @@ sub uncompress_result {
 	}
 };
 
-sub parse_ils {
-	my ($ils, $datastore_root)=@_;
-	my $path=shift @$ils;
-	$path=~m#^$datastore_root/?(.*):#;
-	my @content;
-	my %result=($1 => \@content);
-	$path=$datastore_root . ($1 ? '/' . $1 : '');
-	foreach my $line (@$ils) {
-		if ($line=~m#^\s+C\-\s+$path/(.*)#) {
-			my $name=$1;
-			$name=~s/\s+$//;
-			push @content, +{
-				name	=> $name,
-				type	=> 'dir',	
-			};
-		} else {
-			my @f=split /\s+/, $line, 8;
-			push @content, +{
-				name => $f[7],
-				type => 'file',
-			};
-		}
+hook on_route_exception => sub {
+	my $e = shift;
+	if (ref($e) eq 'scalar') {
+		raise 'InvalidRequest' => $e;
+	} elsif ($e->does('InvalidCredentials')) {
+		halt(to_json({error => $e->message()}));
+	} else {
+		$e->rethrow;
 	}
-	\%result;
-}
-
-sub parse_ls {
-	my ($ls, $file_root)=@_;
-	my $regex=qr#^$file_root/?(.*):#;
-	my %result;
-	#shift @$ls;
-	my $path;
-	foreach (@$ls) {
-		chomp;
-		if (m/$regex/) {
-			$path=$1;
-			$result{$path}=[];
-		} else {
-			my (@f)=split /\s+/;
-			if ($#f >= 8) {
-				push @{$result{$path}}, +{
-					length  => $f[4],
-					name  => $f[8],
-					type  => substr($f[0], 0, 1) eq 'd' ? 'dir' : 'file',
-				};
-			}
-		}
-
-		#my (@f)=split /\s+/;
-		#push @result, {
-		#	length	=> $f[4],
-		#	name	=> $f[8],
-		#	type	=> substr($f[0], 0, 1) eq 'd' ? 'dir' : 'file',
-		#};
-	}
-	\%result;
 };
 
-#get '/' => sub {
-#	send_file 'index.html';
-#};
-#
-
 hook 'before' => sub {
-	print STDERR to_dumper();
-	#print STDERR 'session_id|' . session('id') . "\n";
-	#print STDERR to_dumper(Dancer::Cookies->cookies);
-	#print STDERR to_dumper(session);
+	my $path=request->path;
+	unless(session('cas_user') || $path eq '/' || $path=~m#^/(login|logout|notification)/?#) {
+		if (request->is_ajax) {
+			content_type(setting('plugins')->{Ajax}{content_type});
+			try {
+				raise InvalidCredentials => 'no cas user';
+			} catch {
+				my ($e)=@_;
+				halt(to_json({error => $e->message()}));
+			}
+			#halt(to_json({error => 'InvalidCredentials: no cas user'}));
+		} else {
+			request->path('/');
+		}
+	} 
 };
 
 hook 'after' => sub {
@@ -199,58 +158,45 @@ options qr{/.*} => sub {
 
 };
 
-hook on_route_exception => sub {
-	my $exception = shift;
-	if ($exception->isa('Agave::Exceptions::AuthFailed')) {
-		halt(to_json({error => $_->error}));
-	} else {
-		if (ref($exception) eq 'scalar') {
-			iPC::Exceptions::InvalidRequest->throw($exception);
-		} else {
-			$exception->rethrow;
-		}
-	}
-};
-
-get '/' => sub {
+sub _index {
 	my %config=map { $_ => param($_) } qw/app_id page_id wf_id/;
 	$config{setting}={map {$_ => setting($_)} @EXPORT_SETTINGS};
 
 	template 'index', {
 		config => to_json(\%config),
 	};
+}
+
+get '/' => sub {
+	_index();
 };
 
-ajax '/login' => sub {
-	my ($username, $password)=(param('username'), param('password'));
-	if ($username && $password) {
-		_login({username => $username, password => $password}); 
-	}
-
-	my $result={
-		username	=> session('username'),
-		logged_in => session('logged_in'),
-		token_expiration_at => session('token_expiration_at'),
-	};
-	to_json($result);
+get '/login' => sub {
+	auth_cas();
+	_index();
 };
 
-ajax '/logout' => sub {
+ajax '/user' => sub {
+	my $user=session('cas_user');
+	$user->{logged_in}=1;
+	to_json($user);
+};
+
+get '/logout' => sub {
+	my $redirect_url=setting('plugins')->{'Auth::CAS'}{'cas_url'} . '/logout?service=' . request->uri_base;
 	_logout();
-	return to_json({logged_in => 0});
+	return redirect $redirect_url;
 };
 
 ajax qr{/browse/?(.*)} => sub {
 	my ($typePath) = splat;
-	my $username=session('username');
-	unless (check_login() && $username) {
-		Agave::Exceptions::AuthFailed->throw('Invalid Credentials');
-	}
+	my $user=session('cas_user');
+	my $username=$user->{username};
 	my ($type, $path)=split /\//, $typePath, 2;
 	$path||='';
 	my $datastore=setting('datastore')->{$type};
 	unless ($datastore) {
-		iPC::Exceptions::InvalidRequest->throw('Invalid Datastore');
+		raise 'InvalidRequest' => 'Invalid Datastore'; 
 	}
 	my $datastore_home=$datastore->{home};
 	my $datastore_path=$datastore->{path};
@@ -278,14 +224,14 @@ sub browse_ils {
 	my $fullPath=$homepath . '/' . $path;
 	my @ils=`export irodsEnvFile=$irodsEnvFile;ils -l '$fullPath'`;
 	chomp (@ils);
-	my $dir_list=parse_ils(\@ils, $homepath);
+	my $dir_list=iPC::Utils::parse_ils(\@ils, $homepath);
 
 	[map +{
 			is_root	=> $_ ? 0 : 1,
 			path 	=> $_,
 			list 	=> $dir_list->{$_},
 		}, keys %$dir_list];
-};
+}
 
 sub browse_files {
 	my ($path, $system)=@_;
@@ -295,14 +241,7 @@ sub browse_files {
 
 	my $io = $apif->io;
 	my $dir_list;
-	try {
-		$dir_list=$io->readdir('/' . $system . $path);
-	} catch {
-		if ($_->isa('Agave::Exceptions::HTTPError')) {
-		} else {
-			$_->rethrow;
-		}
-	};
+	$dir_list=$io->readdir('/' . $system . $path);
 
 	[{
 			is_root => $path ? 0 : 1,
@@ -316,7 +255,7 @@ sub browse_ls {
 	my $fullPath=$homepath . '/' . $path;
 
 	my @ls=`ls -tlR $fullPath`;
-	my $dir_list=parse_ls(\@ls, $homepath);
+	my $dir_list=iPC::Utils::parse_ls(\@ls, $homepath);
 
 	[map +{
 			is_root => $_ ? 0 : 1,
@@ -324,18 +263,6 @@ sub browse_ls {
 			list => $dir_list->{$_},
 		}, keys %$dir_list];
 }
-
-#get qr{/browse/?(.*)} => sub {
-#	my ($path) = splat;
-#	my $use_file_server=setting('use_file_server');
-#	my $system;
-#	if ($path=~m#system/([^\/]+)/(.*)#) {
-#		$system=$1;
-#		$path=$2;
-#		$use_file_server=0;
-#	}
-#	$use_file_server ? browse_server($path) : browse_datastore($path, $system);
-#};
 
 ajax '/apps' => sub {
 	my $app_list=retrieveApps();
@@ -448,30 +375,6 @@ sub retrieveMetadataByQuery {
 	$meta->query($query);
 }
 
-#get '/jobs/?' => sub {
-#	check_login();
-#
-#	my $username = session('username');
-#	my $apif = Agave::Client->new(
-#					username => $username,
-#					token => session('token'),
-#				);
-#
-#	my $job_ep = $apif->job;
-#	my $job_list = $job_ep->jobs;
-#	#print STDERR to_dumper($app_list);
-#
-# 	template 'jobs', {
-# 		list => $job_list,
-#	};
-#};
-
-ajax '/workflow/status/:id' => sub {
-	my $wfid=param('id');
-	my $jobs=checkWorkflowJobStatus($wfid);
-	return to_json($jobs);
-};
-
 ajax '/job/status/' => sub {
 	my @job_ids = param_array("id");
 	my $jobs=checkJobStatus(@job_ids);
@@ -551,6 +454,8 @@ sub retrieveJob {
 			}
 			$retry--;
 		} while (!$job && sleep(1) && $retry);
+		my $data={job_id => $job_id, agave_id => $agave_id, app_id => $job->{appId}, agave_json => to_json($job), status => $job->{status}};
+		database->quick_insert('job', $data);
 	}
 	return $job;
 }
@@ -567,15 +472,77 @@ get '/job/:id/remove' => sub {
 	return redirect '/apps';
 };
 
+ajax '/workflow/:id' => sub {
+	my $job_id = param("id");
+};
+
+ajax '/workflow/:id/jobStatus' => sub {
+	my $wfid=param('id');
+	my $jobs=checkWorkflowJobStatus($wfid);
+	return to_json($jobs);
+};
+
 ajax '/workflow/new' => sub {
+	my $user=session('cas_user');
+	my $username=$user->{username};
+	my $status='success';
+	my $wfid=param('_workflow_id');
+	my $wfjson=param('_workflow_json');
+	my $wfname=param('_workflow_name');
+	my $wfdesc=param('_workflow_desc');
+	my $data={workflow_id => $wfid, json => $wfjson, name => $wfname, desc => $wfdesc};
+	try {
+		database->quick_insert('workflow', $data);
+	} catch {
+		$status='error';
+		$data={};
+	};
+	try {
+		database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
+	} catch {
+		$status='error';
+		$data={};
+	};
+	to_json({status => $status, data => $data});
+};
+
+ajax '/workflow/:id/delete' => sub {
+	my $user=session('cas_user');
+	my $username=$user->{username};
+	my $status='success';
+	my $wfid=param('id');
+	my $result;
+	try {
+		$result=database->quick_delete('user_workflow', {username => $username, workflow_id => $wfid});
+		print STDERR to_dumper($result);
+	} catch {
+		$status='error';
+	};
+	$result or $status='error';
+	to_json({status => $status});
+};
+
+ajax '/workflow' => sub {
+	my @result;
+	my $user=session('cas_user');
+	@result=database->quick_select('user_workflow_view', {username => $user->{username}});
+	print STDERR "AA|" . $user->{username} . "\n";
+	print STDERR to_dumper(\@result);
+	return to_json(\@result);
+};
+
+ajax '/workflowJob/new' => sub {
 	my @err = ();
 	my $apif = getAgaveClient();
 	my $apps = $apif->apps;
 
 	my (@jobs, @step_form);
 	my $form = params();
-	my $wf=from_json($form->{'_workflow_json'});
-	my $wid=$form->{'_workflow_id'};
+	my $wfid=$form->{_workflow_id};
+	my $wfjson=$form->{_workflow_json};
+	my $wf=from_json($wfjson);
+	my $wfname=$wf->{name};
+	my $wfdesc=$wf->{desc};
 	foreach my $step (@{$wf->{'steps'}}) {
 		my $app_id=$step->{appId};
 		my ($app) = $apps->find_by_id($app_id);
@@ -586,8 +553,8 @@ ajax '/workflow/new' => sub {
 			push @step_form, $job_form;
 		}
 	}
-	database->quick_insert('workflow', {workflow_id => $wid, workflow_json => to_json($wf)});
-	return to_json({workflow_id => $wid, jobs => \@jobs, workflow => $wf});
+	database->quick_insert('workflow', {workflow_id => $wfid, json => $wfjson, name => $wfname, desc => $wfdesc});
+	return to_json({workflow_id => $wfid, jobs => \@jobs, workflow => $wf});
 };
 
 ajax '/job/new/:id' => sub {
@@ -663,7 +630,7 @@ sub prepareJob {
 		$job_form{$name}=$form->{$name};
 	}
 
-	$job_form{maxRunTime}||=$app->{defaultMaxRunTime} && cmp_maxRunTime($app->{defaultMaxRunTime}, setting("maxRunTime")) < 0 ? $app->{defaultMaxRunTime} : setting("maxRunTime");
+	$job_form{maxRunTime}||=$app->{defaultMaxRunTime} && iPC::Utils::cmp_maxRunTime($app->{defaultMaxRunTime}, setting("maxRunTime")) < 0 ? $app->{defaultMaxRunTime} : setting("maxRunTime");
 
 	# hack for the url input
 	foreach my $name (keys %job_form) {
@@ -679,7 +646,7 @@ sub prepareJob {
 
 	# TODO - check arguments
 
-	my $tempdir=$input_path . "/" . tempname();
+	my $tempdir=$input_path . "/" . iPC::Utils::tempname();
 	my $tempdir_abs=$input_home . '/' . $tempdir;
 	mkdir($tempdir_abs);
 	chmod(0775, $tempdir_abs);
@@ -723,8 +690,12 @@ sub prepareJob {
 		$step->{parameters}{$k}=$job_form{$k};
 	}
 
-	my ($result_folder)=map {my $t=$_; $t=~s/\W+/-/g; lc($t) . "-" . tempname()} ($app_id);
+	my ($result_folder)=map {my $t=$_; $t=~s/\W+/-/g; lc($t) . "-" . iPC::Utils::tempname()} ($app_id);
 	$archive_path.= "/" . $result_folder;
+
+	my $archive_path_abs=$archive_home . "/" . $archive_path;
+	mkdir($archive_path_abs) or print STDERR "Error: can't mkdir $archive_path_abs, $!\n";
+	chmod(0775, $archive_path_abs);
 	
 	my $host_url=setting("host_url");
 	my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}';
@@ -749,12 +720,12 @@ sub prepareJob {
 	$job_form{archivePath}=$archive_path;
 	$job_form{notifications}=$notifications;
 
-	my $job_id=uuid();
+	my $job_id=iPC::Utils::uuid();
 	my $job_json=to_json(\%job_form);
-	my $wid=$form->{'_workflow_id'};
+	my $wfid=$form->{'_workflow_id'};
 	my $data={job_id => $job_id, app_id => $app_id, job_json => $job_json, status => 'PENDING'};
-	if ($wid) {
-		$data->{workflow_id}=$wid;
+	if ($wfid) {
+		$data->{workflow_id}=$wfid;
 		$data->{step_id}=$step->{id};
 	}
 	eval {

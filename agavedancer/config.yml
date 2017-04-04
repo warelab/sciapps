@@ -20,9 +20,10 @@ charset: "UTF-8"
 # template_toolkit: TT
 
 session: 'YAML'
+session_expires: '8 hr'
+#session: 'Storable'
 #session: 'cookie'
 #session_cookie_key: '1{(b)a}sdf07234hjf0sdkflj12*&(@*az'
-#session: 'Storable'
 session_dir: '/tmp/dancer-sessions'
 
 #template: "simple"
@@ -45,12 +46,13 @@ plugins:
     database: 'database'
     dbi_params:
       RaiseError: 1
+      PrintError: 0
+      PrintWarn:  0
       AutoCommit: 1
-#  MemcachedFast:
-#    servers:
-#      - "127.0.0.1:11211"
-#    default_timeout: 1800
-#    namespace: "agaveapidemo:"
+  Auth::CAS:
+    cas_url: "https://auth.iplantcollaborative.org/cas4"
+    cas_denied_path: "/denied"
+    cas_version: "2.0"
 
 output_url:
   brie.cshl.edu: 'http://dev2.sciapps.org'

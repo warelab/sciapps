@@ -11,6 +11,7 @@ import {Panel, Table, Jumbotron} from 'react-bootstrap';
 import AppsInfo from './appsInfo.js';
 import AppsForm from './appsForm.js';
 import Welcome from './welcome.js';
+import UserWorkflows from './userWorkflows.js';
 import Workflows from './workflows.js';
 import WorkflowBuilder from './workflowBuilder.js';
 import WorkflowRunner from './workflowRunner.js';
@@ -43,6 +44,9 @@ const AppsDetail=React.createClass({
 			);
 		} else {
 			switch (appsStore.pageId) {
+				case 'userWorkflows':
+					markup=<UserWorkflows />
+					break;
 				case 'workflows':
 					markup=<Workflows />
 					break;
