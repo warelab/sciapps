@@ -173,7 +173,7 @@ const WorkflowDiagram=React.createClass({
 		let jobStatus=jobsStore.jobStatus;
 		let body=<div />;
 		let info=<div />;
-		let nodeClass="threeNodes";
+		let nodeClass="modal-lg";
 		let jobCount=0;
 		let workflowDirection=1;
 		if (showWorkflowDiagram) {
@@ -194,10 +194,18 @@ const WorkflowDiagram=React.createClass({
                                 	break;
                         	case 5:
                                 	nodeClass="fiveNodes";
-					break;
-				case 6:
-					nodeClass="modal-lg";
                 		}
+			} else {
+				switch (jobCount) {
+				case 7:
+					nodeClass="threeNodes";
+                                        break;
+				case 8:
+					nodeClass="fourNodes";
+                                        break;
+				case 9:
+					nodeClass="fiveNodes";
+				}
 			}
 			let workflowDiagramDef=this.buildWorkflowDiagramDef(this.state.workflowStore, this.state.appsStore, this.state.jobsStore, workflowDirection);
 			body=<Mermaid diagramDef={workflowDiagramDef}/>;
