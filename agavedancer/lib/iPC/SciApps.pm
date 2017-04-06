@@ -1,4 +1,4 @@
-package iPC::AgaveDemo;
+package iPC::SciApps;
 
 use warnings;
 use strict;
@@ -264,6 +264,13 @@ sub browse_ls {
 		}, keys %$dir_list];
 }
 
+ajax '/apps/:id' => sub {
+	my $app_id = param("id");
+	my $app=retrieveApps($app_id);
+	#print STDERR to_dumper($app);
+	to_json($app);
+};
+
 ajax '/apps' => sub {
 	my $app_list=retrieveApps();
 	foreach (@$app_list) {
@@ -274,22 +281,7 @@ ajax '/apps' => sub {
 	to_json($app_list);
 };
 
-get qr{/apps/?} => sub {
-	my $app_list=retrieveApps();
-
- 	template 'apps', {
- 		list => $app_list,
-	};
-};
-
-ajax '/app/:id' => sub {
-	my $app_id = param("id");
-	my $app=retrieveApps($app_id);
-	#print STDERR to_dumper($app);
-	to_json($app);
-};
-
-get '/app/:id' => sub {
+get '/apps/:id' => sub {
 	my $app_id = param("id");
 	my $app=retrieveApps($app_id);
 	my ($inputs, $parameters) = ([], []);
@@ -494,8 +486,6 @@ ajax '/workflow/new' => sub {
 	try {
 		database->quick_insert('workflow', $data);
 	} catch {
-		$status='error';
-		$data={};
 	};
 	try {
 		database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});

@@ -144,6 +144,7 @@ const WorkflowStore=Reflux.createStore({
 				return;
 			} else if (res.data.status === 'success') {
 				this.state.workflows.push(res.data.data);
+				this.complete();
 			}
 		}.bind(this))
 		.catch(function(error) {

@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 use Dancer;
-#use iPC::Foundational::Test;
-use iPC::AgaveDemo;
+use iPC::SciApps;
 
 chdir(setting('appdir'));
 start;
