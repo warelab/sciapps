@@ -125,24 +125,23 @@ hook on_route_exception => sub {
 	}
 };
 
-#hook 'before' => sub {
-#	my $path=request->path;
+hook 'before' => sub {
+	my $path=request->path;
 	#unless(session('cas_user') || $path eq '/' || $path=~m#^/(login|logout|notification)/?#) {
-#	if(! session('cas_user') && $path=~m#^/(job|workflow)/?#) {
-#		if (request->is_ajax) {
-#			content_type(setting('plugins')->{Ajax}{content_type});
-#			try {
-#				raise InvalidCredentials => 'no cas user';
-#			} catch {
-#				my ($e)=@_;
-#				halt(to_json({error => $e->message()}));
-#			};
-#			#halt(to_json({error => 'InvalidCredentials: no cas user'}));
-#		} else {
-#			request->path('/');
-#		}
-#	} 
-#};
+	if(! session('cas_user') && $path=~m#^/(job|workflowJob)/new/?#) {
+		if (request->is_ajax) {
+			content_type(setting('plugins')->{Ajax}{content_type});
+			try {
+				raise InvalidCredentials => 'no cas user';
+			} catch {
+				my ($e)=@_;
+				halt(to_json({error => $e->message()}));
+			};
+		} else {
+			request->path('/');
+		}
+	} 
+};
 
 hook 'after' => sub {
 	my $response = shift;

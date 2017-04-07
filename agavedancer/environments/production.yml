@@ -31,14 +31,27 @@ archive_path: 'results'
 input_system: 'halcott.cshl.edu'
 input_home: '/agave_data'
 input_path: 'inputs'
-datastore_home: '/agave_data'
-datastore_path: 'example_data'
-#output_url: 'http://data.sciapps.org'
 email: 'noreply@sciapps.org'
 upload_suffix: ".upload"
 wf_step_prefix: 'wf_step_'
 maxRunTime: "96:00:00"
-datastore_system: 'data.sciapps.org'
+datastore:
+  __user__: 
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: '__user__/sci_data'
+  __shared__:
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: 'shared'
+  __public__:
+    system: 'data.sciapps.org'
+    home: '/agave_data'
+    path: 'example_data'
+  __system__:
+    system: ''
+    home: ''
+    path: ''
 uncompress_suffix: '.open.tar.gz'
 use_file_server: 1
 irodsEnvFile: '/usr/share/httpd/irodsEnv'
