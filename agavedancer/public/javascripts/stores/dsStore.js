@@ -89,8 +89,7 @@ const DsStore=Reflux.createStore({
 		if (cachedPath) {
 			dataStorePromise=Q(cachedPath);
 		} else {
-			//axios.get(setting.host_url + '/browse/' + typePath, {
-			dataStorePromise=Q(axios.get('/browse/' + typePath, {
+			dataStorePromise=Q(axios.get(setting.host_url + '/browse/' + typePath, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			}))
 			.then(function(res) {

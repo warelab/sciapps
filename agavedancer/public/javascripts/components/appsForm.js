@@ -4,7 +4,7 @@ import React from 'react';
 import Reflux from 'reflux';
 import _ from 'lodash';
 import Q from 'q';
-import {Panel, Button, Alert} from 'react-bootstrap';
+import {Panel, Button, Alert, Tooltip, OverlayTrigger} from 'react-bootstrap';
 import AppsStore from '../stores/appsStore.js';
 import JobsStore from '../stores/jobsStore.js';
 import BaseInput from './baseInput.js';
@@ -38,13 +38,13 @@ const AppsForm=React.createClass({
 	},
 
 	handleSubmit: function() {
-		this.setState({onSubmit: true, onValidate: true});
+		//this.setState({onSubmit: true, onValidate: true});
 		if(this.validateForm()) {
 			let formData=new FormData(this.refs[this.formName]);
 			JobsActions.submitJob(this.props.appId, formData);
 			this.setState({onValidate: false});
 		}
-		Q.delay(1500).then(function() {
+		Q.delay(1000).then(function() {
 			this.setState({onSubmit: false});
 		}.bind(this));
 		//setTimeout(() => {
@@ -52,7 +52,16 @@ const AppsForm=React.createClass({
 		//}, 1500);
 	},
 
+	handleSubmitPrepare: function() {
+		this.setState({onSubmit: true, onValidate: true});
+	},
+
+	handleSubmitDismiss: function() {
+		this.setState({onSubmit: false, onValidate: false});
+	},
+
 	render: function() {
+		let user=this.props.user;
 		let appDetail=this.state.appsStore.appDetailCache[this.props.appId];
 		let jobDetail=this.state.jobsStore.jobDetailCache[this.props.jobId];
 		let resubmit=this.props.resubmit;
@@ -97,18 +106,37 @@ const AppsForm=React.createClass({
 			placeholder: 'Enter email',
 			help: 'Optional Email for notification'
 		};
+		let submitBtn;
+		if (user.logged_in) {
+			if (this.state.onSubmit) {
+				submitBtn=(
+					<Alert bsStyle='warning' onDismiss={this.handleSubmitDismiss}>
+						<p>You are going to submit 1 job to a cloud cluster, are you sure you want to launch it?</p>
+						<Button bsStyle='primary' onClick={this.handleSubmit}>Yes</Button>
+						<span> or </span>
+						<Button onClick={this.handleSubmitDismiss}>No</Button>
+					</Alert>
+				);
+			} else {
+				submitBtn=(
+					<Button bsStyle='primary' onClick={this.handleSubmitPrepare}>Submit Job</Button>
+				);
+			}
+		} else {
+			let tooltipsubmit = <Tooltip id="tooltisubmit">You need to sign in with your CyVerse credentials to launch a job!</Tooltip>;
+			submitBtn=(
+				<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
+					<Button bsStyle='primary' onClick={null}>Submit Job</Button>
+				</OverlayTrigger>
+			);
+		}
 		return (
 			<Panel header={header}>
 				<form ref={this.formName}>
 					{app_inputs}
 					{app_params}
 					<BaseInput data={emailInput} />
-					<Button
-						bsStyle='primary'
-						disabled={onSubmit}
-						onClick={onSubmit ? null : this.handleSubmit}>
-						{onSubmit ? 'Submitting...' : 'Submit Job'}
-					</Button>
+					{submitBtn}
 				</form>
 			</Panel>
 		);

@@ -46,7 +46,7 @@ const UserStore=Reflux.createStore({
 
 	setUser: function() {
 		let setting=_config.setting;
-		Q(axios.get('/user', {
+		Q(axios.get(setting.host_url + '/user', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))
 		.then(function(res) {
@@ -75,8 +75,7 @@ const UserStore=Reflux.createStore({
 		if (formData === undefined) {
 			formData=new FormData();
 		}
-		//Q(axios.post(setting.host_url + '/login', formData, {
-		Q(axios.post('/login', formData, {
+		Q(axios.post(setting.host_url + '/login', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
 		}))

@@ -11,7 +11,7 @@ import JobsActions from '../actions/jobsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import _ from 'lodash';
 import utilities from '../libs/utilities.js';
-import {Panel, Button, ButtonToolbar} from 'react-bootstrap';
+import {Panel, Button, ButtonToolbar, Alert, Tooltip, OverlayTrigger} from 'react-bootstrap';
 
 const WorkflowRunnerForm=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(WorkflowStore, 'workflowStore')],
@@ -39,6 +39,7 @@ const WorkflowRunnerForm=React.createClass({
 	formName: 'workflowRunnerForm',
 
 	validateForm: function() {
+		let user=this.props.user;
 		let setting=_config.setting;
 		let required=_.keys(this.state.required);
 		let form=this.refs[this.formName];
@@ -47,18 +48,26 @@ const WorkflowRunnerForm=React.createClass({
 	},
 
 	handleSubmit: function(event) {
-		this.setState({onSubmit: true, onValidate: true});
+		//this.setState({onSubmit: true, onValidate: true});
 		let wid;
 		if (this.validateForm()) {
 			let formData=new FormData(this.refs[this.formName]);
 			wid=formData.get('_workflow_id');
 			WorkflowActions.submitWorkflow(formData);
-			this.setState({onValidate: false});
+			this.setState({onSubmit: false, onValidate: false});
 		}
-		setTimeout(() => {
-			this.setState({onSubmit: false});
-		}, 1500);
+		//setTimeout(() => {
+		//	this.setState({onSubmit: false});
+		//}, 1500);
 		this.showWorkflowDiagram();
+	},
+
+	handleSubmitPrepare: function() {
+		this.setState({onSubmit: true, onValidate: true});
+	},
+
+	handleSubmitDismiss: function() {
+		this.setState({onSubmit: false, onValidate: false});
 	},
 
 	showWorkflowDiagram: function() {
@@ -66,6 +75,7 @@ const WorkflowRunnerForm=React.createClass({
 	},
 
 	render: function() {
+		let user=this.props.user;
 		let wid=utilities.uuid();
 		let workflowStore=this.state.workflowStore;
 		let appsStore=this.state.appsStore;
@@ -129,6 +139,30 @@ const WorkflowRunnerForm=React.createClass({
 				name: '_workflow_id',
 				value: wid
 			};
+			let submitBtn;
+			if (user.logged_in) {
+				if (this.state.onSubmit) {
+					submitBtn=(
+						<Alert bsStyle='warning' onDismiss={this.handleSubmitDismiss}>
+							<p>You are going to submit {steps.length} jobs to a cloud cluster, are you sure you want to launch them?</p>
+							<Button bsStyle='primary' onClick={this.handleSubmit}>Yes</Button>
+							<span> or </span>
+							<Button onClick={this.handleSubmitDismiss}>No</Button>
+						</Alert>
+					);
+				} else {
+					submitBtn=(
+						<Button bsStyle='primary' onClick={this.handleSubmitPrepare}>Submit Job</Button>
+					);
+				}
+			} else {
+				let tooltipsubmit = <Tooltip id="tooltisubmit">You need to sign in with your CyVerse credentials to launch a job!</Tooltip>;
+				submitBtn=(
+					<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
+						<Button bsStyle='primary' onClick={null}>Submit Job</Button>
+					</OverlayTrigger>
+				);
+			}
 			markup=(
 				<div>
 				<form ref={this.formName} >
@@ -136,17 +170,9 @@ const WorkflowRunnerForm=React.createClass({
 					<BaseInput data={emailInput} />
 					<BaseInput data={workflowJson} />
 					<BaseInput data={workflowId} />
-					<ButtonToolbar>
-					<Button
-						bsStyle='primary'
-						disabled={onSubmit}
-						onClick={onSubmit ? null : this.handleSubmit}>
-						{onSubmit ? 'Submitting...' : 'Submit Workflow Jobs'}
-					</Button>
-					<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>
-                                        	Show Workflow Diagram
-                                	</Button>
-					</ButtonToolbar>
+					{submitBtn}
+					<span> or </span>
+					<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Show Workflow Diagram</Button>
 				</form>
 				</div>
 			);

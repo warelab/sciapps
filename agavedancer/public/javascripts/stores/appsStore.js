@@ -56,8 +56,6 @@ const AppsStore=Reflux.createStore({
 		if (apps.length) {
 			appPromise=Q(apps);
 		} else {
-			//appPromise=Q(axios.get(setting.host_url + '/apps', {
-			//appPromise=Q(axios.get('/apps', {
 			//appPromise=Q(axios.get('/apps', {
 			//	headers: {'X-Requested-With': 'XMLHttpRequest'},
 			//}))
@@ -129,7 +127,6 @@ const AppsStore=Reflux.createStore({
 		if (appDetail) {
 			appPromise=Q(appDetail);
 		} else {
-			//appPromise=Q(axios.get(setting.host_url + '/apps/' + appId, {
 			//appPromise=Q(axios.get('/apps/' + appId, {
 			//	headers: {'X-Requested-With': 'XMLHttpRequest'}
 			//}))
