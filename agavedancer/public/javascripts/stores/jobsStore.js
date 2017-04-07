@@ -246,7 +246,7 @@ const JobsStore=Reflux.createStore({
 		let jobOutputs=this.state.jobOutputs[jobId];
 		let setting=_config.setting;
 		let jobOutputsPromise;
-		if (jobOutputs) {
+		if (jobOutputs && jobOutputs.length) {
 			jobOutputsPromise=Q(jobOutputs);
 		} else {
 			let jobPromise=this.setJob(jobId);

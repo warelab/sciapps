@@ -124,28 +124,6 @@
         {
             "details": {
                 "description": "Numerical file", 
-                "label": "Output filename"
-            }, 
-            "id": "export", 
-            "semantics": {
-                "fileTypes": [
-                    "raw-0"
-                ], 
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
-                "ontology": [
-                    "xs:string"
-                ]
-            }, 
-            "value": {
-                "default": "MLMM", 
-                "order": 0, 
-                "validator": null
-            }
-        }, 
-        {
-            "details": {
-                "description": "Numerical file", 
                 "label": "Step 0 output"
             }, 
             "id": "mlmm0", 

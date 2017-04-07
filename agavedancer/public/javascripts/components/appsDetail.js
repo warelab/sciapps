@@ -28,14 +28,16 @@ const AppsDetail=React.createClass({
 	},
 
 	render: function() {
+		let user=this.props.user;
 		let appsStore=this.state.appsStore;
 		let appDetail=appsStore.appDetail;
 		let jobsStore=this.state.jobsStore;
 		let jobDetail=jobsStore.jobDetail;
 		let markup;
-		if (! this.props.user.logged_in) {
-			markup=<Welcome />
-		} else if (appDetail && appDetail.id) {
+		//if (! this.props.user.logged_in) {
+		//	markup=<Welcome />
+		//} else if (appDetail && appDetail.id) {
+		if (appDetail && appDetail.id) {
 			markup=(
 				<div>
 					<AppsForm appId={appDetail.id} jobId={jobDetail.job_id} resubmit={jobsStore.resubmit} user={this.props.user}/>
@@ -45,16 +47,16 @@ const AppsDetail=React.createClass({
 		} else {
 			switch (appsStore.pageId) {
 				case 'userWorkflows':
-					markup=<UserWorkflows />
+					markup=<UserWorkflows user={user} />
 					break;
 				case 'workflows':
 					markup=<Workflows />
 					break;
 				case 'workflowBuilder':
-					markup=<WorkflowBuilder />
+					markup=<WorkflowBuilder user={user} />
 					break;
 				case 'workflowRunner':
-					markup=<WorkflowRunner />
+					markup=<WorkflowRunner user={user} />
 					break;
 				case 'welcome':
 					markup=<Welcome />

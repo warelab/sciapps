@@ -9,7 +9,7 @@ import UserActions from  '../actions/userActions.js';
 import AppsActions from '../actions/appsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import {Layout, Fixed, Flex} from 'react-layout-pane';
-import {Panel, Well, Button} from 'react-bootstrap';
+import {Panel, Well, Button, Glyphicon} from 'react-bootstrap';
 import AppsGroup from './appsGroup.js';
 import AppsDetail from './appsDetail.js';
 import AppsSearchBox from './appsSearchBox.js';
@@ -50,7 +50,7 @@ const App=React.createClass({
 				<Flex>
 					<Layout type="row">
 						<Fixed className="leftbar">
-              <Fixed className="apps-panel-header">Apps</Fixed>
+              <Fixed className="apps-panel-header"><Glyphicon glyph='cog' /> Apps</Fixed>
 							<Fixed className="search-wrapper"><AppsSearchBox /></Fixed>
 							<AppsGroup user={user} />
 						</Fixed>
@@ -60,7 +60,7 @@ const App=React.createClass({
 							<WorkflowDiagram user={user} />
 						</Flex>
 						<Fixed className="rightbar">
-							<Fixed className="apps-panel-header">History</Fixed>
+							<Fixed className="apps-panel-header"><Glyphicon glyph='time' /> History</Fixed>
 							<JobsMessage />
 							<JobsList user={user} />
 							<JobsDetail user={user} />

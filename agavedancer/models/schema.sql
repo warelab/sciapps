@@ -4,7 +4,10 @@ drop table if exists user;
 create table user (
 	id integer primary key autoincrement,
 	username varchar(40) unique not null,
-	consumer_secret varchar(40)
+	consumerSecret varchar(40),
+	firstName varchar(40),
+	lastName varchar(40),
+	email varchar(40)
 );
 
 drop index if exists username;

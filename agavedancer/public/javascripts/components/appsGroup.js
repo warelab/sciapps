@@ -11,16 +11,15 @@ import {PanelGroup} from 'react-bootstrap';
 const AppsGroup=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore')],
 
-	componentWillReceiveProps: function(nextProps) {
-		if(nextProps.user.logged_in && !this.state.appsStore.apps.length) {
-			AppsActions.debouncedListApps();
-		}
+	componentDidMount: function() {
+		AppsActions.debouncedListApps();
 	},
 
 	render: function() {
 		let appsStore=this.state.appsStore;
 		let apps=appsStore.apps;
-		let appGroup={Private: [], Public: []};
+		//let appGroup={Private: [], Public: []};
+		let appGroup={};
 		for (let app of apps) {
 			for (let tag of app.tags) {
 				if (! appGroup[tag]) {

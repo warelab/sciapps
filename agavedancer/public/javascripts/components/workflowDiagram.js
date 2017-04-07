@@ -78,22 +78,25 @@ const WorkflowDiagram=React.createClass({
 	},
 
 	truncate: function(s) {
-		if (s.length > 10)
-			return (s.substr(0,9)).concat(" ...");
+		if (s.length > 12)
+			return (s.substr(0,11)).concat(" ...");
 		else
 			return s;
 	},
 
-	buildWorkflowDiagramDef: function(workflowStore, appsStore, jobsStore) {
+	buildWorkflowDiagramDef: function(workflowStore, appsStore, jobsStore, workflowDirection) {
 		let that=this;
 		let setting=_config.setting;
 		let jobs=jobsStore.workflow.jobs;
 		let jobStatus=jobsStore.jobStatus;
 		let def;
 		let fileNode={};
+		let diagramDefStmts=['graph LR'];
+		if (workflowDirection > 0) {
+			diagramDefStmts=['graph TD'];
+		}
 		if (workflowStore.workflowDetail) {
 			let steps=workflowStore.workflowDetail.steps;
-			let diagramDefStmts=['graph LR'];
 			steps.map(function(step, i) {
 				let showAppId=step.appId.replace(/\-[\.\d]+$/, '');
 				let appClass='PENDING';
@@ -167,6 +170,7 @@ const WorkflowDiagram=React.createClass({
 
 	render: function() {
 		let showWorkflowDiagram=this.state.workflowStore.showWorkflowDiagram;
+		let user=this.props.user;
 		let setting=_config.setting;
 		let jobsStore=this.state.jobsStore;
 		let worflowStore=this.state.workflowStore;
@@ -180,8 +184,39 @@ const WorkflowDiagram=React.createClass({
 		let nodeClass="modal-lg";
 		let jobCount=0;
 		let workflowDetail=this.state.workflowStore.workflowDetail;
+		let workflowDirection=1;
 		if (showWorkflowDiagram) {
-			let workflowDiagramDef=this.buildWorkflowDiagramDef(this.state.workflowStore, this.state.appsStore, this.state.jobsStore);
+			if (workflowDetail) {
+				jobCount=workflowDetail.steps.length;
+				if (jobCount < 7) {
+					workflowDirection=0;
+					switch (jobCount) {
+						case 2:
+							nodeClass="twoNodes";
+							break;
+						case 3:
+							nodeClass="threeNodes";
+							break;
+						case 4:
+							nodeClass="fourNodes";
+							break;
+						case 5:
+							nodeClass="fiveNodes";
+					}
+				} else {
+					switch (jobCount) {
+						case 7:
+							nodeClass="threeNodes";
+							break;
+						case 8:
+							nodeClass="fourNodes";
+							break;
+						case 9:
+							nodeClass="fiveNodes";
+					}
+				}
+			}
+			let workflowDiagramDef=this.buildWorkflowDiagramDef(this.state.workflowStore, this.state.appsStore, this.state.jobsStore, workflowDirection);
 			body=<Mermaid diagramDef={workflowDiagramDef}/>;
 			if (typeof workflow.jobs === 'object') {
 				let unfinished=_.find(workflow.jobs, function(job) {
@@ -205,24 +240,11 @@ const WorkflowDiagram=React.createClass({
 				}
 			}
 
-			switch (jobCount) {
-				case 2:
-					nodeClass="twoNodes";
-					break;
-				case 3:
-					nodeClass="threeNodes";
-					break;
-				case 4:
-					nodeClass="fourNodes";
-					break;
-				case 5:
-					nodeClass="fiveNodes";
-			}
-
 			let saveBtnTxt=this.state.onSave ? 'Saving' : 'Save Workflow';
 			if (workflowDetail && _.find(worflowStore.workflows, {workflow_id: workflowDetail.id})) {
 				saveBtnTxt='Saved';
 			}
+			let saveBtn=user.logged_in ? <Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved'}>{saveBtnTxt}</Button> : undefined;
 			markup=(
 				<Modal dialogClassName={nodeClass} show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
 					<Modal.Header closeButton>
@@ -234,7 +256,7 @@ const WorkflowDiagram=React.createClass({
 					</Modal.Body>
 					<Modal.Footer>
 						<Button onClick={this.handleDownload}>Download Workflow</Button>
-						<Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved'}>{saveBtnTxt}</Button>
+						{saveBtn}
 						<Button onClick={this.hideWorkflowDiagram}>Close</Button>
 					</Modal.Footer>
 				</Modal>

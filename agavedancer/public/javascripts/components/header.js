@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Reflux from 'reflux';
-import {Navbar, Nav, NavItem, NavDropdown, MenuItem} from 'react-bootstrap';
+import {Navbar, Nav, NavItem, NavDropdown, MenuItem, Glyphicon} from 'react-bootstrap';
 import UserLoginBox from './userLoginBox.js';
 import AppsActions from '../actions/appsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
@@ -47,7 +47,6 @@ const Header=React.createClass({
 	},
 
 	showWorkflowRunner: function() {
-		//WorkflowActions.hideWorkflow();
 		AppsActions.showPage('workflowRunner');
 		WorkflowActions.showWorkflowLoadBox();
 		let title="Running Scientific Workflows";
@@ -77,8 +76,6 @@ const Header=React.createClass({
 	},
 
 	handleLogin: function() {
-		//UserActions.showLoginBox();
-		//UserActions.login();
 		window.location = '/login';
 	},
 
@@ -91,38 +88,32 @@ const Header=React.createClass({
 		let user=this.props.user;
 		let userGreeting, userMenu, workflowMenu;
 		let workflowMenuItem=[
-			<MenuItem key='showWorkflowBuilder' eventKey='showWorkflowBuilder' disabled={!user.logged_in} onSelect={this.showWorkflowBuilder}>Build a workflow</MenuItem>,
-			<MenuItem key='showWorkflowRunner' eventKey='showWorkflowRunner' disabled={!user.logged_in} onSelect={this.showWorkflowRunner}>Load a workflow</MenuItem>,
-			<MenuItem key='showWorkflows' eventKey='showWorkflows' disabled={!user.logged_in} onSelect={this.showWorkflows}>Public workflows</MenuItem>
+			<MenuItem key='showWorkflowBuilder' eventKey='showWorkflowBuilder' onSelect={this.showWorkflowBuilder}><Glyphicon glyph='wrench' /> Build a workflow</MenuItem>,
+			<MenuItem key='showWorkflowRunner' eventKey='showWorkflowRunner' onSelect={this.showWorkflowRunner}><Glyphicon glyph='cloud-upload' /> Load a workflow</MenuItem>,
+			<MenuItem key='showWorkflows' eventKey='showWorkflows' onSelect={this.showWorkflows}><Glyphicon glyph='th-list' /> Public workflows</MenuItem>
 		];
 		if (user.logged_in) {
-			userGreeting=<NavItem eventKey='greeting'>Hi, {user.firstName}!</NavItem>;
+			userGreeting=<NavItem eventKey='greeting'><Glyphicon glyph='user' /> Hi, {user.firstName}!</NavItem>;
 			userMenu=<NavItem eventKey='logout' pullRight onSelect={this.handleLogout}>Logout</NavItem>;
-			//userMenu=(
-			//	<NavDropdown eventKey='user' title={'Login as: ' + user.username} id="user-dropdown">
-			//		<MenuItem eventKey='logout' onSelect={this.handleLogout}>Logout</MenuItem>
-			//	</NavDropdown>
-			//);
-
 			workflowMenuItem.push(
 				<MenuItem key='workflowDivder' eventKey='workflowDivder' divider />,
-				<MenuItem key='userWorkflows' eventKey='userWorkflows' onSelect={this.showUserWorkflows}>My Workflows</MenuItem>
+				<MenuItem key='userWorkflows' eventKey='userWorkflows' onSelect={this.showUserWorkflows}><Glyphicon glyph='briefcase' /> My Workflows</MenuItem>
 			);
 		} else {
-			userMenu=(<NavItem eventKey='login' pullRight onSelect={this.handleLogin}>Login</NavItem>);
+			userMenu=(<NavItem eventKey='login' pullRight onSelect={this.handleLogin}><Glyphicon glyph='user' /> Login</NavItem>);
 		}
 		workflowMenu=(
-			<NavDropdown eventKey='workflows' title="Workflows" id="nav-dropdown">
+			<NavDropdown eventKey='workflows' title={<span><Glyphicon glyph="link" /> Workflows</span>} id="nav-dropdown">
 				{workflowMenuItem}
 			</NavDropdown>
 		);
 		return (
 			<Navbar className="navbar">
 				<Nav>
-					<NavItem eventKey='welcome' onSelect={this.showWelcome}>SciApps</NavItem>
+					<NavItem eventKey='welcome' onSelect={this.showWelcome}><Glyphicon glyph='home' /> SciApps</NavItem>
 					{workflowMenu}
-					<NavItem eventKey='data' href='http://data.sciapps.org' target='_blank'>Data</NavItem>
-					<NavItem eventKey='help' href='http://ask.cyverse.org' target='_blank'>Help</NavItem>
+					<NavItem eventKey='data' href='http://data.sciapps.org' target='_blank'><Glyphicon glyph='th' /> Data</NavItem>
+					<NavItem eventKey='help' href='http://ask.cyverse.org' target='_blank'><Glyphicon glyph='question-sign' /> Help</NavItem>
 					{userGreeting}
 					{userMenu}
 				</Nav>
@@ -132,4 +123,3 @@ const Header=React.createClass({
 });
 
 module.exports = Header;
-

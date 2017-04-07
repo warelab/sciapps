@@ -10,7 +10,7 @@ sub new {
 	my ($class, $args) = @_;
 	bless({
 			_username => $args->{username} || $args->{name},
-			_consumer_secret =>	$args->{consumer_secret}
+			_consumerSecret =>	$args->{consumerSecret}
 		}, $class
 	);
 }
@@ -26,19 +26,19 @@ sub username {
 sub consumerSecret {
 	my ($self, $consumerSecret)=@_;
 	if ($consumerSecret) {
-		$self->{_consumer_secret}=$consumerSecret;
+		$self->{_consumerSecret}=$consumerSecret;
 	}
-	$self->{_consumer_secret};
+	$self->{_consumerSecret};
 }
 
 sub update {
 	my ($self)=@_;
-	database->quick_update('user', {username => $self->{_username}}, {consumer_secret => $self->{_consumer_secret}});
+	database->quick_update('user', {username => $self->{_username}}, {consumerSecret => $self->{_consumer_secret}});
 }
 
 sub save {
 	my ($self)=@_;
-	database->quick_insert('user', {username => $self->{_username}, consumer_secret => $self->{_consumer_secret}});
+	database->quick_insert('user', {username => $self->{_username}, consumerSecret => $self->{_consumerSecret}});
 }
 
 sub search {

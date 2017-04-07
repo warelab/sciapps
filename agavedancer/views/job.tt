@@ -1,7 +1,5 @@
 [% USE date %]
 <div id="page">
-	[%# INCLUDE 'sidebar.tt' %]
-
 	<div id="content">
 [% IF job %]
 <div>Details on job <strong>[% job.id %]</strong>:</div>
@@ -12,7 +10,7 @@
 			<dt>Submitted on: </dt><dd>[% date.format(job.submitTime) %]</dd>
 			<dt>Started on: </dt><dd>[% date.format(job.startTime) %]</dd>
 			<dt>Finished on: </dt><dd>[% date.format(job.endTime) %]</dd>
-			[%- output_link=settings.output_url _ "/" _ job.archivePath -%]
+			[%- system=job.archiveSystem; path=job.archivePath; output_link=settings.output_url.$system _ "/" _ path -%]
 			<dt>Results: </dt><dd>[% IF ('FINISHED' == job.status || 'FAILED' == job.status) %]<a href="[% output_link | url %]">[% output_link %]</a>[% END %]</dd>
 		</dl>
 	</p>

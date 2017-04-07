@@ -20,7 +20,7 @@ charset: "UTF-8"
 # template_toolkit: TT
 
 session: 'YAML'
-session_expires: '8 hr'
+session_expires: '4 hr'
 #session: 'Storable'
 #session: 'cookie'
 #session_cookie_key: '1{(b)a}sdf07234hjf0sdkflj12*&(@*az'

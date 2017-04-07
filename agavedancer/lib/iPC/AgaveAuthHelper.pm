@@ -110,7 +110,7 @@ use Data::Dumper;
 					$user->consumerSecret( $client->{consumerSecret} );
 					$user->update;
 				} else {
-					$user=iPC::User->new({username => $u, consumer_secret => $client->{consumerSecret}});
+					$user=iPC::User->new({username => $u, consumerSecret => $client->{consumerSecret}});
 					$user->save;
 				}
 			}

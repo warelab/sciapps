@@ -11,19 +11,14 @@ import {ListGroup} from 'react-bootstrap';
 const JobsList=React.createClass({
 	mixins: [Reflux.connect(JobsStore, 'jobsStore')],
 
-	componentWillReceiveProps: function(nextProps) {
-		if (! nextProps.user.logged_in && this.state.jobsStore.jobs.length) {
-			JobsActions.resetState();
-		}
-	},
-
 	render: function() {
 		let jobsStore=this.state.jobsStore;
 		let setting=_config.setting;
 		let jobs, jobOutputs, jobsItemNodes;
 		jobs=jobsStore.jobs;
 		jobOutputs=jobsStore.jobOutputs;
-		if (this.props.user.logged_in && jobs && jobs.length) {
+		//if (this.props.user.logged_in && jobs && jobs.length) {
+		if (jobs && jobs.length) {
 			jobsItemNodes = jobs.map(function (jobsItem, index) {
 				if (jobsItem) {
 					let outputs=jobOutputs[jobsItem.job_id];

@@ -1,21 +1,26 @@
 [
-    {
+   {
+        "_links": {
+            "self": {
+                "href": "https://agave.iplantc.org/apps/v2/XYPlot-0.0.2"
+            }
+        },
+        "id": "XYPlot-0.0.2",
+        "label": "XYPlot",
+        "name": "XYPlot",
+        "tags": ["Visualization"],
+        "version": "0.0.2"
+   },
+   {
         "_links": {
             "self": {
                 "href": "https://agave.iplantc.org/apps/v2/SNAP-0.0.1"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "SNAP-0.0.1", 
-        "isPublic": false, 
         "label": "SNAP", 
-        "lastModified": "2016-03-21T17:01:37.000-05:00", 
         "name": "SNAP", 
-        "revision": 1, 
-        "shortDescription": "Semi-HMM-based Nucleic Acid Parser", 
-        "tags": [
-                "Annotation"
-        ],
+        "tags": ["Prediction"],
         "version": "0.0.1"
     },
     {
@@ -24,17 +29,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/queryGramene-0.0.1"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "queryGramene-0.0.1", 
-        "isPublic": false, 
         "label": "queryGramene", 
-        "lastModified": "2016-03-03T10:40:32.000-06:00", 
         "name": "queryGramene", 
-        "revision": 7, 
-        "shortDescription": "Query Gramene database", 
-        "tags": [
-                "Database"
-        ],
+        "tags": [ "Query" ],
         "version": "0.0.1"
     }, 
     {
@@ -43,17 +41,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/MAKER-0.0.1"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "MAKER-0.0.1", 
-        "isPublic": false, 
         "label": "Maker", 
-        "lastModified": "2016-02-29T22:19:25.000-06:00", 
         "name": "MAKER", 
-        "revision": 4, 
-        "shortDescription": "Perform genome annotation with Maker", 
-    	"tags": [
-       		"Annotation"
-    	], 
+    	"tags": [ "Annotation" ], 
         "version": "0.0.1"
     },
     {
@@ -62,17 +53,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/CIM-0.1.17"
             }
         }, 
-        "executionSystem": "cshl-compute-00", 
         "id": "CIM-0.1.17", 
-        "isPublic": false, 
         "label": "Composite interval mapping via QTL Cartographer", 
-        "lastModified": "2015-12-16T09:30:03.000-06:00", 
         "name": "CIM", 
-        "revision": 6, 
-        "shortDescription": "Composite interval mapping", 
-    	"tags": [
-		"Association"
-    	], 
+    	"tags": [ "Mapping" ], 
         "version": "0.1.17"
     }, 
     {
@@ -81,17 +65,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/VCAP-5.2.20"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "VCAP-5.2.20", 
-        "isPublic": false, 
         "label": "VCAP", 
-        "lastModified": "2016-02-25T15:41:49.000-06:00", 
         "name": "VCAP", 
-        "revision": 1, 
-        "shortDescription": "VCAP", 
-    	"tags": [
-       		"Phenotype"
-    	], 
+    	"tags": [ "Calculation" ], 
         "version": "5.2.20"
     }, 
     {
@@ -100,17 +77,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/NAM-TASSEL-5.2.15"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "NAM-TASSEL-5.2.15", 
-        "isPublic": false, 
         "label": "NAM", 
-        "lastModified": "2015-10-25T00:39:35.000-05:00", 
         "name": "NAM-TASSEL", 
-        "revision": 1, 
-        "shortDescription": "NAM GWAS", 
-    	"tags": [
-       		"Association"
-    	], 
+    	"tags": [ "Mapping" ], 
         "version": "5.2.15"
     }, 
     {
@@ -119,17 +89,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/GenSel-0.4.55"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "GenSel-0.4.55", 
-        "isPublic": false, 
         "label": "GenSel", 
-        "lastModified": "2015-10-24T02:35:11.000-05:00", 
         "name": "GenSel", 
-        "revision": 1, 
-        "shortDescription": "", 
-    	"tags": [
-       		"Association"
-    	], 
+    	"tags": [ "Mapping" ], 
         "version": "0.4.55"
     }, 
     {
@@ -138,17 +101,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/EMMAX-0.0.2"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "EMMAX-0.0.2", 
-        "isPublic": false, 
         "label": "EMMAX", 
-        "lastModified": "2015-10-05T14:17:25.000-05:00", 
         "name": "EMMAX", 
-        "revision": 3, 
-        "shortDescription": "Efficient Mixed-Model Association eXpedited", 
-    	"tags": [
-       		"Association"
-    	], 
+    	"tags": [ "Mapping" ], 
         "version": "0.0.2"
     }, 
     {
@@ -157,17 +113,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/AdjustPvalue-0.0.1"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "AdjustPvalue-0.0.1", 
-        "isPublic": false, 
         "label": "AdjustPvalue", 
-        "lastModified": "2015-10-05T14:12:30.000-05:00", 
         "name": "AdjustPvalue", 
-        "revision": 4, 
-        "shortDescription": "Adjust P-values for multiple comparisons", 
-    	"tags": [
-       		"Statistics"
-    	], 
+    	"tags": [ "Calculation" ], 
         "version": "0.0.1"
     }, 
     {
@@ -176,17 +125,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/fastStructure-0.0.1"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "fastStructure-0.0.1", 
-        "isPublic": false, 
         "label": "FastStructure", 
-        "lastModified": "2015-10-05T12:45:57.000-05:00", 
         "name": "fastStructure", 
-        "revision": 14, 
-        "shortDescription": "Inferring population structure from large SNP genotype data", 
-    	"tags": [
-       		"Genotype"
-    	], 
+    	"tags": [ "Clustering" ], 
         "version": "0.0.1"
     }, 
     {
@@ -195,17 +137,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/MergeG2P-0.0.2"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "MergeG2P-0.0.2", 
-        "isPublic": false, 
         "label": "MergeG2P", 
-        "lastModified": "2015-10-04T21:33:08.000-05:00", 
         "name": "MergeG2P", 
-        "revision": 4, 
-        "shortDescription": "Intersecting genotype data with phenotype data", 
-    	"tags": [
-       		"Transform"
-    	], 
+    	"tags": [ "Data handling" ], 
         "version": "0.0.2"
     }, 
     {
@@ -214,36 +149,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/MLMM-0.0.2"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "MLMM-0.0.2", 
-        "isPublic": false, 
         "label": "MLMM", 
-        "lastModified": "2015-10-04T21:06:47.000-05:00", 
         "name": "MLMM", 
-        "revision": 3, 
-        "shortDescription": "Multi-locus Mixed-Model Association", 
-    	"tags": [
-       		"Association"
-    	], 
-        "version": "0.0.2"
-    }, 
-    {
-        "_links": {
-            "self": {
-                "href": "https://agave.iplantc.org/apps/v2/XYPlot-0.0.2"
-            }
-        }, 
-        "executionSystem": "cshl-compute-10", 
-        "id": "XYPlot-0.0.2", 
-        "isPublic": false, 
-        "label": "XYPlot", 
-        "lastModified": "2015-10-03T23:57:05.000-05:00", 
-        "name": "XYPlot", 
-        "revision": 5, 
-        "shortDescription": "Create 2D Plot", 
-    	"tags": [
-       		"Visualization"
-    	], 
+    	"tags": [ "Mapping" ], 
         "version": "0.0.2"
     }, 
     {
@@ -252,17 +161,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/NPUTE-0.0.1"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "NPUTE-0.0.1", 
-        "isPublic": false, 
         "label": "NPUTE", 
-        "lastModified": "2015-10-03T21:08:14.000-05:00", 
         "name": "NPUTE", 
-        "revision": 3, 
-        "shortDescription": "Imputing missing SNPs", 
-    	"tags": [
-       		"Genotype"
-    	], 
+    	"tags": [ "Calculation" ], 
         "version": "0.0.1"
     }, 
     {
@@ -271,17 +173,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/PCA-0.0.1"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "PCA-0.0.1", 
-        "isPublic": false, 
         "label": "PCA", 
-        "lastModified": "2015-10-03T19:42:58.000-05:00", 
         "name": "PCA", 
-        "revision": 3, 
-        "shortDescription": "Perform PCA with R's prcomp function", 
-    	"tags": [
-       		"Genotype"
-    	], 
+    	"tags": [ "Clustering" ], 
         "version": "0.0.1"
     }, 
     {
@@ -290,17 +185,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/GenomeSelection-TASSEL-4.3.15"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "GenomeSelection-TASSEL-4.3.15", 
-        "isPublic": false, 
         "label": "Genome Selection", 
-        "lastModified": "2015-10-03T19:41:37.000-05:00", 
         "name": "GenomeSelection-TASSEL", 
-        "revision": 2, 
-        "shortDescription": "Ridge regression based genomic selection", 
-    	"tags": [
-       		"Association"
-    	], 
+    	"tags": [ "Mapping" ], 
         "version": "4.3.15"
     }, 
     {
@@ -309,17 +197,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/GLM-TASSEL-5.1.23"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "GLM-TASSEL-5.1.23", 
-        "isPublic": false, 
         "label": "GLM", 
-        "lastModified": "2015-10-03T19:41:23.000-05:00", 
         "name": "GLM-TASSEL", 
-        "revision": 2, 
-        "shortDescription": "General Linear Model analysis", 
-    	"tags": [
-       		"Association"
-    	], 
+    	"tags": [ "Mapping" ], 
         "version": "5.1.23"
     }, 
     {
@@ -328,17 +209,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/MLM-TASSEL-5.1.23"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "MLM-TASSEL-5.1.23", 
-        "isPublic": false, 
         "label": "MLM", 
-        "lastModified": "2015-10-03T19:41:16.000-05:00", 
         "name": "MLM-TASSEL", 
-        "revision": 2, 
-        "shortDescription": "Mixed Linear Model analysis", 
-    	"tags": [
-       		"Association"
-    	], 
+    	"tags": [ "Mapping" ], 
         "version": "5.1.23"
     }, 
     {
@@ -347,17 +221,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/NumericalTransform-TASSEL-4.3.15"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "NumericalTransform-TASSEL-4.3.15", 
-        "isPublic": false, 
         "label": "NumericalTransform", 
-        "lastModified": "2015-10-03T19:41:07.000-05:00", 
         "name": "NumericalTransform-TASSEL", 
-        "revision": 2, 
-        "shortDescription": "Numerical Transform of marker data", 
-    	"tags": [
-       		"Transform"
-    	], 
+    	"tags": [ "Conversion" ], 
         "version": "4.3.15"
     }, 
     {
@@ -366,17 +233,11 @@
                 "href": "https://agave.iplantc.org/apps/v2/ConvertTraitID-0.0.0"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "ConvertTraitID-0.0.0", 
-        "isPublic": false, 
         "label": "ConvertTraitID", 
-        "lastModified": "2015-10-03T19:38:54.000-05:00", 
         "name": "ConvertTraitID", 
-        "revision": 3, 
         "shortDescription": "Resolving accession name with accession id", 
-    	"tags": [
-       		"Phenotype"
-    	], 
+    	"tags": ["Conversion"], 
         "version": "0.0.0"
     }, 
     {
@@ -385,17 +246,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/STRUCTURE2TASSEL-0.0.2"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "STRUCTURE2TASSEL-0.0.2", 
-        "isPublic": false, 
         "label": "STRUCTURE2TASSEL", 
-        "lastModified": "2015-10-03T19:36:49.000-05:00", 
         "name": "STRUCTURE2TASSEL", 
-        "revision": 4, 
-        "shortDescription": "Converting STRUCTURE output for TASSEL", 
-    	"tags": [
-       		"Transform"
-    	], 
+    	"tags": ["Conversion"], 
         "version": "0.0.2"
     }, 
     {
@@ -404,17 +258,10 @@
                 "href": "https://agave.iplantc.org/apps/v2/CloudSTRUCTURE-2.3.4"
             }
         }, 
-        "executionSystem": "cshl-compute-10", 
         "id": "CloudSTRUCTURE-2.3.4", 
-        "isPublic": false, 
         "label": "CloudStructure", 
-        "lastModified": "2015-10-03T19:28:26.000-05:00", 
         "name": "CloudSTRUCTURE", 
-        "revision": 6, 
-        "shortDescription": "Estimating population structure", 
-    	"tags": [
-       		"Genotype"
-    	], 
+    	"tags": ["Clustering"], 
         "version": "2.3.4"
     }
 ]

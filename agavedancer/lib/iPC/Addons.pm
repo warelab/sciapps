@@ -1,4 +1,4 @@
-package iPC::Addon;
+package iPC::Addons;
 
 use warnings;
 use strict;

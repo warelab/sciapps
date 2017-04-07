@@ -4,7 +4,7 @@ import React from 'react';
 import Reflux from 'reflux';
 import _ from 'lodash';
 import Q from 'q';
-import {Panel, Button} from 'react-bootstrap';
+import {Panel, Button, Alert} from 'react-bootstrap';
 import AppsStore from '../stores/appsStore.js';
 import JobsStore from '../stores/jobsStore.js';
 import BaseInput from './baseInput.js';

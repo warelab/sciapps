@@ -7,10 +7,11 @@ import {Panel} from 'react-bootstrap';
 
 const WorkflowRunner=React.createClass({
 	render: function() {
+		let user=this.props.user;
 		return (
 			<Panel>
 				<WorkflowLoadBox />
-				<WorkflowRunnerForm />
+				<WorkflowRunnerForm user={user} />
 			</Panel>
 		);
 	}
