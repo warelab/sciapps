@@ -6,7 +6,7 @@ import _ from 'lodash';
 import Q from 'q';
 import DsActions from  '../actions/dsActions.js';
 
-axios.defaults.withCredentials = true;
+//axios.defaults.withCredentials = true;
 
 const DsStore=Reflux.createStore({
 	listenables: DsActions,

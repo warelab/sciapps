@@ -155,7 +155,6 @@ options qr{/.*} => sub {
 		'Access-Control-Allow-Methods' => 'GET, POST, OPTIONS',
 		'Access-Control-Allow-Credentials' => 'true',
 	);
-
 };
 
 sub _index {

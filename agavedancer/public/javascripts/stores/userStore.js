@@ -10,7 +10,7 @@ import JobsActions from  '../actions/jobsActions.js';
 import DsActions from  '../actions/dsActions.js';
 import WorkflowActions from  '../actions/workflowActions.js';
 
-axios.defaults.withCredentials = true;
+//axios.defaults.withCredentials = true;
 
 const UserStore=Reflux.createStore({
 	listenables: UserActions,

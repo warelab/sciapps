@@ -8,7 +8,7 @@ import AppsActions from  '../actions/appsActions.js';
 import JobsActions from  '../actions/jobsActions.js';
 import WorkflowActions from  '../actions/workflowActions.js';
 
-axios.defaults.withCredentials = true;
+//axios.defaults.withCredentials = true;
 
 const WorkflowStore=Reflux.createStore({
 	listenables: WorkflowActions,
