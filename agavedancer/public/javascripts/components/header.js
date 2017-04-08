@@ -94,13 +94,13 @@ const Header=React.createClass({
 		];
 		if (user.logged_in) {
 			userGreeting=<NavItem eventKey='greeting'><Glyphicon glyph='user' /> Hi, {user.firstName}!</NavItem>;
-			userMenu=<NavItem eventKey='logout' pullRight onSelect={this.handleLogout}>Logout</NavItem>;
+			userMenu=<NavItem eventKey='logout' pullRight onSelect={this.handleLogout}>Logout <Glyphicon glyph='log-out' /></NavItem>;
 			workflowMenuItem.push(
 				<MenuItem key='workflowDivder' eventKey='workflowDivder' divider />,
 				<MenuItem key='userWorkflows' eventKey='userWorkflows' onSelect={this.showUserWorkflows}><Glyphicon glyph='briefcase' /> My Workflows</MenuItem>
 			);
 		} else {
-			userMenu=(<NavItem eventKey='login' pullRight onSelect={this.handleLogin}><Glyphicon glyph='user' /> Login</NavItem>);
+			userMenu=(<NavItem eventKey='login' pullRight onSelect={this.handleLogin}>Login <Glyphicon glyph='log-in' /></NavItem>);
 		}
 		workflowMenu=(
 			<NavDropdown eventKey='workflows' title={<span><Glyphicon glyph="link" /> Workflows</span>} id="nav-dropdown">
@@ -110,7 +110,7 @@ const Header=React.createClass({
 		return (
 			<Navbar className="navbar">
 				<Nav>
-					<NavItem eventKey='welcome' onSelect={this.showWelcome}><Glyphicon glyph='home' /> SciApps</NavItem>
+					<NavItem eventKey='welcome' onSelect={this.showWelcome}>SciApps <Glyphicon glyph='home' /></NavItem>
 					{workflowMenu}
 					<NavItem eventKey='data' href='http://data.sciapps.org' target='_blank'><Glyphicon glyph='th' /> Data</NavItem>
 					<NavItem eventKey='help' href='http://ask.cyverse.org' target='_blank'><Glyphicon glyph='question-sign' /> Help</NavItem>
