@@ -9,7 +9,7 @@ import UserActions from  '../actions/userActions.js';
 import AppsActions from '../actions/appsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import {Layout, Fixed, Flex} from 'react-layout-pane';
-import {Panel, Well, Button, Glyphicon} from 'react-bootstrap';
+import {Panel, Glyphicon} from 'react-bootstrap';
 import AppsGroup from './appsGroup.js';
 import AppsDetail from './appsDetail.js';
 import AppsSearchBox from './appsSearchBox.js';
