@@ -233,7 +233,7 @@ sub browse_ils {
 	my ($path, $system, $homepath)=@_;
 	my $irodsEnvFile=setting('irodsEnvFile');
 	my $fullPath=$homepath . '/' . $path;
-	my @ils=`export irodsEnvFile=$irodsEnvFile;ils -l '$fullPath'`;
+	my @ils=`export irodsEnvFile=$irodsEnvFile;export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ils -l '$fullPath'`;
 	chomp (@ils);
 	my $dir_list=iPC::Utils::parse_ils(\@ils, $homepath);
 
