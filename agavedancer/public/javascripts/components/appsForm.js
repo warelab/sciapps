@@ -111,7 +111,7 @@ const AppsForm=React.createClass({
 			if (this.state.onSubmit) {
 				submitBtn=(
 					<Alert bsStyle='warning' onDismiss={this.handleSubmitDismiss}>
-						<p>You are going to submit 1 job to a cloud cluster, are you sure you want to launch it?</p>
+						<p>You are going to submit 1 job to a cluster, are you sure?</p>
 						<Button bsStyle='primary' onClick={this.handleSubmit}>Yes</Button>
 						<span> or </span>
 						<Button onClick={this.handleSubmitDismiss}>No</Button>
@@ -123,7 +123,7 @@ const AppsForm=React.createClass({
 				);
 			}
 		} else {
-			let tooltipsubmit = <Tooltip id="tooltisubmit">You need to sign in with your CyVerse credentials to launch a job!</Tooltip>;
+			let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
 			submitBtn=(
 				<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
 					<Button bsStyle='primary' onClick={null}>Submit Job</Button>

@@ -8,7 +8,7 @@ import AppsActions from  '../actions/appsActions.js';
 import JobsActions from  '../actions/jobsActions.js';
 import WorkflowActions from  '../actions/workflowActions.js';
 
-//axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true;
 
 const WorkflowStore=Reflux.createStore({
 	listenables: WorkflowActions,
@@ -79,7 +79,8 @@ const WorkflowStore=Reflux.createStore({
 
 	listWorkflow: function() {
 		let setting=_config.setting;
-		Q(axios.get(setting.host_url + '/workflow', {
+		//Q(axios.get(setting.host_url + '/workflow', {
+		Q(axios.get('/workflow', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))
 		.then(function(res) {
@@ -136,7 +137,8 @@ const WorkflowStore=Reflux.createStore({
 		formData.append('_workflow_desc',  wf.description);
 		formData.append('_workflow_json',  JSON.stringify(wf));
 
-		Q(axios.post(setting.host_url + '/workflow/new', formData, {
+		//Q(axios.post(setting.host_url + '/workflow/new', formData, {
+		Q(axios.post('/workflow/new', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
 		}))
@@ -157,7 +159,8 @@ const WorkflowStore=Reflux.createStore({
 
 	deleteWorkflow: function(wfid) {
 		let setting=_config.setting;
-		Q(axios.get(setting.host_url + '/workflow/' + wfid + '/delete', {
+		//Q(axios.get(setting.host_url + '/workflow/' + wfid + '/delete', {
+		Q(axios.get('/workflow/' + wfid + '/delete', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'}
 		}))
 		.then(function(res) {

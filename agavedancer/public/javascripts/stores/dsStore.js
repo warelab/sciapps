@@ -6,7 +6,7 @@ import _ from 'lodash';
 import Q from 'q';
 import DsActions from  '../actions/dsActions.js';
 
-//axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true;
 
 const DsStore=Reflux.createStore({
 	listenables: DsActions,
@@ -89,7 +89,8 @@ const DsStore=Reflux.createStore({
 		if (cachedPath) {
 			dataStorePromise=Q(cachedPath);
 		} else {
-			dataStorePromise=Q(axios.get(setting.host_url + '/browse/' + typePath, {
+			//dataStorePromise=Q(axios.get(setting.host_url + '/browse/' + typePath, {
+			dataStorePromise=Q(axios.get('/browse/' + typePath, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			}))
 			.then(function(res) {

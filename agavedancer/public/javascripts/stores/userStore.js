@@ -10,7 +10,7 @@ import JobsActions from  '../actions/jobsActions.js';
 import DsActions from  '../actions/dsActions.js';
 import WorkflowActions from  '../actions/workflowActions.js';
 
-//axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true;
 
 const UserStore=Reflux.createStore({
 	listenables: UserActions,
@@ -46,7 +46,8 @@ const UserStore=Reflux.createStore({
 
 	setUser: function() {
 		let setting=_config.setting;
-		Q(axios.get(setting.host_url + '/user', {
+		//Q(axios.get(setting.host_url + '/user', {
+		Q(axios.get('/user', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))
 		.then(function(res) {
@@ -75,7 +76,8 @@ const UserStore=Reflux.createStore({
 		if (formData === undefined) {
 			formData=new FormData();
 		}
-		Q(axios.post(setting.host_url + '/login', formData, {
+		//Q(axios.post(setting.host_url + '/login', formData, {
+		Q(axios.post('/login', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
 		}))

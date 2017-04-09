@@ -1,0 +1,57 @@
+# configuration file for production environment
+port: 80
+
+# only log warning and error messsages
+log: "core"
+
+# log message to a file in logs/
+logger: "console"
+
+# don't consider warnings critical
+warnings: 1
+
+# hide errors 
+show_errors: 1
+
+# cache route resolution for maximum performance
+route_cache: 1
+
+# For debugging
+#log: "core"
+#logger: "console"
+#warnings: 1
+#show_errors: 1
+
+# production config
+agave_config: ".agave"
+host_url: "https://www.sciapps.org"
+archive_system: 'halcott.cshl.edu'
+archive_home: '/agave_data'
+archive_path: 'results'
+input_system: 'halcott.cshl.edu'
+input_home: '/agave_data'
+input_path: 'inputs'
+email: 'noreply@sciapps.org'
+upload_suffix: ".upload"
+wf_step_prefix: 'wf_step_'
+maxRunTime: "96:00:00"
+datastore:
+  __user__: 
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: '__user__/sci_data'
+  __shared__:
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: 'shared'
+  __public__:
+    system: 'data.sciapps.org'
+    home: '/agave_data'
+    path: 'example_data'
+  __system__:
+    system: ''
+    home: ''
+    path: ''
+uncompress_suffix: '.open.tar.gz'
+use_file_server: 1
+irodsEnvFile: '/usr/share/httpd/irodsEnv'
