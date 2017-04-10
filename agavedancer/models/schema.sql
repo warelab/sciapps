@@ -1,10 +1,17 @@
 PRAGMA encoding = "UTF-8";
 
+drop table if exists agave_user;
+create table agave_user (
+	id integer primary key autoincrement,
+	username varchar(40) unique not null,
+	consumerSecret varchar(40),
+	clientname varchar(40)
+);
+
 drop table if exists user;
 create table user (
 	id integer primary key autoincrement,
 	username varchar(40) unique not null,
-	consumerSecret varchar(40),
 	firstName varchar(40),
 	lastName varchar(40),
 	email varchar(40)
