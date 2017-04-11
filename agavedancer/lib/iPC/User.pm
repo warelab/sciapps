@@ -10,7 +10,8 @@ sub new {
 	my ($class, $args) = @_;
 	bless({
 			_username => $args->{username} || $args->{name},
-			_consumerSecret =>	$args->{consumerSecret}
+			_consumerSecret =>	$args->{consumerSecret},
+			_clientname => $args->{clientname},
 		}, $class
 	);
 }
@@ -31,19 +32,27 @@ sub consumerSecret {
 	$self->{_consumerSecret};
 }
 
+sub clientname {
+	my ($self, $clientname)=@_;
+	if ($clientname) {
+		$self->{_clientname}=$clientname;
+	}
+	$self->{_clientname};
+}
+
 sub update {
 	my ($self)=@_;
-	database->quick_update('user', {username => $self->{_username}}, {consumerSecret => $self->{_consumer_secret}});
+	database->quick_update('agave_user', {username => $self->{_username}}, {consumerSecret => $self->{_consumerSecret}, clientname => $self->{_clientname}});
 }
 
 sub save {
 	my ($self)=@_;
-	database->quick_insert('user', {username => $self->{_username}, consumerSecret => $self->{_consumerSecret}});
+	database->quick_insert('agave_user', {username => $self->{_username}, consumerSecret => $self->{_consumerSecret}, clientname => $self->{_clientname}});
 }
 
 sub search {
 	my ($class, $args)=@_;
-	my $user=database->quick_select('user', {username  => $args->{username} || $args->{name}});
+	my $user=database->quick_select('agave_user', {username  => $args->{username} || $args->{name}});
 	$user ? $class->new($user) : undef;
 }
 
