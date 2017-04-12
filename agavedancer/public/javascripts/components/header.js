@@ -22,6 +22,18 @@ const Header=React.createClass({
 		}
 	},
 
+        showHelp: function() {
+                AppsActions.showPage('help');
+                let title="Help";
+                let url="/?page_id=help";
+                if (typeof (history.pushState) != "undefined") {
+                        let obj = { Title: title, Url: url };
+                        history.pushState(obj, obj.Title, obj.Url);
+                } else {
+                        alert("Browser does not support HTML5.");
+                }
+        },
+
 	showWorkflows: function() {
 		AppsActions.showPage('workflows');
 		let title="Scientific Workflows";
@@ -97,23 +109,23 @@ const Header=React.createClass({
 			userMenu=<NavItem eventKey='logout' pullRight onSelect={this.handleLogout}>Logout <Glyphicon glyph='log-out' /></NavItem>;
 			workflowMenuItem.push(
 				<MenuItem key='workflowDivder' eventKey='workflowDivder' divider />,
-				<MenuItem key='userWorkflows' eventKey='userWorkflows' onSelect={this.showUserWorkflows}><Glyphicon glyph='briefcase' /> My Workflows</MenuItem>
+				<MenuItem key='userWorkflows' eventKey='userWorkflows' onSelect={this.showUserWorkflows}>My Workflows</MenuItem>
 			);
 		} else {
 			userMenu=(<NavItem eventKey='login' pullRight onSelect={this.handleLogin}>Login <Glyphicon glyph='log-in' /></NavItem>);
 		}
 		workflowMenu=(
-			<NavDropdown eventKey='workflows' title={<span><Glyphicon glyph="link" /> Workflows</span>} id="nav-dropdown">
+			<NavDropdown eventKey='workflows' title={<span><Glyphicon glyph="link" /> Workflow</span>} id="nav-dropdown">
 				{workflowMenuItem}
 			</NavDropdown>
 		);
 		return (
 			<Navbar className="navbar">
 				<Nav>
-					<NavItem eventKey='welcome' onSelect={this.showWelcome}>SciApps <Glyphicon glyph='home' /></NavItem>
+					<NavItem eventKey='welcome' onSelect={this.showWelcome}><Glyphicon glyph='home' /> Home</NavItem>
 					{workflowMenu}
 					<NavItem eventKey='data' href='http://data.sciapps.org' target='_blank'><Glyphicon glyph='th' /> Data</NavItem>
-					<NavItem eventKey='help' href='http://ask.cyverse.org' target='_blank'><Glyphicon glyph='question-sign' /> Help</NavItem>
+					<NavItem eventKey='help' onSelect={this.showHelp}><Glyphicon glyph='question-sign' /> Help</NavItem>
 					{userGreeting}
 					{userMenu}
 				</Nav>

@@ -20,6 +20,7 @@ import DsDetail from './dsDetail.js';
 import WorkflowDiagram from './workflowDiagram.js';
 import Header from './header.js';
 import UserLoginBox from './userLoginBox.js';
+import Help from './help.js';
 
 const App=React.createClass({
 	mixins: [Reflux.connect(UserStore, 'userStore')],

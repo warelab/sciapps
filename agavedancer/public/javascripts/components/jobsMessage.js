@@ -41,7 +41,7 @@ const JobsMessage=React.createClass({
 		if (numJobs>0) {
 			message=<span>{"Total " + numJobs + " jobs, select 2 or more jobs to "}<Button bsStyle='link' onClick={this.showWorkflowBuilder}>build a workflow</Button></span>;
 		} else {
-			message=<span>{"History is empty. You can start with submitting a new job or loading a "}<Button bsStyle='link' onClick={this.showWorkflows}>public workflow</Button></span>;
+			message=<span>{"History is empty. You can start with a "}<Button bsStyle='link' onClick={this.showWorkflows}>public workflow</Button></span>;
 		}
 		let markup=(
 			<div className="info-message">{message}</div>

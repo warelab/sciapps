@@ -15,6 +15,7 @@ import UserWorkflows from './userWorkflows.js';
 import Workflows from './workflows.js';
 import WorkflowBuilder from './workflowBuilder.js';
 import WorkflowRunner from './workflowRunner.js';
+import Help from './help.js';
 
 const AppsDetail=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(JobsStore, 'jobsStore')],
@@ -60,6 +61,9 @@ const AppsDetail=React.createClass({
 					break;
 				case 'welcome':
 					markup=<Welcome />
+					break;
+				case 'help':
+					markup=<Help />
 					break;
 				default:
 					markup=<div />
