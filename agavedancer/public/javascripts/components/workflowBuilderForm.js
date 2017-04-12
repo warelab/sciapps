@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Reflux from 'reflux';
+import AppsStore from '../stores/appsStore.js';
 import JobsStore from '../stores/jobsStore.js';
 import JobsActions from '../actions/jobsActions.js';
 import WorkflowStore from '../stores/workflowStore.js';
@@ -12,12 +13,11 @@ import {Button, ButtonToolbar, Input} from 'react-bootstrap';
 import utilities from '../libs/utilities.js';
 
 const WorkflowBuilderForm=React.createClass({
-	mixins: [Reflux.connect(JobsStore, 'jobsStore'), Reflux.connect(WorkflowStore, 'workflowStore')],
+	mixins: [Reflux.connect(JobsStore, 'jobsStore'), Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(WorkflowStore, 'workflowStore')],
 
 	getInitialState: function() {
 		return {
-			wid: undefined,
-			setting: _config.setting,
+			wfid: undefined,
 			onSubmit: false,
 			onValidate: false,
 			formData: {}
@@ -26,9 +26,10 @@ const WorkflowBuilderForm=React.createClass({
 
 	componentDidUpdate: function(prevProps, prevState) {
 		let workflowStore=this.state.workflowStore;
-		let wf=this.state.wid ? workflowStore.build[this.state.wid] : undefined;
-		if (this.state.onSubmit && wf && wf.completed) {
-			WorkflowActions.showWorkflow(wf.id);
+		//let wf=this.state.wfid ? workflowStore.build[this.state.wfid] : undefined;
+		let wf=this.state.wfid ? workflowStore.workflowDetailCache[this.state.wfid] : undefined;
+		if (this.state.onSubmit && wf) {
+			//WorkflowActions.showWorkflow(wf.id);
 			WorkflowActions.showWorkflowDiagram();
 			this.setState({ onSubmit: false });
 		}
@@ -37,7 +38,6 @@ const WorkflowBuilderForm=React.createClass({
 	formName: 'workflowBuilderForm',
 
 	handleSubmit: function() {
-		let wid=utilities.uuid();
 		let form=this.refs[this.formName], formData={}, changed=false;;
 		['jobList', 'workflowName', 'workflowDesc'].forEach(function(n) {
 			if (form[n].value !== this.state.formData[n]) {
@@ -47,17 +47,61 @@ const WorkflowBuilderForm=React.createClass({
 		}.bind(this));
 
 		if (changed) {
-			this.setState({onSubmit: true, wid: wid});
-			WorkflowActions.buildWorkflow(wid, formData['workflowName'], formData['workflowDesc']);
+			let wfid=utilities.uuid();
+			this.setState({onSubmit: true, wfid: wfid});
+			let workflow=this.buildWorkflow(wfid, formData['workflowName'], formData['workflowDesc'], this.state.jobsStore, this.state.appsStore);
+			//WorkflowActions.buildWorkflow(wfid, formData['workflowName'], formData['workflowDesc'], this.state.jobsStore, this.state.appsStore);
+			WorkflowActions.setWorkflow(wfid, workflow);
 			this.setState({ formData: formData });
 		} else {
 			WorkflowActions.showWorkflowDiagram();
 		}
 	},
 
+	buildWorkflow: function(wfid, wfName, wfDesc, jobsStore, appsStore) {
+		let setting=_config.setting;
+		let workflow={
+				id: wfid, 
+				name: wfName,
+				description: wfDesc || '',
+				steps: []
+		};
+		let jobs=jobsStore.workflowBuilderJobIndex.map(function(v, i) {
+			return v ? jobsStore.jobs[i] : undefined;
+		}).filter(function(v) {return v !== undefined});
+		let outputs={};
+		jobs.forEach(function(job, index) {
+			let step=this._buildWfStep(job, index, outputs);
+			workflow.steps.push(step);
+			let app=appsStore.appDetailCache[job.appId];
+			app.outputs.forEach(function(output) {
+				let path=job.archivePath + '/' + output.value.default;
+				outputs[path]={step: index, output_name: output.value.default};
+			});
+		}.bind(this));
+		return workflow;
+	},
+
+	_buildWfStep: function(job, index, outputs) {
+		let step={
+			id: index,
+			appId: job.appId,
+			jobId: job.id,
+			inputs: {},
+			parameters: job.parameters
+		};
+		_.forIn(job.inputs, function(iv, ik) {
+			let output=_.find(outputs, function(ov, ok) {
+				return _.endsWith(iv, ok);
+			});
+			step.inputs[ik]=output ? output : iv[0];
+		})
+		return step;
+	},
+
 	handleReset: function() {
 		JobsActions.removeWorkflowBuilderJobIndex();
-		this.setState({wid: undefined});
+		this.setState({wfid: undefined});
 	},
 
 	handleDiagram: function() {

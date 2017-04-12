@@ -91,7 +91,6 @@ use Data::Dumper;
 		my $user = iPC::User->search({username => $u});
 		
 		my $client_name=$user && $user->clientname ? $user->clientname : '_SciApps' . '_' . iPC::Utils::tempname();
-		print STDERR 'CC|' . $client_name . "\n";
 
 		if ($purge || ! $user || ! $user->consumerSecret) {
 			print STDERR '** ', __PACKAGE__, ' purging client ', 

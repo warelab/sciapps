@@ -15,18 +15,18 @@ const JobsItem=React.createClass({
 	},
 
 	showJob: function() {
-		JobsActions.showJob(this.props.data.job_id);
+		JobsActions.showJob(this.props.job.job_id);
 	},
 
 	showJobOutputs: function() {
-		if (! this.state.isOpen) {
-			JobsActions.showJobOutputs(this.props.data.job_id);
-		}
+		//if (! this.state.isOpen) {
+		//	JobsActions.showJobOutputs(this.props.job.job_id);
+		//}
 		this.setState({ isOpen: !this.state.isOpen });
 	},
 
 	resubmitJob: function() {
-		JobsActions.resubmitJob(this.props.data.job_id);
+		JobsActions.resubmitJob(this.props.job.job_id);
 	},
 
 	handleCheck: function() {
@@ -39,28 +39,27 @@ const JobsItem=React.createClass({
 	},
 
 	render: function() {
-		let appId=this.props.data.appId;
+		let app=this.props.app;
+		let job=this.props.job
+		let setting=_config.setting;
+		let appId=job.appId;
+		let jobId=job.job_id;
 		let displayName=(this.props.index + 1) + ': ' + appId;
-		let isSubmitting=undefined === this.props.data.job_id;
-		let setting=this.props.setting;
-		let outputs=this.props.outputs;
-		let jobId=this.props.data.job_id;
-		let outputsItemNodes='Loading ...';
+		let isSubmitting=undefined === jobId;
+		//let outputsItemNodes='Loading ...';
 		let checkedGlyph=this.state.checked ? 'check' : 'unchecked';
 		let tooltipout = (<Tooltip id="tooltipout">Display Outputs</Tooltip>);
 		let tooltipsta = (<Tooltip id="tooltipsta">Job Status</Tooltip>);
 		let tooltipres = (<Tooltip id="tooltipres">Relaunch Job</Tooltip>);
 		let addedornot=this.state.checked ? 'Click to Remove' : 'Add to Workflow';
 		let tooltipadd = (<Tooltip id="tooltipadd">{addedornot}</Tooltip>);
-		if (outputs && outputs.length) {
-			outputsItemNodes=outputs.filter(function(item) {
-				let name='job-for-' + appId.toLowerCase().replace(/\W+/g, '-');
-				return item.name.includes(name) ? false : true;
-			}).map(function(result, index) {
-				//let href=setting.output_url + '/' + result.path;
-				let href=setting.output_url[result.system] + '/' + result.path;
+		let outputsItemNodes='Loading ...';
+		if (app) {
+			outputsItemNodes=app.outputs.map(function(o, i) {
+				let oname=o.value.default;
+				let href=[setting.output_url[job.archiveSystem], job.archivePath, oname].join('/');
 				return (
-					<ListGroupItem key={index}><a href={href} target='_blank'>{result.name}</a></ListGroupItem>
+					<ListGroupItem key={i}><a href={href} target='_blank'>{oname}</a></ListGroupItem>
 				);
 			});
 		}

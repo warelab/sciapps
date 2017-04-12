@@ -411,7 +411,6 @@ ajax '/job/:id' => sub {
 	my $job_id = param("id");
 
 	my $job=retrieveJob($job_id);
-	$job->{job_id}=$job_id;
 	return to_json($job);
 };
 
@@ -419,7 +418,6 @@ get '/job/:id' => sub {
 	my $job_id = param("id");
 
 	my $job=retrieveJob($job_id);
-	$job->{job_id}=$job_id;
 	return to_json($job);
 	if ($job) {
 		return template 'job', {
@@ -438,8 +436,11 @@ sub retrieveJob {
 	if ($row) {
 		if ($row->{status} eq 'FINISHED') {
 			$job=Agave::Client::Object::Job->new(from_json($row->{agave_json}));
-		} elsif($row->{job_id} eq $job_id) {
-			$agave_id=$row->{'agave_id'};
+			$job->{job_id}=$row->{job_id};
+		} elsif ($row->{job_id} eq $job_id) {
+			$agave_id=$row->{agave_id};
+		} elsif ($row->{agave_id} eq $job_id) {
+			$job_id=$row->{job_id};
 		}
 	}
 	unless ($job) {
@@ -458,6 +459,7 @@ sub retrieveJob {
 			};
 			$retry--;
 		} while (!$job && sleep(1) && $retry);
+		$job->{job_id}=$job_id;
 		my $data={job_id => $job_id, agave_id => $agave_id, app_id => $job->{appId}, agave_json => to_json($job), status => $job->{status}};
 		try {
 			database->quick_insert('job', $data);

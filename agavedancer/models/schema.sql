@@ -51,8 +51,8 @@ from workflow join user_workflow on (workflow.workflow_id = user_workflow.workfl
 drop table if exists job;
 create table job (
 	id integer primary key autoincrement,
-	job_id varchar(40) not null,
-	agave_id varchar(40),
+	job_id varchar(40) unique not null,
+	agave_id varchar(40) unique,
 	app_id varchar(40) not null,
 	job_json text,
 	agave_json text,
