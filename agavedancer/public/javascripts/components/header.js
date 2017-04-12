@@ -22,6 +22,18 @@ const Header=React.createClass({
 		}
 	},
 
+        showHelp: function() {
+                AppsActions.showPage('help');
+                let title="Help";
+                let url="/?page_id=help";
+                if (typeof (history.pushState) != "undefined") {
+                        let obj = { Title: title, Url: url };
+                        history.pushState(obj, obj.Title, obj.Url);
+                } else {
+                        alert("Browser does not support HTML5.");
+                }
+        },
+
 	showWorkflows: function() {
 		AppsActions.showPage('workflows');
 		let title="Scientific Workflows";
@@ -113,7 +125,7 @@ const Header=React.createClass({
 					<NavItem eventKey='welcome' onSelect={this.showWelcome}><Glyphicon glyph='home' /> Home</NavItem>
 					{workflowMenu}
 					<NavItem eventKey='data' href='http://data.sciapps.org' target='_blank'><Glyphicon glyph='th' /> Data</NavItem>
-					<NavItem eventKey='help' href='http://ask.cyverse.org' target='_blank'><Glyphicon glyph='question-sign' /> Help</NavItem>
+					<NavItem eventKey='help' onSelect={this.showHelp}><Glyphicon glyph='question-sign' /> Help</NavItem>
 					{userGreeting}
 					{userMenu}
 				</Nav>

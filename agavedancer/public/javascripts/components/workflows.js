@@ -31,26 +31,6 @@ const Workflows=React.createClass({
 					<li><a href="#" onClick={this.showWorkflowRunner}>Association</a></li>
 					<li><a href="#" onClick={this.showWorkflowRunner}>Annotation</a></li>
 				</ul><br />
-				<h5>To build a workflow with Apps listed in the left panel</h5>
-				<ul className="list">
-					<li>Search,  or click on any Category, then App name, to bring up the App form</li>
-						<ul className="list">
-							<li>To build a new App, please follow the <a href="https://github.com/cyverse/cyverse-sdk" target="_blank">App Building Guide</a></li>
-                        			</ul>
-					<li>Fill the form for required inputs (from any sources below) and parameters</li>
-						<ul className="list">
-							<li>Uploading from your computer (&lt; 2GB files)</li>
-							<li>A URL (paste in the URL field)</li>
-							<li>Browse Data Store</li>
-								<ul className="list">
-									<li>CyVerse Data Store (under 'shared' or 'user', after login)</li>
-									<li>SciApps Data Store (under 'public')</li>
-								</ul>
-							<li>Holding and dragging the results file URL from the right panel (History) to the URL field</li>
-						</ul>
-					<li>Submit Job, then job history will show up in the right panel</li>
-					<li>Select at least 2 jobs from the tight panel, then click on Worflows/Build_a_workflow (top menu)</li>
-				</ul><br />
 				<h5>Why building/using SciApps workflow</h5>
 				SciApps workflows are built on top of Agave API to leverage distributed compute and storage systems on the cloud. The backend is designed to provide convenience, increase performance, and ensure reproducibility.
 				<ul className="list">

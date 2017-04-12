@@ -13,7 +13,7 @@ const Welcome=React.createClass({
 					<br /><br />
 					<br />
 					<div>
-						The SciApps platform is supported in part by <a href="http://nsf.gov" target="_blank">National Science Foundation</a> DBI-1265383, and <a href="https://cshl.edu">Cold Spring Harbor Laboratory</a>. 
+						The SciApps platform is supported in part by <a href="http://nsf.gov" target="_blank">National Science Foundation</a> DBI-1265383 (the CyVerse project), and <a href="https://cshl.edu">Cold Spring Harbor Laboratory</a>. 
 					</div>
 					<br /><br />
 					<div id="myimages">
