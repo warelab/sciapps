@@ -1,26 +1,28 @@
 # SciApps
 
-To install, follow steps below (for local install, skip step 7)
+To install, follow steps below (for local install, skip step 8)
 
   1. git clone https://github.com/warelab/sciapps.git
 
-  2. cd sciapps/agavedancer
+  2. git checkout cd6e8991d452d7c3ef40ad681bbe4398cfb2e220
+  
+  3. cd sciapps/agavedancer
 
-  3. npm install
+  4. npm install
 
-  4. grunt
+  5. grunt
 
-  5. sqlite3 database <models/schema.sql
+  6. sqlite3 database <models/schema.sql
 
-  6. chmod 777 . database bin
+  7. chmod 777 . database bin
 
-  7. Restart apache
+  8. Restart apache
     
       sudo /usr/sbin/apachectl configtest or sudo /usr/local/apache2/bin/apachectl configtest    
      
       sudo /usr/sbin/apachectl graceful or sudo /usr/local/apache2/bin/apachectl graceful
       
-  8. Add new app
+  9. Add new app
   
       a. Develop app and test in Discovery Environment
       
@@ -34,7 +36,7 @@ To install, follow steps below (for local install, skip step 7)
   
       f. cd to sciapps/agavedancer/public and type `live-server` to test the apps before pushing to github
       
-  9. Publish to SciApps.org (better to your own branch instead of master)
+  10. Publish to your own branch instead of master
   
       git stash (save local modifications)
       
@@ -58,4 +60,3 @@ To install, follow steps below (for local install, skip step 7)
       
       git push origin master
       
-
