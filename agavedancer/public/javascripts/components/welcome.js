@@ -13,15 +13,17 @@ const Welcome=React.createClass({
 					<br /><br />
 					<br />
 					<div>
-						The SciApps platform is supported in part by <a href="http://nsf.gov" target="_blank">National Science Foundation</a> DBI-1265383 (the CyVerse project), and <a href="https://cshl.edu">Cold Spring Harbor Laboratory</a>. 
+						The SciApps platform is supported in part by National Science Foundation DBI-1265383 (the CyVerse project), IOS-1445025 (the MaizeCode project), and Cold Spring Harbor Laboratory. 
 					</div>
 					<br /><br />
 					<div id="myimages">
                         			<a href="https://cyverse.org" target="_blank"><img className="mylogo" height="60" src="cyverse.gif" hspace="10" align="middle" /></a>
 						&nbsp;&nbsp;&nbsp;&nbsp;
                         			<a href="https://nsf.gov" target="_blank"><img classNmae="mylogo" height="70" src="nsf.gif" hspace="10" align="middle" /></a>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;
+                                                <a href="http://maizecode.org" target="_blank"><img classNmae="mylogo" height="70" src="maizecode.gif"  align="middle" /></a>
                         			&nbsp;&nbsp;&nbsp;&nbsp;
-                                                <a href="https://cshl.edu" target="_blank"><img classNmae="mylogo" height="60" src="cshl.gif" hspace="10" align="middle" /></a>
+                                                <a href="https://www.cshl.edu" target="_blank"><img classNmae="mylogo" height="60" src="cshl.gif" hspace="10" align="middle" /></a>
 					</div>
 				</div>
 			</div>

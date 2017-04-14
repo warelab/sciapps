@@ -31,6 +31,9 @@ const App=React.createClass({
 
 	componentDidMount: function () {
 		let app_id=_config.app_id, wf_id=_config.wf_id, page_id=_config.page_id || 'welcome';
+	        if (this.props.params.page_id) {
+                        page_id = this.props.params.page_id;
+		}
 		if (wf_id) {
 			AppsActions.showPage('workflowRunner');
 			WorkflowActions.showWorkflow(wf_id);
