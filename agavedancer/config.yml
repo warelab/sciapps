@@ -24,6 +24,7 @@ session_expires: '4 hr'
 #session: 'Storable'
 #session: 'cookie'
 #session_cookie_key: '1{(b)a}sdf07234hjf0sdkflj12*&(@*az'
+session_secure: 1
 session_dir: '/tmp/dancer-sessions'
 
 #template: "simple"

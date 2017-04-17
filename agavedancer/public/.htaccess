@@ -1,0 +1,5 @@
+RewriteEngine on
+# Don't rewrite files or directories
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule . index.html [L]

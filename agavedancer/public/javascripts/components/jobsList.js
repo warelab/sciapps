@@ -7,15 +7,24 @@ import AppsStore from '../stores/appsStore.js';
 import JobsStore from '../stores/jobsStore.js';
 import JobsActions from  '../actions/jobsActions.js';
 import JobsItem from './jobsItem.js';
-import {ListGroup} from 'react-bootstrap';
+import {ListGroup, Panel, ButtonGroup, Button} from 'react-bootstrap';
 
 const JobsList=React.createClass({
 	mixins: [Reflux.connect(JobsStore, 'jobsStore'), Reflux.connect(AppsStore, 'appsStore')],
+
+	handleSelectAll: function() {
+		JobsActions.addWorkflowBuilderJobIndex();
+	},
+
+	handleReset: function() {
+		JobsActions.removeWorkflowBuilderJobIndex();
+	},
 
 	render: function() {
 		let jobsStore=this.state.jobsStore;
 		let appsStore=this.state.appsStore;
 		let setting=_config.setting;
+		let markup=<div />;
 		let jobs, jobOutputs, jobsItemNodes;
 		jobs=jobsStore.jobs;
 		//if (this.props.user.logged_in && jobs && jobs.length) {
@@ -33,13 +42,22 @@ const JobsList=React.createClass({
 			}).filter(function(jobsItem) {
 				return jobsItem;
 			});
+			markup=(
+				<div>
+					<Panel>
+						<ButtonGroup>
+							<Button onClick={this.handleSelectAll} >Select all</Button>
+							<Button onClick={this.handleReset}>Reset</Button>
+						</ButtonGroup>
+					</Panel>
+					<ListGroup>
+						{jobsItemNodes}
+					</ListGroup>
+				</div>
+			);
 		}
 
-		return (
-			<ListGroup>
-				{jobsItemNodes}
-			</ListGroup>
-		);
+		return markup;
 	}
 });
 

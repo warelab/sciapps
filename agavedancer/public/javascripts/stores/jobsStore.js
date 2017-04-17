@@ -387,7 +387,13 @@ const JobsStore=Reflux.createStore({
 	},
 
 	addWorkflowBuilderJobIndex: function(index) {
-		this.state.workflowBuilderJobIndex[index]=true;
+		if (index !== undefined) {
+			this.state.workflowBuilderJobIndex[index]=true;
+		} else {
+			this.state.jobs.forEach(function(job, i) {
+				this.state.workflowBuilderJobIndex[i]=true;
+			}.bind(this));
+		}
 		this.complete();
 	},
 

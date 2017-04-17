@@ -3,6 +3,7 @@
 import Reflux from 'reflux';
 
 const DsActions=Reflux.createActions([
+	'refreshDataStore',
 	'showDataStore',
 	'hideDataStore',
 	'setDataStoreItemTarget',
