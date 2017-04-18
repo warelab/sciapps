@@ -99,6 +99,10 @@ const WorkflowBuilderForm=React.createClass({
 		return step;
 	},
 
+	handleSelectAll: function() {
+		JobsActions.addWorkflowBuilderJobIndex();
+	},
+
 	handleReset: function() {
 		JobsActions.removeWorkflowBuilderJobIndex();
 		this.setState({wfid: undefined});
@@ -168,6 +172,12 @@ const WorkflowBuilderForm=React.createClass({
 						disabled={onSubmit || jobList.length === 0}
 						onClick={this.handleReset}>
 						Reset
+					</Button>
+					<Button
+						bsStyle='primary'
+						disabled={onSubmit}
+						onClick={this.handleSelectAll}>
+						Select All
 					</Button>
 				</ButtonToolbar>
 			</form>

@@ -12,14 +12,6 @@ import {ListGroup, Panel, ButtonGroup, Button} from 'react-bootstrap';
 const JobsList=React.createClass({
 	mixins: [Reflux.connect(JobsStore, 'jobsStore'), Reflux.connect(AppsStore, 'appsStore')],
 
-	handleSelectAll: function() {
-		JobsActions.addWorkflowBuilderJobIndex();
-	},
-
-	handleReset: function() {
-		JobsActions.removeWorkflowBuilderJobIndex();
-	},
-
 	render: function() {
 		let jobsStore=this.state.jobsStore;
 		let appsStore=this.state.appsStore;
@@ -43,17 +35,9 @@ const JobsList=React.createClass({
 				return jobsItem;
 			});
 			markup=(
-				<div>
-					<Panel>
-						<ButtonGroup>
-							<Button onClick={this.handleSelectAll} >Select all</Button>
-							<Button onClick={this.handleReset}>Reset</Button>
-						</ButtonGroup>
-					</Panel>
-					<ListGroup>
-						{jobsItemNodes}
-					</ListGroup>
-				</div>
+				<ListGroup>
+					{jobsItemNodes}
+				</ListGroup>
 			);
 		}
 
