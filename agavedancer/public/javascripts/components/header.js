@@ -25,7 +25,7 @@ const Header=React.createClass({
         showHelp: function() {
                 AppsActions.showPage('help');
                 let title="Help";
-                let url="/?page_id=help";
+                let url="/page/help";
                 if (typeof (history.pushState) != "undefined") {
                         let obj = { Title: title, Url: url };
                         history.pushState(obj, obj.Title, obj.Url);
@@ -37,7 +37,7 @@ const Header=React.createClass({
 	showWorkflows: function() {
 		AppsActions.showPage('workflows');
 		let title="Scientific Workflows";
-		let url="/?page_id=workflows";
+		let url="/page/workflows";
 		if (typeof (history.pushState) !== "undefined") {
 			let obj = { Title: title, Url: url };
 			history.pushState(obj, obj.Title, obj.Url);
@@ -49,7 +49,7 @@ const Header=React.createClass({
 	showWorkflowBuilder: function() {
 		AppsActions.showPage('workflowBuilder');
 		let title="Building Scientific Workflows";
-		let url="/?page_id=workflowBuilder";
+		let url="/page/workflowBuilder";
 		if (typeof (history.pushState) !== "undefined") {
 			let obj = { Title: title, Url: url };
 			history.pushState(obj, obj.Title, obj.Url);
@@ -62,7 +62,7 @@ const Header=React.createClass({
 		AppsActions.showPage('workflowRunner');
 		WorkflowActions.showWorkflowLoadBox();
 		let title="Running Scientific Workflows";
-		let url="/?page_id=workflowRunner";
+		let url="/page/workflowRunner";
 		if (typeof (history.pushState) !== "undefined") {
 			let obj = { Title: title, Url: url };
 			history.pushState(obj, obj.Title, obj.Url);
@@ -74,7 +74,7 @@ const Header=React.createClass({
 	showWorkflows: function() {
 		AppsActions.showPage('workflows');
 		let title="Public Workflows";
-		let url="/?page_id=workflows";
+		let url="/page/workflows";
 		if (typeof (history.pushState) !== "undefined") {
 			let obj = { Title: title, Url: url };
 			history.pushState(obj, obj.Title, obj.Url);
