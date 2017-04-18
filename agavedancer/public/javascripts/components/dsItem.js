@@ -13,7 +13,7 @@ const DsItem=React.createClass({
 		let content=event.target.textContent;
 		switch(this.props.data.type) {
 			case 'dir':
-				DsActions.selectDataStoreItem();
+				//DsActions.selectDataStoreItem();
 				DsActions.showDataStore(content);
 				break;
 			case 'file':
@@ -62,7 +62,7 @@ const DsItem=React.createClass({
 					<Glyphicon glyph={checkedGlyph} />
 				</Button>
 				<Glyphicon glyph={typeGlyph} />
-				<Button bsStyle='link' onClick={isFile ? null : this.handleDblClick}>
+				<Button bsStyle='link' onClick={this.handleDblClick}>
 					{isFile ? data.name : data.name + '/'}
 				</Button>
 			</ListGroupItem>

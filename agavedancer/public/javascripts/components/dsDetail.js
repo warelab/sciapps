@@ -23,6 +23,10 @@ const DsDetail=React.createClass({
 		DsActions.showDataStore('..');
 	},
 
+	handleRefresh: function() {
+		DsActions.refreshDataStore();
+	},
+
 	render: function() {
 		let user=this.props.user;
 		let setting=_config.setting;
@@ -39,7 +43,8 @@ const DsDetail=React.createClass({
 			return <Button key={name} onClick={disabled ? null : this.handleChangeSource} disabled={disabled} bsStyle={isActive ? 'primary' : 'default'}>{name}</Button>
 		}.bind(this));
 		let goupButton=<Button key='goup' onClick={dsDetail.is_root ? null : this.handleGoup} >Go up</Button>;
-		let actionButtons=[goupButton];
+		let refreshButton=<Button key='refresh' onClick={this.handleRefresh} >Refresh</Button>;
+		let actionButtons=[goupButton, refreshButton];
 		let path;
 		if (dsDetail.list) {
 			dsFileNodes=_.cloneDeep(dsDetail.list).sort(function (a,b) {

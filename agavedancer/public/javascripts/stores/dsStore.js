@@ -39,6 +39,16 @@ const DsStore=Reflux.createStore({
 		};
 	},
 
+	refreshDataStore: function(showPath) {
+		let path=showPath;
+		if (path === undefined) {
+			path=this.state.dsDetail.path || '';
+		}
+		this.state.dsDetailCache={};
+		this.state.dsDetail={};
+		this.showDataStore(path);
+	},
+
 	showDataStore: function(showPath) {
 		let setting=_config.setting;
 		let path=showPath, type=this.state.type;
