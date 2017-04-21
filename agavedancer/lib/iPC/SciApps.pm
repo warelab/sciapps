@@ -22,7 +22,7 @@ use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/host_url output_url upload_suffix wf_step_prefix datastore archive_home/;
+our @EXPORT_SETTINGS=qw/host_url output_url upload_suffix wf_step_prefix datastore archive_system archive_home archive_path/;
 our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError SystemError/;
 
 foreach my $exception (@EXCEPTIONS) {
@@ -118,7 +118,7 @@ hook on_route_exception => sub {
 	my $e = shift;
 	if (ref($e) eq 'scalar') {
 		raise 'InvalidRequest' => $e;
-	} elsif ($e->does('InvalidCredentials')) {
+	} elsif ($e->can('does') && $e->does('InvalidCredentials')) {
 		halt(to_json({error => $e->message()}));
 	} else {
 		$e->rethrow;
@@ -691,21 +691,24 @@ sub prepareJob {
 		$step->{parameters}{$k}=$job_form{$k};
 	}
 
-	my ($result_folder)=map {my $t=$_; $t=~s/\W+/-/g; lc($t) . "-" . iPC::Utils::tempname()} ($app_id);
-	$archive_path.= "/" . $result_folder;
+	#my ($result_folder)=map {my $t=$_; $t=~s/\W+/-/g; lc($t) . "-" . iPC::Utils::tempname()} ($app_id);
+	#$archive_path.= "/" . $result_folder;
 
-	my $archive_path_abs=$archive_home . "/" . $archive_path;
-	mkdir($archive_path_abs) or print STDERR "Error: can't mkdir $archive_path_abs, $!\n";
-	chmod(0775, $archive_path_abs);
-	open FH, ">", "$archive_path_abs/.htaccess" or error("Error: can't open  ${archive_path_abs}/.htaccess, $!\n") && raise 'SystemError' => 'file system error';
-	print FH "DirectoryIndex ../.index.php?dir=$result_folder\n";
-	close FH;
+	#my $archive_path_abs=$archive_home . "/" . $archive_path;
+	#mkdir($archive_path_abs) or print STDERR "Error: can't mkdir $archive_path_abs, $!\n";
+	#chmod(0775, $archive_path_abs);
+	#open FH, ">", "$archive_path_abs/.htaccess" or error("Error: can't open  ${archive_path_abs}/.htaccess, $!\n") && raise 'SystemError' => 'file system error';
+	#print FH "DirectoryIndex ../.index.php?dir=$result_folder\n";
+	#close FH;
 	
-	my $host_url=setting("host_url");
-	my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archiveSystem=${JOB_ARCHIVE_SYSTEM}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}';
+	#my $host_url=setting("host_url");
+	my $host_url=request->uri_base;
+	#my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archiveSystem=${JOB_ARCHIVE_SYSTEM}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}';
+	my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&message=${JOB_ERROR}';
 	my $notifications=[
 	{
-		event	=> "ARCHIVING_FINISHED",
+		#event	=> "ARCHIVING_FINISHED",
+		event	=> "FINISHED",
 		url		=> $host_url . $noteinfo,
 	},
 	{
@@ -719,9 +722,9 @@ sub prepareJob {
 	];
 
 	$job_form{_email}=$form->{_email} || undef;
-	$job_form{archive}=1;
-	$job_form{archiveSystem}=$archive_system;
-	$job_form{archivePath}=$archive_path;
+	$job_form{archive}=0;
+	#$job_form{archiveSystem}=$archive_system;
+	#$job_form{archivePath}=$archive_path;
 	$job_form{notifications}=$notifications;
 
 	my $job_id=iPC::Utils::uuid();
@@ -816,12 +819,28 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	}
 	if ($params->{status} eq 'FINISHED') {
 		submitNextJob($params);
-		uncompress_result($params->{archivePath});
+		archiveJob($params->{id});
+		#uncompress_result($params->{archivePath});
 	} elsif ($params->{status} eq 'FAILED') {
 		#resubmitJob($params->{id});
 	}
 	return;
 };
+
+sub archiveJob {
+	my $job_id = shift;
+	my $archive_system=setting("archive_system");
+	my $archive_home=setting("archive_home");
+	my $archive_path=setting("archive_path");
+
+	my $job=retrieveJob($job_id);
+	my $apif = getAgaveClient();
+	my $io = $apif->io;
+	my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $job->executionSystem, $job->outputPath);
+	my $target=sprintf("/system/%s/%s", $archive_system, $archive_path);
+	my $res=$io->import_file($target, {urlToIngest => $source});
+	print STDERR "AA|$source|$target\n";
+}
 
 sub updateJob {
 	my ($params)=@_;

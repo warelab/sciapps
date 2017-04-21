@@ -121,7 +121,7 @@ const JobsStore=Reflux.createStore({
 
 		let funcs=jobIds.map(function(jobId) {
 			return function() {
-				return this.setJob(jobId).then(function(job) {
+				return this._setJob(jobId).then(function(job) {
 					if (job && ! currentJobIds[job.job_id]) {
 						this.state.jobs[submitNumber++]=this.state.jobDetailCache[job.job_id];
 					}
@@ -140,6 +140,11 @@ const JobsStore=Reflux.createStore({
 	},
 
 	setJob: function(jobId) {
+		this._setJob(jobId);
+		this.complete();
+	},
+
+	_setJob: function(jobId) {
 		let jobDetail=this.state.jobDetailCache[jobId];
 		let setting=_config.setting;
 		let jobPromise;
@@ -154,6 +159,12 @@ const JobsStore=Reflux.createStore({
 				if (res.data.error) {
 					console.log(res.data.error);
 					return;
+				}
+				let i=_.findIndex(this.state.jobs, function(job) {
+					return job.id === res.data.id;
+				});
+				if (i >= 0) {
+					this.state.jobs[i]=res.data;
 				}
 				this.state.jobDetailCache[res.data.job_id]=res.data;
 				return res.data;
@@ -202,7 +213,7 @@ const JobsStore=Reflux.createStore({
 			this.state.showJob=true;
 			this.complete();
 		}
-		let jobPromise=this.setJob(jobId);
+		let jobPromise=this._setJob(jobId);
 		jobPromise.then(function(jobDetail) {
 			this.state.showJobId=jobId;
 			this.complete();
@@ -250,7 +261,7 @@ const JobsStore=Reflux.createStore({
 		if (jobOutputs && jobOutputs.length) {
 			jobOutputsPromise=Q(jobOutputs);
 		} else {
-			let jobPromise=this.setJob(jobId);
+			let jobPromise=this._setJob(jobId);
 			jobOutputsPromise=jobPromise.then(function(jobDetail) {
 				let path='__system__/' + jobDetail.archiveSystem + '/' + jobDetail.archivePath;
 				//return Q(axios.get(setting.host_url + '/browse/' + path, {
@@ -369,7 +380,7 @@ const JobsStore=Reflux.createStore({
 
 	resubmitJob: function(jobId) {
 		this.state.resubmit=true;
-		let jobPromise=this.setJob(jobId);
+		let jobPromise=this._setJob(jobId);
 		jobPromise.then(function(jobDetail) {
 			this.state.jobDetail=jobDetail;
 			AppsActions.showAppByJob(this.state);

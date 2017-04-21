@@ -19,9 +19,10 @@ const JobsItem=React.createClass({
 	},
 
 	showJobOutputs: function() {
-		//if (! this.state.isOpen) {
-		//	JobsActions.showJobOutputs(this.props.job.job_id);
-		//}
+		if (! this.state.isOpen) {
+			//JobsActions.showJobOutputs(this.props.job.job_id);
+			JobsActions.setJob(this.props.job.job_id);
+		}
 		this.setState({ isOpen: !this.state.isOpen });
 	},
 
@@ -54,10 +55,11 @@ const JobsItem=React.createClass({
 		let addedornot=this.state.checked ? 'Click to Remove' : 'Add to Workflow';
 		let tooltipadd = (<Tooltip id="tooltipadd">{addedornot}</Tooltip>);
 		let outputsItemNodes='Loading ...';
-		if (app) {
+		if (app && job.outputPath) {
 			outputsItemNodes=app.outputs.map(function(o, i) {
 				let oname=o.value.default;
-				let href=[setting.output_url[job.archiveSystem], job.archivePath, oname].join('/');
+				let archivePath=job.outputPath.replace(job.owner, setting.archive_path);
+				let href=[setting.output_url[setting.archive_system], archivePath, oname].join('/');
 				return (
 					<ListGroupItem key={i}><a href={href} target='_blank'>{oname}</a></ListGroupItem>
 				);
