@@ -43,7 +43,6 @@ const WorkflowRunnerForm=React.createClass({
 		let setting=_config.setting;
 		let required=_.keys(this.state.required);
 		let form=this.refs[this.formName];
-		let formdata={};
 		return utilities.validateForm(form, required, setting.upload_suffix);
 	},
 
@@ -123,7 +122,12 @@ const WorkflowRunnerForm=React.createClass({
 				help: 'Optional Email for notification'
 			};
 			let runDetail=_.cloneDeep(workflowDetail);
-			runDetail.id=wid;
+			_.assign(runDetail, {
+				id: wid,
+				name: '',
+				description: ''
+			});
+
 			runDetail.steps.forEach(function(step) {
 				step.jobId=undefined;
 			});

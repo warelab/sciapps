@@ -35,6 +35,10 @@ const WorkflowBuilderForm=React.createClass({
 		}
 	},
 
+	componentWillUnmount: function() {
+		this.setState({formData: {}});
+	},
+
 	formName: 'workflowBuilderForm',
 
 	handleSubmit: function() {
@@ -67,7 +71,7 @@ const WorkflowBuilderForm=React.createClass({
 				steps: []
 		};
 		let jobs=jobsStore.workflowBuilderJobIndex.map(function(v, i) {
-			return v ? jobsStore.jobs[i] : undefined;
+			return v ? jobsStore.jobDetailCache[jobsStore.jobs[i].job_id] : undefined;
 		}).filter(function(v) {return v !== undefined});
 		let outputs={};
 		jobs.forEach(function(job, index) {
