@@ -19,9 +19,10 @@ const JobsItem=React.createClass({
 	},
 
 	showJobOutputs: function() {
-		//if (! this.state.isOpen) {
-		//	JobsActions.showJobOutputs(this.props.job.job_id);
-		//}
+		if (! this.state.isOpen) {
+			//JobsActions.showJobOutputs(this.props.job.job_id);
+			JobsActions.setJob(this.props.job.job_id);
+		}
 		this.setState({ isOpen: !this.state.isOpen });
 	},
 
@@ -54,7 +55,7 @@ const JobsItem=React.createClass({
 		let addedornot=this.state.checked ? 'Click to Remove' : 'Add to Workflow';
 		let tooltipadd = (<Tooltip id="tooltipadd">{addedornot}</Tooltip>);
 		let outputsItemNodes='Loading ...';
-		if (app) {
+		if (app && job.archiveSystem) {
 			outputsItemNodes=app.outputs.map(function(o, i) {
 				let oname=o.value.default;
 				let href=[setting.output_url[job.archiveSystem], job.archivePath, oname].join('/');
