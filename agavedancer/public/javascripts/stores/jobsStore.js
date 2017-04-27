@@ -68,7 +68,8 @@ const JobsStore=Reflux.createStore({
 			wf.steps.map(function(step, i) {
 				let index=submitNumber + i;
 				let job=res.data.jobs[i];
-				this.state.jobs[index]=job;
+				this.state.jobs[index].job_id=job.job_id;
+				this.state.jobDetailCache[job.job_id]=job;
 				this.state.jobStatus[job.job_id]=job.status;
 				jobs[i]=job.job_id;
 			}.bind(this));
@@ -102,7 +103,8 @@ const JobsStore=Reflux.createStore({
 				return;
 			}
 			let job=res.data;
-			this.state.jobs[submitNumber]=job;
+			this.state.jobs[submitNumber].job_id=job.job_id;
+			this.state.jobDetailCache[job.job_id]=job;
 			this.state.jobStatus[job.job_id]=job.status;
 			this.complete();
 		}.bind(this))
@@ -114,16 +116,12 @@ const JobsStore=Reflux.createStore({
 
 	setJobs: function(jobIds) {
 		let submitNumber=this.state.jobs.length;
-		let currentJobIds={};
-		this.state.jobs.forEach(function(job) {
-			currentJobIds[job.job_id]=true;
-		});
 
 		let funcs=jobIds.map(function(jobId) {
 			return function() {
 				return this._setJob(jobId).then(function(job) {
-					if (job && ! currentJobIds[job.job_id]) {
-						this.state.jobs[submitNumber++]=this.state.jobDetailCache[job.job_id];
+					if (job && ! _.find(this.state.jobs, 'job_id', job.job_id)) {
+						this.state.jobs[submitNumber++]=_.pick(this.state.jobDetailCache[job.job_id], ['job_id', 'appId']);
 					}
 					return job;
 				}.bind(this));
@@ -397,10 +395,14 @@ const JobsStore=Reflux.createStore({
 	addWorkflowBuilderJobIndex: function(index) {
 		if (index !== undefined) {
 			this.state.workflowBuilderJobIndex[index]=true;
+			this.setJob(this.state.jobs[index].job_id);
 		} else {
+			let jobIds=[];
 			this.state.jobs.forEach(function(job, i) {
 				this.state.workflowBuilderJobIndex[i]=true;
+				jobIds.push(this.state.jobs[i].job_id);
 			}.bind(this));
+			this.setJobs(jobIds);
 		}
 		this.complete();
 	},
