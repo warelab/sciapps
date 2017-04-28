@@ -155,7 +155,7 @@ const WorkflowDiagram=React.createClass({
 	handleDownload: function() {
 		let workflowStore=this.state.workflowStore;
 		let wf=workflowStore.workflowDetail;
-		utilities.download(wfObj.name + '.json', 'application/json;charset=utf-8', JSON.stringify(wf));
+		utilities.download(wf.name + '.json', 'application/json;charset=utf-8', JSON.stringify(wf));
 	},
 
 	handleSave: function() {
