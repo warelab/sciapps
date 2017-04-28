@@ -244,7 +244,7 @@ const WorkflowDiagram=React.createClass({
 			if (workflowDetail && _.find(worflowStore.workflows, {workflow_id: workflowDetail.id})) {
 				saveBtnTxt='Saved';
 			}
-			let saveBtn=user.logged_in ? <Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved'}>{saveBtnTxt}</Button> : undefined;
+			let saveBtn=user.logged_in ? <Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved' || workflowDetail.name.length === 0}>{saveBtnTxt}</Button> : undefined;
 			markup=(
 				<Modal dialogClassName={nodeClass} show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
 					<Modal.Header closeButton>

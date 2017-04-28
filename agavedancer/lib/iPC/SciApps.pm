@@ -435,7 +435,7 @@ sub retrieveJob {
 
 	my $row = database->quick_select('job', {job_id => $job_id}) || database->quick_select('job', {agave_id => $job_id});
 	if ($row) {
-		if ($row->{status} eq 'FINISHED', || $row->{status} eq 'FAILED') {
+		if ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED') {
 			$job=Agave::Client::Object::Job->new(from_json($row->{agave_json}));
 			$job->{job_id}=$row->{job_id};
 		} elsif ($row->{job_id} eq $job_id) {
@@ -547,8 +547,9 @@ ajax '/workflowJob/new' => sub {
 		my ($app) = $apps->find_by_id($app_id);
 		my ($job_id, $job_form)=prepareJob($app, $form, $step, \@step_form, \@jobs);
 		my ($job, $err)=submitJob($apif, $app, $job_id, $job_form);
+		$job||={appId => $app_id, job_id => $job_id, archiveSystem => $job_form->{archiveSystem}, archivePath => $job_form->{archivePath}, status => 'PENDING'};
 		if ($job_id) {
-			push @jobs, {appId => $app_id, job_id => $job_id, status => 'PENDING'};
+			push @jobs, $job;
 			push @step_form, $job_form;
 		}
 	}
@@ -570,10 +571,7 @@ ajax '/job/new/:id' => sub {
 	my ($job_id, $job_form)=prepareJob($app, $form);
 	my ($job, $err)=submitJob($apif, $app, $job_id, $job_form);
 	if ($job_id && $job && $job->{id}) {
-		my $jobRef=retrieveJob($job_id);
-		$jobRef->{job_id}=$job_id;
-		database->quick_update('job', {job_id => $job_id}, {agave_json => to_json($jobRef)});
-		return to_json($jobRef);
+		return to_json($job);
 	}
 };
 
@@ -705,7 +703,6 @@ sub prepareJob {
 	#print FH "DirectoryIndex ../.index.php?dir=$result_folder\n";
 	#close FH;
 	
-	#my $host_url=setting("host_url");
 	my $host_url=request->uri_base;
 	#my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archiveSystem=${JOB_ARCHIVE_SYSTEM}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}';
 	my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&message=${JOB_ERROR}';
@@ -769,7 +766,8 @@ sub submitJob {
 	if ($st) {
 		if ($st->{status} eq 'success') {
 			my $job = $st->{data};
-			database->quick_update('job', {job_id => $job_id}, {agave_id => $job->{id}, status => 'PENDING'});
+			database->quick_update('job', {job_id => $job_id}, {agave_id => $job->{id}, agave_json => to_json($job), status => 'PENDING'});
+			$job->{job_id}=$job_id;
 			return ($job);
 		} else {
 			error('Error: ', $st->{message});
@@ -792,9 +790,10 @@ sub resubmitJob {
 
 any ['get', 'post'] => '/notification/:id' => sub {
 	my $params=params;
-	my $job=retrieveJob($params->{id});
+	my $job=database->quick_select('job', {agave_id => $params->{id}});
+	$job->{status}=$params->{status};
 	updateJob($job);
-	if ($params->{status} eq 'FINISHED') {
+	if ($params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED') {
 		#next if $params->{message}=~/Attempt [12] to submit job/;
 		my $job_form=from_json($job->{job_json});
 
@@ -810,6 +809,8 @@ any ['get', 'post'] => '/notification/:id' => sub {
 			};
 			email $mail;
 		}
+	}
+	if ($params->{status} eq 'FINISHED') {
 		submitNextJob($job);
 		archiveJob($job);
 		#uncompress_result($params->{archivePath});
@@ -820,35 +821,36 @@ any ['get', 'post'] => '/notification/:id' => sub {
 };
 
 sub archiveJob {
-	my $job = shift;
+	my ($job)=@_;
 	my $archive_system=setting("archive_system");
 	my $archive_home=setting("archive_home");
 	my $archive_path=setting("archive_path");
 
 	my $apif = getAgaveClient();
 	my $io = $apif->io;
-	my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $job->executionSystem, $job->outputPath);
+	my $jobObj=from_json($job->{agave_json});
+	my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->executionSystem, $jobObj->outputPath);
 	my $target=sprintf("/system/%s/%s", $archive_system, $archive_path);
 	my $res=$io->import_file($target, {urlToIngest => $source});
 }
 
 sub updateJob {
 	my ($job)=@_;
-	my $data={
-		status => $job->{status}, 
-		agave_json => to_json($job)
+	my $data={ status => $job->{status} };
+	if ($job->{status} eq 'FINISHED' || $job->{status} eq 'FAILED') {
+		$job->{agave_json}=$data->{agave_json}=to_json(retrieveJob($job->{job_id}));
 	};
-	database->quick_update('job', {agave_id => $job->{id}}, $data);
+	database->quick_update('job', {job_id => $job->{job_id}}, $data);
 }
 
 sub submitNextJob {
-	my ($params)=@_;
+	my ($job)=@_;
 
 	my $apif = getAgaveClient();
 
 	my $apps = $apif->apps;
 
-	my $prev=database->quick_select('job', {agave_id => $params->{id}});
+	my $prev=database->quick_select('job', {job_id => $job->{job_id}});
 	my @next=database->quick_select('nextstep', {prev => $prev->{job_id}, status => 0});
 	if (scalar @next) {
 		database->quick_update('nextstep', {prev => $prev->{job_id}}, {status => 1});
@@ -856,11 +858,11 @@ sub submitNextJob {
 
 	foreach my $next (@next) {
 		next if database->quick_count('nextstep', {next => $next->{next}, status => 0});
-		my $job=database->quick_select('job', {job_id => $next->{next}});
-		my $job_form=from_json($job->{job_json});
-		my ($app) = $apps->find_by_id($job->{app_id});
+		my $next_job=database->quick_select('job', {job_id => $next->{next}});
+		my $job_form=from_json($next_job->{job_json});
+		my ($app) = $apps->find_by_id($next_job->{app_id});
 	
-		my ($res, $err)=submitJob($apif, $app, $job->{job_id}, $job_form);
+		my ($res, $err)=submitJob($apif, $app, $next_job->{job_id}, $job_form);
 	}
 }
 

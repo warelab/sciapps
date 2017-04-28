@@ -43,7 +43,6 @@ const WorkflowRunnerForm=React.createClass({
 		let setting=_config.setting;
 		let required=_.keys(this.state.required);
 		let form=this.refs[this.formName];
-		let formdata={};
 		return utilities.validateForm(form, required, setting.upload_suffix);
 	},
 
@@ -123,7 +122,12 @@ const WorkflowRunnerForm=React.createClass({
 				help: 'Optional Email for notification'
 			};
 			let runDetail=_.cloneDeep(workflowDetail);
-			runDetail.id=wid;
+			_.assign(runDetail, {
+				id: wid,
+				name: '',
+				description: ''
+			});
+
 			runDetail.steps.forEach(function(step) {
 				step.jobId=undefined;
 			});
@@ -152,14 +156,14 @@ const WorkflowRunnerForm=React.createClass({
 					);
 				} else {
 					submitBtn=(
-						<Button bsStyle='primary' onClick={this.handleSubmitPrepare}>Submit Job</Button>
+						<Button bsStyle='primary' onClick={this.handleSubmitPrepare}>Submit Workflow Jobs</Button>
 					);
 				}
 			} else {
 				let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
 				submitBtn=(
 					<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
-						<Button bsStyle='primary' onClick={null}>Submit Job</Button>
+						<Button bsStyle='primary' onClick={null}>Submit Workflow Jobs</Button>
 					</OverlayTrigger>
 				);
 			}
