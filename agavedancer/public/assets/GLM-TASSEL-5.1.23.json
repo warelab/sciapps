@@ -1,335 +1,363 @@
 {
-    "_links": {
-        "executionSystem": {
-            "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
-        }, 
-        "metadata": {
-            "href": "https://agave.iplantc.org/meta/v2/data/?q={\"associationIds\":\"6679232145649561115-e0bd34dffff8de6-0001-005\"}"
-        }, 
-        "owner": {
-            "href": "https://agave.iplantc.org/profiles/v2/lwang"
-        }, 
-        "permissions": {
-            "href": "https://agave.iplantc.org/apps/v2/GLM-TASSEL-5.1.23/pems"
-        }, 
-        "self": {
-            "href": "https://agave.iplantc.org/apps/v2/GLM-TASSEL-5.1.23"
-        }, 
-        "storageSystem": {
-            "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
-        }
-    }, 
-    "available": true, 
-    "checkpointable": false, 
-    "defaultMaxRunTime": null, 
-    "defaultMemoryPerNode": 1, 
-    "defaultNodeCount": 1, 
-    "defaultProcessorsPerNode": 1, 
-    "defaultQueue": "debug", 
-    "deploymentPath": "/lwang/applications/tassel/glm", 
-    "deploymentSystem": "data.iplantcollaborative.org", 
-    "executionSystem": "cshl-compute-10", 
-    "executionType": "HPC", 
-    "helpURI": "http://www.maizegenetics.net", 
-    "icon": null, 
-    "id": "GLM-TASSEL-5.1.23", 
-    "inputs": [
-        {
-            "details": {
-                "argument": null, 
-                "description": "marker file", 
-                "label": "Select marker file", 
-                "repeatArgument": false, 
-                "showArgument": false
-            }, 
-            "id": "hmarker", 
-            "semantics": {
-                "fileTypes": [
-                    "raw-0"
-                ], 
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
-                "ontology": [
-                    "xs:string"
-                ]
-            }, 
-            "value": {
-                "default": "", 
-                "enquote": false, 
-                "order": 0, 
-                "required": true, 
-                "validator": null, 
-                "visible": true
-            }
-        }, 
-        {
-            "details": {
-                "argument": null, 
-                "description": "trait file", 
-                "label": "Select trait file", 
-                "repeatArgument": false, 
-                "showArgument": false
-            }, 
-            "id": "rtrait", 
-            "semantics": {
-                "fileTypes": [
-                    "raw-0"
-                ], 
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
-                "ontology": [
-                    "xs:string"
-                ]
-            }, 
-            "value": {
-                "default": "", 
-                "enquote": false, 
-                "order": 1, 
-                "required": true, 
-                "validator": null, 
-                "visible": true
-            }
-        }, 
-        {
-            "details": {
-                "argument": null, 
-                "description": "population structure file", 
-                "label": "Select population structure file", 
-                "repeatArgument": false, 
-                "showArgument": false
-            }, 
-            "id": "qstructure", 
-            "semantics": {
-                "fileTypes": [
-                    "raw-0"
-                ], 
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
-                "ontology": [
-                    "xs:string"
-                ]
-            }, 
-            "value": {
-                "default": "", 
-                "enquote": false, 
-                "order": 2, 
-                "required": false, 
-                "validator": null, 
-                "visible": true
-            }
-        }, 
-        {
-            "details": {
-                "argument": null, 
-                "description": "map file", 
-                "label": "Select map file (if genotype in Plink or Flapjack format)", 
-                "repeatArgument": false, 
-                "showArgument": false
-            }, 
-            "id": "mapfile", 
-            "semantics": {
-                "fileTypes": [
-                    "raw-0"
-                ], 
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
-                "ontology": [
-                    "xs:string"
-                ]
-            }, 
-            "value": {
-                "default": "", 
-                "enquote": false, 
-                "order": 3, 
-                "required": false, 
-                "validator": null, 
-                "visible": true
-            }
-        }
-    ], 
-    "isPublic": false, 
-    "label": "GLM", 
-    "lastModified": "2015-10-03T19:41:23.000-05:00", 
-    "longDescription": "General Linear Model analysis using TASSEL", 
-    "modules": [], 
-    "name": "GLM-TASSEL", 
-    "ontology": [], 
-    "outputs": [
-        {
-            "details": {
-                "description": "Genotype effect file", 
-                "label": "alleleFile"
-            }, 
-            "id": "alleleFile", 
-            "semantics": {
-                "fileTypes": [
-                    "raw-0"
-                ], 
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
-                "ontology": [
-                    "xs:string"
-                ]
-            }, 
-            "value": {
-                "default": "GLM_allele.txt", 
-                "order": 0, 
-                "validator": null
-            }
-        }, 
-        {
-            "details": {
-                "description": "Statistics file", 
-                "label": "siteFile"
-            }, 
-            "id": "siteFile", 
-            "semantics": {
-                "fileTypes": [
-                    "raw-0"
-                ], 
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
-                "ontology": [
-                    "xs:string"
-                ]
-            }, 
-            "value": {
-                "default": "GLM_stat.txt", 
-                "order": 0, 
-                "validator": null
-            }
-        }
-    ], 
-    "parallelism": "SERIAL", 
-    "parameters": [
-        {
-            "details": {
-                "argument": null, 
-                "description": null, 
-                "label": "Select format of marker data", 
-                "repeatArgument": false, 
-                "showArgument": false
-            }, 
-            "id": "markerformat", 
-            "semantics": {
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
-                "ontology": [
-                    "xs:string"
-                ]
-            }, 
-            "value": {
-                "default": "Hapmap", 
-                "enquote": false, 
-                "enum_values": [
-                    {
-                        "Hapmap": "Hapmap"
-                    }, 
-                    {
-                        "HDF5": "HDF5"
-                    }, 
-                    {
-                        "VCF": "VCF"
-                    }, 
-                    {
-                        "Plink": "Plink"
-                    }, 
-                    {
-                        "Flapjack": "Flapjack"
-                    }
-                ], 
-                "order": 0, 
-                "required": true, 
-                "type": "enumeration", 
-                "visible": true
-            }
-        }, 
-        {
-            "details": {
-                "argument": null, 
-                "description": "Minimal Allele Frequency for filtering", 
-                "label": "Enter minimal allele frequency for filtering", 
-                "repeatArgument": false, 
-                "showArgument": false
-            }, 
-            "id": "filter", 
-            "semantics": {
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
-                "ontology": [
-                    "xs:float"
-                ]
-            }, 
-            "value": {
-                "default": 0.050000000000000003, 
-                "enquote": false, 
-                "order": 1, 
-                "required": true, 
-                "type": "number", 
-                "validator": null, 
-                "visible": true
-            }
-        }, 
-        {
-            "details": {
-                "argument": null, 
-                "description": "Maximal P value reported", 
-                "label": "Enter maximal P value reported", 
-                "repeatArgument": false, 
-                "showArgument": false
-            }, 
-            "id": "maxp", 
-            "semantics": {
-                "maxCardinality": 1, 
-                "minCardinality": 1, 
-                "ontology": [
-                    "xs:float"
-                ]
-            }, 
-            "value": {
-                "default": 1, 
-                "enquote": false, 
-                "order": 2, 
-                "required": true, 
-                "type": "number", 
-                "validator": null, 
-                "visible": true
-            }
-        }, 
-        {
-            "details": {
-                "argument": null, 
-                "description": "Number of permutations", 
-                "label": "Enter number of permutations", 
-                "repeatArgument": false, 
-                "showArgument": false
-            }, 
-            "id": "glmPermutations", 
-            "semantics": {
-                "maxCardinality": 1, 
-                "minCardinality": 0, 
-                "ontology": [
-                    "xs:integer"
-                ]
-            }, 
-            "value": {
-                "default": 0, 
-                "enquote": false, 
-                "order": 3, 
-                "required": false, 
-                "type": "number", 
-                "validator": null, 
-                "visible": true
-            }
-        }
-    ], 
-    "revision": 2, 
-    "shortDescription": "General Linear Model analysis", 
-    "tags": [
-        "GWAS"
-    ], 
-    "templatePath": "glm_wrapper.sh", 
-    "testPath": "glm_test_wrapper.sh", 
-    "uuid": "6679232145649561115-e0bd34dffff8de6-0001-005", 
-    "version": "5.1.23"
+  "id": "GLM-TASSEL-5.1.23",
+  "name": "GLM-TASSEL",
+  "icon": null,
+  "uuid": "750058728813957606-242ac118-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": "debug",
+  "version": "5.1.23",
+  "revision": 5,
+  "isPublic": false,
+  "helpURI": "http://www.maizegenetics.net",
+  "label": "GLM",
+  "owner": "lwang",
+  "shortDescription": "General Linear Model analysis",
+  "longDescription": "General Linear Model analysis using TASSEL",
+  "tags": [
+    "GWAS"
+  ],
+  "ontology": [
+    "http://edamontology.org/topic_3517"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "cshl-compute-10",
+  "deploymentPath": "/lwang/applications/tassel/glm",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "glm_wrapper.sh",
+  "testPath": "glm_test_wrapper.sh",
+  "checkpointable": false,
+  "lastModified": "2017-04-25T18:12:32.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "hmarker",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select marker file",
+        "description": "marker file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "rtrait",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select trait file",
+        "description": "trait file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "qstructure",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 2,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select population structure file",
+        "description": "population structure file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "mapfile",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 3,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select map file (if genotype in Plink or Flapjack format)",
+        "description": "map file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "markerformat",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "Hapmap",
+        "enum_values": [
+          {
+            "Hapmap": "Hapmap"
+          },
+          {
+            "HDF5": "HDF5"
+          },
+          {
+            "VCF": "VCF"
+          },
+          {
+            "Plink": "Plink"
+          },
+          {
+            "Flapjack": "Flapjack"
+          }
+        ]
+      },
+      "details": {
+        "label": "Select format of marker data",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "filter",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 1,
+        "enquote": false,
+        "default": 0.05,
+        "validator": null
+      },
+      "details": {
+        "label": "Enter minimal allele frequency for filtering",
+        "description": "Minimal Allele Frequency for filtering",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:float"
+        ]
+      }
+    },
+    {
+      "id": "maxp",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 2,
+        "enquote": false,
+        "default": 1,
+        "validator": null
+      },
+      "details": {
+        "label": "Enter maximal P value reported",
+        "description": "Maximal P value reported",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:float"
+        ]
+      }
+    },
+    {
+      "id": "glmPermutations",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 3,
+        "enquote": false,
+        "default": 0,
+        "validator": null
+      },
+      "details": {
+        "label": "Enter number of permutations",
+        "description": "Number of permutations",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "alleleFile",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "glm_allele.txt"
+      },
+      "details": {
+        "label": "alleleFile",
+        "description": "Genotype effect file"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "siteFile",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "glm_stat.txt"
+      },
+      "details": {
+        "label": "siteFile",
+        "description": "Statistics file"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "manp",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "manhattan.plot"
+      },
+      "details": {
+        "label": "Manhattan plot",
+        "description": "File for Manhattan plot"
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/GLM-TASSEL-5.1.23"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/GLM-TASSEL-5.1.23/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%22750058728813957606-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/lwang"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/GLM-TASSEL-5.1.23/pems"
+    }
+  }
 }
