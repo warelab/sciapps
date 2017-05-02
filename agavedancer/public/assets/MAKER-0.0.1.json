@@ -297,8 +297,8 @@
       "details": {
         "label": "Maker annotations",
         "description": "MAKER derived GFF3 file (gzipped)",
-        "argument": "maker_gff=./",
-        "showArgument": true,
+        "argument": null,
+        "showArgument": false,
         "repeatArgument": false
       }, 
       "semantics": {
