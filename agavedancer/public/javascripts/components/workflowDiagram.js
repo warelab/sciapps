@@ -88,7 +88,12 @@ const WorkflowDiagram=React.createClass({
 		let that=this;
 		let setting=_config.setting;
 		let jobs=jobsStore.workflow.jobs;
-		let jobStatus=jobsStore.jobStatus;
+		let jobStatus={};
+		if (jobs) {
+			jobs.forEach(function(job_id) {
+				jobStatus[job_id]=jobsStore.jobDetailCache[job_id].status;
+			});
+		}
 		let def;
 		let fileNode={};
 		let diagramDefStmts=['graph LR'];
@@ -178,7 +183,13 @@ const WorkflowDiagram=React.createClass({
 		let workflow=jobsStore.workflow;
 		let activeNode=this.state.activeNode;
 		let fileId=jobsStore.fileId;
-		let jobStatus=jobsStore.jobStatus;
+		let jobs=workflow.jobs;
+		let jobStatus={};
+		if (jobs) {
+			jobs.forEach(function(job_id) {
+				jobStatus[job_id]=jobsStore.jobDetailCache[job_id].status;
+			});
+		}
 		let markup=<div />;
 		let body=<div />;
 		let info=<div />;
@@ -219,8 +230,8 @@ const WorkflowDiagram=React.createClass({
 			}
 			let workflowDiagramDef=this.buildWorkflowDiagramDef(this.state.workflowStore, this.state.appsStore, this.state.jobsStore, workflowDirection);
 			body=<Mermaid diagramDef={workflowDiagramDef}/>;
-			if (typeof workflow.jobs === 'object') {
-				let unfinished=_.find(workflow.jobs, function(job) {
+			if (typeof jobs === 'object') {
+				let unfinished=_.find(jobs, function(job) {
 					return jobStatus[job] !== 'FINISHED';
 				});
 				if (unfinished) {

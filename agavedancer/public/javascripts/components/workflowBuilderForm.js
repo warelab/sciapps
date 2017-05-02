@@ -20,6 +20,7 @@ const WorkflowBuilderForm=React.createClass({
 			wfid: undefined,
 			onSubmit: false,
 			onValidate: false,
+			required: ['jobList', 'workflowName'],
 			formData: {}
 		}
 	},
@@ -43,22 +44,26 @@ const WorkflowBuilderForm=React.createClass({
 
 	handleSubmit: function() {
 		let form=this.refs[this.formName], formData={}, changed=false;;
+		let required=this.state.required;
 		['jobList', 'workflowName', 'workflowDesc'].forEach(function(n) {
 			if (form[n].value !== this.state.formData[n]) {
 				changed=true;
 			}
 			formData[n]=form[n].value;
 		}.bind(this));
-
+		let validated=utilities.validateForm(form, required);
 		if (changed) {
-			let wfid=utilities.uuid();
-			this.setState({onSubmit: true, wfid: wfid});
-			let workflow=this.buildWorkflow(wfid, formData['workflowName'], formData['workflowDesc'], this.state.jobsStore, this.state.appsStore);
-			//WorkflowActions.buildWorkflow(wfid, formData['workflowName'], formData['workflowDesc'], this.state.jobsStore, this.state.appsStore);
-			WorkflowActions.setWorkflow(wfid, workflow);
+			if (validated) {
+				let wfid=utilities.uuid();
+				this.setState({onSubmit: true, wfid: wfid});
+				let workflow=this.buildWorkflow(wfid, formData['workflowName'], formData['workflowDesc'], this.state.jobsStore, this.state.appsStore);
+				WorkflowActions.setWorkflow(wfid, workflow);
+			} 
 			this.setState({ formData: formData });
 		} else {
-			WorkflowActions.showWorkflowDiagram();
+			if (validated) {
+				WorkflowActions.showWorkflowDiagram();
+			}
 		}
 	},
 
@@ -131,9 +136,6 @@ const WorkflowBuilderForm=React.createClass({
 			 jobCount++;
 			}
 		});
-		if (jobList === undefined) {
-			jobList='None';
-		}
 		let jobListInput={
 			name: 'jobList',
 			label: '*Selected Jobs (at least 2)',
@@ -147,23 +149,25 @@ const WorkflowBuilderForm=React.createClass({
 			name: 'workflowName',
 			label: '*Workflow Name',
 			required: true,
-			value: 'my_workflow',
+			placeholder: 'Enter workflow name',
+			value: this.state.formData['workflowName'] !== undefined ? this.state.formData['workflowName'] : 'my_workflow',
 			type: 'text'
 		};
 		let descInput={
 			name: 'workflowDesc',
 			label: 'Workflow Description',
 			required: false,
-			value: '',
+			placeholder: 'Enter workflow description',
+			value: this.state.formData['workflowDesc'] !== undefined ? this.state.formData['workflowDesc'] : '',
 			type: 'textarea',
 			rows: 3
 		};
 
 		let markup=(
 			<form ref={this.formName} >
-				<BaseInput ref={'jobListInput'} data={jobListInput} onValidate={true} />
-				<BaseInput ref={'nameInput'} data={nameInput} onValidate={true} />
-				<BaseInput ref={'descInput'} data={descInput} />
+				<BaseInput data={jobListInput} onValidate={true} />
+				<BaseInput data={nameInput} onValidate={true} />
+				<BaseInput data={descInput} />
 				<ButtonToolbar>
 					<Button
 						bsStyle='primary'

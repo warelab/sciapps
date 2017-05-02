@@ -396,8 +396,19 @@ sub checkJobStatus {
 
 sub checkWorkflowJobStatus {
 	my ($wfid)=@_;
-	my @jobs=database->quick_select('job', {workflow_id => $wfid}, {columns => [qw/job_id status/]});
-	return \@jobs;
+	my @jobs=database->quick_select('job', {workflow_id => $wfid});
+	my @result;
+	foreach my $job (@jobs) {
+		my $jobObj={};
+		if (my $json=$job->{agave_json}) {
+			$jobObj=from_json($json);
+		}
+		$jobObj->{job_id}=$job->{job_id};
+		$jobObj->{status}=$job->{status};
+		push @result, $jobObj;
+	}
+	
+	return \@result;
 }
 
 ajax qr{/file/(.*)} => sub {
@@ -520,6 +531,23 @@ ajax '/workflow/:id/delete' => sub {
 		$status='error';
 	};
 	$result or $status='error';
+	to_json({status => $status});
+};
+
+ajax '/workflow/:id/update' => sub {
+	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
+	my $username=$user->{username};
+	my $wfid=param('id');
+	my $wfname=param('_workflow_name');
+	my $wfdesc=param('_workflow_desc');
+	my $status='success';
+	my $data={name => $wfname, desc => $wfdesc};
+	try {
+		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or raise 'InvalidRequest' => 'Invalid Workflow';
+		database->quick_update('workflow', {workflow_id => $wfid}, $data);
+	} catch {
+		$status='error';
+	};
 	to_json({status => $status});
 };
 

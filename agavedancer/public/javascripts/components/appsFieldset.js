@@ -4,7 +4,6 @@ import React from 'react';
 import Reflux from 'reflux';
 import _ from 'lodash';
 import {Panel, Button} from 'react-bootstrap';
-import BaseInput from './baseInput.js';
 import AppsParam from './appsParam.js';
 import AppsInput from './appsInput.js';
 import utilities from '../libs/utilities.js';

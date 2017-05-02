@@ -5,8 +5,6 @@ import Reflux from 'reflux';
 import _ from 'lodash';
 import Q from 'q';
 import {Panel, Button, Alert, Tooltip, OverlayTrigger} from 'react-bootstrap';
-import AppsStore from '../stores/appsStore.js';
-import JobsStore from '../stores/jobsStore.js';
 import BaseInput from './baseInput.js';
 import AppsParam from './appsParam.js';
 import AppsInput from './appsInput.js';
@@ -14,21 +12,11 @@ import JobsActions from '../actions/jobsActions.js';
 import utilities from '../libs/utilities.js';
 
 const AppsForm=React.createClass({
-	mixins: [Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(JobsStore, 'jobsStore')],
-
 	getInitialState: function() {
 		return { onSubmit: false, onValidate: false, required: {} };
 	},
 
 	formName: 'agaveWebAppForm',
-
-	validateForm: function() {
-		let setting=_config.setting;
-		let required=_.keys(this.state.required);
-		let form=this.refs[this.formName];
-		let formdata={};
-		return utilities.validateForm(form, required, setting.upload_suffix);
-	},
 
 	componentWillReceiveProps: function(nextProps) {
 		this.setState({
@@ -38,10 +26,32 @@ const AppsForm=React.createClass({
 	},
 
 	handleSubmit: function() {
+		let setting=_config.setting;
+		let required=[];
+		let appDetail=this.props.appDetail;
+		if (appDetail && undefined !== appDetail.name) {
+			if (appDetail.inputs && appDetail.inputs.length) {
+				appDetail.inputs.forEach(function(input) {
+					if (input.value.required) {
+						required.push(input.id);
+					}
+				});
+			}
+			if (appDetail.parameters &&  appDetail.parameters.length) {
+				appDetail.parameters.forEach(function(param) {
+					if (param.value.required) {
+						required.push(param.id);
+					}
+				});
+			}
+		}
+		let form=this.refs[this.formName];
+		let validated=utilities.validateForm(form, required, setting.upload_suffix);
+
 		//this.setState({onSubmit: true, onValidate: true});
-		if(this.validateForm()) {
+		if(validated) {
 			let formData=new FormData(this.refs[this.formName]);
-			JobsActions.submitJob(this.props.appId, formData);
+			JobsActions.submitJob(this.props.appDetail.id, formData);
 			this.setState({onValidate: false});
 		}
 		Q.delay(1000).then(function() {
@@ -62,11 +72,10 @@ const AppsForm=React.createClass({
 
 	render: function() {
 		let user=this.props.user;
-		let appDetail=this.state.appsStore.appDetailCache[this.props.appId];
-		let jobDetail=this.state.jobsStore.jobDetailCache[this.props.jobId];
+		let appDetail=this.props.appDetail;
+		let jobDetail=this.props.jobDetail;
 		let resubmit=this.props.resubmit;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
-		let required=this.state.required={};
 		let useResubmit=resubmit && appDetail.id === jobDetail.appId; 
 		let app_inputs=[], app_params=[], header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
 
@@ -74,9 +83,6 @@ const AppsForm=React.createClass({
 			if (appDetail.inputs && appDetail.inputs.length) {
 				let sortedInputs=_.sortBy(appDetail.inputs, utilities.getValueOrder);
 				app_inputs=sortedInputs.map(function(input) {
-					if (input.value.required) {
-						required[input.id]=1;
-					}
 					let resubmitValue;
 					if (useResubmit) {
 						resubmitValue=jobDetail.inputs[input.id];
@@ -87,9 +93,6 @@ const AppsForm=React.createClass({
 			if (appDetail.parameters &&  appDetail.parameters.length) {
 				let sortedParams=_.sortBy(appDetail.parameters, utilities.getValueOrder);
 				app_params=sortedParams.map(function(param) {
-					if (param.value.required) {
-						required[param.id]=1;
-					}
 					let resubmitValue;
 					if (useResubmit) {
 						resubmitValue=jobDetail.parameters[param.id];

@@ -57,8 +57,10 @@ const WorkflowStore=Reflux.createStore({
 	},
 
 	showWorkflowDiagram: function() {
-		this.state.showWorkflowDiagram=true;
-		this.complete();
+		if (this.state.workflowDetail !== undefined) {
+			this.state.showWorkflowDiagram=true;
+			this.complete();
+		}
 	},
 
 	hideWorkflowDiagram: function() {
@@ -127,6 +129,30 @@ const WorkflowStore=Reflux.createStore({
 			console.log(error);
 		});
 		return workflowPromise;
+	},
+
+	updateWorkflow: function(wf) {
+		let formData=new FormData();
+		formData.append('_workflow_name',  wf.name);
+		formData.append('_workflow_desc',  wf.description);
+		Q(axios.post('/workflow/' + wf.id + '/update', formData, {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+			transformRequest: function(data) { return data; }
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				console.log(res.data.error);
+				return;
+			} else if (res.data.status === 'success') {
+				let currWf=_.find(this.state.workflows, 'workflow_id', wf.id);
+				_.assign(currWf, wf);
+				this.complete();
+			}
+		}.bind(this))
+		.catch(function(error) {
+				console.log(error);
+		})
+		.done();
 	},
 
 	saveWorkflow: function(wf) {
