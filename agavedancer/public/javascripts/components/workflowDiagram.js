@@ -207,10 +207,10 @@ const WorkflowDiagram=React.createClass({
 				} else {
 					switch (jobCount) {
 						case 7:
-							nodeClass="threeNodes";
+							nodeClass="fiveNodes";
 							break;
 						case 8:
-							nodeClass="fourNodes";
+							nodeClass="fiveNodes";
 							break;
 						case 9:
 							nodeClass="fiveNodes";
