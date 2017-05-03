@@ -33,7 +33,6 @@ const JobsStore=Reflux.createStore({
 			jobs: [],
 			workflowBuilderJobIndex: [],
 			jobDetail: {},
-			jobStatus: {},
 			jobOutputs: {},
 			jobDetailCache: {},
 			wid: {},
@@ -70,7 +69,6 @@ const JobsStore=Reflux.createStore({
 				let job=res.data.jobs[i];
 				this.state.jobs[index].job_id=job.job_id;
 				this.state.jobDetailCache[job.job_id]=job;
-				this.state.jobStatus[job.job_id]=job.status;
 				jobs[i]=job.job_id;
 			}.bind(this));
 			this.state.workflow={
@@ -105,7 +103,6 @@ const JobsStore=Reflux.createStore({
 			let job=res.data;
 			this.state.jobs[submitNumber].job_id=job.job_id;
 			this.state.jobDetailCache[job.job_id]=job;
-			this.state.jobStatus[job.job_id]=job.status;
 			this.complete();
 		}.bind(this))
 		.catch(function(error) {
@@ -338,32 +335,9 @@ const JobsStore=Reflux.createStore({
 		}))
 		.then(function(res) {
 			_.forEach(res.data, function(v) {
-				this.state.jobStatus[v.job_id]=v.status;
+				this.state.jobDetailCache[v.job_id]=v;
 			}.bind(this));
-			console.log(this.state.jobStatus);
-			this.complete();
-			return res.data;
-		}.bind(this))
-		.catch(function(error) {
-			console.log(error);
-		});
-		return jobStatusPromise;
-	},
-
-	checkJobStatus: function(jobIds) {
-		let setting=_config.setting;
-		let query=jobIds.map(function(jobId) {
-			return('id=' + jobId); 
-		}).join('&');
-		//let jobStatusPromise=Q(axios.get(setting.host_url + '/job/status/?' + query, {
-		let jobStatusPromise=Q(axios.get('/job/status/?' + query, {
-			headers: {'X-Requested-With': 'XMLHttpRequest'},
-		}))
-		.then(function(res) {
-			_.forEach(res.data, function(v) {
-				this.state.jobStatus[v.job_id]=v.status;
-			}.bind(this));
-			console.log(this.state.jobStatus);
+			//console.log(this.state.jobStatus);
 			this.complete();
 			return res.data;
 		}.bind(this))

@@ -2,21 +2,15 @@
 
 import React from 'react';
 import Reflux from 'reflux';
-import AppsStore from '../stores/appsStore.js';
-import JobsStore from '../stores/jobsStore.js';
 import {Panel, Table} from 'react-bootstrap';
 
 const AppsInfo=React.createClass({
-	mixins: [Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(JobsStore, 'jobsStore')],
-
 	render: function() {
-		let appDetail=this.state.appsStore.appDetailCache[this.props.appId];
-		let app_info, jobDetail;
+		let appDetail=this.props.appDetail;
+		let jobDetail=this.props.jobDetail;
+		let app_info;
 		let header=appDetail.name + '(' + appDetail.version + '): ' + appDetail.longDescription + ' <a href="' + appDetail.helpURI + '" target="_blank">Source</a>'; 
 		if (appDetail && undefined !== appDetail.name) {
-			if (this.props.jobId !== undefined) {
-				jobDetail==this.state.JobsStore.jobDetailCache[this.props.jobId];
-			}
 			let inputsDetail=appDetail.inputs.map(function (inputItem) {
 				let inputKey='app_info_' + inputItem.id;
 				let jobInputValue=jobDetail ? <td>jobDetail.inputs[inputItem.id]</td> : undefined;

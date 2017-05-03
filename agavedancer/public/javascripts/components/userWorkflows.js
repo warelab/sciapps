@@ -7,9 +7,14 @@ import {Panel, Table, Button, Glyphicon} from 'react-bootstrap';
 import WorkflowStore from '../stores/workflowStore.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import AppsActions from '../actions/appsActions.js';
+import BaseInput from './baseInput.js';
 
 const UserWorkflows=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore')],
+
+	getInitialState: function() {
+		return { onEdit: {} };
+	},
 
 	handleLoad: function(e) {
 		let wfid=e.target.value;
@@ -24,14 +29,49 @@ const UserWorkflows=React.createClass({
 		WorkflowActions.deleteWorkflow(wfid);
 	},
 
+	handleEdit: function(e) {
+		let wfid=e.target.value;
+		this.state.onEdit[wfid]=true;
+		this.setState({});
+	},
+
+	handleSave: function(e) {
+		let wfid=e.target.value;
+		let formData={id: wfid, name: this.refs[wfid + '_nameInput'].state.value, description: this.refs[wfid + '_descInput'].state.value};
+		WorkflowActions.updateWorkflow(formData);
+		delete this.state.onEdit[wfid];
+		this.setState({});
+	},
+
 	render: function() {
 		let workflowStore=this.state.workflowStore;
 		let workflowItems;
 		if (workflowStore.workflows.length) {
 			workflowItems=workflowStore.workflows.map(function(workflow, i) {
-				let loadButton=<Button bsStyle='link' onClick={this.handleLoad} value={workflow.workflow_id}>Load,</Button>;
+				let onEdit=this.state.onEdit[workflow.workflow_id];
+				let loadButton=<Button bsStyle='link' onClick={this.handleLoad} value={workflow.workflow_id}>Load</Button>;
 				let delButton=<Button bsStyle='link' onClick={this.handleDel} value={workflow.workflow_id}>Delete</Button>;
-				return <tr key={workflow.workflow_id}><td>{workflow.name}</td><td>{workflow.desc}</td><td>{loadButton}{delButton}</td></tr>;
+				let editButton=<Button bsStyle='link' onClick={this.handleEdit} value={workflow.workflow_id}>Edit</Button>;
+				let saveButton=<Button bsStyle='link' onClick={this.handleSave} value={workflow.workflow_id}>Save</Button>;
+				let item;
+				if (onEdit) {
+					let nameInput={
+						name: 'name',
+						required: true,
+						value: workflow.name,
+						type: 'text'
+					};
+					let descInput={
+						name: 'description',
+						required: false,
+						value: workflow.description,
+						type: 'text'
+					};
+					item=<tr key={workflow.workflow_id}><td><BaseInput data={nameInput} onValidate={true} ref={workflow.workflow_id + '_nameInput'}/></td><td><BaseInput data={descInput} ref={workflow.workflow_id + '_descInput'}/></td><td>{loadButton}{delButton}{saveButton}</td></tr>;
+				} else {
+					item=<tr key={workflow.workflow_id}><td>{workflow.name}</td><td>{workflow.description}</td><td>{loadButton}{delButton}{editButton}</td></tr>;
+				}
+				return item;
 			}.bind(this));
 		}
 		return (

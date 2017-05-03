@@ -57,8 +57,10 @@ const WorkflowStore=Reflux.createStore({
 	},
 
 	showWorkflowDiagram: function() {
-		this.state.showWorkflowDiagram=true;
-		this.complete();
+		if (this.state.workflowDetail !== undefined) {
+			this.state.showWorkflowDiagram=true;
+			this.complete();
+		}
 	},
 
 	hideWorkflowDiagram: function() {
@@ -129,6 +131,30 @@ const WorkflowStore=Reflux.createStore({
 		return workflowPromise;
 	},
 
+	updateWorkflow: function(wf) {
+		let formData=new FormData();
+		formData.append('_workflow_name',  wf.name);
+		formData.append('_workflow_desc',  wf.description);
+		Q(axios.post('/workflow/' + wf.id + '/update', formData, {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+			transformRequest: function(data) { return data; }
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				console.log(res.data.error);
+				return;
+			} else if (res.data.status === 'success') {
+				let currWf=_.find(this.state.workflows, 'workflow_id', wf.id);
+				_.assign(currWf, wf);
+				this.complete();
+			}
+		}.bind(this))
+		.catch(function(error) {
+				console.log(error);
+		})
+		.done();
+	},
+
 	saveWorkflow: function(wf) {
 		let setting=_config.setting;
 		let formData=new FormData();
@@ -157,10 +183,10 @@ const WorkflowStore=Reflux.createStore({
 		.done();
 	},
 
-	deleteWorkflow: function(wfid) {
+	deleteWorkflow: function(wfId) {
 		let setting=_config.setting;
-		//Q(axios.get(setting.host_url + '/workflow/' + wfid + '/delete', {
-		Q(axios.get('/workflow/' + wfid + '/delete', {
+		//Q(axios.get(setting.host_url + '/workflow/' + wfId + '/delete', {
+		Q(axios.get('/workflow/' + wfId + '/delete', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'}
 		}))
 		.then(function(res) {
@@ -168,7 +194,7 @@ const WorkflowStore=Reflux.createStore({
 				console.log(res.data.error);
 				return;
 			} else if (res.data.status === 'success') {
-				_.remove(this.state.workflows, {workflow_id: wfid});
+				_.remove(this.state.workflows, {workflow_id: wfId});
 				this.complete();
 			}
 		}.bind(this))
@@ -178,9 +204,12 @@ const WorkflowStore=Reflux.createStore({
 		.done();
 	},
 
-	workflowJobsReady: function(wfid, jobIds, jobDetailCache, jobOutputs) {
-		this._workflowJobsReady(wfid, jobIds, jobDetailCache, jobOutputs);
-		JobsActions.resetWorkflowJobs(wfid);
+	workflowJobsReady: function(wfId, jobIds, jobDetailCache, jobOutputs) {
+		this._workflowJobsReady(wfId, jobIds, jobDetailCache, jobOutputs);
+		JobsActions.resetWorkflowJobs(wfId);
+	},
+
+	updateWorkflowJob: function(wfId) {
 	},
 
 	setWorkflowSteps: function(wfDetail) {

@@ -33,8 +33,8 @@ const BaseInput=React.createClass({
 	},
 
 	render: function() {
-		let data=this.props.data, isSelect=this.props.isSelect, options=this.props.options, markup;
-		data=_.assign(data, {
+		let data=_.cloneDeep(this.props.data), isSelect=this.props.isSelect, options=_.cloneDeep(this.props.options), markup;
+		_.assign(data, {
 			value: this.state.value,
 			bsStyle: this.props.onValidate ? this.validateState() : undefined,
 			onChange: this.handleChange
