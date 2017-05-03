@@ -183,10 +183,10 @@ const WorkflowStore=Reflux.createStore({
 		.done();
 	},
 
-	deleteWorkflow: function(wfid) {
+	deleteWorkflow: function(wfId) {
 		let setting=_config.setting;
-		//Q(axios.get(setting.host_url + '/workflow/' + wfid + '/delete', {
-		Q(axios.get('/workflow/' + wfid + '/delete', {
+		//Q(axios.get(setting.host_url + '/workflow/' + wfId + '/delete', {
+		Q(axios.get('/workflow/' + wfId + '/delete', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'}
 		}))
 		.then(function(res) {
@@ -194,7 +194,7 @@ const WorkflowStore=Reflux.createStore({
 				console.log(res.data.error);
 				return;
 			} else if (res.data.status === 'success') {
-				_.remove(this.state.workflows, {workflow_id: wfid});
+				_.remove(this.state.workflows, {workflow_id: wfId});
 				this.complete();
 			}
 		}.bind(this))
@@ -204,9 +204,12 @@ const WorkflowStore=Reflux.createStore({
 		.done();
 	},
 
-	workflowJobsReady: function(wfid, jobIds, jobDetailCache, jobOutputs) {
-		this._workflowJobsReady(wfid, jobIds, jobDetailCache, jobOutputs);
-		JobsActions.resetWorkflowJobs(wfid);
+	workflowJobsReady: function(wfId, jobIds, jobDetailCache, jobOutputs) {
+		this._workflowJobsReady(wfId, jobIds, jobDetailCache, jobOutputs);
+		JobsActions.resetWorkflowJobs(wfId);
+	},
+
+	updateWorkflowJob: function(wfId) {
 	},
 
 	setWorkflowSteps: function(wfDetail) {

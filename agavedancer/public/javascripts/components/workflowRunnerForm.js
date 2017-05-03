@@ -124,8 +124,8 @@ const WorkflowRunnerForm=React.createClass({
 			let runDetail=_.cloneDeep(workflowDetail);
 			_.assign(runDetail, {
 				id: wid,
-				name: '',
-				description: ''
+				name: 'workflow-' + wid + '-' + workflowDetail.name,
+				description: workflowDetail.description || ''
 			});
 
 			runDetail.steps.forEach(function(step) {

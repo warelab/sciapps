@@ -230,8 +230,9 @@ const WorkflowDiagram=React.createClass({
 			}
 			let workflowDiagramDef=this.buildWorkflowDiagramDef(this.state.workflowStore, this.state.appsStore, this.state.jobsStore, workflowDirection);
 			body=<Mermaid diagramDef={workflowDiagramDef}/>;
+			let unfinished;
 			if (typeof jobs === 'object') {
-				let unfinished=_.find(jobs, function(job) {
+				unfinished=_.find(jobs, function(job) {
 					return jobStatus[job] !== 'FINISHED';
 				});
 				if (unfinished) {
@@ -256,7 +257,7 @@ const WorkflowDiagram=React.createClass({
 			if (workflowDetail && _.find(worflowStore.workflows, {workflow_id: workflowDetail.id})) {
 				saveBtnTxt='Saved';
 			}
-			let saveBtn=user.logged_in ? <Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved' || workflowDetail.name.length === 0}>{saveBtnTxt}</Button> : undefined;
+			let saveBtn=user.logged_in ? <Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved' || unfinished !== undefined}>{saveBtnTxt}</Button> : undefined;
 			markup=(
 				<Modal dialogClassName={nodeClass} show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
 					<Modal.Header closeButton>

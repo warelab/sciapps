@@ -62,14 +62,14 @@ const UserWorkflows=React.createClass({
 						type: 'text'
 					};
 					let descInput={
-						name: 'desc',
+						name: 'description',
 						required: false,
-						value: workflow.desc,
+						value: workflow.description,
 						type: 'text'
 					};
 					item=<tr key={workflow.workflow_id}><td><BaseInput data={nameInput} onValidate={true} ref={workflow.workflow_id + '_nameInput'}/></td><td><BaseInput data={descInput} ref={workflow.workflow_id + '_descInput'}/></td><td>{loadButton}{delButton}{saveButton}</td></tr>;
 				} else {
-					item=<tr key={workflow.workflow_id}><td>{workflow.name}</td><td>{workflow.desc}</td><td>{loadButton}{delButton}{editButton}</td></tr>;
+					item=<tr key={workflow.workflow_id}><td>{workflow.name}</td><td>{workflow.description}</td><td>{loadButton}{delButton}{editButton}</td></tr>;
 				}
 				return item;
 			}.bind(this));

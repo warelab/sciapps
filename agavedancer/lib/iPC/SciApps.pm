@@ -405,6 +405,7 @@ sub checkWorkflowJobStatus {
 		}
 		$jobObj->{job_id}=$job->{job_id};
 		$jobObj->{status}=$job->{status};
+		$jobObj->{appId}=$job->{app_id};
 		push @result, $jobObj;
 	}
 	
@@ -506,7 +507,7 @@ ajax '/workflow/new' => sub {
 	my $wfjson=param('_workflow_json');
 	my $wfname=param('_workflow_name');
 	my $wfdesc=param('_workflow_desc');
-	my $data={workflow_id => $wfid, json => $wfjson, name => $wfname, desc => $wfdesc};
+	my $data={workflow_id => $wfid, json => $wfjson, name => $wfname, description => $wfdesc};
 	try {
 		database->quick_insert('workflow', $data);
 	};
@@ -541,7 +542,7 @@ ajax '/workflow/:id/update' => sub {
 	my $wfname=param('_workflow_name');
 	my $wfdesc=param('_workflow_desc');
 	my $status='success';
-	my $data={name => $wfname, desc => $wfdesc};
+	my $data={name => $wfname, description => $wfdesc};
 	try {
 		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or raise 'InvalidRequest' => 'Invalid Workflow';
 		database->quick_update('workflow', {workflow_id => $wfid}, $data);
@@ -569,7 +570,7 @@ ajax '/workflowJob/new' => sub {
 	my $wfjson=$form->{_workflow_json};
 	my $wf=from_json($wfjson);
 	my $wfname=$wf->{name};
-	my $wfdesc=$wf->{desc};
+	my $wfdesc=$wf->{workflowJob};
 	foreach my $step (@{$wf->{'steps'}}) {
 		my $app_id=$step->{appId};
 		my ($app) = $apps->find_by_id($app_id);
@@ -582,7 +583,7 @@ ajax '/workflowJob/new' => sub {
 		}
 	}
 	try {
-		database->quick_insert('workflow', {workflow_id => $wfid, json => $wfjson, name => $wfname, desc => $wfdesc});
+		database->quick_insert('workflow', {workflow_id => $wfid, json => $wfjson, name => $wfname, workflowJob => $wfdesc});
 	};
 	return to_json({workflow_id => $wfid, jobs => \@jobs, workflow => $wf});
 };
