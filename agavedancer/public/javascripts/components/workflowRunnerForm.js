@@ -156,14 +156,14 @@ const WorkflowRunnerForm=React.createClass({
 					);
 				} else {
 					submitBtn=(
-						<Button bsStyle='primary' onClick={this.handleSubmitPrepare}>Submit Workflow Jobs</Button>
+						<Button bsStyle='primary' onClick={this.handleSubmitPrepare}>Submit Jobs</Button>
 					);
 				}
 			} else {
 				let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
 				submitBtn=(
 					<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
-						<Button bsStyle='primary' onClick={null}>Submit Workflow Jobs</Button>
+						<Button bsStyle='primary' onClick={null}>Submit Jobs</Button>
 					</OverlayTrigger>
 				);
 			}
@@ -176,7 +176,7 @@ const WorkflowRunnerForm=React.createClass({
 					<BaseInput data={workflowId} />
 					{submitBtn}
 					<span> or </span>
-					<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Show Workflow Diagram</Button>
+					<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Show Diagram</Button>
 				</form>
 				</div>
 			);

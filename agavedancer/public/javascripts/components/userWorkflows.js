@@ -29,7 +29,7 @@ const UserWorkflows=React.createClass({
 		let workflowItems;
 		if (workflowStore.workflows.length) {
 			workflowItems=workflowStore.workflows.map(function(workflow, i) {
-				let loadButton=<Button bsStyle='link' onClick={this.handleLoad} value={workflow.workflow_id}>Load</Button>;
+				let loadButton=<Button bsStyle='link' onClick={this.handleLoad} value={workflow.workflow_id}>Load,</Button>;
 				let delButton=<Button bsStyle='link' onClick={this.handleDel} value={workflow.workflow_id}>Delete</Button>;
 				return <tr key={workflow.workflow_id}><td>{workflow.name}</td><td>{workflow.desc}</td><td>{loadButton}{delButton}</td></tr>;
 			}.bind(this));
@@ -38,7 +38,7 @@ const UserWorkflows=React.createClass({
 			<Panel header="My Workflows">
 				<Table striped condensed hover>
 					<thead>
-						<tr><th>Name</th><th>Description</th><th>Actions</th></tr>
+						<tr><th class='col-xs-2 col-md-2'>Name</th><th class='col-xs-9 col-md-9'>Description</th><th class='col-xs-1 col-md-1'> </th></tr>
 					</thead>
 					<tbody>
 						{workflowItems}
