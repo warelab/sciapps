@@ -3,7 +3,7 @@
 import React from 'react';
 import Reflux from 'reflux';
 import _ from 'lodash';
-import {Panel, Table, Button} from 'react-bootstrap';
+import {Panel, Table, Button, Glyphicon} from 'react-bootstrap';
 import WorkflowStore from '../stores/workflowStore.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import AppsActions from '../actions/appsActions.js';
