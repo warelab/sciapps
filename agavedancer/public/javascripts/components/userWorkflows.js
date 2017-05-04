@@ -78,7 +78,7 @@ const UserWorkflows=React.createClass({
 			<Panel header="My Workflows">
 				<Table striped condensed hover>
 					<thead>
-						<tr><th class='col-xs-2 col-md-2'>Name</th><th class='col-xs-9 col-md-9'>Description</th><th class='col-xs-1 col-md-1'> </th></tr>
+						<tr><th className='col-xs-2 col-md-2'>Name</th><th className='col-xs-6 col-md-6'>Description</th><th className='col-xs-2 col-md-2'>Actions</th></tr>
 					</thead>
 					<tbody>
 						{workflowItems}
