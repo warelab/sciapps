@@ -337,6 +337,7 @@ const JobsStore=Reflux.createStore({
 			_.forEach(res.data, function(v) {
 				this.state.jobDetailCache[v.job_id]=v;
 			}.bind(this));
+			WorkflowActions.updateWorkflowJob(wfId, res.data);
 			//console.log(this.state.jobStatus);
 			this.complete();
 			return res.data;

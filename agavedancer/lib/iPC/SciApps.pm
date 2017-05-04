@@ -396,7 +396,7 @@ sub checkJobStatus {
 
 sub checkWorkflowJobStatus {
 	my ($wfid)=@_;
-	my @jobs=database->quick_select('job', {workflow_id => $wfid});
+	my @jobs=database->quick_select('job', {workflow_id => $wfid}, {order_by => 'id'});
 	my @result;
 	foreach my $job (@jobs) {
 		my $jobObj={};
