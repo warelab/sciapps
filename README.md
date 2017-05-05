@@ -22,7 +22,8 @@ To install, follow steps below (for local install, skip step 8)
      
       sudo /usr/sbin/apachectl graceful or sudo /usr/local/apache2/bin/apachectl graceful
       
-  9. Add new app
+  9. Add .agave with correct CyVerse credentials in agavedancer folder
+  10. Add new app
   
       a. Develop app and test in Discovery Environment
       
@@ -36,7 +37,7 @@ To install, follow steps below (for local install, skip step 8)
   
       f. cd to sciapps/agavedancer/public and type `live-server` to test the apps before pushing to github
       
-  10. Publish to your own branch instead of master
+  11. Publish to your own branch instead of master
   
       git stash (save local modifications)
       
