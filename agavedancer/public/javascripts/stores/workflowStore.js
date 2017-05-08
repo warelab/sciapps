@@ -212,13 +212,10 @@ const WorkflowStore=Reflux.createStore({
 	updateWorkflowJob: function(wfId, jobs) {
 		if (this.state.workflowDetail.id === wfId) {
 			this.state.workflowDetail.steps.forEach(function(v, i) {
-				if (jobs[i].id) {
+				if (v.jobId === undefined && jobs[i].id) {
 					v.jobId=jobs[i].id;
 				}
 			});
-		}
-		if (this.state.workflowDetailCache[wfId]) {
-			this.state.workflowDetailCache[wfId]=this.state.workflowDetail;
 		}
 		this.complete();
 	},

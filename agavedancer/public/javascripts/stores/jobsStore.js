@@ -15,6 +15,7 @@ const JobsStore=Reflux.createStore({
 
 	init: function() {
 		this._resetState();
+		this.debouncedCheckWorkflowJobStatus=_.debounce((wfId) => { this.checkWorkflowJobStatus(wfId) }, 2000);
 	},
 
 	getInitialState: function() {
@@ -334,11 +335,17 @@ const JobsStore=Reflux.createStore({
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))
 		.then(function(res) {
+			let changed;
 			_.forEach(res.data, function(v) {
-				this.state.jobDetailCache[v.job_id]=v;
+				let job=this.state.jobDetailCache[v.job_id];
+				if (job.id === undefined && v.id || job.status !== v.status) {
+					changed=true;
+					this.state.jobDetailCache[v.job_id]=v;
+				}
 			}.bind(this));
-			WorkflowActions.updateWorkflowJob(wfId, res.data);
-			//console.log(this.state.jobStatus);
+			if (changed) {
+				WorkflowActions.updateWorkflowJob(wfId, res.data);
+			}
 			this.complete();
 			return res.data;
 		}.bind(this))

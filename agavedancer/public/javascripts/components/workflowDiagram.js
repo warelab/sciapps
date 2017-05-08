@@ -178,8 +178,9 @@ const WorkflowDiagram=React.createClass({
 		let showWorkflowDiagram=this.state.workflowStore.showWorkflowDiagram;
 		let user=this.props.user;
 		let setting=_config.setting;
+		let appsStore=this.state.appsStore;
 		let jobsStore=this.state.jobsStore;
-		let worflowStore=this.state.workflowStore;
+		let workflowStore=this.state.workflowStore;
 		let workflow=jobsStore.workflow;
 		let activeNode=this.state.activeNode;
 		let fileId=jobsStore.fileId;
@@ -195,7 +196,7 @@ const WorkflowDiagram=React.createClass({
 		let info=<div />;
 		let nodeClass="modal-lg";
 		let jobCount=0;
-		let workflowDetail=this.state.workflowStore.workflowDetail;
+		let workflowDetail=workflowStore.workflowDetail;
 		let workflowDirection=1;
 		if (showWorkflowDiagram) {
 			if (workflowDetail) {
@@ -228,7 +229,7 @@ const WorkflowDiagram=React.createClass({
 					}
 				}
 			}
-			let workflowDiagramDef=this.buildWorkflowDiagramDef(this.state.workflowStore, this.state.appsStore, this.state.jobsStore, workflowDirection);
+			let workflowDiagramDef=this.buildWorkflowDiagramDef(workflowStore, appsStore, jobsStore, workflowDirection);
 			body=<Mermaid diagramDef={workflowDiagramDef}/>;
 			let unfinished;
 			if (typeof jobs === 'object') {
@@ -236,7 +237,7 @@ const WorkflowDiagram=React.createClass({
 					return jobStatus[job] !== 'FINISHED';
 				});
 				if (unfinished) {
-					setTimeout((wfId) => JobsActions.checkWorkflowJobStatus(wfId), this.props.timeout, workflow.id); 
+					setTimeout((wfId) => JobsActions.debouncedCheckWorkflowJobStatus(wfId), this.props.timeout, workflow.id); 
 				}
 			}
 			if (workflowDetail) {
@@ -248,13 +249,17 @@ const WorkflowDiagram=React.createClass({
 					info=<FilesInfo fileId={activeNode.id} />;
 				} else if (activeNode.type === 'apps') {
 					let id=activeNode.id.replace(setting.wf_step_prefix,'');
-					let appId=this.state.workflowStore.workflowDetail.steps[id].appId;
-					info=<AppsInfo appId={appId} detailed={true} />
+					let appId=workflowStore.workflowDetail.steps[id].appId;
+					//let jobId=workflowStore.workflowDetail.steps[id].jobId;
+					let appDetail=appsStore.appDetailCache[appId];
+					//let jobDetail=jobId !== undefined ? _.find(this.state.jobsStore.jobDetailCache, 'id', jobId) : undefined;
+					//info=<AppsInfo appDetail={appDetail} jobDetail={jobDetail} detailed={true} />
+					info=<AppsInfo appDetail={appDetail} />
 				}
 			}
 
 			let saveBtnTxt=this.state.onSave ? 'Saving' : 'Save Workflow';
-			if (workflowDetail && _.find(worflowStore.workflows, {workflow_id: workflowDetail.id})) {
+			if (workflowDetail && _.find(workflowStore.workflows, 'workflow_id', workflowDetail.id)) {
 				saveBtnTxt='Saved';
 			}
 			let saveBtn=user.logged_in ? <Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved' || unfinished !== undefined}>{saveBtnTxt}</Button> : undefined;
