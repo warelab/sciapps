@@ -67,9 +67,9 @@ const UserWorkflows=React.createClass({
 						value: workflow.description,
 						type: 'text'
 					};
-					item=<tr key={workflow.workflow_id}><td><BaseInput data={nameInput} onValidate={true} ref={workflow.workflow_id + '_nameInput'}/></td><td><BaseInput data={descInput} ref={workflow.workflow_id + '_descInput'}/></td><td>{loadButton}{delButton}{saveButton}</td></tr>;
+					item=<tr key={workflow.workflow_id}><td><BaseInput data={nameInput} onValidate={true} ref={workflow.workflow_id + '_nameInput'}/></td><td className='text-center'><BaseInput data={descInput} ref={workflow.workflow_id + '_descInput'}/></td><td>{loadButton}{delButton}{saveButton}</td></tr>;
 				} else {
-					item=<tr key={workflow.workflow_id}><td>{workflow.name}</td><td>{workflow.description}</td><td>{loadButton}{delButton}{editButton}</td></tr>;
+					item=<tr key={workflow.workflow_id}><td>{workflow.name}</td><td>{workflow.description}</td><td className='text-center'>{loadButton}{delButton}{editButton}</td></tr>;
 				}
 				return item;
 			}.bind(this));
@@ -78,7 +78,7 @@ const UserWorkflows=React.createClass({
 			<Panel header="My Workflows">
 				<Table striped condensed hover>
 					<thead>
-						<tr><th className='col-xs-2 col-md-2'>Name</th><th className='col-xs-6 col-md-6'>Description</th><th className='col-xs-2 col-md-2'>Actions</th></tr>
+						<tr><th className='col-xs-2 col-md-2'>Name</th><th className='col-xs-6 col-md-6'>Description</th><th className='col-xs-2 col-md-2 text-center'>Actions</th></tr>
 					</thead>
 					<tbody>
 						{workflowItems}
