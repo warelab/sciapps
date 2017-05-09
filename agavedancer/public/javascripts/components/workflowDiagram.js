@@ -169,7 +169,7 @@ const WorkflowDiagram=React.createClass({
 		let workflowStore=this.state.workflowStore;
 		let wf=workflowStore.workflowDetail;
 		WorkflowActions.saveWorkflow(wf);
-		Q.delay(1500).then(function() {
+		Q.delay(1000).then(function() {
 			this.setState({onSave: false});
 		}.bind(this));
 	},

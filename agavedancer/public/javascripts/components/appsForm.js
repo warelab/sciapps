@@ -26,6 +26,7 @@ const AppsForm=React.createClass({
 	},
 
 	handleSubmit: function() {
+		this.setState({onSubmit: true, onValidate: true});
 		let setting=_config.setting;
 		let required=[];
 		let appDetail=this.props.appDetail;
@@ -47,17 +48,31 @@ const AppsForm=React.createClass({
 		}
 		let form=this.refs[this.formName];
 		let validated=utilities.validateForm(form, required, setting.upload_suffix);
+		let confirmed, formData;
+		if (validated) {
+			formData=new FormData(this.refs[this.formName]);
+			confirmed=confirm('You are going to submit 1 job to cluster, are you sure?');
+		} else {
+			alert('There is something missing in your job submission form.');
+		}
 
-		//this.setState({onSubmit: true, onValidate: true});
-		if(validated) {
-			let formData=new FormData(this.refs[this.formName]);
+		if (confirmed) {
 			JobsActions.submitJob(this.props.appDetail.id, formData);
 			this.setState({onValidate: false});
 		}
-		alert('Job has been submitted');
-		Q.delay(1000).then(function() {
+
+		Q.delay(1000).then(function() {	
+			if (confirmed) {
+				alert('Job has been submitted.');
+			}
 			this.setState({onSubmit: false});
 		}.bind(this));
+		//this.setState({onSubmit: true, onValidate: true});
+		//if(validated) {
+		//	let formData=new FormData(this.refs[this.formName]);
+		//	JobsActions.submitJob(this.props.appDetail.id, formData);
+		//	this.setState({onValidate: false});
+		//}
 		//setTimeout(() => {
 		//	this.setState({onSubmit: false});
 		//}, 1500);
@@ -110,30 +125,34 @@ const AppsForm=React.createClass({
 			placeholder: 'Enter email',
 			help: 'Optional Email for notification'
 		};
-		let submitBtn;
-		if (user.logged_in) {
-			if (this.state.onSubmit) {
-				submitBtn=(
-					<Alert bsStyle='warning' onDismiss={this.handleSubmitDismiss}>
-						<p>You are going to submit 1 job to a cluster, are you sure?</p>
-						<Button bsStyle='primary' onClick={this.handleSubmit}>Yes</Button>
-						<span> or </span>
-						<Button onClick={this.handleSubmitDismiss}>No</Button>
-					</Alert>
-				);
-			} else {
-				submitBtn=(
-					<Button bsStyle='primary' onClick={this.handleSubmitPrepare}>Submit Job</Button>
-				);
-			}
-		} else {
-			let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
-			submitBtn=(
-				<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
-					<Button bsStyle='primary' onClick={null}>Submit Job</Button>
-				</OverlayTrigger>
-			);
-		}
+		let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
+		let submitBtn=user.logged_in ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit Job</Button> :
+			<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
+				<Button bsStyle='primary' onClick={null}>Submit Job</Button>
+			</OverlayTrigger>;
+		//if (user.logged_in) {
+		//	if (this.state.onSubmit) {
+		//		submitBtn=(
+		//			<Alert bsStyle='warning' onDismiss={this.handleSubmitDismiss}>
+		//				<p>You are going to submit 1 job to a cluster, are you sure?</p>
+		//				<Button bsStyle='primary' onClick={this.handleSubmit}>Yes</Button>
+		//				<span> or </span>
+		//				<Button onClick={this.handleSubmitDismiss}>No</Button>
+		//			</Alert>
+		//		);
+		//	} else {
+		//		submitBtn=(
+		//			<Button bsStyle='primary' onClick={this.handleSubmitPrepare}>Submit Job</Button>
+		//		);
+		//	}
+		//} else {
+		//	let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
+		//	submitBtn=(
+		//		<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
+		//			<Button bsStyle='primary' onClick={null}>Submit Job</Button>
+		//		</OverlayTrigger>
+		//	);
+		//}
 		return (
 			<Panel header={header}>
 				<form ref={this.formName}>
