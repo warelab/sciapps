@@ -4,13 +4,20 @@ To install, follow steps below (for local install, skip step 8)
 
   1. git clone https://github.com/warelab/sciapps.git
 
-  2. git checkout cd6e8991d452d7c3ef40ad681bbe4398cfb2e220
+  2. git pull
   
   3. cd sciapps/agavedancer
 
   4. npm install
+  
+    a. Install node.js with b and c below if npm not found
+    
+    b. curl --silent --location https://rpm.nodesource.com/setup_7.x | sudo bash -
+    
+    c. sudo yum -y install nodejs
+    
 
-  5. grunt
+  5. grunt (if not found, sudo npm install -g grunt-cli)
 
   6. sqlite3 database <models/schema.sql
 
