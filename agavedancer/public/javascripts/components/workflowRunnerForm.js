@@ -55,6 +55,7 @@ const WorkflowRunnerForm=React.createClass({
 			WorkflowActions.submitWorkflow(formData);
 			this.setState({onSubmit: false, onValidate: false});
 		}
+		alert('Workflow has been submitted');
 		//setTimeout(() => {
 		//	this.setState({onSubmit: false});
 		//}, 1500);

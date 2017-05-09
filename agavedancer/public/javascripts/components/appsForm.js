@@ -54,6 +54,7 @@ const AppsForm=React.createClass({
 			JobsActions.submitJob(this.props.appDetail.id, formData);
 			this.setState({onValidate: false});
 		}
+		alert('Job has been submitted');
 		Q.delay(1000).then(function() {
 			this.setState({onSubmit: false});
 		}.bind(this));
