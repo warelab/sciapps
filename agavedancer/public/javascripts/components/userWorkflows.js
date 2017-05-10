@@ -38,7 +38,18 @@ const UserWorkflows=React.createClass({
 	handleSave: function(e) {
 		let wfid=e.target.value;
 		let formData={id: wfid, name: this.refs[wfid + '_nameInput'].state.value, description: this.refs[wfid + '_descInput'].state.value};
-		WorkflowActions.updateWorkflow(formData);
+		let workflows=this.state.workflowStore.workflows;
+		if (_.find(workflows, 'name', formData.name)) {
+			alert('Please choose a unique name.');
+		} else {
+			WorkflowActions.updateWorkflow(formData);
+			delete this.state.onEdit[wfid];
+			this.setState({});
+		}
+	},
+
+	handleCancel: function(e) {
+		let wfid=e.target.value;
 		delete this.state.onEdit[wfid];
 		this.setState({});
 	},
@@ -53,6 +64,7 @@ const UserWorkflows=React.createClass({
 				let delButton=<Button bsStyle='link' onClick={this.handleDel} value={workflow.workflow_id}>Delete</Button>;
 				let editButton=<Button bsStyle='link' onClick={this.handleEdit} value={workflow.workflow_id}>Edit</Button>;
 				let saveButton=<Button bsStyle='link' onClick={this.handleSave} value={workflow.workflow_id}>Save</Button>;
+				let cancelButton=<Button bsStyle='link' onClick={this.handleCancel} value={workflow.workflow_id}>Cancel</Button>;
 				let item;
 				if (onEdit) {
 					let nameInput={
@@ -67,7 +79,7 @@ const UserWorkflows=React.createClass({
 						value: workflow.description,
 						type: 'text'
 					};
-					item=<tr key={workflow.workflow_id}><td><BaseInput data={nameInput} onValidate={true} ref={workflow.workflow_id + '_nameInput'}/></td><td className='text-center'><BaseInput data={descInput} ref={workflow.workflow_id + '_descInput'}/></td><td>{loadButton}{delButton}{saveButton}</td></tr>;
+					item=<tr key={workflow.workflow_id}><td><BaseInput data={nameInput} onValidate={true} ref={workflow.workflow_id + '_nameInput'}/></td><td className='text-center'><BaseInput data={descInput} ref={workflow.workflow_id + '_descInput'}/></td><td>{saveButton}{cancelButton}</td></tr>;
 				} else {
 					item=<tr key={workflow.workflow_id}><td>{workflow.name}</td><td>{workflow.description}</td><td className='text-center'>{loadButton}{delButton}{editButton}</td></tr>;
 				}
