@@ -8,6 +8,7 @@ import WorkflowStore from '../stores/workflowStore.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import AppsActions from '../actions/appsActions.js';
 import BaseInput from './baseInput.js';
+import Dialog from 'react-bootstrap-dialog';
 
 const UserWorkflows=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore')],
@@ -40,7 +41,8 @@ const UserWorkflows=React.createClass({
 		let formData={id: wfid, name: this.refs[wfid + '_nameInput'].state.value, description: this.refs[wfid + '_descInput'].state.value};
 		let workflows=this.state.workflowStore.workflows;
 		if (_.find(workflows, 'name', formData.name)) {
-			alert('Please choose a unique name.');
+			//alert('Please choose a unique name.');
+			this.refs.dialog.showAlert('Please choose a unique name.');
 		} else {
 			WorkflowActions.updateWorkflow(formData);
 			delete this.state.onEdit[wfid];
@@ -96,6 +98,7 @@ const UserWorkflows=React.createClass({
 						{workflowItems}
 					</tbody>
 				</Table>
+				<Dialog ref='dialog' />
 			</Panel>
 		);
 	}

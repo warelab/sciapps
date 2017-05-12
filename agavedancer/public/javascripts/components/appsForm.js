@@ -10,6 +10,7 @@ import AppsParam from './appsParam.js';
 import AppsInput from './appsInput.js';
 import JobsActions from '../actions/jobsActions.js';
 import utilities from '../libs/utilities.js';
+import Dialog from 'react-bootstrap-dialog';
 
 const AppsForm=React.createClass({
 	getInitialState: function() {
@@ -51,20 +52,34 @@ const AppsForm=React.createClass({
 		let confirmed, formData;
 		if (validated) {
 			formData=new FormData(this.refs[this.formName]);
-			confirmed=confirm('You are going to submit 1 job to cluster, are you sure?');
+			//confirmed=confirm('You are going to submit 1 job to cluster, are you sure?');
+			this.refs.dialog.show({
+				body: 'You are going to submit 1 job to cluster, are you sure?',
+				actions: [
+					Dialog.CancelAction(),
+					Dialog.OKAction(() => {
+						JobsActions.submitJob(this.props.appDetail.id, formData);
+						this.setState({onValidate: false});
+						Q.delay(1000).then(function() {
+							this.refs.dialog.showAlert('Job has been submitted.');
+						}.bind(this));
+					})
+				]
+			});
 		} else {
-			alert('There is something missing in your job submission form.');
+			//alert('There is something missing in your job submission form.');
+			this.refs.dialog.showAlert('There is something missing in your job submission form.');
 		}
 
-		if (confirmed) {
-			JobsActions.submitJob(this.props.appDetail.id, formData);
-			this.setState({onValidate: false});
-		}
+		//if (confirmed) {
+		//	JobsActions.submitJob(this.props.appDetail.id, formData);
+		//	this.setState({onValidate: false});
+		//}
 
 		Q.delay(1000).then(function() {	
-			if (confirmed) {
-				alert('Job has been submitted.');
-			}
+			//if (confirmed) {
+			//	alert('Job has been submitted.');
+			//}
 			this.setState({onSubmit: false});
 		}.bind(this));
 		//this.setState({onSubmit: true, onValidate: true});
@@ -161,6 +176,7 @@ const AppsForm=React.createClass({
 					<BaseInput data={emailInput} />
 					{submitBtn}
 				</form>
+				<Dialog ref='dialog' />
 			</Panel>
 		);
 	}

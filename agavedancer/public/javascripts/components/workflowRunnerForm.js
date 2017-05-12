@@ -13,6 +13,7 @@ import _ from 'lodash';
 import Q from 'q';
 import utilities from '../libs/utilities.js';
 import {Panel, Button, ButtonToolbar, Alert, Tooltip, OverlayTrigger} from 'react-bootstrap';
+import Dialog from 'react-bootstrap-dialog';
 
 const WorkflowRunnerForm=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(WorkflowStore, 'workflowStore')],
@@ -50,21 +51,42 @@ const WorkflowRunnerForm=React.createClass({
 			formData=new FormData(this.refs[this.formName]);
 			wid=formData.get('_workflow_id');
 			wf=JSON.parse(formData.get('_workflow_json'));
-			confirmed=confirm('You are going to submit ' + wf.steps.length + ' jobs to cluster, are you sure?');
+			//confirmed=confirm('You are going to submit ' + wf.steps.length + ' jobs to cluster, are you sure?');
+			this.refs.dialog.show({
+				body: 'You are going to submit ' + wf.steps.length + ' jobs to cluster, are you sure?',
+				actions: [
+					Dialog.CancelAction(),
+					Dialog.OKAction(() => {
+						WorkflowActions.submitWorkflow(formData);
+						this.setState({onSubmit: false});
+						Q.delay(1000).then(function() {
+							this.refs.dialog.show({
+								body: 'Workflow has been submitted.',
+								actions: [
+									Dialog.OKAction(() => {
+										this.showWorkflowDiagram();
+									})
+								]
+							});
+						}.bind(this));
+					})
+				]
+			});
 		} else {
-			alert('There is something missing in your job submission form.');
+			//alert('There is something missing in your job submission form.');
+			this.refs.dialog.showAlert('There is something missing in your submission form.');
 		}
 
-		if (confirmed) {
-			WorkflowActions.submitWorkflow(formData);
-			this.setState({onSubmit: false});
-		}
+		//if (confirmed) {
+		//	WorkflowActions.submitWorkflow(formData);
+		//	this.setState({onSubmit: false});
+		//}
 
 		Q.delay(1000).then(function() {
-			if (confirmed) {
-				alert('Workflow has been submitted.');
-				this.showWorkflowDiagram();
-			}
+			//if (confirmed) {
+			//	alert('Workflow has been submitted.');
+			//	this.showWorkflowDiagram();
+			//}
 			this.setState({onSubmit: false});
 		}.bind(this));
 		//setTimeout(() => {
@@ -184,15 +206,16 @@ const WorkflowRunnerForm=React.createClass({
 			//}
 			markup=(
 				<div>
-				<form ref={this.formName} >
-					{appsFieldsets}
-					<BaseInput data={emailInput} />
-					<BaseInput data={workflowJson} />
-					<BaseInput data={workflowId} />
-					{submitBtn}
-					<span> or </span>
-					<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Show Diagram</Button>
-				</form>
+					<form ref={this.formName} >
+						{appsFieldsets}
+						<BaseInput data={emailInput} />
+						<BaseInput data={workflowJson} />
+						<BaseInput data={workflowId} />
+						{submitBtn}
+						<span> or </span>
+						<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Show Diagram</Button>
+					</form>
+					<Dialog ref='dialog' />
 				</div>
 			);
 		}

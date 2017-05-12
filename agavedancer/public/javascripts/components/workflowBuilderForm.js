@@ -11,6 +11,7 @@ import BaseInput from './baseInput.js';
 import _ from 'lodash';
 import {Button, ButtonToolbar, Input} from 'react-bootstrap';
 import utilities from '../libs/utilities.js';
+import Dialog from 'react-bootstrap-dialog';
 
 const WorkflowBuilderForm=React.createClass({
 	mixins: [Reflux.connect(JobsStore, 'jobsStore'), Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(WorkflowStore, 'workflowStore')],
@@ -56,7 +57,8 @@ const WorkflowBuilderForm=React.createClass({
 			if (validated) {
 				let workflows=this.state.workflowStore.workflows;
 				if (_.find(workflows, 'name', formData['workflowName'])) {
-					alert('Please choose a unique name.');
+					//alert('Please choose a unique name.');
+					this.refs.dialog.showAlert('Please choose a unique name.');
 				} else {
 					let wfid=utilities.uuid();
 					this.setState({onSubmit: true, wfid: wfid});
@@ -169,31 +171,34 @@ const WorkflowBuilderForm=React.createClass({
 		};
 
 		let markup=(
-			<form ref={this.formName} >
-				<BaseInput data={jobListInput} onValidate={true} />
-				<BaseInput data={nameInput} onValidate={true} />
-				<BaseInput data={descInput} />
-				<ButtonToolbar>
-					<Button
-						bsStyle='primary'
-						disabled={onSubmit || jobCount <2}
-						onClick={this.handleSubmit}>
-						{onSubmit ? 'Building...' : 'Build Workflow'}
-					</Button>
-					<Button
-						bsStyle='primary'
-						disabled={onSubmit || jobList.length === 0}
-						onClick={this.handleReset}>
-						Reset
-					</Button>
-					<Button
-						bsStyle='primary'
-						disabled={onSubmit}
-						onClick={this.handleSelectAll}>
+			<div>
+				<form ref={this.formName} >
+					<BaseInput data={jobListInput} onValidate={true} />
+					<BaseInput data={nameInput} onValidate={true} />
+					<BaseInput data={descInput} />
+					<ButtonToolbar>
+						<Button
+							bsStyle='primary'
+							disabled={onSubmit || jobCount <2}
+							onClick={this.handleSubmit}>
+							{onSubmit ? 'Building...' : 'Build Workflow'}
+						</Button>
+						<Button
+							bsStyle='primary'
+							disabled={onSubmit || jobList.length === 0}
+							onClick={this.handleReset}>
+							Reset
+						</Button>
+						<Button
+							bsStyle='primary'
+							disabled={onSubmit}
+							onClick={this.handleSelectAll}>
 						Select All
-					</Button>
-				</ButtonToolbar>
-			</form>
+						</Button>
+					</ButtonToolbar>
+				</form>
+				<Dialog ref='dialog' />
+			</div>
 		);
 		return markup;
 	}
