@@ -19,8 +19,8 @@ const Help=React.createClass({
 				<ul className="list">
 					<li>Log in to <a href="http://user.cyverse.org/">CyVerse User Management portal</a></li>
 					<li>Under <b>Apps & Services</b> tab, go to the <b>Available Services</b> section at the bottom</li>
-					<li>Click <b>Request Access</b> for SciApps, refresh the page after a few minutes to check status</li>
-					<li>Once in <b>Completed</b> status, a folder named as <b>sci_data</b> is created under your root folder: /iplant/home/YOUR_USER_NAME/sci_data</li>
+					<li>Click <b>Request Access</b> for SciApps</li>
+					<li>A folder named as <b>sci_data</b> is created under your root folder: /iplant/home/YOUR_USER_NAME/sci_data</li>
 				</ul>
 			<h5>3. Upload your data for SciApps</h5>
 				<ul className="list">

@@ -201,7 +201,7 @@ const WorkflowDiagram=React.createClass({
 		if (showWorkflowDiagram) {
 			if (workflowDetail) {
 				jobCount=workflowDetail.steps.length;
-				if (jobCount < 7) {
+				if (jobCount < 8) {
 					workflowDirection=0;
 					switch (jobCount) {
 						case 2:
@@ -218,9 +218,6 @@ const WorkflowDiagram=React.createClass({
 					}
 				} else {
 					switch (jobCount) {
-						case 7:
-							nodeClass="fiveNodes";
-							break;
 						case 8:
 							nodeClass="fiveNodes";
 							break;
