@@ -37,12 +37,13 @@ module.exports = {
 	},
 
 	validateForm: function(form, required, upload_suffix) {
+		upload_suffix=upload_suffix || '';
 		let formdata={};
 		for (let key of _.keys(form)) {
 			if (form[key].name && form[key].value && form[key].name.toString().length && form[key].value.toString().length) formdata[form[key].name]=form[key].value;
 		}
 		let ret=required.every(function(n) {
-			if (formdata[n].toString().length || formdata[n + upload_suffix].toString().length) return true
+			if (formdata[n] && formdata[n].toString().length || formdata[n + upload_suffix] && formdata[n + upload_suffix].toString().length) return true
 		});
 		return ret;
 	},

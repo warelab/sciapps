@@ -10,8 +10,10 @@ import AppsActions from '../actions/appsActions.js';
 import JobsActions from '../actions/jobsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import _ from 'lodash';
+import Q from 'q';
 import utilities from '../libs/utilities.js';
 import {Panel, Button, ButtonToolbar, Alert, Tooltip, OverlayTrigger} from 'react-bootstrap';
+import Dialog from 'react-bootstrap-dialog';
 
 const WorkflowRunnerForm=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(WorkflowStore, 'workflowStore')],
@@ -38,27 +40,58 @@ const WorkflowRunnerForm=React.createClass({
 
 	formName: 'workflowRunnerForm',
 
-	validateForm: function() {
-		let user=this.props.user;
+	handleSubmit: function(event) {
+		this.setState({onSubmit: true, onValidate: true});
 		let setting=_config.setting;
 		let required=_.keys(this.state.required);
 		let form=this.refs[this.formName];
-		return utilities.validateForm(form, required, setting.upload_suffix);
-	},
-
-	handleSubmit: function(event) {
-		//this.setState({onSubmit: true, onValidate: true});
-		let wid;
-		if (this.validateForm()) {
-			let formData=new FormData(this.refs[this.formName]);
+		let validated=utilities.validateForm(form, required, setting.upload_suffix);
+		let wid, wf, confirmed, formData;
+		if (validated) {
+			formData=new FormData(this.refs[this.formName]);
 			wid=formData.get('_workflow_id');
-			WorkflowActions.submitWorkflow(formData);
-			this.setState({onSubmit: false, onValidate: false});
+			wf=JSON.parse(formData.get('_workflow_json'));
+			//confirmed=confirm('You are going to submit ' + wf.steps.length + ' jobs to cluster, are you sure?');
+			this.refs.dialog.show({
+				body: 'You are going to submit ' + wf.steps.length + ' jobs to cluster, are you sure?',
+				actions: [
+					Dialog.CancelAction(),
+					Dialog.OKAction(() => {
+						WorkflowActions.submitWorkflow(formData);
+						this.setState({onSubmit: false});
+						Q.delay(1000).then(function() {
+							this.refs.dialog.show({
+								body: 'Workflow has been submitted.',
+								actions: [
+									Dialog.OKAction(() => {
+										this.showWorkflowDiagram();
+									})
+								]
+							});
+						}.bind(this));
+					})
+				]
+			});
+		} else {
+			//alert('There is something missing in your job submission form.');
+			this.refs.dialog.showAlert('There is something missing in your submission form.');
 		}
+
+		//if (confirmed) {
+		//	WorkflowActions.submitWorkflow(formData);
+		//	this.setState({onSubmit: false});
+		//}
+
+		Q.delay(1000).then(function() {
+			//if (confirmed) {
+			//	alert('Workflow has been submitted.');
+			//	this.showWorkflowDiagram();
+			//}
+			this.setState({onSubmit: false});
+		}.bind(this));
 		//setTimeout(() => {
 		//	this.setState({onSubmit: false});
 		//}, 1500);
-		this.showWorkflowDiagram();
 	},
 
 	handleSubmitPrepare: function() {
@@ -124,8 +157,8 @@ const WorkflowRunnerForm=React.createClass({
 			let runDetail=_.cloneDeep(workflowDetail);
 			_.assign(runDetail, {
 				id: wid,
-				name: '',
-				description: ''
+				name: 'workflow-' + wid + '-' + workflowDetail.name,
+				description: workflowDetail.description || ''
 			});
 
 			runDetail.steps.forEach(function(step) {
@@ -143,41 +176,46 @@ const WorkflowRunnerForm=React.createClass({
 				name: '_workflow_id',
 				value: wid
 			};
-			let submitBtn;
-			if (user.logged_in) {
-				if (this.state.onSubmit) {
-					submitBtn=(
-						<Alert bsStyle='warning' onDismiss={this.handleSubmitDismiss}>
-							<p>You are going to submit {steps.length} jobs to a cluster, are you sure?</p>
-							<Button bsStyle='primary' onClick={this.handleSubmit}>Yes</Button>
-							<span> or </span>
-							<Button onClick={this.handleSubmitDismiss}>No</Button>
-						</Alert>
-					);
-				} else {
-					submitBtn=(
-						<Button bsStyle='primary' onClick={this.handleSubmitPrepare}>Submit Workflow Jobs</Button>
-					);
-				}
-			} else {
-				let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
-				submitBtn=(
-					<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
-						<Button bsStyle='primary' onClick={null}>Submit Workflow Jobs</Button>
-					</OverlayTrigger>
-				);
-			}
+			let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
+			let submitBtn=user.logged_in ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit Workflow</Button> : 
+				<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
+					<Button bsStyle='primary' onClick={null}>Submit Jobs</Button>
+				</OverlayTrigger>;
+			//if (user.logged_in) {
+			//	if (this.state.onSubmit) {
+			//		submitBtn=(
+			//			<Alert bsStyle='warning' onDismiss={this.handleSubmitDismiss}>
+			//				<p>You are going to submit {steps.length} jobs to a cluster, are you sure?</p>
+			//				<Button bsStyle='primary' onClick={this.handleSubmit}>Yes</Button>
+			//				<span> or </span>
+			//				<Button onClick={this.handleSubmitDismiss}>No</Button>
+			//			</Alert>
+			//		);
+			//	} else {
+			//		submitBtn=(
+			//			<Button bsStyle='primary' onClick={this.handleSubmitPrepare}>Submit Jobs</Button>
+			//		);
+			//	}
+			//} else {
+			//	let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
+			//	submitBtn=(
+			//		<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
+			//			<Button bsStyle='primary' onClick={null}>Submit Jobs</Button>
+			//		</OverlayTrigger>
+			//	);
+			//}
 			markup=(
 				<div>
-				<form ref={this.formName} >
-					{appsFieldsets}
-					<BaseInput data={emailInput} />
-					<BaseInput data={workflowJson} />
-					<BaseInput data={workflowId} />
-					{submitBtn}
-					<span> or </span>
-					<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Show Workflow Diagram</Button>
-				</form>
+					<form ref={this.formName} >
+						{appsFieldsets}
+						<BaseInput data={emailInput} />
+						<BaseInput data={workflowJson} />
+						<BaseInput data={workflowId} />
+						{submitBtn}
+						<span> or </span>
+						<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Show Diagram</Button>
+					</form>
+					<Dialog ref='dialog' />
 				</div>
 			);
 		}

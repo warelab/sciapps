@@ -18,6 +18,7 @@ const JobsActions=Reflux.createActions([
 	'showJobOutputs',
 	'setFile',
 	'checkJobStatus',
+	'debouncedCheckWorkflowJobStatus',
 	'checkWorkflowJobStatus',
 	'resubmitJob',
 	'resetResubmit',

@@ -24,8 +24,8 @@ drop table if exists workflow;
 create table workflow (
 	id integer primary key autoincrement,
 	workflow_id varchar(40) unique not null,
-	name varchar(40),
-	desc text,
+	name varchar(40) unique not null,
+	description text,
 	json text
 );
 
@@ -45,7 +45,7 @@ create index username_workflow on user_workflow(username);
 
 drop view if exists user_workflow_view;
 create view user_workflow_view as 
-select workflow.workflow_id as workflow_id, workflow.name as name, workflow.desc as desc, workflow.json as json, user_workflow.username as username
+select workflow.workflow_id as workflow_id, workflow.name as name, workflow.description as description, workflow.json as json, user_workflow.username as username
 from workflow join user_workflow on (workflow.workflow_id = user_workflow.workflow_id);
 
 drop table if exists job;
