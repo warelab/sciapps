@@ -53,23 +53,27 @@ const WorkflowRunnerForm=React.createClass({
 			wf=JSON.parse(formData.get('_workflow_json'));
 			//confirmed=confirm('You are going to submit ' + wf.steps.length + ' jobs to cluster, are you sure?');
 			this.refs.dialog.show({
-				body: 'You are going to submit ' + wf.steps.length + ' jobs to cluster, are you sure?',
+				body: 'Are you sure you want to submit these ' + wf.steps.length + ' jobs?',
 				actions: [
 					Dialog.CancelAction(),
-					Dialog.OKAction(() => {
-						WorkflowActions.submitWorkflow(formData);
-						this.setState({onSubmit: false});
-						Q.delay(1000).then(function() {
-							this.refs.dialog.show({
-								body: 'Workflow has been submitted.',
-								actions: [
-									Dialog.OKAction(() => {
-										this.showWorkflowDiagram();
-									})
-								]
-							});
-						}.bind(this));
-					})
+					Dialog.Action(
+						'Submit',
+						() => {
+							WorkflowActions.submitWorkflow(formData);
+							this.setState({onSubmit: false});
+							Q.delay(1000).then(function() {
+								this.refs.dialog.show({
+									body: 'Submitted! Check History panel for status',
+									actions: [
+										Dialog.OKAction(() => {
+											this.showWorkflowDiagram();
+										})
+									]
+								})
+							}.bind(this))
+						},
+						'btn-danger'
+					)
 				]
 			});
 		} else {
