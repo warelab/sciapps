@@ -40,7 +40,8 @@ const UserWorkflows=React.createClass({
 		let wfid=e.target.value;
 		let formData={id: wfid, name: this.refs[wfid + '_nameInput'].state.value, description: this.refs[wfid + '_descInput'].state.value};
 		let workflows=this.state.workflowStore.workflows;
-		if (_.find(workflows, 'name', formData.name)) {
+		let existed=_.find(workflows, 'name', formData.name);
+		if (existed && existed.workflow_id !== wfid) {
 			//alert('Please choose a unique name.');
 			this.refs.dialog.showAlert('Please choose a unique name.');
 		} else {

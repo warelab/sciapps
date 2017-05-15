@@ -158,7 +158,8 @@ const WorkflowRunnerForm=React.createClass({
 			_.assign(runDetail, {
 				id: wid,
 				name: 'workflow-' + wid + '-' + workflowDetail.name,
-				description: workflowDetail.description || ''
+				description: workflowDetail.description || '',
+				derived_from: workflowDetail.id
 			});
 
 			runDetail.steps.forEach(function(step) {
@@ -181,29 +182,6 @@ const WorkflowRunnerForm=React.createClass({
 				<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
 					<Button bsStyle='primary' onClick={null}>Submit Jobs</Button>
 				</OverlayTrigger>;
-			//if (user.logged_in) {
-			//	if (this.state.onSubmit) {
-			//		submitBtn=(
-			//			<Alert bsStyle='warning' onDismiss={this.handleSubmitDismiss}>
-			//				<p>You are going to submit {steps.length} jobs to a cluster, are you sure?</p>
-			//				<Button bsStyle='primary' onClick={this.handleSubmit}>Yes</Button>
-			//				<span> or </span>
-			//				<Button onClick={this.handleSubmitDismiss}>No</Button>
-			//			</Alert>
-			//		);
-			//	} else {
-			//		submitBtn=(
-			//			<Button bsStyle='primary' onClick={this.handleSubmitPrepare}>Submit Jobs</Button>
-			//		);
-			//	}
-			//} else {
-			//	let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
-			//	submitBtn=(
-			//		<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
-			//			<Button bsStyle='primary' onClick={null}>Submit Jobs</Button>
-			//		</OverlayTrigger>
-			//	);
-			//}
 			markup=(
 				<div>
 					<form ref={this.formName} >
