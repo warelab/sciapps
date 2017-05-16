@@ -562,6 +562,7 @@ ajax '/workflow' => sub {
 
 ajax '/workflowJob/new' => sub {
 	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
+	my $username=$user->{username};
 	my @err = ();
 	my $apif = getAgaveClient();
 	my $apps = $apif->apps;
@@ -577,8 +578,8 @@ ajax '/workflowJob/new' => sub {
 	foreach my $step (@{$wf->{'steps'}}) {
 		my $app_id=$step->{appId};
 		my ($app) = $apps->find_by_id($app_id);
-		my ($job_id, $job_form)=prepareJob($user, $app, $form, $step, \@step_form, \@jobs);
-		my ($job, $err)=submitJob($apif, $app, $job_id, $job_form);
+		my ($job_id, $job_form)=prepareJob($username, $app, $form, $step, \@step_form, \@jobs);
+		my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
 		$job||={appId => $app_id, job_id => $job_id, archiveSystem => $job_form->{archiveSystem}, archivePath => $job_form->{archivePath}, status => 'PENDING'};
 		if ($job_id) {
 			push @jobs, $job;
@@ -593,6 +594,7 @@ ajax '/workflowJob/new' => sub {
 
 ajax '/job/new/:id' => sub {
 	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
+	my $username=$user->{username};
 	my @err = ();
 	my $app_id = param("id");
 	my $apif = getAgaveClient();
@@ -601,14 +603,16 @@ ajax '/job/new/:id' => sub {
 
 	my ($app) = $apps->find_by_id($app_id);
 	my $form = params();
-	my ($job_id, $job_form)=prepareJob($user, $app, $form);
-	my ($job, $err)=submitJob($apif, $app, $job_id, $job_form);
+	my ($job_id, $job_form)=prepareJob($username, $app, $form);
+	my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
 	if ($job_id && $job && $job->{id}) {
 		return to_json($job);
 	}
 };
 
 any ['get', 'post'] => '/job/new/:id' => sub {
+	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
+	my $username=$user->{username};
 	my @err = ();
 	my $app_id = param("id");
 	my $apif = getAgaveClient();
@@ -618,8 +622,8 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 
 	my $form = params();
 	if ( request->method() eq "POST" ) {
-		my ($job_id, $job_form)=prepareJob($app, $form);
-		my ($job, $err)=submitJob($apif, $app, $job_id, $job_form);
+		my ($job_id, $job_form)=prepareJob($username, $app, $form);
+		my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
 		if ($job_id && $job && $job->{id}) {
 			return redirect '/job/' . $job_id;
 		} else {
@@ -638,7 +642,7 @@ any ['get', 'post'] => '/job/new/:id' => sub {
 };
 
 sub prepareJob {
-	my ($user, $app, $form, $step, $step_form, $prev_job)=@_;
+	my ($username, $app, $form, $step, $step_form, $prev_job)=@_;
 	my $app_id=$app->{id};
 	my $archive_system=setting("archive_system");
 	my $archive_home=setting("archive_home");
@@ -761,7 +765,7 @@ sub prepareJob {
 
 	my $job_json=to_json(\%job_form);
 	my $wfid=$form->{'_workflow_id'};
-	my $data={username => $user->{username}, job_id => $job_id, app_id => $app_id, job_json => $job_json, status => 'PENDING'};
+	my $data={username => $username, job_id => $job_id, app_id => $app_id, job_json => $job_json, status => 'PENDING'};
 	if ($wfid) {
 		$data->{workflow_id}=$wfid;
 		$data->{step_id}=$step->{id};
@@ -783,7 +787,7 @@ sub prepareJob {
 }
 
 sub submitJob {
-	my ($apif, $app, $job_id, $job_form)=@_;
+	my ($username, $apif, $app, $job_id, $job_form)=@_;
 	
 	return if ! $job_id || database->quick_count('nextstep', {next => $job_id, status => 0});
 
@@ -799,6 +803,7 @@ sub submitJob {
 			my $job = $st->{data};
 			database->quick_update('job', {job_id => $job_id}, {agave_id => $job->{id}, agave_json => to_json($job), status => 'PENDING'});
 			$job->{job_id}=$job_id;
+			$job_ep->share_job($job->{id}, $username, 'READ');
 			return ($job);
 		} else {
 			error('Error: ', $st->{message});
@@ -816,7 +821,7 @@ sub resubmitJob {
 	my $job=database->quick_select('job', {agave_id => $job_id}) || database->quick_select('job', {job_id => $job_id});
 	my $job_form=from_json($job->{job_json});
 	my ($app) = $apps->find_by_id($job->{app_id});
-	my ($res, $err)=submitJob($apif, $app, $job->{job_id}, $job_form);
+	my ($res, $err)=submitJob($job->{username}, $apif, $app, $job->{job_id}, $job_form);
 }
 
 any ['get', 'post'] => '/notification/:id' => sub {
@@ -878,7 +883,7 @@ sub submitNextJob {
 		my $job_form=from_json($next_job->{job_json});
 		my ($app) = $apps->find_by_id($next_job->{app_id});
 	
-		my ($res, $err)=submitJob($apif, $app, $next_job->{job_id}, $job_form);
+		my ($res, $err)=submitJob($next_job->{username}, $apif, $app, $next_job->{job_id}, $job_form);
 	}
 }
 
