@@ -33,3 +33,5 @@ bundle.js
 __mytest__
 tmp
 database
+config.yml
+environments

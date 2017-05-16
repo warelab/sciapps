@@ -58,7 +58,7 @@ const WorkflowBuilderForm=React.createClass({
 				let workflows=this.state.workflowStore.workflows;
 				if (_.find(workflows, 'name', formData['workflowName'])) {
 					//alert('Please choose a unique name.');
-					this.refs.dialog.showAlert('Please choose a unique name.');
+					this.refs.dialog.showAlert('A workflow with that name already exists. Please enter a different name');
 				} else {
 					let wfid=utilities.uuid();
 					this.setState({onSubmit: true, wfid: wfid});

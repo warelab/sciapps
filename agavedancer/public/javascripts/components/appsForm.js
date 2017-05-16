@@ -26,6 +26,10 @@ const AppsForm=React.createClass({
 		});
 	},
 
+        componentWillUnmount () {
+                Dialog.resetOptions()
+        },
+
 	handleSubmit: function() {
 		this.setState({onSubmit: true, onValidate: true});
 		let setting=_config.setting;
@@ -52,18 +56,21 @@ const AppsForm=React.createClass({
 		let confirmed, formData;
 		if (validated) {
 			formData=new FormData(this.refs[this.formName]);
-			//confirmed=confirm('You are going to submit 1 job to cluster, are you sure?');
 			this.refs.dialog.show({
-				body: 'You are going to submit 1 job to cluster, are you sure?',
+				body: 'Are you sure you want to submit this job?',
 				actions: [
 					Dialog.CancelAction(),
-					Dialog.OKAction(() => {
-						JobsActions.submitJob(this.props.appDetail.id, formData);
-						this.setState({onValidate: false});
-						Q.delay(1000).then(function() {
-							this.refs.dialog.showAlert('Job has been submitted.');
-						}.bind(this));
-					})
+					Dialog.Action(
+						'Submit',
+						() => {
+							JobsActions.submitJob(this.props.appDetail.id, formData);
+							this.setState({onValidate: false});
+							Q.delay(1000).then(function() {
+								this.refs.dialog.showAlert('Submitted! Check History panel for status');
+							}.bind(this));
+						},
+						'btn-warning'
+					)
 				]
 			});
 		} else {

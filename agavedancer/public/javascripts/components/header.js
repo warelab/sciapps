@@ -7,6 +7,7 @@ import UserLoginBox from './userLoginBox.js';
 import AppsActions from '../actions/appsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import UserActions from  '../actions/userActions.js';
+import Dialog from 'react-bootstrap-dialog';
 
 const Header=React.createClass({
 
@@ -92,8 +93,20 @@ const Header=React.createClass({
 	},
 
 	handleLogout: function() {
-		UserActions.logout();
-		window.location = '/logout';
+		this.refs.dialog.show({
+ 			body: 'You will lose all job histories if you have not saved them as a workflow',
+ 			actions: [
+ 				Dialog.CancelAction(),
+ 				Dialog.Action(
+					'Logout',
+					() => {
+						UserActions.logout();
+						window.location = '/logout';
+ 					},
+					'btn-danger'
+				)
+ 			]
+ 		});
 	},
 
 	render: function() {
@@ -120,6 +133,7 @@ const Header=React.createClass({
 			</NavDropdown>
 		);
 		return (
+			<div>
 			<Navbar className="navbar">
 				<Nav>
 					<NavItem eventKey='welcome' onSelect={this.showWelcome}><Glyphicon glyph='home' /> Home</NavItem>
@@ -130,6 +144,8 @@ const Header=React.createClass({
 					{userMenu}
 				</Nav>
 			</Navbar>
+			<Dialog ref='dialog' />
+			</div>
 		);
 	}
 });

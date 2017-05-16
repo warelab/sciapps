@@ -43,7 +43,7 @@ const UserWorkflows=React.createClass({
 		let existed=_.find(workflows, 'name', formData.name);
 		if (existed && existed.workflow_id !== wfid) {
 			//alert('Please choose a unique name.');
-			this.refs.dialog.showAlert('Please choose a unique name.');
+			this.refs.dialog.showAlert('A workflow with that name already exists. Please enter a different name');
 		} else {
 			WorkflowActions.updateWorkflow(formData);
 			delete this.state.onEdit[wfid];
