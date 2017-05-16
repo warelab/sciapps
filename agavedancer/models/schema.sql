@@ -20,17 +20,33 @@ create table user (
 drop index if exists username;
 create index username on user(username);
 
+drop table if exists login;
+create table login (
+	id integer primary key autoincrement,
+	username varchar(40) references user(username) not null,
+	login_at datetime DEFAULT CURRENT_TIMESTAMP not null
+);
+
+drop index if exists login_username;
+create index login_username on login(username);
+
 drop table if exists workflow;
 create table workflow (
 	id integer primary key autoincrement,
 	workflow_id varchar(40) unique not null,
 	name varchar(40) unique not null,
 	description text,
-	json text
+	json text,
+	derived_from varchar(40),
+	created_at datetime default CURRENT_TIMESTAMP not null,
+	modified_at datetime default CURRENT_TIMESTAMP not null
 );
 
 drop index if exists workflow_id;
 create index workflow_id on workflow(workflow_id);
+
+drop index if exists workflow_derived_from;
+create index workflow_derived_from on workflow(derived_from);
 
 drop table if exists user_workflow;
 create table user_workflow (
@@ -58,7 +74,8 @@ create table job (
 	agave_json text,
 	status varchar(40),
 	step_id integer,
-	workflow_id varchar(40) references workflow(workflow_id)
+	workflow_id varchar(40) references workflow(workflow_id),
+	username varchar(40) references user(username)
 );
 
 drop index if exists job_id;
@@ -66,6 +83,9 @@ create index job_id on job(job_id);
 
 drop index if exists job_agave_id;
 create index job_agave_id on job(agave_id);
+
+drop index if exists job_username;
+create index job_username on job(username);
 
 drop table if exists nextstep;
 create table nextstep (
