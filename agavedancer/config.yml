@@ -57,6 +57,7 @@ plugins:
 
 output_url:
   brie.cshl.edu: 'https://dev2.sciapps.org'
+  brebiou.cshl.edu: 'https://data.sciapps.org'
   halcott.cshl.edu: 'https://data.sciapps.org'
   dev2.sciapps.org: 'https://dev2.sciapps.org'
   data.sciapps.org: 'https://data.sciapps.org'
