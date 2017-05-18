@@ -35,6 +35,7 @@ const AppsForm=React.createClass({
 		let setting=_config.setting;
 		let required=[];
 		let appDetail=this.props.appDetail;
+		let user=this.props.user;
 		if (appDetail && undefined !== appDetail.name) {
 			if (appDetail.inputs && appDetail.inputs.length) {
 				appDetail.inputs.forEach(function(input) {
@@ -54,34 +55,38 @@ const AppsForm=React.createClass({
 		let form=this.refs[this.formName];
 		let validated=utilities.validateForm(form, required, setting.upload_suffix);
 		let confirmed, formData;
-		if (validated) {
-			formData=new FormData(this.refs[this.formName]);
-			this.refs.dialog.show({
-				body: 'Are you sure you want to submit this job?',
-				actions: [
-					Dialog.CancelAction(),
-					Dialog.Action(
-						'Submit',
-						() => {
-							JobsActions.submitJob(this.props.appDetail.id, formData);
-							this.setState({onValidate: false});
-							Q.delay(1000).then(function() {
-								this.refs.dialog.showAlert('Submitted! Check History panel for status');
-							}.bind(this));
-						},
-						'btn-warning'
-					)
-				]
-			});
-		} else {
-			//alert('There is something missing in your job submission form.');
-			this.refs.dialog.showAlert('There is something missing in your job submission form.');
-		}
-
-		//if (confirmed) {
-		//	JobsActions.submitJob(this.props.appDetail.id, formData);
-		//	this.setState({onValidate: false});
-		//}
+		if (user.logged_in) {
+			if (validated) {
+				formData=new FormData(this.refs[this.formName]);
+				this.refs.dialog.show({
+					body: 'Are you sure you want to submit this job?',
+					actions: [
+						Dialog.CancelAction(),
+						Dialog.Action(
+							'Submit',
+							() => {
+								JobsActions.submitJob(this.props.appDetail.id, formData);
+								this.setState({onValidate: false});
+								Q.delay(1000).then(function() {
+									this.refs.dialog.showAlert('Submitted! Check History panel for status');
+								}.bind(this));
+							},
+							'btn-warning'
+						)
+					]
+				});
+			} else {
+				//alert('There is something missing in your job submission form.');
+				this.refs.dialog.showAlert('There is something missing in your job submission form.');
+			}
+		                }
+                else {
+                        this.refs.dialog.showAlert('Please login to submit your analysis job!');
+                }
+			//if (confirmed) {
+			//	JobsActions.submitJob(this.props.appDetail.id, formData);
+			//	this.setState({onValidate: false});
+			//}
 
 		Q.delay(1000).then(function() {	
 			//if (confirmed) {
@@ -147,11 +152,7 @@ const AppsForm=React.createClass({
 			placeholder: 'Enter email',
 			help: 'Optional Email for notification'
 		};
-		let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
-		let submitBtn=user.logged_in ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit Job</Button> :
-			<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
-				<Button bsStyle='primary' onClick={null}>Submit Job</Button>
-			</OverlayTrigger>;
+		let submitBtn=<Button bsStyle='primary' onClick={this.handleSubmit}>Submit Job</Button>; 
 		//if (user.logged_in) {
 		//	if (this.state.onSubmit) {
 		//		submitBtn=(
