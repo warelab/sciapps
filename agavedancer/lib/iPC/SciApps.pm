@@ -563,6 +563,9 @@ ajax '/workflow' => sub {
 ajax '/workflowJob/new' => sub {
 	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
 	my $username=$user->{username};
+	my $archive_system=setting("archive_system");
+	my $archive_home=setting("archive_home");
+	my $archive_path=setting("archive_path");
 	my @err = ();
 	my $apif = getAgaveClient();
 	my $apps = $apif->apps;
@@ -580,7 +583,7 @@ ajax '/workflowJob/new' => sub {
 		my ($app) = $apps->find_by_id($app_id);
 		my ($job_id, $job_form)=prepareJob($username, $app, $form, $step, \@step_form, \@jobs);
 		my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
-		$job||={appId => $app_id, job_id => $job_id, archiveSystem => $job_form->{archiveSystem}, archivePath => $job_form->{archivePath}, status => 'PENDING'};
+		$job||={appId => $app_id, job_id => $job_id, archiveSystem => $archive_system, archivePath => $job_form->{archivePath}, status => 'PENDING'};
 		if ($job_id) {
 			push @jobs, $job;
 			push @step_form, $job_form;
@@ -719,6 +722,7 @@ sub prepareJob {
 		if ($v && ref($v)) {
 			#my $sf=$step_form->[$v->{step}];
 			#$job_form{$k}='agave://' . $input_system . '/' . $sf->{archivePath} . '/' . $v->{output_name};
+			$job_form{$k}=$prev_job->[$v->{step}]{job_id} . ':' . $v->{output_name};
 		} else {
 			$step->{inputs}{$k}=$job_form{$k};
 		}
@@ -866,7 +870,7 @@ sub archiveJob {
 	my $apif = getAgaveClient();
 	my $io = $apif->io;
 	my $jobObj=from_json($job->{agave_json});
-	my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->executionSystem, $jobObj->outputPath);
+	my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->{executionSystem}, $jobObj->{outputPath});
 	my $target=sprintf("/system/%s/%s", $archive_system, $archive_path);
 	my $res=$io->import_file($target, {urlToIngest => $source});
 }

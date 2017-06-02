@@ -93,6 +93,7 @@ create table nextstep (
 	prev varchar(40) references job(job_id),
 	next varchar(40) references job(job_id),
 	input_name varchar(100) not null,
+	input_value varchar(100) not null,
 	status integer default 0
 );
 
