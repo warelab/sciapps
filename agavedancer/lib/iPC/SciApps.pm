@@ -671,10 +671,12 @@ sub prepareJob {
 	$job_form{maxRunTime}||=$app->{defaultMaxRunTime} && iPC::Utils::cmp_maxRunTime($app->{defaultMaxRunTime}, setting("maxRunTime")) < 0 ? $app->{defaultMaxRunTime} : setting("maxRunTime");
 
 	# hack for the url input
-	#foreach my $name (keys %job_form) {
-	#	next unless $job_form{$name};
-	#	if ($job_form{$name}=~m#^http://data.maizecode.org#) {
-	#		$job_form{$name}=~s#^http://data.maizecode.org#agave://$archive_system/data#;
+	foreach my $name (keys %job_form) {
+		next unless $job_form{$name};
+		if ($job_form{$name}=~m#^https://data.sciapps.org#) {
+			$job_form{$name}=~s#^https://data.sciapps.org#agave://halcott.cshl.edu#;
+		}
+	}
 	#	} elsif ($job_form{$name}=~m#^http://www.maizecode.org#) {
 	#		$job_form{$name}=~s#^http://www.maizecode.org#agave://$archive_system#;
 	#	} else {
