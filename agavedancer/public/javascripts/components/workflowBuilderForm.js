@@ -91,9 +91,10 @@ const WorkflowBuilderForm=React.createClass({
 			workflow.steps.push(step);
 			let app=appsStore.appDetailCache[job.appId];
 			app.outputs.forEach(function(output) {
+				let filePath=job.archive ? job.archivePath : job.id + '/outputs/media';
 				//let path=job.archivePath + '/' + output.value.default;
-				let archivePath=job.outputPath.replace(job.owner, setting.archive_path);
-				let path=archivePath + '/' + output.value.default;
+				//let archivePath=job.outputPath.replace(job.owner, setting.archive_path);
+				let path=filePath + '/' + output.value.default;
 				outputs[path]={step: index, output_name: output.value.default};
 			});
 		}.bind(this));

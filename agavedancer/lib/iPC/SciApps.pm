@@ -894,17 +894,32 @@ sub submitNextJob {
 	my $apps = $apif->apps;
 
 	my $prev=database->quick_select('job', {job_id => $job->{job_id}});
+	my $jobObj=from_json($prev->{agave_json});
+	#my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->{executionSystem}, $jobObj->{outputPath});
+	my $source=sprintf("https://agave.iplantc.org/jobs/v2/%s/outputs/media", $jobObj->{id});
 	my @next=database->quick_select('nextstep', {prev => $prev->{job_id}, status => 0});
 	if (scalar @next) {
-		database->quick_update('nextstep', {prev => $prev->{job_id}}, {status => 1});
+		database->quick_update('nextstep', {prev => $prev->{job_id}}, {input_source => $source, status => 1});
 	}
 
 	foreach my $next (@next) {
 		next if database->quick_count('nextstep', {next => $next->{next}, status => 0});
 		my $next_job=database->quick_select('job', {job_id => $next->{next}});
 		my $job_form=from_json($next_job->{job_json});
+		my @prev=database->quick_select('nextstep', {next => $next->{next}});
+		my %input;
+		foreach (@prev) {
+			my (undef, $filename)=split /:/, $_->{input_name};
+			$input{$_->{input_name}}=$_->{input_source} . '/' . $filename;
+		}
+		while (my ($k, $v) = each %$job_form) {
+			if (exists $input{$v}) {
+				$job_form->{$k}=$input{$v};
+			}
+		}
+		database->quick_update('job', {job_id => $next->{next}}, {job_json => to_json($job_form)});
 		my ($app) = $apps->find_by_id($next_job->{app_id});
-	
+
 		my ($res, $err)=submitJob($next_job->{username}, $apif, $app, $next_job->{job_id}, $job_form);
 	}
 }

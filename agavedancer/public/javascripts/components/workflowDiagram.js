@@ -116,7 +116,7 @@ const WorkflowDiagram=React.createClass({
 				let jobDetail=step.jobId ? jobsStore.jobDetailCache[step.jobId] || _.find(jobsStore.jobDetailCache, 'id', step.jobId) : undefined;
 				_.forEach(appDetail.outputs, function(v) {
 					let value=v.value.default;
-					let output_name=(jobDetail ? jobDetail.archiveSystem + '/' + jobDetail.archivePath + '/' : setting.wf_step_prefix + step.id + ':') + value;
+					let output_name=(jobDetail ? (jobDetail.archive ? jobDetail.archiveSystem + '/' + jobDetail.archivePath + '/' : jobDetail.outputPath + '/') : setting.wf_step_prefix + step.id + ':') + value;
 					let url=output_name;
 					output_name=output_name.replace(/\W/g, '_').toLowerCase();
 					diagramDefStmts.push(output_name + '(' + that.truncate(value) + '); class ' + output_name + ' fileNode');
@@ -133,7 +133,7 @@ const WorkflowDiagram=React.createClass({
 						let prevAppNodeId=(setting.wf_step_prefix + ic.step).replace(/\W/g, '_').toLowerCase();
 						let prevJobId=steps[ic.step].jobId;
 						let prevJobDetail=prevJobId ? jobsStore.jobDetailCache[prevJobId] || _.find(jobsStore.jobDetailCache, 'id', prevJobId) : undefined;
-						let input_name=(prevJobDetail ? prevJobDetail.archiveSystem + '/' + prevJobDetail.archivePath + '/' : setting.wf_step_prefix + ic.step + ':') + ic.output_name;
+						let input_name=(prevJobDetail ? (prevJobDetail.archive ? prevJobDetail.archiveSystem + '/' + prevJobDetail.archivePath + '/' : prevJobDetail.outputPath + '/') : setting.wf_step_prefix + ic.step + ':') + ic.output_name;
 						let url=input_name; 
 						input_name=input_name.replace(/\W/g, '_').toLowerCase();
 						//diagramDefStmts.push(value + '(' + that.truncate(ic.output_name) + '); class ' + value + ' fileNode');
