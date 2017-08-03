@@ -8,13 +8,9 @@ import JobsStore from '../stores/jobsStore.js';
 const FilesInfo=React.createClass({
 	mixins: [Reflux.connect(JobsStore, 'jobsStore')],
 
-	getInitialState: function() {
-		return { setting: _config.setting };
-	},
-	
 	render: function() {
 		let jobsStore=this.state.jobsStore;
-		let setting=this.state.setting;
+		let setting=_config.setting;
 		let fileDetail=jobsStore.fileDetailCache[this.props.fileId];
 		let markup=<div />;
 		let tbody=[];
