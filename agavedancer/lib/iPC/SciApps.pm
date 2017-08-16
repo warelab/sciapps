@@ -197,7 +197,7 @@ ajax '/user' => sub {
 	to_json($user);
 };
 
-ajax qr{/browse/?(.*)} => sub {
+get qr{/browse/?(.*)} => sub {
 	my ($typePath) = splat;
 	my ($type, $path)=split /\//, $typePath, 2;
 	$path||='';
@@ -221,14 +221,35 @@ ajax qr{/browse/?(.*)} => sub {
 	} elsif ($type eq '__shared__') {
 		$result=browse_ils($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__public__') {
-		$result=browse_ls($path, $datastore_system, $datastore_homepath);
+		#$result=browse_ls($path, $datastore_system, $datastore_homepath);
+		$result=browse_output_files($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__system__') {
 		my ($system, $filepath)=split /\//, $path, 2;
 		$result=browse_files($filepath, $system);
+	} elsif ($type eq '__output__') {
+		$result=browse_output_files($path, $datastore_system, $datastore_homepath);
 	}
 
 	to_json($result);
 };
+
+sub browse_output_files {
+	my ($path, $agave_id, $homepath)=@_;
+	$homepath=~s/^\///;
+
+	my $fullPath=$homepath . '/' . $path;
+
+	my $apif=getAgaveClient();
+	my $job_ep = $apif->job;
+	my $dir_list=$job_ep->job_output_files($agave_id, $fullPath);
+
+	[{
+			is_root => $path ? 0 : 1,
+			path => $path,
+			list => [map {name => $_->{name}, length => $_->{length}, type =>$_ ->{type}}, @$dir_list],
+		}];
+
+}
 
 sub browse_ils {
 	my ($path, $system, $homepath)=@_;

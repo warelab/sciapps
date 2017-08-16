@@ -55,7 +55,8 @@ const DsDetail=React.createClass({
 					<DsItem key={dsItem.name} data={dsItem} checked={isChecked} />
 				);
 			});
-			path=[dsSetting.system, dsSetting.path, dsDetail.path].join('/');
+			//path=[dsSetting.system, dsSetting.path, dsDetail.path].join('/');
+			path=[dsSetting.path, dsDetail.path].join('/');
 		}
 		return (
 			<Modal show={showDataStore} onHide={this.hideDataStoreDetail}>
