@@ -6,9 +6,12 @@ import _ from 'lodash';
 import DsActions from '../actions/dsActions.js';
 import DsStore from '../stores/dsStore.js';
 import {Input, Button} from 'react-bootstrap';
+import Dialog from 'react-bootstrap-dialog';
 
 const AppsInput=React.createClass({
 	mixins: [Reflux.listenTo(DsStore, 'handleDsStoreChange')],
+
+	fileSizeLimit: 10000000,
 
 	getInitialState: function() {
 		return {
@@ -24,6 +27,7 @@ const AppsInput=React.createClass({
 	},
 
 	componentWillUnmount: function() {
+		Dialog.resetOptions();
 		this.setState({textValue: this.props.data.value.default});
 	},
 
@@ -51,7 +55,12 @@ const AppsInput=React.createClass({
 	},
 
 	handleFileChange: function(event) {
-		this.setState({fileValue: event.target.value});
+		let file = event.target.files[0];
+		if (file.size > this.fileSizeLimit) {
+				this.refs.dialog.showAlert('The file size is over the limit (10 Mb).');
+		} else {
+			this.setState({fileValue: event.target.value});
+		}
 	},
 
 	handleDataStore: function(event) {
@@ -109,6 +118,7 @@ const AppsInput=React.createClass({
 				<Input {...props} >
 					<Input {...fileProps} />
 					<Input {...textProps} />
+					<Dialog ref='dialog' />
 				</Input>
 			);
 		}

@@ -820,25 +820,31 @@ sub submitJob {
 	return if ! $job_id || database->quick_count('nextstep', {next => $job_id, status => 0});
 
 	my $job_ep = $apif->job;
-	my $st = try {
-		$job_ep->submit_job($app, %$job_form);
-	} catch {
-		my ($e)=@_;
-		error("Error: $e");
-	};
-	if ($st) {
-		if ($st->{status} eq 'success') {
-			my $job = $st->{data};
-			database->quick_update('job', {job_id => $job_id}, {agave_id => $job->{id}, agave_json => to_json($job), status => 'PENDING'});
-			$job->{job_id}=$job_id;
-			$job_ep->share_job($job->{id}, $username, 'READ');
-			return ($job);
-		} else {
-			error('Error: ', $st->{message});
-			return (undef, $st->{message});
+	my $retry=3;
+	my $err;
+	while ($retry-- > 0) {
+		my $st = try {
+			$job_ep->submit_job($app, %$job_form);
+		} catch {
+			my ($e)=@_;
+			$err="Error: $e";
+			error($err);
+		};
+		if ($st) {
+			if ($st->{status} eq 'success') {
+				my $job = $st->{data};
+				database->quick_update('job', {job_id => $job_id}, {agave_id => $job->{id}, agave_json => to_json($job), status => 'PENDING'});
+				$job->{job_id}=$job_id;
+				$job_ep->share_job($job->{id}, $username, 'READ');
+				return ($job);
+			} else {
+				$err='Error: ' . $st->{message};
+				error($err);
+			}
 		}
+		sleep(180) if $retry;
 	}
-	return;
+	return (undef, $err);
 }
 
 sub resubmitJob {

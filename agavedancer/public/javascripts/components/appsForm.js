@@ -25,10 +25,10 @@ const AppsForm=React.createClass({
 			onValidate: false
 		});
 	},
-
-        componentWillUnmount () {
-                Dialog.resetOptions()
-        },
+	
+	componentWillUnmount () {
+		Dialog.resetOptions();
+	},
 
 	handleSubmit: function() {
 		this.setState({onSubmit: true, onValidate: true});
@@ -79,10 +79,9 @@ const AppsForm=React.createClass({
 				//alert('There is something missing in your job submission form.');
 				this.refs.dialog.showAlert('There is something missing in your job submission form.');
 			}
-		                }
-                else {
-                        this.refs.dialog.showAlert('Please login to submit your analysis job!');
-                }
+		} else {
+			this.refs.dialog.showAlert('Please login to submit your analysis job!');
+		}
 			//if (confirmed) {
 			//	JobsActions.submitJob(this.props.appDetail.id, formData);
 			//	this.setState({onValidate: false});

@@ -101,9 +101,13 @@ const JobsStore=Reflux.createStore({
 			if (res.data.error) {
 				return;
 			}
-			let job=res.data;
-			this.state.jobs[submitNumber].job_id=job.job_id;
-			this.state.jobDetailCache[job.job_id]=job;
+			if (res.data) {
+				let job=res.data;
+				this.state.jobs[submitNumber].job_id=job.job_id;
+				this.state.jobDetailCache[job.job_id]=job;
+			} else {
+				this.state.jobs[submitNumber].job_id=undefined;
+			}
 			this.complete();
 		}.bind(this))
 		.catch(function(error) {
@@ -309,7 +313,7 @@ const JobsStore=Reflux.createStore({
 
 	setFile: function(fileId, url) {
 		let setting=_config.setting;
-		let path=url.replace('agave://', '');
+		let path=url.replace('^(agave|https?)://', '');
 		let fileDetail=this.state.fileDetailCache[fileId];
 		let filePromise;
 		if (fileDetail) {

@@ -123,14 +123,14 @@ const WorkflowDiagram=React.createClass({
 					if (jobDetail) {
 						output_name=jobDetail.id;
 						if (jobDetail.archive) {
-							url=jobDetail.archiveSystem + '/' + jobDetail.archivePath + '/';
+							url=[jobDetail.archiveSystem, jobDetail.archivePath, value].join('/');
 						} else if (jobDetail.outputPath) {
-							url=setting.archive_system + '/' + jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path) + '/';
+							url=[setting.archive_system, jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path), value].join('/');
 						}
 					} else {
 						output_name=setting.wf_step_prefix + step.id + ':';
 					}
-					output_name=output_name + value;
+					output_name=['file', output_name, value].join('_');
 					output_name=output_name.replace(/\W/g, '_').toLowerCase();
 					diagramDefStmts.push(output_name + '(' + that.truncate(value) + '); class ' + output_name + ' fileNode');
 					if (url) {
@@ -153,7 +153,7 @@ const WorkflowDiagram=React.createClass({
 						} else {
 							input_name=setting.wf_step_prefix + ic.step + ':';
 						}
-						input_name=input_name + ic.output_name;
+						input_name=['file', input_name, ic.output_name].join('_');
 						//let url=input_name; 
 						input_name=input_name.replace(/\W/g, '_').toLowerCase();
 						//diagramDefStmts.push(value + '(' + that.truncate(ic.output_name) + '); class ' + value + ' fileNode');
