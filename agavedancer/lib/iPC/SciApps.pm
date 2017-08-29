@@ -22,7 +22,7 @@ use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/host_url output_url upload_suffix wf_step_prefix datastore archive_system archive_home archive_path/;
+our @EXPORT_SETTINGS=qw/host_url output_url upload_suffix wf_step_prefix datastore public_datastore_type archive_system archive_home archive_path/;
 our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError SystemError/;
 
 foreach my $exception (@EXCEPTIONS) {
@@ -204,6 +204,8 @@ get qr{/browse/?(.*)} => sub {
 	my $user=session('cas_user');
 	if (($type eq '__user__' || $type eq '__shared__') && ! $user) {
 		raise InvalidCredentials => 'no cas user';
+	} elsif ($type eq '__public__') {
+		$type=setting('public_datastore_type');
 	}
 	my $username=$user->{username};
 	my $datastore=setting('datastore')->{$type};
@@ -221,8 +223,7 @@ get qr{/browse/?(.*)} => sub {
 	} elsif ($type eq '__shared__') {
 		$result=browse_ils($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__public__') {
-		#$result=browse_ls($path, $datastore_system, $datastore_homepath);
-		$result=browse_output_files($path, $datastore_system, $datastore_homepath);
+		$result=browse_ls($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__system__') {
 		my ($system, $filepath)=split /\//, $path, 2;
 		$result=browse_files($filepath, $system);
@@ -629,6 +630,7 @@ ajax '/job/new/:id' => sub {
 	my $form = params();
 	my ($job_id, $job_form)=prepareJob($username, $app, $form);
 	my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
+	#return;
 	if ($job_id && $job && $job->{id}) {
 		return to_json($job);
 	}
@@ -785,7 +787,9 @@ sub prepareJob {
 	},
 	];
 
-	$job_form{_email}=$form->{_email} || undef;
+	my $user=session('cas_user');
+
+	$job_form{_email}=$form->{_email} ? $user->{email} : undef;
 	$job_form{archive}=0;
 	#$job_form{archiveSystem}=$archive_system;
 	#$job_form{archivePath}=$archive_path;
@@ -866,6 +870,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	if ($params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED') {
 		#next if $params->{message}=~/Attempt [12] to submit job/;
 		my $job_form=from_json($job->{job_json});
+		print STDERR 'AA|' . to_dumper($job_form);
 
 		if (my $email=$job_form->{_email}) {
 			my $template_engine = engine 'template';

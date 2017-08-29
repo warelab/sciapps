@@ -23,7 +23,7 @@ const JobsList=React.createClass({
 		if (jobs && jobs.length) {
 			jobsItemNodes = jobs.map(function (jobsItem, index) {
 				if (jobsItem) {
-					if (jobsItem.job_id !== undefined) {
+					if (jobsItem.job_id) {
 						jobsItem=jobsStore.jobDetailCache[jobsItem.job_id];
 					}
 					let checked=jobsStore.workflowBuilderJobIndex[index];

@@ -106,7 +106,8 @@ const JobsStore=Reflux.createStore({
 				this.state.jobs[submitNumber].job_id=job.job_id;
 				this.state.jobDetailCache[job.job_id]=job;
 			} else {
-				this.state.jobs[submitNumber].job_id=undefined;
+				//this.state.jobs[submitNumber].job_id=undefined;
+				this.state.jobs[submitNumber].job_id=0;
 			}
 			this.complete();
 		}.bind(this))
@@ -215,16 +216,18 @@ const JobsStore=Reflux.createStore({
 		if (! this.state.showJob) {
 			this.state.showJob=true;
 			this.complete();
+			if (jobId) {
+				let jobPromise=this._setJob(jobId);
+				jobPromise.then(function(jobDetail) {
+					this.state.showJobId=jobId;
+					this.complete();
+				}.bind(this))
+				.catch(function(error) {
+					console.log(error);
+				})
+				.done();
+			}
 		}
-		let jobPromise=this._setJob(jobId);
-		jobPromise.then(function(jobDetail) {
-			this.state.showJobId=jobId;
-			this.complete();
-		}.bind(this))
-		.catch(function(error) {
-			console.log(error);
-		})
-		.done();
 	},
 
 	hideJob: function() {

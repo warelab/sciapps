@@ -15,11 +15,13 @@ const JobsItem=React.createClass({
 	},
 
 	showJob: function() {
-		JobsActions.showJob(this.props.job.job_id);
+		if (this.props.job.job_id) {
+			JobsActions.showJob(this.props.job.job_id);
+		}
 	},
 
 	showJobOutputs: function() {
-		if (! this.state.isOpen) {
+		if (! this.state.isOpen && this.props.job.job_id) {
 			//JobsActions.showJobOutputs(this.props.job.job_id);
 			JobsActions.setJob(this.props.job.job_id);
 		}
@@ -27,7 +29,9 @@ const JobsItem=React.createClass({
 	},
 
 	resubmitJob: function() {
-		JobsActions.resubmitJob(this.props.job.job_id);
+		if (this.props.job.job_id) {
+			JobsActions.resubmitJob(this.props.job.job_id);
+		}
 	},
 
 	handleCheck: function() {
@@ -45,8 +49,15 @@ const JobsItem=React.createClass({
 		let setting=_config.setting;
 		let appId=job.appId;
 		let jobId=job.job_id;
-		let displayName=(this.props.index + 1) + ': ' + appId;
+		let displayName=(this.props.index + 1) + ': ';
+		if (jobId === undefined) {
+			displayName=displayName + ' (Submitting) ';
+		} else if (jobId === 0) {
+			displayName=displayName + '(Failed) ';
+		}
+		displayName=displayName + appId;
 		let isSubmitting=undefined === jobId;
+		let isFailed=0 === jobId;
 		//let outputsItemNodes='Loading ...';
 		let checkedGlyph=this.state.checked ? 'check' : 'unchecked';
 		let tooltipout = (<Tooltip id="tooltipout">Display Outputs</Tooltip>);
@@ -70,16 +81,16 @@ const JobsItem=React.createClass({
 			<ListGroupItem>
 				<ButtonToolbar>
 					<OverlayTrigger placement="bottom" overlay={tooltipout}>
-						<Button key='outputs' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJobOutputs} >{displayName}</Button>
+						<Button key='outputs' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.showJobOutputs} >{displayName}</Button>
 					</OverlayTrigger>
 					<OverlayTrigger placement="bottom" overlay={tooltipres}>
-			    	<Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.resubmitJob} ><Glyphicon glyph='repeat' /></Button>
+			    	<Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.resubmitJob} ><Glyphicon glyph='repeat' /></Button>
 					</OverlayTrigger>
 					<OverlayTrigger placement="bottom" overlay={tooltipsta}>
-						<Button key='status' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.showJob} ><Glyphicon glyph='info-sign' /></Button>
+						<Button key='status' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.showJob} ><Glyphicon glyph='info-sign' /></Button>
 					</OverlayTrigger>
           <OverlayTrigger placement="bottom" overlay={tooltipadd}>
-						<Button key='check' bsSize='medium' bsStyle='link' disabled={isSubmitting} onClick={isSubmitting ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
+						<Button key='check' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
 					</OverlayTrigger>
 			  </ButtonToolbar>
 				<Panel collapsible expanded={this.state.isOpen}>

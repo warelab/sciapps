@@ -6,6 +6,7 @@ import _ from 'lodash';
 import Q from 'q';
 import {Panel, Button, Alert, Tooltip, OverlayTrigger} from 'react-bootstrap';
 import BaseInput from './baseInput.js';
+import AppsBoolParam from './appsBoolParam.js';
 import AppsParam from './appsParam.js';
 import AppsInput from './appsInput.js';
 import JobsActions from '../actions/jobsActions.js';
@@ -144,12 +145,14 @@ const AppsForm=React.createClass({
 			}
 		}
 		let emailInput={
-			type: 'email',
+			type: 'checkbox',
+			required: false,
+			key: '_email',
 			id: '_email',
 			name: '_email',
-			label: 'Email Address',
-			placeholder: 'Enter email',
-			help: 'Optional Email for notification'
+			value: false,
+			label: 'Email Notification',
+			help: 'Optional Email notification upon job completeion'
 		};
 		let submitBtn=<Button bsStyle='primary' onClick={this.handleSubmit}>Submit Job</Button>; 
 		//if (user.logged_in) {
@@ -180,7 +183,7 @@ const AppsForm=React.createClass({
 				<form ref={this.formName}>
 					{app_inputs}
 					{app_params}
-					<BaseInput data={emailInput} />
+					<AppsBoolParam data={emailInput} />
 					{submitBtn}
 				</form>
 				<Dialog ref='dialog' />

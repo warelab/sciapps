@@ -31,7 +31,7 @@ const DsDetail=React.createClass({
 		let user=this.props.user;
 		let setting=_config.setting;
 		let dsStore=this.state.dsStore;
-		let dsSetting=setting.datastore[dsStore.type];
+		let dsSetting=setting.datastore[dsStore.type === '__public__' ? setting.public_datastore_type : dsStore.type];
 		let dsDetail=dsStore.dsDetail;
 		let showDataStore=dsStore.showDataStore;
 		let dsFileNodes='Loading ...';
