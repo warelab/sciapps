@@ -1,5 +1,14 @@
 [
    {
+  	"tags": [
+      		"Validation"
+    	],
+    	"id": "vcfValidator-0.5.0",
+    	"label": "vcf-validator",
+   	"name": "vcfValidator",
+   	"version": "0.5.0"
+   },
+   {
         "_links": {
             "self": {
                 "href": "https://agave.iplantc.org/apps/v2/XYPlot-0.0.2"
@@ -8,7 +17,7 @@
         "id": "XYPlot-0.0.2",
         "label": "XYPlot",
         "name": "XYPlot",
-        "tags": ["Visualization"],
+        "tags": ["Visualisation"],
         "version": "0.0.2"
    },
    {
