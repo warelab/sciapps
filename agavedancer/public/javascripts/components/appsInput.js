@@ -37,7 +37,8 @@ const AppsInput=React.createClass({
 		let dsItemPath=dsStore.dsItemPaths[this.props.data.id];
 		if (dsItemPath) {
 			let datastore=setting.datastore[dsItemPath.type === '__public__' ? setting.public_datastore_type : dsItemPath.type];
-			dsItemUrl=setting.public_datastore_type === '__public__' ? 'agave://' + [datastore.system, datastore.path, (dsItemPath.path ? dsItemPath.path + '/' : '') + dsItemPath.name].join('/') : 'https://agave.iplantc.org/jobs/v2/' + [datastore.system, 'outputs/media', datastore.path, (dsItemPath.path ? dsItemPath.path + '/' : '') + dsItemPath.name].join('/');
+			dsItemUrl='https://agave.iplantc.org/jobs/v2/' + [datastore.system, 'outputs/media', datastore.path, (dsItemPath.path ? dsItemPath.path + '/' : '') + dsItemPath.name].join('/');
+			//dsItemUrl=setting.public_datastore_type === '__public__' ? 'agave://' + [datastore.system, datastore.path, (dsItemPath.path ? dsItemPath.path + '/' : '') + dsItemPath.name].join('/') : 'https://agave.iplantc.org/jobs/v2/' + [datastore.system, 'outputs/media', datastore.path, (dsItemPath.path ? dsItemPath.path + '/' : '') + dsItemPath.name].join('/');
 		} else if (dsItemPath === '') {
 			dsItemUrl='';
 		}

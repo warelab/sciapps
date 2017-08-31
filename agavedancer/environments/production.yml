@@ -45,13 +45,18 @@ datastore:
     home: '/iplant/home'
     path: 'shared'
   __public__:
-    system: 'data.sciapps.org'
+    system: '1970491483740115431-242ac113-0001-007'
     home: '/agave_data'
     path: 'example_data'
   __system__:
     system: ''
     home: ''
     path: ''
+  __output__:
+    system: '1970491483740115431-242ac113-0001-007'
+    home: ''
+    path: 'example_data'
+public_datastore_type: '__public__'
 uncompress_suffix: '.open.tar.gz'
 use_file_server: 1
 irodsEnvFile: '/usr/share/httpd/irodsEnv'
