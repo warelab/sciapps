@@ -51,7 +51,7 @@ const JobsItem=React.createClass({
 		let jobId=job.job_id;
 		let displayName=(this.props.index + 1) + ': ';
 		if (jobId === undefined) {
-			displayName=displayName + ' (Submitting) ';
+			//displayName=displayName + ' (Submitting) ';
 		} else if (jobId === 0) {
 			displayName=displayName + '(Failed) ';
 		}
