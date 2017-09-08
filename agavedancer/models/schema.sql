@@ -4,7 +4,10 @@ drop table if exists agave_user;
 create table agave_user (
 	id integer primary key autoincrement,
 	username varchar(40) unique not null,
+	consumerKey varchar(40),
 	consumerSecret varchar(40),
+	token varchar(40),
+	refresh_token varchar(40),
 	clientname varchar(40)
 );
 

@@ -36,28 +36,6 @@ sub token_valid {
 	$token && $tk_expiration && $tk_expiration > time() ? 1 : 0;
 }
 
-sub _login {
-	my ($args)=@_;
-	my $ah=iPC::AgaveAuthHelper->new({
-			username => $args->{username},
-			password => $args->{password},
-		}
-	);
-	my $api;
-	if ($ah and $api=$ah->api and $api->token) {
-		debug "Token: " . $api->token . "\n";
-    session 'username' => $api->{'user'};
-    session 'token' => $api->token;
-    session 'logged_in' => 1;
-    session 'token_expiration_in' => $api->auth->token_expiration_in;
-    session 'token_expiration_at' => $api->auth->token_expiration_at;
-		print STDERR "Delta: ", $api->auth->token_expiration_in, $/;
-	} else {
-		raise 'InvalidCredentials' => 'agave login falied';
-	}
-	1;
-}
-
 sub _logout {
 	session->destroy();
 }
@@ -67,10 +45,13 @@ sub agave_login {
 	my $contents = do { local $/;  <AGAVE> };
 	close AGAVE;
 	my $agave=from_json($contents);
+}
 
+sub _agave_login {
+	my ($args)=@_;
 	my $ah=iPC::AgaveAuthHelper->new({
-			username => $agave->{username},
-			password => $agave->{password},
+			username => $args->{username},
+			password => $args->{password},
 		}
 	);
 	my $api;
@@ -127,7 +108,6 @@ hook on_route_exception => sub {
 
 hook 'before' => sub {
 	my $path=request->path;
-	#unless(session('cas_user') || $path eq '/' || $path=~m#^/(login|logout|notification)/?#) {
 	if(! session('cas_user') && $path=~m#^/(job|workflowJob)/new/?#) {
 		if (request->is_ajax) {
 			content_type(setting('plugins')->{Ajax}{content_type});
@@ -769,8 +749,8 @@ sub prepareJob {
 	#close FH;
 	
 	my $host_url=request->uri_base;
-	#my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archiveSystem=${JOB_ARCHIVE_SYSTEM}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}';
-	my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&message=${JOB_ERROR}';
+	my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archiveSystem=${JOB_ARCHIVE_SYSTEM}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}';
+	#my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&message=${JOB_ERROR}';
 	my $notifications=[
 	{
 		#event	=> "ARCHIVING_FINISHED",
@@ -790,7 +770,7 @@ sub prepareJob {
 	my $user=session('cas_user');
 
 	$job_form{_email}=$form->{_email} ? $user->{email} : undef;
-	$job_form{archive}=0;
+	$job_form{archive}=1;
 	#$job_form{archiveSystem}=$archive_system;
 	#$job_form{archivePath}=$archive_path;
 	$job_form{notifications}=$notifications;
@@ -887,7 +867,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	}
 	if ($params->{status} eq 'FINISHED') {
 		submitNextJob($job);
-		archiveJob($job);
+		#archiveJob($job);
 		#uncompress_result($params->{archivePath});
 	} elsif ($params->{status} eq 'FAILED') {
 		#resubmitJob($params->{id});
