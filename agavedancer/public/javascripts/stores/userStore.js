@@ -69,6 +69,11 @@ const UserStore=Reflux.createStore({
 		.done();
 	},
 
+	login: function() {
+		this._login();
+		this.complete();
+	},
+
 	_login: function(formData) {
 		this.state.error='';
 		this.complete();

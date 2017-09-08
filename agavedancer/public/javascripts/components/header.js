@@ -22,18 +22,18 @@ const Header=React.createClass({
 			alert("Browser does not support HTML5.");
 		}
 	},
-
-        showHelp: function() {
-                AppsActions.showPage('help');
-                let title="Help";
-                let url="/?page_id=help";
-                if (typeof (history.pushState) != "undefined") {
-                        let obj = { Title: title, Url: url };
-                        history.pushState(obj, obj.Title, obj.Url);
-                } else {
-                        alert("Browser does not support HTML5.");
-                }
-        },
+	
+	showHelp: function() {
+		AppsActions.showPage('help');
+		let title="Help";
+		let url="/?page_id=help";
+		if (typeof (history.pushState) != "undefined") {
+			let obj = { Title: title, Url: url };
+			history.pushState(obj, obj.Title, obj.Url);
+		} else {
+			alert("Browser does not support HTML5.");
+		}
+	},
 
 	showWorkflows: function() {
 		AppsActions.showPage('workflows');
@@ -89,7 +89,8 @@ const Header=React.createClass({
 	},
 
 	handleLogin: function() {
-		window.location = '/login';
+		//window.location = '/login';
+		UserActions.showLoginBox();
 	},
 
 	handleLogout: function() {
@@ -101,7 +102,7 @@ const Header=React.createClass({
 					'Logout',
 					() => {
 						UserActions.logout();
-						window.location = '/logout';
+						//window.location = '/logout';
  					},
 					'btn-danger'
 				)
@@ -144,6 +145,7 @@ const Header=React.createClass({
 					{userMenu}
 				</Nav>
 			</Navbar>
+			<UserLoginBox />
 			<Dialog ref='dialog' />
 			</div>
 		);
