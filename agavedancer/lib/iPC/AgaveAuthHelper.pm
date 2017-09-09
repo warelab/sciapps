@@ -26,8 +26,16 @@ use Data::Dumper;
 			return;
 		}
 
-		if ($username ne '' && $password ne '') {
-			$client = eval{_build_client($username, $password);};
+
+		if ($username ne '') {
+			my ($consumerKey, $consumerSecret);
+			my $user = iPC::User->search({username => $u});
+			if ($user) {
+				($consumerKey, $consumerSecret)=($user->consumerKey, $user->consumerSecret);
+			} else {
+				$client = eval{_build_client($username, $password);};
+				($consumerKey, $consumerSecret)=($client->{consumerKey}, $client->{consumerSecret});
+			}
 			if ($client) {
 				$apio = eval {
 						Agave::Client->new(
@@ -99,6 +107,7 @@ use Data::Dumper;
 			print STDERR  '** ', __PACKAGE__, ' deleting: ', $@, $/ if $@;
 		} else {
 			$client = $apic->client( $client_name );
+			print STDERR 'BB|' . Dumper($client);
 		}
 
 		if ($client) {

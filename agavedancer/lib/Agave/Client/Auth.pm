@@ -107,7 +107,8 @@ sub _auth_post_token {
 	my $uri = URI::Encode->new;
 	my $content = {
             scope => 'PRODUCTION',
-            grant_type => 'client_credentials',
+						#grant_type => 'client_credentials',
+						grant_type => 'password',
             username => $uri->encode( $self->user ),
             password => $uri->encode( $self->password ),
         };
