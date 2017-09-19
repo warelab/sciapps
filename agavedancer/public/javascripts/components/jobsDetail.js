@@ -24,12 +24,12 @@ const JobsDetail=React.createClass({
 		let jobDetail=jobsStore.jobDetailCache[jobsStore.showJobId];
 		let showJob=jobsStore.showJob;
 		let markup=<div />;
-		let output_link;
+		//let output_link;
 		if (jobDetail) {
 			if (jobDetail.status && _.includes(['FINISHED','FAILED'], jobDetail.status)) {
-				let archivePath=jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path);
-				let link_url=setting.output_url[setting.archive_system] + '/' + archivePath;
-				output_link=(<a href={link_url} target='_blank'>{link_url}</a>);
+				//let archivePath=jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path);
+				//let link_url=setting.output_url[setting.archive_system] + '/' + archivePath;
+				//output_link=(<a href={link_url} target='_blank'>{link_url}</a>);
 			}
 			let job_info=(
 				<Table striped condensed hover>
@@ -40,10 +40,10 @@ const JobsDetail=React.createClass({
 						<tr key='job_info_submitTime'><th>Submitted on:</th><td>{jobDetail.submitTime ? toLocaleString(jobDetail.submitTime) : ''}</td></tr>
 						<tr key='job_info_startTime'><th>Started on:</th><td>{jobDetail.startTime ? toLocaleString(jobDetail.startTime) : ''}</td></tr>
 						<tr key='job_info_endTime'><th>Finished on:</th><td>{jobDetail.endTime ? toLocaleString(jobDetail.endTime) : ''}</td></tr>
-						<tr key='job_info_results'><th>Results:</th><td>{output_link}</td></tr>
 					</tbody>
 				</Table>
 			);
+						//<tr key='job_info_results'><th>Results:</th><td>{output_link}</td></tr>
 			markup=(
 				<Modal show={showJob} onHide={this.hideJob}>
 					<Modal.Header closeButton>

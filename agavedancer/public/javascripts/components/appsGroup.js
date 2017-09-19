@@ -12,19 +12,21 @@ const AppsGroup=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore')],
 
 	componentDidMount: function() {
-		AppsActions.debouncedListApps();
+		if (this.props.user.logged_in) {
+			AppsActions.debouncedListApps();
+		}
 	},
 
 	render: function() {
 		let appsStore=this.state.appsStore;
 		let apps=appsStore.apps;
-		//let appGroup={Private: [], Public: []};
-		let appGroup={};
+		let appGroup={Private: [], Public: []};
+		//let appGroup={};
 		for (let app of apps) {
 			for (let tag of app.tags) {
-				if (! appGroup[tag]) {
-					appGroup[tag]=[];
-				}
+		//		if (! appGroup[tag]) {
+		//			appGroup[tag]=[];
+		//		}
 				appGroup[tag].push(app);
 			}
 		}

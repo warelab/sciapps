@@ -6,10 +6,13 @@ create table agave_user (
 	username varchar(40) unique not null,
 	consumerKey varchar(40),
 	consumerSecret varchar(40),
-	token varchar(40),
+	clientname varchar(40),
+	token varchar(40), 
 	refresh_token varchar(40),
-	clientname varchar(40)
+	token_expires_in datetime
 );
+drop index if exists agave_user_username;
+create index agave_user_username on agave_user(username);
 
 drop table if exists user;
 create table user (

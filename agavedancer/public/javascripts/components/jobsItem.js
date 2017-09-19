@@ -66,10 +66,11 @@ const JobsItem=React.createClass({
 		let addedornot=this.state.checked ? 'Click to Remove' : 'Add to Workflow';
 		let tooltipadd = (<Tooltip id="tooltipadd">{addedornot}</Tooltip>);
 		let outputsItemNodes='Loading ...';
-		if (app && job.outputPath) {
+		if (app && job.archivePath) {
 			outputsItemNodes=app.outputs.map(function(o, i) {
 				let oname=o.value.default;
-				let href=job.archivePath ? setting.output_url[job.archiveSystem] + '/' + job.archivePath + '/' + oname : setting.output_url[setting.archive_system] + '/' + job.outputPath.replace(job.owner, setting.archive_path) + '/' + oname;
+				//let href=job.archivePath ? setting.output_url[job.archiveSystem] + '/' + job.archivePath + '/' + oname : setting.output_url[setting.archive_system] + '/' + job.outputPath.replace(job.owner, setting.archive_path) + '/' + oname;
+				let href=['https://agave.iplantc.org/files/v2/download', job.owner, 'system', job.archiveSystem, job.archivePath, oname].join('/'); 
 				return (
 					<ListGroupItem key={i}><a href={href} target='_blank'>{oname}</a></ListGroupItem>
 				);

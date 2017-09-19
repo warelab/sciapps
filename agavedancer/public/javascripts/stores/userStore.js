@@ -44,7 +44,7 @@ const UserStore=Reflux.createStore({
 		};
 	},
 
-	setUser: function() {
+	setUser: function(user) {
 		let setting=_config.setting;
 		//Q(axios.get(setting.host_url + '/user', {
 		Q(axios.get('/user', {
@@ -69,8 +69,8 @@ const UserStore=Reflux.createStore({
 		.done();
 	},
 
-	login: function() {
-		this._login();
+	login: function(formData) {
+		this._login(formData);
 		this.complete();
 	},
 
@@ -81,7 +81,6 @@ const UserStore=Reflux.createStore({
 		if (formData === undefined) {
 			formData=new FormData();
 		}
-		//Q(axios.post(setting.host_url + '/login', formData, {
 		Q(axios.post('/login', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
@@ -94,7 +93,7 @@ const UserStore=Reflux.createStore({
 				this.state.error=res.data.error;
 				this.complete();
 			} else if (res.data.logged_in) {
-				this._updateUser(res.data);
+				this.setUser(res.data);
 				this.hideLoginBox();
 			}
 		}.bind(this))
@@ -122,6 +121,15 @@ const UserStore=Reflux.createStore({
 		JobsActions.resetState();
 		WorkflowActions.resetState();
 		DsActions.resetState();
+		Q(axios.get('/logout', {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+		}.bind(this))
+		.catch(function(error) {
+				console.log(error);
+		})
+		.done();
 	},
 
 	showLoginBox: function() {

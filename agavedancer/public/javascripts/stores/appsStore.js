@@ -56,10 +56,10 @@ const AppsStore=Reflux.createStore({
 		if (apps.length) {
 			appPromise=Q(apps);
 		} else {
-			//appPromise=Q(axios.get('/apps', {
-			//	headers: {'X-Requested-With': 'XMLHttpRequest'},
-			//}))
-			appPromise=Q(axios.get('/assets/agaveAppsList.json'))
+			appPromise=Q(axios.get('/apps', {
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+			}))
+			//appPromise=Q(axios.get('/assets/agaveAppsList.json'))
 			.then(function(res) {
 				if (res.data.error) {
 					return;
@@ -127,10 +127,10 @@ const AppsStore=Reflux.createStore({
 		if (appDetail) {
 			appPromise=Q(appDetail);
 		} else {
-			//appPromise=Q(axios.get('/apps/' + appId, {
-			//	headers: {'X-Requested-With': 'XMLHttpRequest'}
-			//}))
-			appPromise=Q(axios.get('/assets/' + appId + '.json'))
+			appPromise=Q(axios.get('/apps/' + appId, {
+				headers: {'X-Requested-With': 'XMLHttpRequest'}
+			}))
+			//appPromise=Q(axios.get('/assets/' + appId + '.json'))
 			.then(function(res) {
 				if (res.data.error) {
 					return;

@@ -32,7 +32,7 @@ agave_config: ".agave"
 host_url: "https://dev1.sciapps.org"
 archive_system: 'data.iplantcollaborative.org'
 archive_home: '/iplant/home'
-archive_path: '__user__/sci_data'
+archive_path: '__user__/archive/jobs'
 input_system: 'brie.cshl.edu'
 input_home: '/agave_data'
 input_path: 'inputs'
@@ -44,13 +44,13 @@ datastore:
   __user__: 
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
-    path: '__user__/sci_data'
+    path: '__user__/archive/jobs'
   __shared__:
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
     path: 'shared'
   __public__:
-    system: 'data.sciapps.org'
+    system: 'sciapps.org'
     home: '/halcott'
     path: 'example_data'
   __system__:

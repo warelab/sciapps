@@ -145,14 +145,13 @@ const AppsForm=React.createClass({
 			}
 		}
 		let emailInput={
-			type: 'checkbox',
+			type: 'email',
 			required: false,
 			key: '_email',
 			id: '_email',
 			name: '_email',
-			value: false,
-			label: 'Email Notification',
-			help: 'Optional Email notification upon job completeion'
+			label: 'Email',
+			help: 'Optional Email notification upon job completion'
 		};
 		let submitBtn=<Button bsStyle='primary' onClick={this.handleSubmit}>Submit Job</Button>; 
 		//if (user.logged_in) {
@@ -183,7 +182,7 @@ const AppsForm=React.createClass({
 				<form ref={this.formName}>
 					{app_inputs}
 					{app_params}
-					<AppsBoolParam data={emailInput} />
+					<BaseInput data={emailInput} />
 					{submitBtn}
 				</form>
 				<Dialog ref='dialog' />

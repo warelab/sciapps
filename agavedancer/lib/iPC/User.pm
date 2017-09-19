@@ -13,6 +13,9 @@ sub new {
 			_consumerKey => $args->{consumerKey},
 			_consumerSecret =>	$args->{consumerSecret},
 			_clientname => $args->{clientname},
+			_token	=> $args->{token},
+			_refresh_token => $args->{refresh_token},
+			_token_expires_at => $args->{token_expires_at},
 		}, $class
 	);
 }
@@ -49,9 +52,32 @@ sub clientname {
 	$self->{_clientname};
 }
 
+sub token {
+	my ($self, $token)=@_;
+	if ($token) {
+		$self->{_token}=$token;
+	}
+	$self->{_token};
+}
+sub refresh_token {
+	my ($self, $refresh_token)=@_;
+	if ($refresh_token) {
+		$self->{_refresh_token}=$refresh_token;
+	}
+	$self->{_refresh_token};
+}
+
+sub token_expires_at {
+	my ($self, $token_expires_at)=@_;
+	if ($token_expires_at) {
+		$self->{_token_expires_at}=$token_expires_at;
+	}
+	$self->{_token_expires_at};
+}
+
 sub update {
 	my ($self)=@_;
-	database->quick_update('agave_user', {username => $self->{_username}}, consumerKey => $self->{_consumerKey}, {consumerSecret => $self->{_consumerSecret}, clientname => $self->{_clientname}});
+	database->quick_update('agave_user', {username => $self->{_username}}, {consumerKey => $self->{_consumerKey} || '', consumerSecret => $self->{_consumerSecret} || '', clientname => $self->{_clientname} || '', token => $self->{_token}, refresh_token => $self->{_refresh_token}});
 }
 
 sub save {

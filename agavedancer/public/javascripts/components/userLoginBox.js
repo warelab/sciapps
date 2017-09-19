@@ -26,12 +26,14 @@ const UserLoginBox=React.createClass({
 		let usernameInput={
 			type: 'text',
 			name: 'username',
-			label: 'Username'
+			label: 'Username',
+			help: 'Cyverse username'
 		};
 		let passwordInput={
 			type: 'password',
 			name: 'password',
-			label: 'Password'
+			label: 'Password',
+			help: 'Cyverse password'
 		};
 		let error_label=this.state.userStore.error ? <div className="error">{this.state.userStore.error}</div> : '';
 		return(

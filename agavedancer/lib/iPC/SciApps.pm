@@ -7,13 +7,13 @@ use Dancer ':syntax';
 use Dancer::Plugin::Ajax;
 use Dancer::Plugin::Email;
 use Dancer::Plugin::Database;
-use Dancer::Plugin::Auth::CAS;
+#use Dancer::Plugin::Auth::CAS;
 use Dancer::Cookies;
 use Dancer::Response;
 use Dancer::Exception qw(:all);
 use iPC::AgaveAuthHelper ();
-use iPC::User ();
-use iPC::Addons ();
+#use iPC::User ();
+#use iPC::Addons ();
 use iPC::Utils ();
 use Agave::Client ();
 use Agave::Client::Client ();
@@ -30,8 +30,9 @@ foreach my $exception (@EXCEPTIONS) {
 }
 
 sub token_valid {
-	my $token=session('token');
-	my $tk_expiration = session('token_expiration_at');
+	my $args=shift;
+	my $token=$args->{token} || session('token');
+	my $tk_expiration=$args->{token_expires_at} || session('token_expiration_at');
 
 	$token && $tk_expiration && $tk_expiration > time() ? 1 : 0;
 }
@@ -41,10 +42,8 @@ sub _logout {
 }
 
 sub agave_login {
-	open(AGAVE, setting("appdir") . "/" . setting("agave_config"));
-	my $contents = do { local $/;  <AGAVE> };
-	close AGAVE;
-	my $agave=from_json($contents);
+	my $user=shift;
+	_agave_login($user);
 }
 
 sub _agave_login {
@@ -56,44 +55,70 @@ sub _agave_login {
 	);
 	my $api;
 	if ($ah and $api=$ah->api and $api->token) {
-		debug "Token: " . $api->token . "\n";
-    session 'username' => $api->{'user'};
-    session 'token' => $api->token;
-    session 'token_expiration_in' => $api->auth->token_expiration_in;
-    session 'token_expiration_at' => $api->auth->token_expiration_at;
-		print STDERR "Delta: ", $api->auth->token_expiration_in, $/;
+		_store_auth_session($api->auth);
+		$args->{logged_in}=1;
 	} else {
 		raise 'InvalidCredentials' => 'agave login falied';
 	}
-	1;
+	delete $args->{password};
+	$args;
+}
+
+sub _store_auth_session {
+	my $auth=shift;
+	if ($auth && ref($auth) eq 'Agave::Client::Auth') {
+		debug "Token: " . $auth->{access_token} . "\n";
+    session 'username' => $auth->{user};
+    session 'token' => $auth->{access_token};
+    session 'refresh_token' => $auth->{refresh_token};
+    session 'token_expiration_in' => $auth->token_expiration_in;
+    session 'token_expiration_at' => $auth->token_expiration_at;
+		print STDERR "Delta: ", $auth->token_expiration_in, $/;
+	};
+}
+
+sub agave_refresh {
+	my $args=shift;
+	my $username=$args->{username} || session('username');
+	my $token=$args->{token} || session('token');
+	my $refresh_token=$args->{refresh_token} || session('refresh_token');
+	my $apio=Agave::Client->new(
+		username => $username,
+		token => $token,
+	);
+
+	my $ah=iPC::AgaveAuthHelper->new({
+			username => $username,
+			apio => $apio,
+		}
+	);
+	if (my $new_token=$ah->refresh($refresh_token)) {
+		my $auth=$apio->auth;
+		if ($args) {
+			$args->{token}=$new_token;
+			$args->{refresh_token}=$auth->{refresh_token};
+    	$args->{token_expiration_in} => $auth->token_expiration_in;
+		} else {
+			_store_auth_session($auth);
+		}
+	}
 }
 
 sub check_agave_login {
-	unless (token_valid()) {
-		agave_login();
+	my $args=shift;
+	unless (token_valid($args)) {
+		agave_refresh($args);
 	}
+	token_valid($args);
 }
 
 sub getAgaveClient {
-	check_agave_login();
-
-	my $username = session('username');
-	Agave::Client->new(
-		username => $username,
-		token => session('token'),
-	);
+	my $args=shift;
+	check_agave_login($args) ? Agave::Client->new(
+		username => $args->{username} || session('username'),
+		token => $args->{token} || session('token'),
+	) : undef;
 }
-
-sub uncompress_result {
-	my ($path)=@_;
-	my $path_abs=setting("archive_home") . '/' . $path;
-	my $uncompress_suffix= setting("uncompress_suffix");
-	chdir $path_abs;
-	foreach my $file (glob("*" . $uncompress_suffix)) {
-		system("tar --overwrite -xzf $file && rm $file") == 0 or
-		print STDERR "uncompress_result error: $!\n";
-	}
-};
 
 hook on_route_exception => sub {
 	my $e = shift;
@@ -108,11 +133,12 @@ hook on_route_exception => sub {
 
 hook 'before' => sub {
 	my $path=request->path;
-	if(! session('cas_user') && $path=~m#^/(job|workflowJob)/new/?#) {
+	unless($path eq '/' || $path=~m#^/(login|logout|notification)/?# || check_agave_login()) {
+	#if(! session('cas_user') && $path=~m#^/(job|workflowJob)/new/?#) {
 		if (request->is_ajax) {
 			content_type(setting('plugins')->{Ajax}{content_type});
 			try {
-				raise InvalidCredentials => 'no cas user';
+				raise InvalidCredentials => 'no username';
 			} catch {
 				my ($e)=@_;
 				halt(to_json({error => $e->message()}));
@@ -120,22 +146,22 @@ hook 'before' => sub {
 		} else {
 			request->path('/');
 		}
-	} 
+	}
 };
 
-hook 'after' => sub {
-	my $response = shift;
-	$response->header('Access-Control-Allow-Origin' => '*');
-};
+#hook 'after' => sub {
+#	my $response = shift;
+#	$response->header('Access-Control-Allow-Origin' => '*');
+#};
 
-options qr{/.*} => sub {
-	headers(
-		'Access-Control-Allow-Origin' => '*',
-		'Access-Control-Allow-Headers' => 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-		'Access-Control-Allow-Methods' => 'GET, POST, OPTIONS',
-		'Access-Control-Allow-Credentials' => 'true',
-	);
-};
+#options qr{/.*} => sub {
+#	headers(
+#		'Access-Control-Allow-Origin' => '*',
+#		'Access-Control-Allow-Headers' => 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
+#		'Access-Control-Allow-Methods' => 'GET, POST, OPTIONS',
+#		'Access-Control-Allow-Credentials' => 'true',
+#	);
+#};
 
 sub _index {
 	my %config=map { $_ => param($_) } qw/app_id page_id wf_id/;
@@ -150,26 +176,25 @@ get '/' => sub {
 	_index();
 };
 
-get '/login' => sub {
-	auth_cas();
-	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
-	my %data=map { $_ => $user->{$_} } qw/username firstName lastName email/;
+ajax '/login' => sub {
+	my $user={username => param("username"), password => param("password")};
+	$user=agave_login($user);
+	my %data=map { $_ => $user->{$_} } qw/username/;
 	try {
 		database->quick_insert('user', \%data);
 		database->quick_insert('login', {username => $user->{username}});
 	};
-	_index();
+	to_json($user);
 };
 
-get '/logout' => sub {
-	my $redirect_url=setting('plugins')->{'Auth::CAS'}{'cas_url'} . '/logout?service=' . request->uri_base;
+ajax '/logout' => sub {
 	_logout();
-	return redirect $redirect_url;
+	to_json({status => "successful"});
 };
 
 ajax '/user' => sub {
-	my $user=session('cas_user');
-	if ($user) {
+	my $user={username => session('username')};
+	if (check_agave_login()) {
 		$user->{logged_in}=1;
 	} else {
 		$user={logged_in => 0};
@@ -181,13 +206,12 @@ get qr{/browse/?(.*)} => sub {
 	my ($typePath) = splat;
 	my ($type, $path)=split /\//, $typePath, 2;
 	$path||='';
-	my $user=session('cas_user');
-	if (($type eq '__user__' || $type eq '__shared__') && ! $user) {
-		raise InvalidCredentials => 'no cas user';
+	my $username=session('username');
+	if (($type eq '__user__' || $type eq '__shared__') && ! $username) {
+		raise InvalidCredentials => 'no username';
 	} elsif ($type eq '__public__') {
 		$type=setting('public_datastore_type');
 	}
-	my $username=$user->{username};
 	my $datastore=setting('datastore')->{$type};
 	unless ($datastore) {
 		raise 'InvalidRequest' => 'Invalid Datastore'; 
@@ -195,11 +219,12 @@ get qr{/browse/?(.*)} => sub {
 	my $datastore_home=$datastore->{home};
 	my $datastore_path=$datastore->{path};
 	my $datastore_system=$datastore->{system};
+	$datastore_path=~s/__user__/$username/;
 	my $result={};
 	my $datastore_homepath=$datastore_home .'/' . $datastore_path;
 	if ($type eq '__user__') {
-		$datastore_homepath=~s/__user__/$username/;
-		$result=browse_ils($path, $datastore_system, $datastore_homepath);
+		#$result=browse_ils($path, $datastore_system, $datastore_homepath);
+		$result=browse_files($path, $datastore_system, $datastore_path);
 	} elsif ($type eq '__shared__') {
 		$result=browse_ils($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__public__') {
@@ -216,20 +241,16 @@ get qr{/browse/?(.*)} => sub {
 
 sub browse_output_files {
 	my ($path, $agave_id, $homepath)=@_;
-	$homepath=~s/^\///;
-
-	my $fullPath=$homepath . '/' . $path;
-
 	my $apif=getAgaveClient();
+	$homepath=~s/^\///;
+	my $fullPath=$homepath . '/' . $path;
 	my $job_ep = $apif->job;
 	my $dir_list=$job_ep->job_output_files($agave_id, $fullPath);
-
 	[{
 			is_root => $path ? 0 : 1,
 			path => $path,
 			list => [map {name => $_->{name}, length => $_->{length}, type =>$_ ->{type}}, @$dir_list],
 		}];
-
 }
 
 sub browse_ils {
@@ -248,14 +269,16 @@ sub browse_ils {
 }
 
 sub browse_files {
-	my ($path, $system)=@_;
+	my ($path, $system, $homepath)=@_;
 	my $apif=getAgaveClient();
+	my $fullPath=$homepath ? $homepath . '/' . $path : $path;
 
 	$system='system/' . $system . '/';
 
 	my $io = $apif->io;
 	my $dir_list;
-	$dir_list=$io->readdir('/' . $system . $path);
+	$dir_list=$io->readdir('/' . $system . $fullPath);
+	print STDERR to_dumper($dir_list);
 
 	[{
 			is_root => $path ? 0 : 1,
@@ -313,8 +336,12 @@ get '/apps/:id' => sub {
 sub retrieveApps {
 	my ($app_id)=@_;
 	my $api = getAgaveClient();
-	my $apps = $api->apps;
-	my $return = $app_id ? $apps->find_by_id($app_id) : $apps->list;
+	my $return=[];
+	if ($api) {
+		my $apps = $api->apps;
+		$return = $app_id ? $apps->find_by_id($app_id) : $apps->list;
+	}
+	$return;
 }
 
 get '/schema/:id' => sub {
@@ -503,8 +530,7 @@ ajax '/workflow/:id/jobStatus' => sub {
 };
 
 ajax '/workflow/new' => sub {
-	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
-	my $username=$user->{username};
+	my $username=session('username');
 	my $status='success';
 	my $wfid=param('_workflow_id');
 	my $wfjson=param('_workflow_json');
@@ -524,8 +550,7 @@ ajax '/workflow/new' => sub {
 };
 
 ajax '/workflow/:id/delete' => sub {
-	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
-	my $username=$user->{username};
+	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $status='success';
 	my $wfid=param('id');
 	my $result;
@@ -539,8 +564,7 @@ ajax '/workflow/:id/delete' => sub {
 };
 
 ajax '/workflow/:id/update' => sub {
-	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
-	my $username=$user->{username};
+	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $wfid=param('id');
 	my $wfname=param('_workflow_name');
 	my $wfdesc=param('_workflow_desc');
@@ -557,14 +581,13 @@ ajax '/workflow/:id/update' => sub {
 
 ajax '/workflow' => sub {
 	my @result;
-	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
-	@result=database->quick_select('user_workflow_view', {username => $user->{username}});
+	my $username=session('username') or raise InvalidCredentials => 'no username';
+	@result=database->quick_select('user_workflow_view', {username => $username});
 	return to_json(\@result);
 };
 
 ajax '/workflowJob/new' => sub {
-	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
-	my $username=$user->{username};
+	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $archive_system=setting("archive_system");
 	my $archive_home=setting("archive_home");
 	my $archive_path=setting("archive_path");
@@ -598,8 +621,7 @@ ajax '/workflowJob/new' => sub {
 };
 
 ajax '/job/new/:id' => sub {
-	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
-	my $username=$user->{username};
+	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my @err = ();
 	my $app_id = param("id");
 	my $apif = getAgaveClient();
@@ -617,8 +639,7 @@ ajax '/job/new/:id' => sub {
 };
 
 any ['get', 'post'] => '/job/new/:id' => sub {
-	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
-	my $username=$user->{username};
+	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my @err = ();
 	my $app_id = param("id");
 	my $apif = getAgaveClient();
@@ -753,7 +774,6 @@ sub prepareJob {
 	#my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&message=${JOB_ERROR}';
 	my $notifications=[
 	{
-		#event	=> "ARCHIVING_FINISHED",
 		event	=> "FINISHED",
 		url		=> $host_url . $noteinfo,
 	},
@@ -767,9 +787,6 @@ sub prepareJob {
 	},
 	];
 
-	my $user=session('cas_user');
-
-	$job_form{_email}=$form->{_email} ? $user->{email} : undef;
 	$job_form{archive}=1;
 	#$job_form{archiveSystem}=$archive_system;
 	#$job_form{archivePath}=$archive_path;
@@ -845,13 +862,10 @@ sub resubmitJob {
 any ['get', 'post'] => '/notification/:id' => sub {
 	my $params=params;
 	my $job=database->quick_select('job', {agave_id => $params->{id}});
-	$job->{status}=$params->{status};
+	my $username=$job->{username};
 	updateJob($job);
 	if ($params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED') {
-		#next if $params->{message}=~/Attempt [12] to submit job/;
 		my $job_form=from_json($job->{job_json});
-		print STDERR 'AA|' . to_dumper($job_form);
-
 		if (my $email=$job_form->{_email}) {
 			my $template_engine = engine 'template';
 			my $content=$template_engine->apply_renderer('job', {job => $params}); 
@@ -867,6 +881,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	}
 	if ($params->{status} eq 'FINISHED') {
 		submitNextJob($job);
+		shareOutput($job);
 		#archiveJob($job);
 		#uncompress_result($params->{archivePath});
 	} elsif ($params->{status} eq 'FAILED') {
@@ -874,6 +889,17 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	}
 	return;
 };
+ 
+sub shareOutput {
+	my ($job)=@_;
+	my $username=$job->{username};
+
+	my $apif = getAgaveClient();
+	my $io = $apif->io;
+	my $jobObj=from_json($job->{agave_json});
+	my $path=$jobObj->{archivePath};
+	my $res=$io->share($path, 'public', 'READ', 1);
+}
 
 sub archiveJob {
 	my ($job)=@_;
@@ -893,7 +919,9 @@ sub updateJob {
 	my ($job)=@_;
 	my $data={ status => $job->{status} };
 	if ($job->{status} eq 'FINISHED' || $job->{status} eq 'FAILED') {
-		$job->{agave_json}=$data->{agave_json}=to_json(retrieveJob($job->{job_id}));
+		my $jobObj=from_json($job->{agave_json});
+		$jobObj->{status}=$job->{status};
+		$job->{agave_json}=$data->{agave_json}=to_json($jobObj);
 	};
 	database->quick_update('job', {job_id => $job->{job_id}}, $data);
 }
