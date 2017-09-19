@@ -887,7 +887,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	}
 	if ($params->{status} eq 'FINISHED') {
 		submitNextJob($job);
-		archiveJob($job);
+		#archiveJob($job);
 		#uncompress_result($params->{archivePath});
 	} elsif ($params->{status} eq 'FAILED') {
 		#resubmitJob($params->{id});
