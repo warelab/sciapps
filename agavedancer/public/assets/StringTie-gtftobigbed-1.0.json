@@ -1,0 +1,122 @@
+{
+  "id": "StringTie-gtftobigbed-1.0",
+  "name": "StringTie-gtftobigbed",
+  "icon": null,
+  "uuid": "1369754960030536166-242ac118-0001-005",
+  "parallelism": "PARALLEL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "36:00:00",
+  "defaultQueue": "debug",
+  "version": "1.0",
+  "revision": 2,
+  "isPublic": false,
+  "helpURI": "http://bedops.readthedocs.io/en/latest/content/reference/file-management/conversion/gtf2bed.html",
+  "label": "StringTie-gtftobigbed-1.0",
+  "owner": "kapeelc",
+  "shortDescription": "Convert gtf files to bigbed",
+  "longDescription": "This app converts StrignTie generated gtf files to bigbed files for visualization",
+  "tags": [
+    "gtf"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/sequenceServices/SequenceServices",
+    "http://edamontology.org/operation_0547",
+    "http://edamontology.org/topic_3293",
+    "http://sswapmeet.sswap.info/iplant/apps/Application"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "cshl-compute-10",
+  "deploymentPath": "kapeelc/applications/StringTie-gtftobed-1.0",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "str_gtftobed_wrapper.sh",
+  "testPath": "str_gtftobed_test.sh",
+  "checkpointable": true,
+  "lastModified": "2017-03-20T23:51:39.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "chromSize",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "chromosome size file",
+        "description": "upload a two txt file with chr name and size ",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "txt"
+        ]
+      }
+    },
+    {
+      "id": "seqFolder",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 2,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Directory of gtf files(.gtf)",
+        "description": "gtf files input directory got from stringTie assemmbly",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "directory"
+        ]
+      }
+    }
+  ],
+  "parameters": [],
+  "outputs": [],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/StringTie-gtftobigbed-1.0"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/StringTie-gtftobigbed-1.0/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%221369754960030536166-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/kapeelc"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/StringTie-gtftobigbed-1.0/pems"
+    }
+  }
+}
