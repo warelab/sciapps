@@ -56,7 +56,7 @@ const AppsInput=React.createClass({
 
 	handleFileChange: function(event) {
 		let file = event.target.files[0];
-		if (file.size > this.fileSizeLimit) {
+		if (file && file.size > this.fileSizeLimit) {
 				this.refs.dialog.showAlert('The file size is over the limit (10 Mb).');
 		} else {
 			this.setState({fileValue: event.target.value});
