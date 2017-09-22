@@ -290,7 +290,6 @@ const WorkflowDiagram=React.createClass({
 						{info}
 					</Modal.Body>
 					<Modal.Footer>
-						<Button onClick={this.handleDownload}>Download Workflow</Button>
 						{saveBtn}
 						<Button onClick={this.hideWorkflowDiagram}>Close</Button>
 					</Modal.Footer>
