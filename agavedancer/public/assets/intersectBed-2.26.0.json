@@ -1,0 +1,471 @@
+{
+  "id": "intersectBed-2.26.0",
+  "name": "intersectBed",
+  "icon": null,
+  "uuid": "7486981560173391385-242ac119-0001-005",
+  "parallelism": "PARALLEL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "35:56:00",
+  "defaultQueue": "debug",
+  "version": "2.26.0",
+  "revision": 1,
+  "isPublic": false,
+  "helpURI": "http://bedtools.readthedocs.io/en/latest/content/tools/intersect.html",
+  "label": "intersectBed",
+  "owner": "xiaofei_iplant",
+  "shortDescription": "Overlapped genomic features.",
+  "longDescription": "BEDTools intersect is to screen overlaps between two sets of genomic features.",
+  "tags": [
+    "Beta"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/sequenceServices/SequenceServices"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "cshl-compute-10",
+  "deploymentPath": "xiaofei_iplant/application/intersectBed-2.26.0",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "intersectBed_wrapper.sh",
+  "testPath": "intersectBed_test.sh",
+  "checkpointable": true,
+  "lastModified": "2017-06-15T13:22:31.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "inputFolder",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select a folder containing bed/gff/vcf files",
+        "description": "Containing two or more feature files in search of overlaps.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence"
+        ],
+        "fileTypes": [
+          "directory"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "Fb",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": null,
+        "validator": ""
+      },
+      "details": {
+        "label": "F",
+        "description": "Minimum overlap required as a fraction of B.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "f",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "0.5",
+        "validator": ""
+      },
+      "details": {
+        "label": "f",
+        "description": "Minimum overlap required as a fraction of A.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "bamInpOutFormat",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 1,
+        "enquote": false,
+        "default": "",
+        "enum_values": [
+          {
+            "": "compressed BAM output, default"
+          },
+          {
+            "ubam": "unompressed BAM output"
+          },
+          {
+            "bed": "BED output"
+          }
+        ]
+      },
+      "details": {
+        "label": "When using BAM as input, write as",
+        "description": "Output format for BAM input (A).",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "wa",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 2,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "wa",
+        "description": "Write the original entry in A for each overlap.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "wb",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 3,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "wb",
+        "description": "Write the original entry in B for each overlap.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "wo",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 4,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "wo",
+        "description": "Write the original A and B entries plus the number of base pairs of overlap between the two features.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "wao",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 5,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "wao",
+        "description": "Write the original A and B entries plus the number of base pairs of overlap between the two features. However, A features w/o overlap are also reported.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "u",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 6,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "u",
+        "description": "Write the original A entry once if any overlaps found in B.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "c",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 7,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "c",
+        "description": "For each entry in A, report the number of overlaps with B.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "v",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 8,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "v",
+        "description": "Only report those entries in A that have no overlaps with B.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "r",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 11,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "r",
+        "description": "Require that the fraction overlap be reciprocal for A and B.",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "strand",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 12,
+        "enquote": false,
+        "default": "",
+        "enum_values": [
+          {
+            "": "None, default"
+          },
+          {
+            "s": "Same strand"
+          },
+          {
+            "S": "Opposite strand"
+          }
+        ]
+      },
+      "details": {
+        "label": "Strandedness",
+        "description": "Type of sequencing reads",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "bamInputFormat",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 13,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "isBamInputFormat",
+        "description": "Is there input in BAM format?",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "commonPeaks",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "commonPeaks"
+      },
+      "details": {
+        "label": "commonPeaks",
+        "description": "Intersected genomic features output."
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "directory"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/intersectBed-2.26.0"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/intersectBed-2.26.0/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%227486981560173391385-242ac119-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/xiaofei_iplant"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/intersectBed-2.26.0/pems"
+    }
+  }
+}

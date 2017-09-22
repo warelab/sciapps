@@ -453,14 +453,14 @@ ajax '/job/:id' => sub {
 	my $job_id = param("id");
 
 	my $job=retrieveJob($job_id);
-	return to_json($job);
+	return $job ? to_json($job) : to_json({status => 'error'});
 };
 
 get '/job/:id' => sub {
 	my $job_id = param("id");
 
 	my $job=retrieveJob($job_id);
-	return to_json($job);
+	return $job ? to_json($job) : to_json({status => 'error'});
 	if ($job) {
 		return template 'job', {
 			job => $job,
@@ -474,12 +474,14 @@ sub retrieveJob {
 	my $agave_id=$job_id;
 	my $job;
 
-
 	my $row = database->quick_select('job', {job_id => $job_id}) || database->quick_select('job', {agave_id => $job_id});
 	if ($row) {
 		if ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED') {
-			$job=Agave::Client::Object::Job->new(from_json($row->{agave_json}));
-			$job->{job_id}=$row->{job_id};
+			my $jobObj=from_json($row->{agave_json});
+			if ($jobObj->{status} && $jobObj->{status} eq $row->{status}) {
+				$job=Agave::Client::Object::Job->new($jobObj);
+				$job->{job_id}=$row->{job_id};
+			}
 		} elsif ($row->{job_id} eq $job_id) {
 			$agave_id=$row->{agave_id};
 		} elsif ($row->{agave_id} eq $job_id) {
@@ -502,11 +504,16 @@ sub retrieveJob {
 			};
 			$retry--;
 		} while (!$job && sleep(1) && $retry);
-		$job->{job_id}=$job_id;
-		my $data={job_id => $job_id, agave_id => $agave_id, app_id => $job->{appId}, agave_json => to_json($job), status => $job->{status}};
-		try {
-			database->quick_insert('job', $data);
-		};
+		if ($job) {
+			$job->{job_id}=$job_id;
+			my $data={job_id => $job_id, agave_id => $agave_id, app_id => $job->{appId}, agave_json => to_json($job), status => $job->{status}};
+			try {
+				database->quick_insert('job', $data);
+			} catch {
+				delete $data->{job_id};
+				database->quick_update('job', {job_id => $job_id}, $data);
+			};
+		}
 	}
 	return $job;
 }
@@ -555,6 +562,7 @@ ajax '/workflow/:id/delete' => sub {
 	my $wfid=param('id');
 	my $result;
 	try {
+		#$result=database->quick_delete('workflow', {workflow_id => $wfid});
 		$result=database->quick_delete('user_workflow', {username => $username, workflow_id => $wfid});
 	} catch {
 		$status='error';
@@ -678,6 +686,7 @@ sub prepareJob {
 	my $input_home=setting("input_home");
 	my $input_path=setting("input_path");
 	my $output_url=setting("output_url");
+	my $upload_suffix=setting("upload_suffix");
 
 	my $job_id=iPC::Utils::uuid();
 
@@ -693,6 +702,10 @@ sub prepareJob {
 	foreach my $key (@$inputs, @$parameters) {
 		my $name=defined $step ? $step_prefix . $key->{id} : $key->{id};
 		$job_form{$name}=$form->{$name};
+		my $upload_name=$name . $upload_suffix;
+		if (exists $form->{$upload_name}) {
+			$job_form{$upload_name}=$form->{$upload_name};
+		}
 	}
 
 	$job_form{maxRunTime}||=$app->{defaultMaxRunTime} && iPC::Utils::cmp_maxRunTime($app->{defaultMaxRunTime}, setting("maxRunTime")) < 0 ? $app->{defaultMaxRunTime} : setting("maxRunTime");
@@ -715,9 +728,6 @@ sub prepareJob {
 
 	my $tempdir=$input_path . "/" . iPC::Utils::tempname();
 	my $tempdir_abs=$input_home . '/' . $tempdir;
-	mkdir($tempdir_abs);
-	chmod(0775, $tempdir_abs);
-	my $upload_suffix=quotemeta(setting("upload_suffix"));
 	try {
 		foreach my $upload (keys %{request->uploads()}) {
 			next unless exists $job_form{$upload};
@@ -725,6 +735,10 @@ sub prepareJob {
 			my $source=$file->tempname;
 			my $target_abs=$tempdir_abs . "/" . $file->filename;
 			my $target=$tempdir . "/" . $file->filename;
+			unless (-d $tempdir_abs) {
+				mkdir($tempdir_abs) || error("Error: $!");
+				chmod(0775, $tempdir_abs) || error("Error: $!");
+			}
 			File::Copy::copy($source, $target_abs) or raise 'SystemError' => 'file system error';
 			my $input="agave://" . $input_system . "/" . $target;
 			delete $job_form{$upload};
@@ -861,11 +875,11 @@ sub resubmitJob {
 
 any ['get', 'post'] => '/notification/:id' => sub {
 	my $params=params;
+	my $jobObj=retrieveJob($params->{id});
 	my $job=database->quick_select('job', {agave_id => $params->{id}});
-	my $username=$job->{username};
-	updateJob($job);
 	if ($params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED') {
 		my $job_form=from_json($job->{job_json});
+
 		if (my $email=$job_form->{_email}) {
 			my $template_engine = engine 'template';
 			my $content=$template_engine->apply_renderer('job', {job => $params}); 
@@ -919,11 +933,10 @@ sub updateJob {
 	my ($job)=@_;
 	my $data={ status => $job->{status} };
 	if ($job->{status} eq 'FINISHED' || $job->{status} eq 'FAILED') {
-		my $jobObj=from_json($job->{agave_json});
-		$jobObj->{status}=$job->{status};
-		$job->{agave_json}=$data->{agave_json}=to_json($jobObj);
+		#$job->{agave_json}=$data->{agave_json}=to_json(retrieveJob($job->{job_id}));
+		retrieveJob($job->{job_id});
 	};
-	database->quick_update('job', {job_id => $job->{job_id}}, $data);
+	#database->quick_update('job', {job_id => $job->{job_id}}, $data);
 }
 
 sub submitNextJob {
@@ -948,19 +961,23 @@ sub submitNextJob {
 		my $job_form=from_json($next_job->{job_json});
 		my @prev=database->quick_select('nextstep', {next => $next->{next}});
 		my %input;
+		my $count=0;
 		foreach (@prev) {
 			my (undef, $filename)=split /:/, $_->{input_name};
 			$input{$_->{input_name}}=$_->{input_source} . '/' . $filename;
 		}
 		while (my ($k, $v) = each %$job_form) {
-			if (exists $input{$v}) {
+			if (defined $v && exists $input{$v}) {
 				$job_form->{$k}=$input{$v};
+				$count++;
 			}
 		}
-		database->quick_update('job', {job_id => $next->{next}}, {job_json => to_json($job_form)});
-		my ($app) = $apps->find_by_id($next_job->{app_id});
+		if ($count) {
+			database->quick_update('job', {job_id => $next->{next}}, {job_json => to_json($job_form)});
+			my ($app) = $apps->find_by_id($next_job->{app_id});
 
-		my ($res, $err)=submitJob($next_job->{username}, $apif, $app, $next_job->{job_id}, $job_form);
+			my ($res, $err)=submitJob($next_job->{username}, $apif, $app, $next_job->{job_id}, $job_form);
+		}
 	}
 }
 

@@ -51,7 +51,7 @@ datastore:
     path: 'shared'
   __public__:
     system: 'sciapps.org'
-    home: '/halcott'
+    home: '/agave_data'
     path: 'example_data'
   __system__:
     system: ''
