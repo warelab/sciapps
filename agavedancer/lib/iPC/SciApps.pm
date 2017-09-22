@@ -735,8 +735,8 @@ sub prepareJob {
 			my $target_abs=$tempdir_abs . "/" . $file->filename;
 			my $target=$tempdir . "/" . $file->filename;
 			unless (-d $tempdir_abs) {
-				mkdir($tempdir_abs);
-				chmod(0775, $tempdir_abs);
+				mkdir($tempdir_abs) || error("Error: $!");
+				chmod(0775, $tempdir_abs) || error("Error: $!");
 			}
 			File::Copy::copy($source, $target_abs) or raise 'SystemError' => 'file system error';
 			my $input="agave://" . $input_system . "/" . $target;
