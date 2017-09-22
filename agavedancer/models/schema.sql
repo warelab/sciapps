@@ -34,7 +34,7 @@ drop table if exists workflow;
 create table workflow (
 	id integer primary key autoincrement,
 	workflow_id varchar(40) unique not null,
-	name varchar(40) unique not null,
+	name varchar(40) not null,
 	description text,
 	json text,
 	derived_from varchar(40),

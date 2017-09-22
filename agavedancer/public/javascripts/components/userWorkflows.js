@@ -9,6 +9,7 @@ import WorkflowActions from '../actions/workflowActions.js';
 import AppsActions from '../actions/appsActions.js';
 import BaseInput from './baseInput.js';
 import Dialog from 'react-bootstrap-dialog';
+import utilities from '../libs/utilities.js';
 
 const UserWorkflows=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore')],
@@ -34,6 +35,12 @@ const UserWorkflows=React.createClass({
 		let wfid=e.target.value;
 		this.state.onEdit[wfid]=true;
 		this.setState({});
+	},
+
+	handleDownload: function(e) {
+		let wfid=e.target.value;
+		let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
+		utilities.download(wf.name + '.json', 'application/json;charset=utf-8', wf.json);
 	},
 
 	handleSave: function(e) {
@@ -66,6 +73,7 @@ const UserWorkflows=React.createClass({
 				let loadButton=<Button bsStyle='link' onClick={this.handleLoad} value={workflow.workflow_id}>Load</Button>;
 				let delButton=<Button bsStyle='link' onClick={this.handleDel} value={workflow.workflow_id}>Delete</Button>;
 				let editButton=<Button bsStyle='link' onClick={this.handleEdit} value={workflow.workflow_id}>Edit</Button>;
+				let downloadButton=<Button bsStyle='link' onClick={this.handleDownload} value={workflow.workflow_id}>Download</Button>;
 				let saveButton=<Button bsStyle='link' onClick={this.handleSave} value={workflow.workflow_id}>Save</Button>;
 				let cancelButton=<Button bsStyle='link' onClick={this.handleCancel} value={workflow.workflow_id}>Cancel</Button>;
 				let item;
@@ -84,7 +92,7 @@ const UserWorkflows=React.createClass({
 					};
 					item=<tr key={workflow.workflow_id}><td><BaseInput data={nameInput} onValidate={true} ref={workflow.workflow_id + '_nameInput'}/></td><td className='text-center'><BaseInput data={descInput} ref={workflow.workflow_id + '_descInput'}/></td><td className='text-center'>{saveButton}{cancelButton}</td></tr>;
 				} else {
-					item=<tr key={workflow.workflow_id}><td>{workflow.name}</td><td>{workflow.description}</td><td className='text-center'>{loadButton}{delButton}{editButton}</td></tr>;
+					item=<tr key={workflow.workflow_id}><td>{workflow.name}</td><td>{workflow.description}</td><td className='text-center'>{loadButton}{delButton}{editButton}{downloadButton}</td></tr>;
 				}
 				return item;
 			}.bind(this));
@@ -93,7 +101,7 @@ const UserWorkflows=React.createClass({
 			<Panel header="My Workflows">
 				<Table striped condensed hover>
 					<thead>
-						<tr><th className='col-xs-2 col-md-2'>Name</th><th className='col-xs-6 col-md-6'>Description</th><th className='col-xs-2 col-md-2 text-center'>Actions</th></tr>
+						<tr><th className='col-xs-2 col-md-2'>Name</th><th className='col-xs-5 col-md-5'>Description</th><th className='col-xs-3 col-md-3 text-center'>Actions</th></tr>
 					</thead>
 					<tbody>
 						{workflowItems}
