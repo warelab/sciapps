@@ -22,7 +22,7 @@ use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/host_url output_url upload_suffix wf_step_prefix datastore public_datastore_type archive_system archive_home archive_path/;
+our @EXPORT_SETTINGS=qw/host_url output_url wf_step_prefix datastore public_datastore_type archive_system archive_home archive_path/;
 our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError SystemError/;
 
 foreach my $exception (@EXCEPTIONS) {
@@ -682,11 +682,7 @@ sub prepareJob {
 	my $archive_system=setting("archive_system");
 	my $archive_home=setting("archive_home");
 	my $archive_path=setting("archive_path");
-	my $input_system=setting("input_system");
-	my $input_home=setting("input_home");
-	my $input_path=setting("input_path");
 	my $output_url=setting("output_url");
-	my $upload_suffix=setting("upload_suffix");
 
 	my $job_id=iPC::Utils::uuid();
 
@@ -702,10 +698,6 @@ sub prepareJob {
 	foreach my $key (@$inputs, @$parameters) {
 		my $name=defined $step ? $step_prefix . $key->{id} : $key->{id};
 		$job_form{$name}=$form->{$name};
-		my $upload_name=$name . $upload_suffix;
-		if (exists $form->{$upload_name}) {
-			$job_form{$upload_name}=$form->{$upload_name};
-		}
 	}
 
 	$job_form{maxRunTime}||=$app->{defaultMaxRunTime} && iPC::Utils::cmp_maxRunTime($app->{defaultMaxRunTime}, setting("maxRunTime")) < 0 ? $app->{defaultMaxRunTime} : setting("maxRunTime");
@@ -725,30 +717,6 @@ sub prepareJob {
 	#}
 
 	# TODO - check arguments
-
-	my $tempdir=$input_path . "/" . iPC::Utils::tempname();
-	my $tempdir_abs=$input_home . '/' . $tempdir;
-	try {
-		foreach my $upload (keys %{request->uploads()}) {
-			next unless exists $job_form{$upload};
-			my $file=request->upload($upload);
-			my $source=$file->tempname;
-			my $target_abs=$tempdir_abs . "/" . $file->filename;
-			my $target=$tempdir . "/" . $file->filename;
-			unless (-d $tempdir_abs) {
-				mkdir($tempdir_abs) || error("Error: $!");
-				chmod(0775, $tempdir_abs) || error("Error: $!");
-			}
-			File::Copy::copy($source, $target_abs) or raise 'SystemError' => 'file system error';
-			my $input="agave://" . $input_system . "/" . $target;
-			delete $job_form{$upload};
-			$upload=~s/$upload_suffix$//;
-			$job_form{$upload}=$input;
-		}
-	} catch {
-		my ($e)=@_;
-		error("Error: $e");
-	};
 
 	foreach my $name (keys %job_form) {
 		my $n=$name;
@@ -773,16 +741,6 @@ sub prepareJob {
 		$step->{parameters}{$k}=$job_form{$k};
 	}
 
-	#my ($result_folder)=map {my $t=$_; $t=~s/\W+/-/g; lc($t) . "-" . iPC::Utils::tempname()} ($app_id);
-	#$archive_path.= "/" . $result_folder;
-
-	#my $archive_path_abs=$archive_home . "/" . $archive_path;
-	#mkdir($archive_path_abs) or print STDERR "Error: can't mkdir $archive_path_abs, $!\n";
-	#chmod(0775, $archive_path_abs);
-	#open FH, ">", "$archive_path_abs/.htaccess" or error("Error: can't open  ${archive_path_abs}/.htaccess, $!\n") && raise 'SystemError' => 'file system error';
-	#print FH "DirectoryIndex ../.index.php?dir=$result_folder\n";
-	#close FH;
-	
 	my $host_url=request->uri_base;
 	my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archiveSystem=${JOB_ARCHIVE_SYSTEM}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}';
 	#my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&message=${JOB_ERROR}';

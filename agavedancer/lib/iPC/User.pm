@@ -77,7 +77,7 @@ sub token_expires_at {
 
 sub update {
 	my ($self)=@_;
-	database->quick_update('agave_user', {username => $self->{_username}}, {consumerKey => $self->{_consumerKey} || '', consumerSecret => $self->{_consumerSecret} || '', clientname => $self->{_clientname} || '', token => $self->{_token}, refresh_token => $self->{_refresh_token}});
+	database->quick_update('agave_user', {username => $self->{_username}}, {consumerKey => $self->{_consumerKey}, consumerSecret => $self->{_consumerSecret}, clientname => $self->{_clientname}, token => $self->{_token}, refresh_token => $self->{_refresh_token}, token_expires_at => $self->{_token_expires_at}});
 }
 
 sub save {

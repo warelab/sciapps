@@ -6,28 +6,23 @@ import _ from 'lodash';
 import DsActions from '../actions/dsActions.js';
 import DsStore from '../stores/dsStore.js';
 import {Input, Button} from 'react-bootstrap';
-import Dialog from 'react-bootstrap-dialog';
 
 const AppsInput=React.createClass({
 	mixins: [Reflux.listenTo(DsStore, 'handleDsStoreChange')],
 
-	fileSizeLimit: 10000000,
-
 	getInitialState: function() {
 		return {
-			textValue: this.props.useResubmit ? this.props.resubmitValue : this.props.data.value.default,
-			fileValue: ''
+			textValue: this.props.useResubmit ? this.props.resubmitValue : this.props.data.value.default
 		};
 	},
 
 	componentWillReceiveProps: function(nextProps) {
 		if (nextProps.useResubmit) {
-			this.setState({textValue: nextProps.resubmitValue, fileValue: ''});
+			this.setState({textValue: nextProps.resubmitValue});
 		}
 	},
 
 	componentWillUnmount: function() {
-		Dialog.resetOptions();
 		this.setState({textValue: this.props.data.value.default});
 	},
 
@@ -52,15 +47,6 @@ const AppsInput=React.createClass({
 
 	handleTextChange: function(event) {
 		this.setState({textValue: event.target.value});
-	},
-
-	handleFileChange: function(event) {
-		let file = event.target.files[0];
-		if (file && file.size > this.fileSizeLimit) {
-				this.refs.dialog.showAlert('The file size is over the limit (10 Mb).');
-		} else {
-			this.setState({fileValue: event.target.value});
-		}
 	},
 
 	handleDataStore: function(event) {
@@ -88,38 +74,22 @@ const AppsInput=React.createClass({
 			markup=(<Input {...props} />);
 		} else {
 			let dataStoreButton=(
-				<Button onClick={this.handleDataStore} bsStyle={this.props.onValidate ? this.validateState() : 'default'} >or Browse DataStore</Button>
+				<Button onClick={this.handleDataStore} bsStyle={this.props.onValidate ? this.validateState() : 'default'} >Browse DataStore</Button>
 			);
 			let props={
 				label: prefix + data.details.label,
 				help: data.details.description,
 				bsStyle: this.props.onValidate ? this.validateState() : undefined,
-				wrapperClassName: 'wrapper'
-			};
-			let textProps={
 				key: data.id,
 				name: data.id,
 				value: this.state.textValue,
 				type: 'text',
         buttonBefore: dataStoreButton,
 				placeholder: 'or Enter URL',
-				className: 'form-control',
 				onChange: this.handleTextChange
 			};
-			let fileProps={
-				key: data.id + suffix,
-				name: data.id + suffix,
-				value: this.state.fileValue,
-				type: 'file',
-				className: 'wf-load-box',
-				onChange: this.handleFileChange
-			};
 			markup=(
-				<Input {...props} >
-					<Input {...fileProps} />
-					<Input {...textProps} />
-					<Dialog ref='dialog' />
-				</Input>
+				<Input {...props} />
 			);
 		}
 		return markup;

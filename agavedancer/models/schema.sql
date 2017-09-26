@@ -9,7 +9,7 @@ create table agave_user (
 	clientname varchar(40),
 	token varchar(40), 
 	refresh_token varchar(40),
-	token_expires_in datetime
+	token_expires_at datetime
 );
 drop index if exists agave_user_username;
 create index agave_user_username on agave_user(username);
