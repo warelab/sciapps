@@ -11,6 +11,7 @@ Optimizing modular Agave apps for SciApps
   * At run time, XX-1.fastq and XX-2.fastq will then not collapse with each other. 
   * Modify your merge script to access both of them in the "same" output folder
 * Use [installed Singularity images](Singularity-SciApps.md) if you can, and put wrapper scripts in your CyVerse Data Store
+  * Remove existing code that handles installation of any packages
   * This will ensure that the same workflow can be easily pointed to XSEDE/Stampede2 or other cloud for execution
   * When running on a different cloud, we will add the image to the bin folder, gzip it, and pass it with the wrapper script
   * Contact support@SciApps.org if you need new images installed
