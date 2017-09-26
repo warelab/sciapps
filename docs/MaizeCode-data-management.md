@@ -16,6 +16,10 @@ A local copy of MaizeCode data will be kept on the SciApps system to support re-
 
 ### Metadata
 A combination of Google forms, CyVerse metadata templates, and MaizeCode metadata JSON templates will be used to support collecting, management, display, and searching MaizeCode metadata.
+* Google forms are used to collect metadata
+* Agave metadata schemas (in JSON) are created to match the Google forms
+* Metadata are converted from Google form to Agave
+* Metadata are displayed on SciApps workflow diagram
 
 ### Community Access
 Once mature, all MaizeCode data, apps and workflows will be made public for the community to access through the CyVerse infrastructure. For analysis submitted by Community members, data will be stored in CyVerse Data Store and processed with XSEDE computing resources.
