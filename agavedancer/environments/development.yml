@@ -50,8 +50,8 @@ datastore:
     home: '/iplant/home'
     path: 'shared'
   __public__:
-    system: 'data.sciapps.org'
-    home: '/halcott'
+    system: 'sciapps.org'
+    home: '/agave_data'
     path: 'example_data'
   __system__:
     system: ''

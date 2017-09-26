@@ -651,6 +651,7 @@ sub prepareJob {
 	my $input_home=setting("input_home");
 	my $input_path=setting("input_path");
 	my $output_url=setting("output_url");
+	my $upload_suffix=setting("upload_suffix");
 
 	my $job_id=iPC::Utils::uuid();
 
@@ -688,9 +689,9 @@ sub prepareJob {
 
 	my $tempdir=$input_path . "/" . iPC::Utils::tempname();
 	my $tempdir_abs=$input_home . '/' . $tempdir;
-	mkdir($tempdir_abs);
-	chmod(0775, $tempdir_abs);
 	my $upload_suffix=quotemeta(setting("upload_suffix"));
+	print STDERR "AA|" . to_dumper(request->uploads());
+	print STDERR "AA|" . to_dumper(\%job_form);
 	try {
 		foreach my $upload (keys %{request->uploads()}) {
 			next unless exists $job_form{$upload};
@@ -698,6 +699,10 @@ sub prepareJob {
 			my $source=$file->tempname;
 			my $target_abs=$tempdir_abs . "/" . $file->filename;
 			my $target=$tempdir . "/" . $file->filename;
+			unless (-d $tempdir_abs) {
+				mkdir($tempdir_abs);
+				chmod(0775, $tempdir_abs);
+			}
 			File::Copy::copy($source, $target_abs) or raise 'SystemError' => 'file system error';
 			my $input="agave://" . $input_system . "/" . $target;
 			delete $job_form{$upload};
