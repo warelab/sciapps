@@ -690,11 +690,11 @@ sub prepareJob {
 	my $tempdir=$input_path . "/" . iPC::Utils::tempname();
 	my $tempdir_abs=$input_home . '/' . $tempdir;
 	my $upload_suffix=quotemeta(setting("upload_suffix"));
-	print STDERR "AA|" . to_dumper(request->uploads());
-	print STDERR "AA|" . to_dumper(\%job_form);
 	try {
 		foreach my $upload (keys %{request->uploads()}) {
-			next unless exists $job_form{$upload};
+			my $uploadname=$upload;
+			$uploadname=~s/$upload_suffix$//;
+			next unless exists $job_form{$uploadname};
 			my $file=request->upload($upload);
 			my $source=$file->tempname;
 			my $target_abs=$tempdir_abs . "/" . $file->filename;
