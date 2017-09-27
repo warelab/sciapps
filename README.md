@@ -3,6 +3,6 @@ Information about the MaizeCode project on leveraging the CyVerse infrastructure
 
 * [MaizeCode data management](docs/MaizeCode-data-management.md)
 * [Optimizing modular Agave apps for SciApps](docs/Agave-SciApps.md)
-* [Testing SciApps Agave apps](docs/Test-SciApps-apps.mg)
+* [Testing SciApps Agave apps](docs/Test-SciApps-apps.md)
 * [Listing of Singularity images installed on SciApps](docs/Singularity-SciApps.md)
 
