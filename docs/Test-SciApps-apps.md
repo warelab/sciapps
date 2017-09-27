@@ -20,7 +20,7 @@ To get started, modify the following job json and save it (e.g. my-job.json):
     }
 }
 ```
-Note that the input url (for 'trait') starting with 'agave://sciapps.org', which is critical for speeding up data transfer. You can get this url through browsing public example_data on SciApps.org with any app form, or browsing data.sciapps.org and change the url (e.g. from 'https://data.sciapps.org/example_data/gwas_raw/height.txt' to 'agave://sciapps.org/example_data/gwas_raw/height.txt'
+Note that the input url (for 'trait') starting with 'agave://sciapps.org', which is critical for speeding up data transfer. You can get this url through browsing public example_data on SciApps.org with any app form (e.g. [ConvertTraitID](https://www.sciapps.org/app_id/ConvertTraitID-0.0.0), or browsing data.sciapps.org and change the url (e.g. from 'https://data.sciapps.org/example_data/gwas_raw/height.txt' to 'agave://sciapps.org/example_data/gwas_raw/height.txt'
 
 Check the [CyVerse SDK](https://github.com/cyverse/cyverse-sdk/blob/master/docs/app-dev-first-app-job.md) for more details about the job json. Now you can use this job json to test your app, check job status, and download outputs for verification.
 
