@@ -23,9 +23,12 @@ To get started, modify the following job json and save it (e.g. my-job.json):
 Note that the input url (for 'trait') starting with 'agave://sciapps.org', which is critical for speeding up data transfer. You can get this url through browsing DataStore, then public, then example_data on SciApps.org with any app form (e.g. [ConvertTraitID](https://www.sciapps.org/app_id/ConvertTraitID-0.0.0)), or upload them with follownig command:
 
 ```sh
-files-mkdir -N test -S sciapps.org/example_data/Chipseq
-files-upload -v -F myFile.txt -S sciapps.org/example_data/Chipseq/test
-files-delete -S sciapps.org example_data/Chipseq/test/myFile.txt
+$files-mkdir -N test -S sciapps.org/example_data/Chipseq
+$files-upload -v -F myFile.txt -S sciapps.org/example_data/Chipseq/test
+
+# If you want to delete the file or folder
+$files-delete -S sciapps.org example_data/Chipseq/test/myFile.txt
+$files-delete -S sciapps.org example_data/Chipseq/test
 ```
 
 Check the [CyVerse SDK](https://github.com/cyverse/cyverse-sdk/blob/master/docs/app-dev-first-app-job.md) for more details about the job json. Now you can use this job json to test your app, check job status, and download outputs for verification.
