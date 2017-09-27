@@ -20,7 +20,7 @@ To get started, modify the following job json and save it (e.g. my-job.json):
     }
 }
 ```
-Note that the input url (for 'trait') starting with 'agave://sciapps.org', which is critical for speeding up data transfer. You can get this url through browsing DataStore, then public, then example_data on SciApps.org with any app form (e.g. [ConvertTraitID](https://www.sciapps.org/app_id/ConvertTraitID-0.0.0)), or upload them with follownig command:
+Note that the input url (for 'trait') starting with 'agave://sciapps.org', which is critical for speeding up data transfer. You can get this url through browsing DataStore, then public, then example_data on SciApps.org with any app form (e.g. [ConvertTraitID](https://www.sciapps.org/app_id/ConvertTraitID-0.0.0)), or upload them with following command:
 
 ```sh
 $files-mkdir -N test -S sciapps.org/example_data/Chipseq
