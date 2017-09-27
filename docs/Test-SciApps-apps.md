@@ -31,13 +31,13 @@ $jobs-submit -F my-job.json
 Successfully submitted job 3444779753963384345-242ac113-0001-007
 ```
 
-# Check job status
+Check job status
 ```sh
 $jobs-status 3444779753963384345-242ac113-0001-007
 SUBMITTING
 ```
 
-# Check job history
+Check job history
 ```sh
 $jobs-history 3444779753963384345-242ac113-0001-007
 Job accepted and queued for submission.
@@ -55,7 +55,7 @@ Job completed execution
 Job completed. Skipping archiving at user request.
 ```
 
-# List the output, whether it runs to completion or not
+List the output, whether it runs to completion or not
 ```sh
 $jobs-output 3444779753963384345-242ac113-0001-007
 .agave.archive
@@ -66,7 +66,7 @@ tnrs.txt
 unmapped.txt
 ```
 
-# Download specific files, for example the trns.txt file
+Download specific files, for example the trns.txt file
 ```sh
 jobs-output --download --path tnrs.txt 3444779753963384345-242ac113-0001-007 
 ```
