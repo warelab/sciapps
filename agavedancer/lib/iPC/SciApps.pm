@@ -686,6 +686,7 @@ sub prepareJob {
 	my $input_path=setting("input_path");
 	my $output_url=setting("output_url");
 	my $upload_suffix=setting("upload_suffix");
+	my $api = getAgaveClient();
 
 	my $job_id=iPC::Utils::uuid();
 
@@ -712,8 +713,9 @@ sub prepareJob {
 	# hack for the url input
 	foreach my $name (keys %job_form) {
 		next unless $job_form{$name};
-		if ($job_form{$name}=~m#^https://data.sciapps.org#) {
-			$job_form{$name}=~s#^https://data.sciapps.org#agave://halcott.cshl.edu#;
+		if ($job_form{$name}=~m#^https://\w+.sciapps.org/results/job-(\w+\-\w+\-\w+\-\w+)[^\/]*/(.*)#) {
+			#$job_form{$name}=~s#^https://data.sciapps.org#agave://halcott.cshl.edu#;
+			$job_form{$name}='https://agave.iplantc.org/jobs/v2/' . $1 . '/outputs/media/' . $2;
 		}
 	}
 	#	} elsif ($job_form{$name}=~m#^http://www.maizecode.org#) {

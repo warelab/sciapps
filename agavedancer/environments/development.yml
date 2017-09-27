@@ -30,7 +30,7 @@ auto_reload: 0
 # development config
 agave_config: ".agave"
 host_url: "https://dev1.sciapps.org"
-archive_system: 'brie.cshl.edu'
+archive_system: 'sciapps.org'
 archive_home: '/agave_data'
 archive_path: 'results'
 input_system: 'brie.cshl.edu'

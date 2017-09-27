@@ -124,7 +124,10 @@ const JobsStore=Reflux.createStore({
 			return function() {
 				return this._setJob(jobId).then(function(job) {
 					if (job && ! _.find(this.state.jobs, 'job_id', job.job_id)) {
-						this.state.jobs[submitNumber++]=_.pick(this.state.jobDetailCache[job.job_id], ['job_id', 'appId']);
+						let jobDetail=this.state.jobDetailCache[job.job_id];
+						if (jobDetail) {
+							this.state.jobs[submitNumber++]=_.pick(jobDetail, ['job_id', 'appId']);
+						}
 					}
 					return job;
 				}.bind(this));
