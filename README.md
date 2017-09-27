@@ -12,7 +12,9 @@ Information about the MaizeCode project on leveraging the CyVerse infrastructure
     * [Docker 2 Singularity](https://github.com/singularityware/docker2singularity)
 * Submitting Data to NCBI
   * NCBI Sequence Read Archive (SRA) Submission Tutorial
-    * [Wiki tutorial](https://wiki.cyverse.org/wiki/pages/viewpage.action?pageId=20351132)
-    * [Learning center tutorial](https://learning.cyverse.org/projects/sra_submission_quickstart/en/latest/)
+    * [CyVerse Wiki tutorial](https://wiki.cyverse.org/wiki/pages/viewpage.action?pageId=20351132)
+    * [CyVerse Learning center tutorial](https://learning.cyverse.org/projects/sra_submission_quickstart/en/latest/)
+    * [NCBI submission portal](https://www.ncbi.nlm.nih.gov/sra/docs/submitportal/)
   * NCBI Whole Genome Shotgun (WGS) Submission Tutorial
     * [Wiki tutorial](https://wiki.cyverse.org/wiki/pages/viewpage.action?pageId=34834057)
+    * [NCBI genome submission](https://www.ncbi.nlm.nih.gov/genbank/genomesubmit/)
