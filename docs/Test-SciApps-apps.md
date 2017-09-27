@@ -26,7 +26,7 @@ Note that the input url (for 'trait') starting with 'agave://sciapps.org', which
 $files-mkdir -N test -S sciapps.org/example_data/Chipseq
 $files-upload -v -F myFile.txt -S sciapps.org/example_data/Chipseq/test
 
-# If you want to delete the file or folder
+# If you want to delete the file or folder (warning: don't delete any data thats not yours)
 $files-delete -S sciapps.org example_data/Chipseq/test/myFile.txt
 $files-delete -S sciapps.org example_data/Chipseq/test
 ```
