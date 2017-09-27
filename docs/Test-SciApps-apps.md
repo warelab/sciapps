@@ -30,7 +30,21 @@ $files-upload -v -F myFile.txt -S sciapps.org/example_data/gwas_raw/test
 $files-delete -S sciapps.org example_data/gwas_raw/test/myFile.txt
 ```
 
-Check the [CyVerse SDK](https://github.com/cyverse/cyverse-sdk/blob/master/docs/app-dev-first-app-job.md) for more details about the job json. Now you can use the job json file to test your app.
+Above commands use the Agave cli, which can be installed and configured on your server with following commands. Check the [CyVerse SDK](https://github.com/cyverse/cyverse-sdk/blob/master/docs/app-dev-first-app-job.md) for more details about the job json and configuration.
+
+```sh
+$git clone https://github.com/cyverse/cyverse-sdk.git
+$cd cyverse-sdk/
+$make
+$cd cyverse-cli
+$cd bin
+$./tenants-init -t iplantc.org
+$./clients-create -S -v -N my_api_client -D "Client used for app development"
+$auth-tokens-create -S -v
+# you can add the bin folder to your path to access it from any folder
+```
+
+Now you can use the job json file to test your app.
 
 ```sh
 # Submit the job for Agave to execute. Don't forget to edit softwareName, jobName, inputs and parameters
