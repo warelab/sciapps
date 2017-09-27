@@ -22,6 +22,6 @@ A combination of Google forms, CyVerse metadata templates, and MaizeCode metadat
 * Metadata are displayed on SciApps workflow diagram
 
 ### Community Access
-Once mature, all MaizeCode data, apps and workflows will be made public for the community to access through the CyVerse infrastructure. For analysis submitted by Community members, data will be stored in CyVerse Data Store and processed with XSEDE computing resources.
+Once mature, all MaizeCode data, apps and workflows will be made public for the community to access through the CyVerse infrastructure. For analysis submitted by community users, data will be stored in CyVerse Data Store and processed with XSEDE computing resources.
 * Annotation with [XSEDE JetStream](https://portal.xsede.org/jetstream) 
 * ENCODE assays with [XSEDE HPC cluster Stampede2](https://portal.tacc.utexas.edu/user-guides/stampede2)
