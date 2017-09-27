@@ -41,7 +41,7 @@ $cd bin
 $./tenants-init -t iplantc.org
 $./clients-create -S -v -N my_api_client -D "Client used for app development"
 $auth-tokens-create -S -v
-# you can add the bin folder to your path to access it from any folder
+# you can add the bin folder to your path to access it from any folders
 ```
 
 Now you can use the job json file to test your app.
