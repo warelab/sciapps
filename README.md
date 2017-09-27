@@ -18,5 +18,5 @@ Information about the MaizeCode project on leveraging the CyVerse infrastructure
     * [CyVerse Learning Center tutorial](https://learning.cyverse.org/projects/sra_submission_quickstart/en/latest/)
     * [NCBI submission portal](https://www.ncbi.nlm.nih.gov/sra/docs/submitportal/)
   * NCBI Whole Genome Shotgun (WGS) Submission Tutorial
-    * [Wiki tutorial](https://wiki.cyverse.org/wiki/pages/viewpage.action?pageId=34834057)
+    * [CyVerse Wiki tutorial](https://wiki.cyverse.org/wiki/pages/viewpage.action?pageId=34834057)
     * [NCBI genome submission](https://www.ncbi.nlm.nih.gov/genbank/genomesubmit/)
