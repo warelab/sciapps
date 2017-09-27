@@ -47,8 +47,8 @@ Copy in progress
 Job inputs staged to execution system
 Preparing job for submission.
 Attempt 1 to submit job
-Fetching app assets from agave://data3.sciapps.org/tnrs/bin
-Staging runtime assets to agave://cshl-compute-01/lwang/job-3444779753963384345-242ac113-0001-007-tnrs-02
+Fetching app assets from agave://data.iplantcollaborative.org/lwang/apps/tnrs/bin
+Staging runtime assets to agave://sciapps.org/lwang/job-3444779753963384345-242ac113-0001-007-tnrs-02
 HPC job successfully placed into debug queue as local job 9092
 Job started running
 Job completed execution
