@@ -1,7 +1,7 @@
 Testing an app on SciApps.org
 =============================
 
-After [optimizing](Agave-SciApps.md) your Agave apps, the next step is to test the app to see whehter it is working correctly. The app can be tested using the Discovery Environment but the data transfer will be slow, given that SciApps.org is a remote system located at Cold Spring Harbor Laboratory. Therefore, the best way to test the app is through the [Agave CyVerse SDK](https://github.com/cyverse/cyverse-sdk) directly.
+After [optimizing](Agave-SciApps.md) your Agave apps, the next step is to test the app to see whether it is working correctly. The app can be tested using the Discovery Environment but the data transfer will be slow, given that SciApps.org is a remote system located at Cold Spring Harbor Laboratory. Therefore, the best way to test the app is through the [Agave CyVerse SDK](https://github.com/cyverse/cyverse-sdk) directly.
 
 To get started, modify the following job json and save it (e.g. my-job.json):
 
