@@ -10,7 +10,7 @@ Information about the MaizeCode project on leveraging the CyVerse infrastructure
     * [DE Tool development using Bioconda and Biocontainers](https://wiki.cyverse.org/wiki/display/csmgmt/DE+Tool+Docker+Image+registration+and+installation+using+Bioconda+and+Biocontainers)
     * [BioConda recipes](https://github.com/bioconda/bioconda-recipes)
     * [Docker 2 Singularity](https://github.com/singularityware/docker2singularity)
-* Data release
+* Data Release
   * [MaizeCode.org](http://www.maizecode.org/data/)
   * [CyVerse Data Commons](http://datacommons.cyverse.org/)
   * NCBI Sequence Read Archive (SRA) Submission Tutorial
