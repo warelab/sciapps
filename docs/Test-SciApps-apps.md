@@ -30,7 +30,7 @@ $files-upload -v -F myFile.txt -S sciapps.org/example_data/gwas_raw/test
 $files-delete -S sciapps.org example_data/gwas_raw/test/myFile.txt
 ```
 
-Check the [CyVerse SDK](https://github.com/cyverse/cyverse-sdk/blob/master/docs/app-dev-first-app-job.md) for more details about the job json. Now you can use this job json to test your app, check job status, and download outputs for verification.
+Check the [CyVerse SDK](https://github.com/cyverse/cyverse-sdk/blob/master/docs/app-dev-first-app-job.md) for more details about the job json. Now you can use the job json file to test your app.
 
 ```sh
 # Submit the job for Agave to execute. Don't forget to edit softwareName, jobName, inputs and parameters
