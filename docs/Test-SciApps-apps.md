@@ -71,4 +71,4 @@ unmapped.txt
 jobs-output --download --path tnrs.txt 3444779753963384345-242ac113-0001-007 
 ```
 
-# You can get more detailed outputs from any of the Agave CLI commands by adding -v to your command line to output the JSON response, and/or by adding -V which will print STDERR to your screen.
+You can get more detailed outputs from any of the Agave CLI commands by adding -v to your command line to output the JSON response, and/or by adding -V which will print STDERR to your screen.
