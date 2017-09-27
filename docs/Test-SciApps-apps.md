@@ -55,7 +55,7 @@ Job completed execution
 Job completed. Skipping archiving at user request.
 ```
 
-List the output, whether it runs to completion or not
+List the output, whether it runs to completion or not (if you see any inputs, temporary files, or other unneeded files, modify your wrapper scripts to get them handled/removed)
 ```sh
 $jobs-output 3444779753963384345-242ac113-0001-007
 .agave.archive
