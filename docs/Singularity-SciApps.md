@@ -1,6 +1,6 @@
 Singularity images installed on SciApps.org
 -------
-Execute an image like "**singularity exec /scratch/tacc/images/bwa_0.7.13--1.img** bwa index ref.fa".
+Execute an image like "**singularity exec -B /scratch:/scratch /scratch/tacc/images/bwa_0.7.13--1.img** bwa index ref.fa".
 * bwa_0.7.13--1.img
 * beagle_4.1_21Jan17.6cc.jar--0.img                          
 * bedtools_2.26.0gx--0.img                                  
