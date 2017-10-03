@@ -135,8 +135,10 @@ const DsStore=Reflux.createStore({
 	},
 
 	setDataStoreItemTarget: function(target) {
-		this.state.target=target;
-		this.clearDataStoreItem(target);
+		if (target !== this.state.target) {
+			this.state.target=target;
+			this.clearDataStoreItem(target);
+		}
 	},
 
 	selectDataStoreItem: function(item) {

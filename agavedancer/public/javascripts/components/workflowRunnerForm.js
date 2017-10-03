@@ -8,6 +8,7 @@ import AppsStore from '../stores/appsStore.js';
 import WorkflowStore from '../stores/workflowStore.js';
 import AppsActions from '../actions/appsActions.js';
 import JobsActions from '../actions/jobsActions.js';
+import dsActions from '../actions/dsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import _ from 'lodash';
 import Q from 'q';
@@ -41,6 +42,7 @@ const WorkflowRunnerForm=React.createClass({
 	formName: 'workflowRunnerForm',
 
 	handleSubmit: function(event) {
+		dsActions.clearDataStoreItem();
 		this.setState({onSubmit: true, onValidate: true});
 		let setting=_config.setting;
 		let required=_.keys(this.state.required);

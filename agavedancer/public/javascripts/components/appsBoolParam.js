@@ -10,18 +10,21 @@ const AppsBoolParam=React.createClass({
 
 	getInitialState: function() {
 		return {
-			value: this.props.data.value ? 1 : 0
+			value: this.props.reload === 'resubmit' || this.props.data.value !== undefined ? this.props.data.value : this.props.data.default
 		};
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		this.setState({
-			value: nextProps.data.value ? 1 : 0
-		});
+		let reload=nextProps.reload;
+		if (reload === 'resubmit') {
+			this.setState({value: nextProps.data.value ? 1 : 0});
+		} else if (reload === 'default') {
+			this.setState({value: nextProps.data.default ? 1 : 0});
+		}
 	},
 
 	componentWillUnmount: function() {
-		this.setState({value: this.props.data.value});
+		this.setState({value: this.props.data.default});
 	},
 
 	handleBtn: function(event) {
