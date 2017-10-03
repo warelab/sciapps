@@ -174,9 +174,13 @@ const AppsStore=Reflux.createStore({
 	},
 
 	hideApp: function() {
+		this._hideApp();
+		this.complete();
+	},
+
+	_hideApp: function() {
 		if (this.state.appDetail.id) {
 			this.state.appDetail={};
-			this.complete();
 		}
 	},
 
@@ -194,7 +198,8 @@ const AppsStore=Reflux.createStore({
 	showPage: function(pageId) {
 		if (pageId !== this.state.pageId) {
 			this.state.pageId=pageId;
-			this.hideApp();
+			this._hideApp();
+			this.complete();
 		}
 	}
 });
