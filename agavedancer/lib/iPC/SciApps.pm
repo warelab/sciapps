@@ -862,7 +862,7 @@ sub submitJob {
 				error($err);
 			}
 		}
-		sleep(180) if $retry;
+		sleep(60) if $retry;
 	}
 	return (undef, $err);
 }
