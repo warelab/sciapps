@@ -150,7 +150,7 @@ const AppsForm=React.createClass({
 			key: '_email',
 			id: '_email',
 			name: '_email',
-			default: false,
+			default: 0,
 			label: 'Email Notification',
 			help: 'Optional Email notification upon job completeion'
 		};
