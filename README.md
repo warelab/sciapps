@@ -26,7 +26,10 @@ Installation on your pc is not supported. To add an app, follow steps below
   
   7. git push
   
-  8. Notify support@sciapps.org
+  8. Update permission of the app
+    - e.g. **apps-pems-update -v -u maizecode -p READ_EXECUTE BWA_index_mem-0.7.13**
+
+  9. Notify support@sciapps.org
 
 # For SciApps community version (under development)
 
