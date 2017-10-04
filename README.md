@@ -1,5 +1,5 @@
 # For SciApps main version
-Installation of SciApps on your pc is not supported for security reasons. To add an Agave app, follow steps below
+For security reasons, installation of SciApps on your pc is not supported. To add an Agave app, follow steps below
 
   1. git clone https://github.com/warelab/sciapps.git
 
