@@ -11,7 +11,7 @@ Installation on your pc is not supported. To add an app, follow steps below
       - e.g. **apps-list -v BWA_index_mem-0.7.13 > BWA_index_mem-0.7.13.json**
     
   5. Insert following content (example for BWA_index_mem-0.7.13) to the second line of **agaveAppsList.json** for your new app
-    ```json
+  ```json
     {
       "tags": [
         "Beta"
@@ -21,7 +21,7 @@ Installation on your pc is not supported. To add an app, follow steps below
       "name": "BWA_index_mem",
       "version": "0.7.13"
     },
-    ```
+  ```
   6. git commit -m **"Added app BWA_index_mem-0.7.13"**
   
   7. git push
