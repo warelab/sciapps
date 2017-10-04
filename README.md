@@ -8,11 +8,21 @@ Installation on your pc is not supported. To add an app, follow steps below
   3. cd sciapps/agavedancer/public/assets
   
   4. Create/move your app-id.json in this folder (or replace the old one)
-    - e.g. **apps-list -v BWA_index_mem-0.7.13 > BWA_index_mem-0.7.13.json**
+      - e.g. **apps-list -v BWA_index_mem-0.7.13 > BWA_index_mem-0.7.13.json**
     
-  5. Modify **agaveAppsList.json** to add your app
-  
-  6. git commit -m "Added app BWA_index_mem-0.7.13"
+  5. Insert following content (example for BWA_index_mem-0.7.13) to the second line of **agaveAppsList.json** for your new app
+  ```json
+  {
+    "tags": [
+      "Beta"
+    ],
+    "id": "BWA_index_mem-0.7.13",
+    "label": "BWA-index-mem",
+    "name": "BWA_index_mem",
+    "version": "0.7.13"
+  },
+  ```
+  6. git commit -m **"Added app BWA_index_mem-0.7.13"**
   
   7. git push
   
