@@ -22,14 +22,16 @@ Installation on your pc is not supported. To add an Agave app, follow steps belo
       "version": "0.7.13"
     },
   ```
-  6. git commit -m **"Added app BWA_index_mem-0.7.13"**
+  6. git add .
   
-  7. git push
+  7. git commit -m **"Added app BWA_index_mem-0.7.13"**
   
-  8. Share the app with the **maizecode** user
+  8. git push
+  
+  9. Share the app with the **maizecode** user
       - e.g. **apps-pems-update -v -u maizecode -p READ_EXECUTE BWA_index_mem-0.7.13**
 
-  9. Notify support@sciapps.org
+  10. Notify support@sciapps.org
 
 # For SciApps community version (under development)
 
