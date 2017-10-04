@@ -1,5 +1,5 @@
 # For SciApps main version
-Installation on your pc is not supported. To add an app, follow steps below
+Installation on your pc is not supported. To add an Agave app, follow steps below
 
   1. git clone https://github.com/warelab/sciapps.git
 
@@ -26,7 +26,7 @@ Installation on your pc is not supported. To add an app, follow steps below
   
   7. git push
   
-  8. Share the app with the maizecode user
+  8. Share the app with the **maizecode** user
       - e.g. **apps-pems-update -v -u maizecode -p READ_EXECUTE BWA_index_mem-0.7.13**
 
   9. Notify support@sciapps.org
