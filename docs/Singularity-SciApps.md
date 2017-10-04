@@ -9,7 +9,7 @@ Execute an image like "**singularity exec -B /scratch:/scratch /scratch/tacc/ima
 * bowtie2_2.3.2--py36pl5.22.0_1.img                          
 * cufflinks_2.2.1--py36_1.img                          
 * cutadapt_1.14--py36_0.img                                  
-* genomicpariscentre_fastqc-2016-08-01-1fa01d83b22a.img
+* fastqc-2016-08-01-1fa01d83b22a.img
 * fastx_toolkit_0.0.14--2.img
 * freebayes_1.1.0--py36_1.img                                
 * homer-2015-11-10-4604b6dca295.img /home/user1/homer/bin/makeTagDirectory                               
