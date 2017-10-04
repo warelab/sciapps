@@ -12,7 +12,7 @@ Execute an image like "**singularity exec -B /scratch:/scratch /scratch/tacc/ima
 * genomicpariscentre_fastqc-2016-08-01-1fa01d83b22a.img
 * fastx_toolkit_0.0.14--2.img
 * freebayes_1.1.0--py36_1.img                                
-* homer_4.9.1--pl5.22.0_5.img                                
+* homer-2015-11-10-4604b6dca295.img /home/user1/homer/bin/makeTagDirectory                               
 * impute2_2.3.2--0.img                                  
 * macs2_2.1.1.20160309--py27r3.3.2_0.img                    
 * maker_2.31.9--0.img            
