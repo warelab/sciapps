@@ -10,7 +10,7 @@ Installation on your pc is not supported. To add an app, follow steps below
   4. Create/move your app-id.json in this folder (or replace the old one)
       - e.g. **apps-list -v BWA_index_mem-0.7.13 > BWA_index_mem-0.7.13.json**
     
-  5. Insert following content (example for BWA_index_mem-0.7.13) to the second line of **agaveAppsList.json** for your new app
+  5. Insert following content (example for **BWA_index_mem-0.7.13**) to the second line of **agaveAppsList.json** for your new app
   ```json
     {
       "tags": [
