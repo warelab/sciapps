@@ -24,7 +24,7 @@ route_cache: 1
 
 # production config
 agave_config: ".agave"
-host_url: "https://www.sciapps.org"
+host_url: "https://de.sciapps.org"
 archive_system: 'halcott.cshl.edu'
 archive_home: '/agave_data'
 archive_path: 'results'

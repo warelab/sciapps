@@ -313,10 +313,10 @@
     "tags": [
       "Beta"
     ],
-    "id": "BWA_index_mem-0.7.10",
+    "id": "BWA_index_mem-0.7.13",
     "label": "BWA-index-mem",
     "name": "BWA_index_mem",
-    "version": "0.7.10"
+    "version": "0.7.13"
   },
   {
     "tags": [
