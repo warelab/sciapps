@@ -28,7 +28,6 @@ const JobsStore=Reflux.createStore({
 
 	_resetState: function() {
 		this.state={
-			resubmit: false,
 			showJob: false,
 			showJobId: undefined,
 			jobs: [],
@@ -372,22 +371,14 @@ const JobsStore=Reflux.createStore({
 	},
 
 	resubmitJob: function(jobId) {
-		this.state.resubmit=true;
 		let jobPromise=this._setJob(jobId);
 		jobPromise.then(function(jobDetail) {
-			this.state.jobDetail=jobDetail;
-			AppsActions.showAppByJob(this.state);
-			this.complete();
+			AppsActions.showAppByJob(jobDetail);
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
 		})
 		.done();
-	},
-
-	resetResubmit: function() {
-		this.state.resubmit=false;
-		this.complete();
 	},
 
 	addWorkflowBuilderJobIndex: function(index) {

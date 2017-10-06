@@ -3,7 +3,6 @@
 import React from 'react';
 import Reflux from 'reflux';
 import AppsStore from '../stores/appsStore.js';
-import JobsStore from '../stores/jobsStore.js';
 import AppsActions from '../actions/appsActions.js';
 import dsActions from '../actions/dsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
@@ -18,10 +17,14 @@ import WorkflowRunner from './workflowRunner.js';
 import Help from './help.js';
 
 const AppsDetail=React.createClass({
-	mixins: [Reflux.connect(AppsStore, 'appsStore'), Reflux.connect(JobsStore, 'jobsStore')],
+	mixins: [Reflux.connect(AppsStore, 'appsStore')],
+
+	componentDidMount: function() {
+		AppsActions.setReload();
+	},
 
 	componentDidUpdate: function(prevProps, prevState) {
-		dsActions.clearDataStoreItem();
+		AppsActions.setReload();
 	},
 
 	componentWillUnmount: function() {
@@ -32,8 +35,7 @@ const AppsDetail=React.createClass({
 		let user=this.props.user;
 		let appsStore=this.state.appsStore;
 		let appDetail=appsStore.appDetail;
-		let jobsStore=this.state.jobsStore;
-		let jobDetail=jobsStore.jobDetail;
+		let reload=appsStore.reload;
 		let markup;
 		//if (! this.props.user.logged_in) {
 		//	markup=<Welcome />
@@ -41,7 +43,7 @@ const AppsDetail=React.createClass({
 		if (appDetail && appDetail.id) {
 			markup=(
 				<div>
-					<AppsForm appDetail={appDetail} jobDetail={jobDetail} resubmit={jobsStore.resubmit} user={this.props.user}/>
+					<AppsForm appDetail={appDetail} reload={reload} user={this.props.user}/>
 					<AppsInfo appDetail={appDetail} />
 				</div>
 			);

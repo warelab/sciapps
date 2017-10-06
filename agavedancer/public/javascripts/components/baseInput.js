@@ -6,19 +6,20 @@ import {Input} from 'react-bootstrap';
 
 const BaseInput=React.createClass({
 	getInitialState: function() {
-		return {value: this.props.data.value};
+		return {value: this.props.reload === 'resubmit' || this.props.data.value !== undefined ? this.props.data.value : this.props.data.default};
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		if (nextProps.data.value !== undefined) {
-			this.setState({
-				value: nextProps.data.value
-			});
+		let reload=nextProps.reload;
+		if (reload === 'resubmit') {
+			this.setState({value: nextProps.data.value});
+		} else if (reload === 'default') {
+			this.setState({value: nextProps.data.default});
 		}
 	},
 
 	componentWillUnmount: function() {
-		this.setState({value: this.props.data.value});
+		this.setState({value: this.props.data.default});
 	},
 
 	handleChange: function(event) {

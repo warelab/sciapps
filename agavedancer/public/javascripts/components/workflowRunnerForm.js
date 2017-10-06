@@ -8,6 +8,7 @@ import AppsStore from '../stores/appsStore.js';
 import WorkflowStore from '../stores/workflowStore.js';
 import AppsActions from '../actions/appsActions.js';
 import JobsActions from '../actions/jobsActions.js';
+import dsActions from '../actions/dsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import _ from 'lodash';
 import Q from 'q';
@@ -41,6 +42,7 @@ const WorkflowRunnerForm=React.createClass({
 	formName: 'workflowRunnerForm',
 
 	handleSubmit: function(event) {
+		dsActions.clearDataStoreItem();
 		this.setState({onSubmit: true, onValidate: true});
 		let setting=_config.setting;
 		let required=_.keys(this.state.required);
@@ -152,11 +154,12 @@ const WorkflowRunnerForm=React.createClass({
 			});
 			let emailInput={
 				type: 'email',
+				required: false,
+				key: '_email',
 				id: '_email',
 				name: '_email',
-				label: 'Email Address',
-				placeholder: 'Enter email',
-				help: 'Optional Email for notification'
+				label: 'Email',
+				help: 'Optional Email notification upon job completion'
 			};
 			let runDetail=_.cloneDeep(workflowDetail);
 			_.assign(runDetail, {

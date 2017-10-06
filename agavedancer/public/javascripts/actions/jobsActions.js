@@ -21,7 +21,6 @@ const JobsActions=Reflux.createActions([
 	'debouncedCheckWorkflowJobStatus',
 	'checkWorkflowJobStatus',
 	'resubmitJob',
-	'resetResubmit',
 	'addWorkflowBuilderJobIndex',
 	'removeWorkflowBuilderJobIndex'
 ]);

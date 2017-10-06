@@ -22,13 +22,14 @@ const AppsParam=React.createClass({
 		};
 	},
 
-	buildAgaveAppsParam: function(param, useResubmit, resubmitValue) {
+	buildAgaveAppsParam: function(param) {
 		let options, isSelect=false;
 		let props={
 			key: param.id,
 			required: param.value.required,
 			name: param.id,
-			value: useResubmit ? resubmitValue : param.value.default
+			value: param.value.value,
+			default: param.value.default
 		};
 		if (! param.value.visible) {
 			props.type='hidden';
@@ -75,11 +76,11 @@ const AppsParam=React.createClass({
 		};
 	},
 	render: function() {
-		let data=this.buildAgaveAppsParam(this.props.data, this.props.useResubmit, this.props.resubmitValue), markup;
+		let data=this.buildAgaveAppsParam(this.props.data), markup;
 		if (data.data.type === 'checkbox') {
-			markup=<AppsBoolParam {...data} onValidate={this.props.onValidate} />;
+			markup=<AppsBoolParam {...data} reload={this.props.reload} onValidate={this.props.onValidate} />;
 		} else {
-			markup=<BaseInput {...data} onValidate={this.props.onValidate} />;
+			markup=<BaseInput {...data} reload={this.props.reload} onValidate={this.props.onValidate} />;
 		}
 		return markup;
 	}

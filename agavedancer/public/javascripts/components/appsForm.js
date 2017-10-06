@@ -6,10 +6,11 @@ import _ from 'lodash';
 import Q from 'q';
 import {Panel, Button, Alert, Tooltip, OverlayTrigger} from 'react-bootstrap';
 import BaseInput from './baseInput.js';
-import AppsBoolParam from './appsBoolParam.js';
 import AppsParam from './appsParam.js';
 import AppsInput from './appsInput.js';
+import AppsActions from '../actions/appsActions.js';
 import JobsActions from '../actions/jobsActions.js';
+import dsActions from '../actions/dsActions.js';
 import utilities from '../libs/utilities.js';
 import Dialog from 'react-bootstrap-dialog';
 
@@ -26,12 +27,13 @@ const AppsForm=React.createClass({
 			onValidate: false
 		});
 	},
-	
+
 	componentWillUnmount () {
 		Dialog.resetOptions();
 	},
 
 	handleSubmit: function() {
+		dsActions.clearDataStoreItem();
 		this.setState({onSubmit: true, onValidate: true});
 		let setting=_config.setting;
 		let required=[];
@@ -116,31 +118,28 @@ const AppsForm=React.createClass({
 	render: function() {
 		let user=this.props.user;
 		let appDetail=this.props.appDetail;
-		let jobDetail=this.props.jobDetail;
-		let resubmit=this.props.resubmit;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
-		let useResubmit=resubmit && appDetail.id === jobDetail.appId; 
 		let app_inputs=[], app_params=[], header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
+		let reload=this.props.reload;
 
 		if (appDetail && undefined !== appDetail.name) {
+			let jobDetail=appDetail._jobDetail;
 			if (appDetail.inputs && appDetail.inputs.length) {
 				let sortedInputs=_.sortBy(appDetail.inputs, utilities.getValueOrder);
 				app_inputs=sortedInputs.map(function(input) {
-					let resubmitValue;
-					if (useResubmit) {
-						resubmitValue=jobDetail.inputs[input.id];
+					if (jobDetail && jobDetail.inputs[input.id] !== undefined) {
+						input.value.value=jobDetail.inputs[input.id][0];
 					}
-					return(<AppsInput key={appDetail.id + ':' + input.id} data={input} useResubmit={useResubmit} resubmitValue={resubmitValue} onValidate={onValidate} user={this.props.user} />);
+					return(<AppsInput key={appDetail.id + ':' + input.id} data={input} reload={reload} onValidate={onValidate} user={this.props.user} />);
 				}.bind(this));
 			}
 			if (appDetail.parameters &&  appDetail.parameters.length) {
 				let sortedParams=_.sortBy(appDetail.parameters, utilities.getValueOrder);
 				app_params=sortedParams.map(function(param) {
-					let resubmitValue;
-					if (useResubmit) {
-						resubmitValue=jobDetail.parameters[param.id];
+					if (jobDetail && jobDetail.parameters[param.id] !== undefined) {
+						param.value.value=jobDetail.parameters[param.id];
 					}
-					return(<AppsParam key={appDetail.id + ':' + param.id} data={param} useResubmit={useResubmit} resubmitValue={resubmitValue} onValidate={onValidate} user={this.props.user} />);
+					return(<AppsParam key={appDetail.id + ':' + param.id} data={param} reload={reload} onValidate={onValidate} user={this.props.user} />);
 				}.bind(this));
 			}
 		}

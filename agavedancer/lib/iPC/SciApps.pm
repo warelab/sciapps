@@ -192,7 +192,7 @@ ajax '/logout' => sub {
 	to_json({status => "successful"});
 };
 
-ajax '/user' => sub {
+get '/user' => sub {
 	my $user={username => session('username')};
 	if (check_agave_login()) {
 		$user->{logged_in}=1;
@@ -816,7 +816,7 @@ sub submitJob {
 				error($err);
 			}
 		}
-		sleep(180) if $retry;
+		sleep(60) if $retry;
 	}
 	return (undef, $err);
 }

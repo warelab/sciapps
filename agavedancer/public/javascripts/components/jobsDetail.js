@@ -26,7 +26,7 @@ const JobsDetail=React.createClass({
 		let markup=<div />;
 		//let output_link;
 		if (jobDetail) {
-			if (jobDetail.status && _.includes(['FINISHED','FAILED'], jobDetail.status)) {
+			if (jobDetail.status && jobDetail.status === 'FINISHED') {
 				//let archivePath=jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path);
 				//let link_url=setting.output_url[setting.archive_system] + '/' + archivePath;
 				//output_link=(<a href={link_url} target='_blank'>{link_url}</a>);

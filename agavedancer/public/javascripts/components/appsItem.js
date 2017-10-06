@@ -8,7 +8,7 @@ import {ListGroupItem} from 'react-bootstrap';
 const AppsItem=React.createClass({
 
 	showApp: function() {
-		AppsActions.showApp(this.props.data.id);
+		AppsActions.showApp(this.props.data.id, 'default');
 		let title=this.props.data.id;
 		let urlbase="?app_id=";
 		let url=urlbase.concat(title);

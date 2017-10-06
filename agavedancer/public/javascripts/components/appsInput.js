@@ -3,6 +3,7 @@
 import React from 'react';
 import Reflux from 'reflux';
 import _ from 'lodash';
+import AppsActions from '../actions/appsActions.js';
 import DsActions from '../actions/dsActions.js';
 import DsStore from '../stores/dsStore.js';
 import {Input, Button} from 'react-bootstrap';
@@ -11,14 +12,24 @@ const AppsInput=React.createClass({
 	mixins: [Reflux.listenTo(DsStore, 'handleDsStoreChange')],
 
 	getInitialState: function() {
+		let textValue;
+		let reload=this.props.relad;
+		if (reload === 'resubmit' || this.props.data.value.value !== undefined) {
+			textValue=this.props.data.value.value;
+		} else {
+			textValue=this.props.data.value.default;
+		}
 		return {
-			textValue: this.props.useResubmit ? this.props.resubmitValue : this.props.data.value.default
+			textValue: textValue
 		};
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		if (nextProps.useResubmit) {
-			this.setState({textValue: nextProps.resubmitValue});
+		let reload=this.props.reload;
+		if (reload === 'resubmit') {
+			this.setState({textValue: nextProps.data.value.value});
+		} else if (reload === 'default') {
+			this.setState({textValue: nextProps.data.value.default});
 		}
 	},
 

@@ -33,6 +33,7 @@ const AppsStore=Reflux.createStore({
 
 	_resetState: function(pageId) {
 		this.state={
+			reload: '',
 			filtered: false,
 			searchString: '',
 			apps: [],
@@ -145,21 +146,24 @@ const AppsStore=Reflux.createStore({
 		return appPromise;
 	},
 
-	showAppByJob: function(jobsStore) {
-		if (jobsStore.resubmit && jobsStore.jobDetail.appId) {
-			this._showApp(jobsStore.jobDetail.appId);
+	showAppByJob: function(jobDetail) {
+		if (jobDetail.appId) {
+			this._setReload('resubmit');
+			this._showApp(jobDetail.appId, jobDetail);
 		}
 	},
 
-	showApp: function(appId) {
-		JobsActions.resetResubmit();
+	showApp: function(appId, mode) {
+		this._setReload(mode);
 		this._showApp(appId);
 	},
 
-	_showApp: function(appId) {
+	_showApp: function(appId, jobDetail) {
 		let appPromise=this.setApp(appId);
 		appPromise.then(function(appDetail) {
-			this.state.appDetailCache[appId]=appDetail;
+			if (jobDetail) {
+				appDetail._jobDetail=jobDetail;
+			}
 			this.state.appDetail=appDetail;
 			this.complete();
 		}.bind(this))
@@ -170,13 +174,33 @@ const AppsStore=Reflux.createStore({
 	},
 
 	hideApp: function() {
-		this.state.appDetail={};
+		this._hideApp();
 		this.complete();
 	},
 
+	_hideApp: function() {
+		if (this.state.appDetail.id) {
+			this.state.appDetail={};
+		}
+	},
+
+	setReload: function(value) {
+		if (value !== this.state.reload) {
+			this._setReload(value);
+			this.complete();
+		}
+	},
+
+	_setReload: function(value) {
+		this.state.reload=value;
+	},
+
 	showPage: function(pageId) {
-		this.state.pageId=pageId;
-		this.hideApp();
+		if (pageId !== this.state.pageId) {
+			this.state.pageId=pageId;
+			this._hideApp();
+			this.complete();
+		}
 	}
 });
 
