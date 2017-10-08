@@ -25,7 +25,7 @@ route_cache: 1
 # production config
 agave_config: ".agave"
 host_url: "https://www.sciapps.org"
-archive_system: 'halcott.cshl.edu'
+archive_system: 'sciapps.org'
 archive_home: '/agave_data'
 archive_path: 'results'
 input_system: 'brebiou.cshl.edu'
@@ -36,14 +36,14 @@ upload_suffix: ".upload"
 wf_step_prefix: 'wf_step_'
 maxRunTime: "96:00:00"
 datastore:
-  __user__: 
-    system: 'data.iplantcollaborative.org'
-    home: '/iplant/home'
-    path: '__user__/sci_data'
-  __shared__:
-    system: 'data.iplantcollaborative.org'
-    home: '/iplant/home'
-    path: 'shared'
+  __sorghumDB__: 
+    system: 'sciapps.org'
+    home: '/agave_data'
+    path: 'data/sorghum'
+  __maizecode__:
+    system: 'sciapps.org'
+    home: '/agave_data'
+    path: 'data/maize'
   __public__:
     system: 'sciapps.org'
     home: '/agave_data'
@@ -57,6 +57,7 @@ datastore:
     home: ''
     path: 'example_data'
 public_datastore_type: '__public__'
+datastore_types: ['sorghumDB', 'maizecode', 'public']
 uncompress_suffix: '.open.tar.gz'
 use_file_server: 1
 irodsEnvFile: '/usr/share/httpd/irodsEnv'

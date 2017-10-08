@@ -37,7 +37,7 @@ const DsDetail=React.createClass({
 		let dsFileNodes='Loading ...';
 		let targetPath=dsStore.dsItemPaths[dsStore.target];
 		let dsBtnValue=targetPath ? 'Select and Close' : 'Close';
-		let sourceButtons=['user', 'shared', 'public'].map(function(name) {
+		let sourceButtons=setting.datastore_types.map(function(name) {
 			let disabled=!(name === 'public' || user.logged_in);
 			let isActive=dsStore.type === '__' + name + '__';
 			return <Button key={name} onClick={disabled ? null : this.handleChangeSource} disabled={disabled} bsStyle={isActive ? 'primary' : 'default'}>{name}</Button>
