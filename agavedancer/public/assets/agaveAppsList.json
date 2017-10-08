@@ -313,10 +313,19 @@
     "tags": [
       "Beta"
     ],
-    "id": "BWA_index_mem-0.7.10",
+    "id": "BWA_index_mem-0.7.13",
     "label": "BWA-index-mem",
     "name": "BWA_index_mem",
-    "version": "0.7.10"
+    "version": "0.7.13"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "FastQC-0.11.5",
+    "label": "FastQC",
+    "name": "FastQC",
+    "version": "0.11.5"
   },
   {
     "tags": [
