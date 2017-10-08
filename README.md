@@ -1,4 +1,39 @@
-# SciApps
+# For SciApps main version
+For security reasons, installation of SciApps on your pc is not supported. To add an Agave app, follow steps below
+
+  1. git clone https://github.com/warelab/sciapps.git
+
+  2. git pull
+  
+  3. cd sciapps/agavedancer/public/assets
+  
+  4. Create/move your app-id.json in this folder (or replace the old one)
+      - e.g. **apps-list -v BWA_index_mem-0.7.13 > BWA_index_mem-0.7.13.json**
+    
+  5. Insert following content (example for **BWA_index_mem-0.7.13**) to the second line of **agaveAppsList.json** for your new app
+  ```json
+    {
+      "tags": [
+        "Beta"
+      ],
+      "id": "BWA_index_mem-0.7.13",
+      "label": "BWA-index-mem",
+      "name": "BWA_index_mem",
+      "version": "0.7.13"
+    },
+  ```
+  6. git add .
+  
+  7. git commit -m **"Added app BWA_index_mem-0.7.13"**
+  
+  8. git push
+  
+  9. Share the app with the **maizecode** user
+      - e.g. **apps-pems-update -v -u maizecode -p READ_EXECUTE BWA_index_mem-0.7.13**
+
+  10. Notify support@sciapps.org
+
+# For SciApps community version (under development)
 
 To install, follow steps below (for local install, skip step 8)
 
