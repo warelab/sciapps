@@ -717,7 +717,7 @@ sub prepareJob {
 		next unless $job_form{$name};
 		if ($job_form{$name}=~m#^https://\w+.sciapps.org/results/job-(\w+\-\w+\-\w+\-\w+)[^\/]*/(.*)#) {
 			$job_form{$name}='https://agave.iplantc.org/jobs/v2/' . $1 . '/outputs/media/' . $2;
-		} elsif ($job_form{$name}=~s#^https://data.sciapps.org/(example_data|sorghumDB|maizecode)/#agave://sciapps.org/$1/#) {
+		} elsif ($job_form{$name}=~s#^https://data.sciapps.org/(example_data|sorghumDB|MaizeCODE)/#agave://sciapps.org/$1/#) {
 		}
 	}
 	#	} elsif ($job_form{$name}=~m#^http://www.maizecode.org#) {

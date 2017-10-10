@@ -44,7 +44,7 @@ datastore:
     system: 'sciapps.org'
     home: '/agave_data'
     path: 'data/sorghum'
-  __maizecode__:
+  __MaizeCODE__:
     system: 'sciapps.org'
     home: '/agave_data'
     path: 'data/maize'
