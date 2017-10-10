@@ -220,7 +220,7 @@ get qr{/browse/?(.*)} => sub {
 	if ($type eq '__CyVerse__') {
  		$datastore_homepath=~s/__CyVerse__/$username/;
  		$result=browse_ils($path, $datastore_system, $datastore_homepath);
- 	} else if ($type eq '__sorghumDB__') {
+ 	} elsif ($type eq '__sorghumDB__') {
 		$result=browse_ls($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__MaizeCODE__') {
 		$result=browse_ls($path, $datastore_system, $datastore_homepath);
