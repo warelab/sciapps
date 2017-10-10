@@ -36,6 +36,10 @@ upload_suffix: ".upload"
 wf_step_prefix: 'wf_step_'
 maxRunTime: "96:00:00"
 datastore:
+  __CyVerse__:
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: '__user__/sci_data'
   __sorghumDB__: 
     system: 'sciapps.org'
     home: '/agave_data'
@@ -44,7 +48,7 @@ datastore:
     system: 'sciapps.org'
     home: '/agave_data'
     path: 'data/maize'
-  __public__:
+  __exampleData__:
     system: 'sciapps.org'
     home: '/agave_data'
     path: 'example_data'
@@ -56,8 +60,8 @@ datastore:
     system: '1970491483740115431-242ac113-0001-007'
     home: ''
     path: 'example_data'
-public_datastore_type: '__public__'
-datastore_types: ['sorghumDB', 'maizecode', 'public']
+public_datastore_type: '__exampleData__'
+datastore_types: ['CyVerse', 'sorghumDB', 'maizecode', 'exampleData']
 uncompress_suffix: '.open.tar.gz'
 use_file_server: 1
 irodsEnvFile: '/usr/share/httpd/irodsEnv'
