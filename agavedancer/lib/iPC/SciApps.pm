@@ -202,6 +202,11 @@ get qr{/browse/?(.*)} => sub {
 	my ($type, $path)=split /\//, $typePath, 2;
 	$path||='';
 	my $user=session('cas_user');
+	if (($type eq '__CyVerse__') && ! $user) {
+ 		raise InvalidCredentials => 'no cas user';
+ 	} elsif ($type eq '__exampleData__') {
+ 		$type=setting('public_datastore_type');
+ 	}
 	my $username=$user->{username};
 	my $datastore=setting('datastore')->{$type};
 	unless ($datastore) {
@@ -212,11 +217,14 @@ get qr{/browse/?(.*)} => sub {
 	my $datastore_system=$datastore->{system};
 	my $result={};
 	my $datastore_homepath=$datastore_home .'/' . $datastore_path;
-	if ($type eq '__sorghumDB__') {
+	if ($type eq '__CyVerse__') {
+ 		$datastore_homepath=~s/__CyVerse__/$username/;
+ 		$result=browse_ils($path, $datastore_system, $datastore_homepath);
+ 	} else if ($type eq '__sorghumDB__') {
 		$result=browse_ls($path, $datastore_system, $datastore_homepath);
-	} elsif ($type eq '__maizecode__') {
+	} elsif ($type eq '__MaizeCODE__') {
 		$result=browse_ls($path, $datastore_system, $datastore_homepath);
-	} elsif ($type eq '__public__') {
+	} elsif ($type eq '__exampleData__') {
 		$result=browse_ls($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__system__') {
 		my ($system, $filepath)=split /\//, $path, 2;
@@ -709,7 +717,7 @@ sub prepareJob {
 		next unless $job_form{$name};
 		if ($job_form{$name}=~m#^https://\w+.sciapps.org/results/job-(\w+\-\w+\-\w+\-\w+)[^\/]*/(.*)#) {
 			$job_form{$name}='https://agave.iplantc.org/jobs/v2/' . $1 . '/outputs/media/' . $2;
-		} elsif ($job_form{$name}=~s#^https://data.sciapps.org/(example_data|sorghumDB|maizecode)/#agave://sciapps.org/$1/#) {
+		} elsif ($job_form{$name}=~s#^https://data.sciapps.org/(example_data|sorghumDB|MaizeCODE)/#agave://sciapps.org/$1/#) {
 		}
 	}
 	#	} elsif ($job_form{$name}=~m#^http://www.maizecode.org#) {

@@ -31,14 +31,14 @@ const DsDetail=React.createClass({
 		let user=this.props.user;
 		let setting=_config.setting;
 		let dsStore=this.state.dsStore;
-		let dsSetting=setting.datastore[dsStore.type === '__public__' ? setting.public_datastore_type : dsStore.type];
+		let dsSetting=setting.datastore[dsStore.type === '__exampleData__' ? setting.public_datastore_type : dsStore.type];
 		let dsDetail=dsStore.dsDetail;
 		let showDataStore=dsStore.showDataStore;
 		let dsFileNodes='Loading ...';
 		let targetPath=dsStore.dsItemPaths[dsStore.target];
 		let dsBtnValue=targetPath ? 'Select and Close' : 'Close';
 		let sourceButtons=setting.datastore_types.map(function(name) {
-			let disabled=!(name === 'public' || user.logged_in);
+			let disabled=!(name === 'exampleData' || user.logged_in);
 			let isActive=dsStore.type === '__' + name + '__';
 			return <Button key={name} onClick={disabled ? null : this.handleChangeSource} disabled={disabled} bsStyle={isActive ? 'primary' : 'default'}>{name}</Button>
 		}.bind(this));
