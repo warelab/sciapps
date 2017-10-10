@@ -218,7 +218,7 @@ get qr{/browse/?(.*)} => sub {
 	my $result={};
 	my $datastore_homepath=$datastore_home .'/' . $datastore_path;
 	if ($type eq '__CyVerse__') {
- 		$datastore_homepath=~s/__CyVerse__/$username/;
+ 		$datastore_homepath=~s/__user__/$username/;
  		$result=browse_ils($path, $datastore_system, $datastore_homepath);
  	} elsif ($type eq '__sorghumDB__') {
 		$result=browse_ls($path, $datastore_system, $datastore_homepath);
