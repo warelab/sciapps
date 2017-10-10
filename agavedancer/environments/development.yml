@@ -56,9 +56,6 @@ datastore:
     system: ''
     home: ''
     path: ''
-  __output__:
-    system: '1970491483740115431-242ac113-0001-007'
-    home: ''
-    path: 'example_data'
 public_datastore_type: '__public__'
+datastore_types: ["", "", ""]
 irodsEnvFile: '/usr/share/httpd/irodsEnv'

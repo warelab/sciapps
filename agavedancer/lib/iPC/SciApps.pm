@@ -82,24 +82,30 @@ sub agave_refresh {
 	my $username=$args->{username} || session('username');
 	my $token=$args->{token} || session('token');
 	my $refresh_token=$args->{refresh_token} || session('refresh_token');
-	my $apio=Agave::Client->new(
-		username => $username,
-		token => $token,
-	);
-
-	my $ah=iPC::AgaveAuthHelper->new({
+	if ($username && $token && $refresh_token) {
+		my $apio=Agave::Client->new(
 			username => $username,
-			apio => $apio,
-		}
-	);
-	if (my $new_token=$ah->refresh($refresh_token)) {
-		my $auth=$apio->auth;
-		if ($args) {
-			$args->{token}=$new_token;
-			$args->{refresh_token}=$auth->{refresh_token};
-    	$args->{token_expiration_in} => $auth->token_expiration_in;
-		} else {
-			_store_auth_session($auth);
+			token => $token,
+		);
+
+		my $ah=iPC::AgaveAuthHelper->new({
+				username => $username,
+				apio => $apio,
+			}
+		);
+		my $new_token;
+		try {
+			$new_token=$ah->refresh($refresh_token)
+		};
+		if ($new_token) {
+			my $auth=$apio->auth;
+			if ($args) {
+				$args->{token}=$new_token;
+				$args->{refresh_token}=$auth->{refresh_token};
+    		$args->{token_expiration_in} => $auth->token_expiration_in;
+			} else {
+					_store_auth_session($auth);
+			}
 		}
 	}
 }
@@ -194,11 +200,7 @@ ajax '/logout' => sub {
 
 get '/user' => sub {
 	my $user={username => session('username')};
-	if (check_agave_login()) {
-		$user->{logged_in}=1;
-	} else {
-		$user={logged_in => 0};
-	}
+	$user->{logged_in}=$user->{username} && check_agave_login() ? 1 : 0;
 	to_json($user);
 };
 
@@ -223,10 +225,9 @@ get qr{/browse/?(.*)} => sub {
 	my $result={};
 	my $datastore_homepath=$datastore_home .'/' . $datastore_path;
 	if ($type eq '__user__') {
-		#$result=browse_ils($path, $datastore_system, $datastore_homepath);
 		$result=browse_files($path, $datastore_system, $datastore_path);
 	} elsif ($type eq '__shared__') {
-		$result=browse_ils($path, $datastore_system, $datastore_homepath);
+		$result=browse_files($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__public__') {
 		$result=browse_ls($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__system__') {
@@ -278,7 +279,6 @@ sub browse_files {
 	my $io = $apif->io;
 	my $dir_list;
 	$dir_list=$io->readdir('/' . $system . $fullPath);
-	print STDERR to_dumper($dir_list);
 
 	[{
 			is_root => $path ? 0 : 1,

@@ -109,8 +109,8 @@ sub _auth_post_token {
             scope => 'PRODUCTION',
 						#grant_type => 'client_credentials',
 						grant_type => 'password',
-            username => $uri->encode( $self->user ),
-            password => $uri->encode( $self->password ),
+            username => $uri->encode( $self->user || '' ),
+            password => $uri->encode( $self->password || ''),
         };
 
     if ($refresh_token) {
