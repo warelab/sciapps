@@ -318,6 +318,15 @@
     "name": "BWA_index_mem",
     "version": "0.7.13"
   },
+  {
+    "tags": [
+      "Beta"
+    ],
+    "id": "BWA_index-0.7.13",
+    "label": "BWA-index",
+    "name": "BWA_index",
+    "version": "0.7.13"
+  },
     {
     "tags": [
       "Beta"
