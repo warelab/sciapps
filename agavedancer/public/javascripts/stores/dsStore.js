@@ -32,7 +32,7 @@ const DsStore=Reflux.createStore({
 		this.state={
 			showDataStore: false,
 			target: undefined,
-			type: '__public__',
+			type: '__exampleData__',
 			dsDetail: {},
 			dsDetailCache: {},
 			dsItemPaths: {}

@@ -102,8 +102,10 @@ const UserStore=Reflux.createStore({
 	_updateUser: function(data) {
 		let setting=_config.setting;
 		_.assign(this.state, data);
-		let path=setting.datastore['__user__'].path.replace('__user__', data.username);
-		setting.datastore['__user__'].path=path;
+		if (setting.datastore['__CyVerse__']) {
+			let path=setting.datastore['__CyVerse__'].path.replace('__user__', data.username);
+			setting.datastore['__CyVerse__'].path=path;
+		}
 	},
 
 	logout: function() {
