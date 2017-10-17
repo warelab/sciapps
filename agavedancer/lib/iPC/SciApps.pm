@@ -320,22 +320,6 @@ ajax '/apps' => sub {
 	to_json($app_list);
 };
 
-get '/apps/:id' => sub {
-	my $app_id = param("id");
-	my $app=retrieveApps($app_id);
-	my ($inputs, $parameters) = ([], []);
-	if ($app) {
-		$inputs = $app->inputs;
-		$parameters = $app->parameters;
-	}
- 	template 'app', {
- 		app => $app,
-		app_inputs => $inputs,
-		app_params => $parameters,
-		id => param("id"),
-	};
-};
-
 sub retrieveApps {
 	my ($app_id)=@_;
 	my $api = getAgaveClient();
@@ -862,6 +846,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	}
 	if ($params->{status} eq 'FINISHED') {
 		submitNextJob($job, $user);
+		#shareJob($job, $user);
 		shareOutput($job, $user);
 		#archiveJob($job);
 	} elsif ($params->{status} eq 'FAILED') {
@@ -878,6 +863,14 @@ sub shareOutput {
 	my $jobObj=from_json($job->{agave_json});
 	my $path=$jobObj->{archivePath};
 	my $res=$io->share($path, 'public', 'READ', 1);
+}
+
+sub shareJob {
+	my ($job, $user)=@_;
+
+	my $apif = getAgaveClient($user);
+	my $job_ep = $apif->job;
+	my $res=$job_ep->share_job($job->{agave_id}, 'public', 'READ');
 }
 
 sub archiveJob {

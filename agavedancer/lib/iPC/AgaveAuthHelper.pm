@@ -108,7 +108,6 @@ use Data::Dumper;
 			$user->token($auth->{access_token});
 			$user->refresh_token($auth->{refresh_token});
 			$user->token_expires_at(time() + $auth->{token_expires_at});
-			print STDERR "AA|" . Dumper($user);
 			$user->update;
 		}
 	}

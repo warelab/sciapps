@@ -43,13 +43,17 @@ plugins:
   Ajax:
     content_type: 'application/json'
   Database:
-    driver: 'SQLite'
-    database: 'database'
+    driver: 'mysql'
+    database: 'sciapps'
+    host: 'localhost'
+    username: 'sciapps'
+    password: 'mXPpA9ZM'
     dbi_params:
       RaiseError: 1
       PrintError: 0
       PrintWarn:  0
       AutoCommit: 1
+    on_connect_do: ["SET NAMES 'utf8'", "SET CHARACTER SET 'utf8'"]
 
 output_url:
   brie.cshl.edu: 'https://dev2.sciapps.org'
