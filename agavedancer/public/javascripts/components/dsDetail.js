@@ -31,15 +31,16 @@ const DsDetail=React.createClass({
 		let user=this.props.user;
 		let setting=_config.setting;
 		let dsStore=this.state.dsStore;
-		let dsSetting=setting.datastore[dsStore.type === '__public__' ? setting.public_datastore_type : dsStore.type];
+		let type=dsStore.type;
+		let dsSetting=setting.datastore[type];
 		let dsDetail=dsStore.dsDetail;
 		let showDataStore=dsStore.showDataStore;
 		let dsFileNodes='Loading ...';
 		let targetPath=dsStore.dsItemPaths[dsStore.target];
 		let dsBtnValue=targetPath ? 'Select and Close' : 'Close';
-		let sourceButtons=['user', 'shared', 'public'].map(function(name) {
-			let disabled=!(name === 'public' || user.logged_in);
-			let isActive=dsStore.type === '__' + name + '__';
+		let sourceButtons=setting.datastore_types.map(function(name) {
+			let disabled=!(name === 'exampleData' || user.logged_in);
+			let isActive=type === '__' + name + '__';
 			return <Button key={name} onClick={disabled ? null : this.handleChangeSource} disabled={disabled} bsStyle={isActive ? 'primary' : 'default'}>{name}</Button>
 		}.bind(this));
 		let goupButton=<Button key='goup' onClick={dsDetail.is_root ? null : this.handleGoup} >Go up</Button>;
@@ -50,7 +51,7 @@ const DsDetail=React.createClass({
 			dsFileNodes=_.cloneDeep(dsDetail.list).sort(function (a,b) {
 				return a.type.localeCompare(b.type) || a.name.localeCompare(b.name); 
 			}).map(function(dsItem) {
-				let isChecked=targetPath && targetPath.type === dsStore.type && targetPath.path === dsDetail.path && targetPath.name === dsItem.name;
+				let isChecked=targetPath && targetPath.type === type && targetPath.path === dsDetail.path && targetPath.name === dsItem.name;
 				return (
 					<DsItem key={dsItem.name} data={dsItem} checked={isChecked} />
 				);

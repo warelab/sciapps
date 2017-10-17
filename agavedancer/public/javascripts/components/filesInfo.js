@@ -25,8 +25,9 @@ const FilesInfo=React.createClass({
 					);
 				}
 			});
-			let fileName=fileDetail['path'].replace(/.*\// ,'');
-			let link=setting.output_url[fileDetail['system']] + '/' + fileDetail['path'];
+			let jobOwner=fileDetail.path.replace(/\/.*/ ,'');
+			//let link=setting.output_url[fileDetail['system']] + '/' + fileDetail['path'];
+			let link=['https://agave.iplantc.org/files/v2/download', jobOwner, 'system', fileDetail.system, fileDetail.path].join('/');
 			tbody.push(<tr key={'source'}><th><a href={link} target="_blank">Link to File</a></th><td></td></tr>);
 			markup=(
 				<Table striped condensed hover>

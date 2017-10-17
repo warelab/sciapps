@@ -22,7 +22,7 @@ use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/host_url output_url wf_step_prefix datastore public_datastore_type archive_system archive_home archive_path/;
+our @EXPORT_SETTINGS=qw/host_url output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path/;
 our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError SystemError/;
 
 foreach my $exception (@EXCEPTIONS) {
@@ -62,6 +62,11 @@ sub _agave_login {
 	}
 	delete $args->{password};
 	$args;
+}
+
+sub _get_user {
+	my $username=shift;
+	my $user=database->quick_select('agave_user', {username => $username || ''});
 }
 
 sub _store_auth_session {
@@ -209,10 +214,8 @@ get qr{/browse/?(.*)} => sub {
 	my ($type, $path)=split /\//, $typePath, 2;
 	$path||='';
 	my $username=session('username');
-	if (($type eq '__user__' || $type eq '__shared__') && ! $username) {
+	unless ($type eq '__exampleData__' || $username) {
 		raise InvalidCredentials => 'no username';
-	} elsif ($type eq '__public__') {
-		$type=setting('public_datastore_type');
 	}
 	my $datastore=setting('datastore')->{$type};
 	unless ($datastore) {
@@ -224,17 +227,17 @@ get qr{/browse/?(.*)} => sub {
 	$datastore_path=~s/__user__/$username/;
 	my $result={};
 	my $datastore_homepath=$datastore_home .'/' . $datastore_path;
-	if ($type eq '__user__') {
+	if ($type eq '__CyVerseUserData__') {
 		$result=browse_files($path, $datastore_system, $datastore_path);
-	} elsif ($type eq '__shared__') {
-		$result=browse_files($path, $datastore_system, $datastore_homepath);
-	} elsif ($type eq '__public__') {
+	} elsif ($type eq '__CyVerseSharedData__') {
+		$result=browse_files($path, $datastore_system, $datastore_path);
+	} elsif ($type eq '__ArchivedJobs__') {
+		$result=browse_files($path, $datastore_system, $datastore_path);
+	} elsif ($type eq '__exampleData__') {
 		$result=browse_ls($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__system__') {
 		my ($system, $filepath)=split /\//, $path, 2;
 		$result=browse_files($filepath, $system);
-	} elsif ($type eq '__output__') {
-		$result=browse_output_files($path, $datastore_system, $datastore_homepath);
 	}
 
 	to_json($result);
@@ -475,6 +478,7 @@ sub retrieveJob {
 	my $job;
 
 	my $row = database->quick_select('job', {job_id => $job_id}) || database->quick_select('job', {agave_id => $job_id});
+	my $user;
 	if ($row) {
 		if ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED') {
 			my $jobObj=from_json($row->{agave_json});
@@ -487,9 +491,10 @@ sub retrieveJob {
 		} elsif ($row->{agave_id} eq $job_id) {
 			$job_id=$row->{job_id};
 		}
+		$user=_get_user($row->{username});
 	}
 	unless ($job) {
-		my $apif = getAgaveClient();
+		my $apif = getAgaveClient($user);
 		my $job_ep = $apif->job;
 		my $retry=2;
 		do {
@@ -708,6 +713,8 @@ sub prepareJob {
 		if ($job_form{$name}=~m#^https://\w+.sciapps.org/results/job-(\w+\-\w+\-\w+\-\w+)[^\/]*/(.*)#) {
 			#$job_form{$name}=~s#^https://data.sciapps.org#agave://halcott.cshl.edu#;
 			$job_form{$name}='https://agave.iplantc.org/jobs/v2/' . $1 . '/outputs/media/' . $2;
+		} elsif ($job_form{$name}=~m#^https://agave.iplantc.org/files/v2/download#) {
+			$job_form{$name}=~s#https://agave.iplantc.org/files/v2/download/[\w]+/system/#agave://#;
 		}
 	}
 	#	} elsif ($job_form{$name}=~m#^http://www.maizecode.org#) {
@@ -836,6 +843,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	my $params=params;
 	my $jobObj=retrieveJob($params->{id});
 	my $job=database->quick_select('job', {agave_id => $params->{id}});
+	my $user=_get_user($job->{username});
 	if ($params->{status} eq 'FINISHED' || $params->{status} eq 'FAILED') {
 		my $job_form=from_json($job->{job_json});
 
@@ -853,10 +861,9 @@ any ['get', 'post'] => '/notification/:id' => sub {
 		}
 	}
 	if ($params->{status} eq 'FINISHED') {
-		submitNextJob($job);
-		shareOutput($job);
+		submitNextJob($job, $user);
+		shareOutput($job, $user);
 		#archiveJob($job);
-		#uncompress_result($params->{archivePath});
 	} elsif ($params->{status} eq 'FAILED') {
 		#resubmitJob($params->{id});
 	}
@@ -864,10 +871,9 @@ any ['get', 'post'] => '/notification/:id' => sub {
 };
  
 sub shareOutput {
-	my ($job)=@_;
-	my $username=$job->{username};
+	my ($job, $user)=@_;
 
-	my $apif = getAgaveClient();
+	my $apif = getAgaveClient($user);
 	my $io = $apif->io;
 	my $jobObj=from_json($job->{agave_json});
 	my $path=$jobObj->{archivePath};
@@ -888,21 +894,10 @@ sub archiveJob {
 	my $res=$io->import_file($target, {urlToIngest => $source});
 }
 
-sub updateJob {
-	my ($job)=@_;
-	my $data={ status => $job->{status} };
-	if ($job->{status} eq 'FINISHED' || $job->{status} eq 'FAILED') {
-		#$job->{agave_json}=$data->{agave_json}=to_json(retrieveJob($job->{job_id}));
-		retrieveJob($job->{job_id});
-	};
-	#database->quick_update('job', {job_id => $job->{job_id}}, $data);
-}
-
 sub submitNextJob {
-	my ($job)=@_;
+	my ($job, $user)=@_;
 
-	my $apif = getAgaveClient();
-
+	my $apif = getAgaveClient($user);
 	my $apps = $apif->apps;
 
 	my $prev=database->quick_select('job', {job_id => $job->{job_id}});
