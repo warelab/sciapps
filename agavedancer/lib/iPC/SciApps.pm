@@ -134,9 +134,9 @@ sub getAgaveClient {
 hook on_route_exception => sub {
 	my $e = shift;
 	if (ref($e) eq 'scalar') {
-		raise 'InvalidRequest' => $e;
-	} elsif ($e->can('does') && $e->does('InvalidCredentials')) {
-		halt(to_json({error => $e->message()}));
+		raise 'SystemError' => $e;
+	} elsif ($e->can('does') && ($e->does('InvalidCredentials') || $e->does('InvalidRequest'))) {
+		halt(to_json({status => 'error', error => $e->message()}));
 	} else {
 		$e->rethrow;
 	}
@@ -328,7 +328,7 @@ sub retrieveApps {
 		my $apps = $api->apps;
 		$return = $app_id ? $apps->find_by_id($app_id) : $apps->list;
 	}
-	$return;
+	$return or raise InvalidRequest => 'no apps found';
 }
 
 get '/schema/:id' => sub {
