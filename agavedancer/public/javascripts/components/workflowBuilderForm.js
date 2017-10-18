@@ -91,7 +91,7 @@ const WorkflowBuilderForm=React.createClass({
 			workflow.steps.push(step);
 			let app=appsStore.appDetailCache[job.appId];
 			app.outputs.forEach(function(output) {
-				let filePath=job.archive ? job.archivePath : job.id + '/outputs/media';
+				let filePath=job.archivePath ? job.archivePath : job.id + '/outputs/media';
 				//let path=job.archivePath + '/' + output.value.default;
 				//let archivePath=job.outputPath.replace(job.owner, setting.archive_path);
 				let path=filePath + '/' + output.value.default;
@@ -176,7 +176,7 @@ const WorkflowBuilderForm=React.createClass({
 		let markup=(
 			<div>
 				<form ref={this.formName} >
-					<BaseInput data={jobListInput} onValidate={true} />
+					<BaseInput data={jobListInput} reload='resubmit' onValidate={true} />
 					<BaseInput data={nameInput} onValidate={true} />
 					<BaseInput data={descInput} />
 					<ButtonToolbar>

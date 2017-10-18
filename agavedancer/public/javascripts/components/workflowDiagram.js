@@ -114,6 +114,9 @@ const WorkflowDiagram=React.createClass({
 				if (jobDetail) {
 					appClass=jobDetail.status;
 				}
+				if (! _.includes(['PENDING', 'FINISHED', 'FAILED'], appClass)) {
+					appClass='RUNNING';
+				}
 				let appNodeId=(setting.wf_step_prefix + step.id).replace(/\W/g, '_').toLowerCase();
 				diagramDefStmts.push(appNodeId + '[' + that.truncate(showAppId) + ']; class ' + appNodeId + ' appsNode' + appClass);
 				diagramDefStmts.push('click ' + appNodeId + ' clickAppsNode');
@@ -283,7 +286,7 @@ const WorkflowDiagram=React.createClass({
 			markup=(
 				<Modal dialogClassName={nodeClass} show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
 					<Modal.Header closeButton>
-						<Modal.Title>Workflow Diagram</Modal.Title>
+						<Modal.Title>Workflow Diagram: {workflowDetail.name}</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
 						{body}
