@@ -117,9 +117,9 @@ sub uncompress_result {
 hook on_route_exception => sub {
 	my $e = shift;
 	if (ref($e) eq 'scalar') {
-		raise 'InvalidRequest' => $e;
-	} elsif ($e->can('does') && $e->does('InvalidCredentials')) {
-		halt(to_json({error => $e->message()}));
+		raise 'SystemError' => $e;
+	} elsif ($e->can('does') && ($e->does('InvalidCredentials') || $e->does('InvalidRequest'))) {
+		halt(to_json({status => 'error', error => $e->message()}));
 	} else {
 		$e->rethrow;
 	}
@@ -316,27 +316,15 @@ ajax '/apps' => sub {
 	to_json($app_list);
 };
 
-get '/apps/:id' => sub {
-	my $app_id = param("id");
-	my $app=retrieveApps($app_id);
-	my ($inputs, $parameters) = ([], []);
-	if ($app) {
-		$inputs = $app->inputs;
-		$parameters = $app->parameters;
-	}
- 	template 'app', {
- 		app => $app,
-		app_inputs => $inputs,
-		app_params => $parameters,
-		id => param("id"),
-	};
-};
-
 sub retrieveApps {
 	my ($app_id)=@_;
 	my $api = getAgaveClient();
-	my $apps = $api->apps;
-	my $return = $app_id ? $apps->find_by_id($app_id) : $apps->list;
+	my $return;
+	if ($api) {
+		my $apps = $api->apps;
+		$return = $app_id ? $apps->find_by_id($app_id) : $apps->list;
+	}
+	$return or raise InvalidRequest => 'no apps found';
 }
 
 get '/schema/:id' => sub {
