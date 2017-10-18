@@ -18,7 +18,8 @@ Execute an image like "**singularity exec -B /scratch:/scratch /scratch/tacc/ima
 * maker_2.31.9--0.img            
 * picard_2.11.0--py27_0.img                                  
 * plink_1.90b4–0.img
-* samtools_1.5--2.img            
+* samtools_1.5--2.img
+* scythe-2017-09-18-c7268f0a8cd0.img
 * shapeit_2.r837–0.img
 * sickle_0.5--py36_0.img
 * snpeff_4.3.1q--0.img                                       
