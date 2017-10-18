@@ -1,0 +1,154 @@
+{
+  "parameters": [
+    {
+      "id": "prefix",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 0,
+        "enquote": false,
+        "default": "",
+        "validator": ""
+      },
+      "details": {
+        "label": "Index Prefix",
+        "description": "Prefix of the index, same as fasta name by default",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "algoType",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 1,
+        "enquote": false,
+        "default": "",
+        "enum_values": [
+          {
+            "": "auto"
+          },
+          {
+            "is": "IS"
+          },
+          {
+            "bwtsw": "BWTSW"
+          }
+        ]
+      },
+      "details": {
+        "label": "BWT Construction Algorithm",
+        "description": "Algorithm for constructing BWT index",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "reference",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Reference Fasta",
+        "description": "Reference genome",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    }
+  ],
+  "defaultProcessorsPerNode": 16,
+  "parallelism": "PARALLEL",
+  "uuid": "1754555160369425945-242ac117-0001-005",
+  "icon": null,
+  "name": "BWA_index",
+  "id": "BWA_index-0.7.13",
+  "defaultMaxRunTime": "35:56:00",
+  "defaultQueue": "debug",
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/BWA_index-0.7.13"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/sciapps.org"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/BWA_index-0.7.13/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%221754555160369425945-242ac117-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/xiaofei_iplant"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/BWA_index-0.7.13/pems"
+    }
+  },
+  "outputs": [],
+  "owner": "xiaofei_iplant",
+  "label": "BWA-index",
+  "helpURI": "http://bio-bwa.sourceforge.net/bwa.shtml",
+  "isPublic": false,
+  "revision": 1,
+  "version": "0.7.13",
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "shortDescription": "BWA-index",
+  "longDescription": "Index database sequences in the FASTA format",
+  "tags": [
+    "Beta"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/sequenceServices/SequenceServices"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "sciapps.org",
+  "deploymentPath": "xiaofei_iplant/application/BWA-0.7.13",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "bwa_index_wrapper.sh",
+  "testPath": "bwa_index_test.sh",
+  "checkpointable": true,
+  "lastModified": "2017-10-12T09:37:43.000-05:00",
+  "modules": [],
+  "available": true
+}

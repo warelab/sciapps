@@ -14,7 +14,7 @@ const FilesInfo=React.createClass({
 		let fileDetail=jobsStore.fileDetailCache[this.props.fileId];
 		let markup=<div />;
 		let tbody=[];
-		let keys=['line_name', 'organism_name', 'organism_scientific_name', 'organism_taxon_id'];
+		let keys=['line_name', 'organism_name', 'organism_scientific_name', 'organism_taxon_id', 'file_type', 'file_format', 'file_description'];
 		if (fileDetail.system !== undefined) {
 			keys.forEach(function (key) {
 				if (fileDetail[key] !== undefined) {
