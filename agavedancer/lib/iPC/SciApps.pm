@@ -319,7 +319,7 @@ ajax '/apps' => sub {
 sub retrieveApps {
 	my ($app_id)=@_;
 	my $api = getAgaveClient();
-	my $return;
+	my $return=[];
 	if ($api) {
 		my $apps = $api->apps;
 		$return = $app_id ? $apps->find_by_id($app_id) : $apps->list;
