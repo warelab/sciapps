@@ -21,7 +21,7 @@ Execute an image like "**singularity exec -B /scratch:/scratch /scratch/tacc/ima
 * samtools_1.5--2.img
 * scythe-2017-09-18-c7268f0a8cd0.img
 * shapeit_2.r837–0.img
-* sickle_0.5--py36_0.img
+* sickle_0.5--py36_0.img use scythe image instead
 * snpeff_4.3.1q--0.img                                       
 * star-fusion_1.0.0--pl5.22.0_0.img                         
 * star_2.5.3a--0.img                        
