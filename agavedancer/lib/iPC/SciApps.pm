@@ -22,7 +22,7 @@ use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/host_url output_url upload_suffix wf_step_prefix datastore public_datastore_type archive_system archive_home archive_path datastore_types/;
+our @EXPORT_SETTINGS=qw/host_url output_url upload_suffix wf_step_prefix datastore archive_system archive_home archive_path datastore_types/;
 our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError SystemError/;
 
 foreach my $exception (@EXCEPTIONS) {
@@ -143,20 +143,6 @@ hook 'before' => sub {
 	} 
 };
 
-hook 'after' => sub {
-	my $response = shift;
-	$response->header('Access-Control-Allow-Origin' => '*');
-};
-
-options qr{/.*} => sub {
-	headers(
-		'Access-Control-Allow-Origin' => '*',
-		'Access-Control-Allow-Headers' => 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-		'Access-Control-Allow-Methods' => 'GET, POST, OPTIONS',
-		'Access-Control-Allow-Credentials' => 'true',
-	);
-};
-
 sub _index {
 	my %config=map { $_ => param($_) } qw/app_id page_id wf_id/;
 	$config{setting}={map {$_ => setting($_)} @EXPORT_SETTINGS};
@@ -204,8 +190,6 @@ get qr{/browse/?(.*)} => sub {
 	my $user=session('cas_user');
 	if (($type eq '__CyVerse__') && ! $user) {
  		raise InvalidCredentials => 'no cas user';
- 	} elsif ($type eq '__exampleData__') {
- 		$type=setting('public_datastore_type');
  	}
 	my $username=$user->{username};
 	my $datastore=setting('datastore')->{$type};
@@ -215,11 +199,11 @@ get qr{/browse/?(.*)} => sub {
 	my $datastore_home=$datastore->{home};
 	my $datastore_path=$datastore->{path};
 	my $datastore_system=$datastore->{system};
+	$datastore_path=~s/__user__/$username/;
 	my $result={};
 	my $datastore_homepath=$datastore_home .'/' . $datastore_path;
 	if ($type eq '__CyVerse__') {
- 		$datastore_homepath=~s/__user__/$username/;
- 		$result=browse_ils($path, $datastore_system, $datastore_homepath);
+ 		$result=browse_files($path, $datastore_system, $datastore_path);
  	} elsif ($type eq '__sorghumDB__') {
 		$result=browse_ls($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__MaizeCODE__') {
@@ -270,14 +254,15 @@ sub browse_ils {
 }
 
 sub browse_files {
-	my ($path, $system)=@_;
+	my ($path, $system, $homepath)=@_;
 	my $apif=getAgaveClient();
+	my $fullpath=$homepath ? $homepath . '/' . $path : $path;
 
 	$system='system/' . $system . '/';
 
 	my $io = $apif->io;
 	my $dir_list;
-	$dir_list=$io->readdir('/' . $system . $path);
+	$dir_list=$io->readdir('/' . $system . $fullpath);
 
 	[{
 			is_root => $path ? 0 : 1,
@@ -322,7 +307,7 @@ sub retrieveApps {
 	my $return=[];
 	if ($api) {
 		my $apps = $api->apps;
-		$return = $app_id ? $apps->find_by_id($app_id) : $apps->list;
+		$return = $app_id ? $apps->find_by_id($app_id) : $apps->list(limit => 1000);
 	}
 	$return or raise InvalidRequest => 'no apps found';
 }
@@ -498,7 +483,7 @@ sub retrieveJob {
 			};
 		}
 	}
-	return $job;
+	$job or raise InvalidRequest => 'no jobs found';
 }
 
 get '/job/:id/remove' => sub {
@@ -563,7 +548,7 @@ ajax '/workflow/:id/update' => sub {
 	my $wfname=param('_workflow_name');
 	my $wfdesc=param('_workflow_desc');
 	my $status='success';
-	my $data={name => $wfname, description => $wfdesc, modified_at => \"datetime('now')"};
+	my $data={name => $wfname, description => $wfdesc, modified_at => \"now()"};
 	try {
 		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or raise 'InvalidRequest' => 'Invalid Workflow';
 		database->quick_update('workflow', {workflow_id => $wfid}, $data);
@@ -634,37 +619,6 @@ ajax '/job/new/:id' => sub {
 	}
 };
 
-any ['get', 'post'] => '/job/new/:id' => sub {
-	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
-	my $username=$user->{username};
-	my @err = ();
-	my $app_id = param("id");
-	my $apif = getAgaveClient();
-
-	my $apps = $apif->apps;
-	my ($app) = $apps->find_by_id($app_id);
-
-	my $form = params();
-	if ( request->method() eq "POST" ) {
-		my ($job_id, $job_form)=prepareJob($username, $app, $form);
-		my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
-		if ($job_id && $job && $job->{id}) {
-			return redirect '/job/' . $job_id;
-		} else {
-			push @err, $err;
-		}
-	}
- 	template 'job_new', {
-		errors => \@err,
- 		app => $app,
-		app_inputs => $app->inputs || [],
-		app_params => $app->parameters || [],
-		name => $app_id,
-		username => session('username'),
-		form => $form,
-	};
-};
-
 sub prepareJob {
 	my ($username, $app, $form, $step, $step_form, $prev_job)=@_;
 	my $app_id=$app->{id};
@@ -680,16 +634,10 @@ sub prepareJob {
 
 	my $job_id=iPC::Utils::uuid();
 
-	my ($inputs, $parameters) = ([], []);
-	if ($app) {
-		$inputs = $app->inputs;
-		$parameters = $app->parameters;
-	}
-
 	my $step_prefix = defined $step ? setting("wf_step_prefix") . $step->{id} . ':' : '';
 
 	my %job_form;
-	foreach my $key (@$inputs, @$parameters) {
+	foreach my $key (@{$app->inputs}, @{$app->parameters}) {
 		my $name=defined $step ? $step_prefix . $key->{id} : $key->{id};
 		$job_form{$name}=$form->{$name};
 		my $upload_name=$name . $upload_suffix;
@@ -705,7 +653,7 @@ sub prepareJob {
 		next unless $job_form{$name};
 		if ($job_form{$name}=~m#^https://\w+.sciapps.org/results/job-(\w+\-\w+\-\w+\-\w+)[^\/]*/(.*)#) {
 			$job_form{$name}='https://agave.iplantc.org/jobs/v2/' . $1 . '/outputs/media/' . $2;
-		} elsif ($job_form{$name}=~s#^https://data.sciapps.org/(example_data|sorghumDB|MaizeCODE)/#agave://sciapps.org/$1/#) {
+		} elsif ($job_form{$name}=~s#^https://data.sciapps.org/#agave://sciapps.org/#) {
 		}
 	}
 	#	} elsif ($job_form{$name}=~m#^http://www.maizecode.org#) {
@@ -766,6 +714,12 @@ sub prepareJob {
 
 	#my ($result_folder)=map {my $t=$_; $t=~s/\W+/-/g; lc($t) . "-" . iPC::Utils::tempname()} ($app_id);
 	#$archive_path.= "/" . $result_folder;
+	foreach my $group (qw/inputs parameters/) {
+		foreach my $key ($app->$group) {
+			next unless exists $job_form{$key->{id}};
+			$job_form{$group}{$key->{id}}=delete $job_form{$key->{id}};
+		}
+	}
 
 	#my $archive_path_abs=$archive_home . "/" . $archive_path;
 	#mkdir($archive_path_abs) or print STDERR "Error: can't mkdir $archive_path_abs, $!\n";
@@ -779,7 +733,6 @@ sub prepareJob {
 	my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&message=${JOB_ERROR}';
 	my $notifications=[
 	{
-		#event	=> "ARCHIVING_FINISHED",
 		event	=> "FINISHED",
 		url		=> $host_url . $noteinfo,
 	},
@@ -813,7 +766,7 @@ sub prepareJob {
 		while (my ($k, $v)=each %{$step->{inputs}}) {
 			if ($v && ref($v)) {
 				my $prev=$prev_job->[$v->{step}]{job_id};
-				my $row=database->quick_insert('nextstep', {prev => $prev, next => $job_id, input_name => $job_form{$k}});
+				my $row=database->quick_insert('nextstep', {prev => $prev, next => $job_id, input_name => $job_form{inputs}{$k}});
 			}
 		}
 	} catch {
@@ -949,9 +902,9 @@ sub submitNextJob {
 			my (undef, $filename)=split /:/, $_->{input_name};
 			$input{$_->{input_name}}=$_->{input_source} . '/' . $filename;
 		}
-		while (my ($k, $v) = each %$job_form) {
+		while (my ($k, $v) = each %{$job_form->{inputs}}) {
 			if (defined $v && exists $input{$v}) {
-				$job_form->{$k}=$input{$v};
+				$job_form->{inputs}{$k}=$input{$v};
 				$count++;
 			}
 		}

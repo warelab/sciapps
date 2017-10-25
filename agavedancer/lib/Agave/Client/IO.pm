@@ -10,7 +10,7 @@ use Data::Dumper;
 
 use Agave::Client::Object::File;
 use base qw/Agave::Client::Base/;
-
+use JSON ();
 
 =head1 NAME
 
@@ -179,26 +179,32 @@ sub move {
 
 
 sub stream_file {
-	my ($self, $path, %params) = @_;
+    my ($self, $path, %params) = @_;
 
-	# Check for the requested path to be renamed
-	unless (defined($path)) {
-		print STDERR "::IO::stream_file Please specify a path which you want streamed\n";
-		return;
-	}
+    # Check for the requested path to be renamed
+    unless (defined($path)) {
+        print STDERR "::IO::stream_file Please specify a path which you want streamed\n";
+        return;
+    }
 
-	# TODO - make limit_size = 1024 by default - why?
-	my $ep_path = '/media';
+    # Check for the required params (save_to, limit_size, stream_to_stdout)
+    # do_get, used here, expects a JSON as result
+    unless (%params) {
+        $params{limit_size} = 1024;
+        print STDERR '::IO::stream_file set a default limit_size to 1024', $/;
+    }
 
-	$path = "/$path" unless $path =~ m/^\//;
+    my $ep_path = '/media';
+    $path = "/$path" unless $path =~ m/^\//;
 
-    my $buffer = try {$self->do_get($ep_path . $path, %params);}
-				catch {
-					return $self->_error("IO::stream_file. Error streaming file.", $_)
-						unless ref($_);
-					# catch/handle the error upstream
-					$_->rethrow;
-				};
+    my $buffer = try {
+            $self->do_get($ep_path . $path, %params);
+        } catch {
+            return $self->_error("IO::stream_file. Error streaming file.", $_)
+                unless ref($_);
+            # catch/handle the error upstream
+            $_->rethrow;
+        };
 
     return $buffer;
 }
@@ -404,14 +410,18 @@ $DB::single = 2;
 
 	$path = "/$path" unless $path =~ m/^\//;
 
+	my $json = JSON->new->utf8;
 	# to specify the systemid set the _sub_end_point to 'media/system/${systemid}'
 	# eg: media/system/data.iplantcollaborative.org
 	my %p = (
 			_sub_end_point => 'media',	# files/v2/media
-			urlToIngest => $$params{urlToIngest},
-			fileType => $$params{fileType} || '',
-			fileName => $$params{fileName} || '',
-			notifications => $$params{notifications} || ''
+			_content_type => 'application/json; charset=utf-8',
+			_body => $json->encode({
+				urlToIngest => $$params{urlToIngest},
+				fileType => $$params{fileType} || '',
+				fileName => $$params{fileName} || '',
+				notifications => $$params{notifications} || [],
+			}),
 		);
 	
 	my $resp = try {
