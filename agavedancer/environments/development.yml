@@ -40,26 +40,22 @@ email: 'noreply@sciapps.org'
 wf_step_prefix: 'wf_step_'
 maxRunTime: "96:00:00"
 datastore:
-  __CyVerseUserData__: 
+  __home__: 
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
     path: '__user__'
-  __CyVerseSharedData__:
+  __shared__:
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
     path: 'shared'
-  __ArchivedJobs__: 
+  __recent_jobs__: 
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
     path: '__user__/archive/jobs'
-  __exampleData__:
-    system: 'sciapps.org'
-    home: '/agave_data'
-    path: 'example_data'
   __system__:
     system: ''
     home: ''
     path: ''
-datastore_types: ['ArchivedJobs', 'CyVerseSharedData', 'CyVerseUserData', 'exampleData']
+datastore_types: ['recent_jobs', 'shared', 'home']
 uncompress_suffix: '.open.tar.gz'
 irodsEnvFile: '/usr/share/httpd/irodsEnv'

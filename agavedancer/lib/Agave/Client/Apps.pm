@@ -14,11 +14,11 @@ Agave::Client::Apps - The great new Agave::Client::Apps!
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 =head1 SYNOPSIS
@@ -43,15 +43,22 @@ Perhaps a little code snippet.
 
 # retrieve a list of the available applications
 sub list {
-	my ($self) = @_;
+    my ($self, %params) = @_;
 
-	my @applications = ();
-    my $list = $self->do_get('/');
+    my @applications = ();
+
+    if (! %params) {
+        %params = (limit => 100, offset => 0);
+    }
+    $params{limit} //= 100;
+    $params{offset} //= 0;
+
+    my $list = $self->do_get('/?limit=' . $params{limit} . "&offset=" . $params{offset});
     if ($list && 'ARRAY' eq ref $list) {
         push @applications, map { new Agave::Client::Object::Application($_) } @$list;
     }
 
-	wantarray ? @applications : \@applications;
+    wantarray ? @applications : \@applications;
 }
 
 =head2 find_by_name

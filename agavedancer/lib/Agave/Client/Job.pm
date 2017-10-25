@@ -18,11 +18,11 @@ Agave::Client::Job - The great new Agave::Client::Job!
 
 =head1 VERSION
 
-Version 0.03
+Version 0.05
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 
 =head1 SYNOPSIS
@@ -92,8 +92,8 @@ sub submit_job {
 			#	"\tv:", defined $opt->{validator} ? $opt->{validator} : '',
 			#	$/;
 			#$available_options{$opt->{id}} = $opt;
-			if (defined $params{$opt->{id}} && $params{$opt->{id}} ne "") {
-				$post_content{ $opt->{id} } = $params{$opt->{id}};
+			if (defined $params{$opt_group}->{$opt->{id}} && $params{$opt_group}->{$opt->{id}} ne "") {
+				$post_content{$opt_group}->{ $opt->{id} } = $params{$opt_group}->{$opt->{id}};
 			}
 			elsif (defined $opt->{required} && $opt->{required}) {
 				$required_options{$opt->{id}} = $opt_group;
@@ -158,6 +158,55 @@ sub job_details {
 
 	return $data;
 }
+
+=head2 job_status
+
+=cut
+
+sub job_status {
+	my ($self, $job_id) = @_;
+
+	return unless $job_id;
+	my $data = $self->do_get('/' . $job_id . '/status');
+
+	if ('HASH' eq ref $data) {
+		return $$data{status};
+	}
+
+	return undef;
+}
+
+
+=head2 job_history
+
+return a list of hashes
+  [{
+    "status" : "PENDING",
+    "created" : "2017-07-14T10:26:31.000-05:00",
+    "createdBy" : "ghiban",
+    "description" : "Job accepted and queued for submission."
+  }]
+
+=cut
+
+sub job_history {
+	my ($self, $job_id) = @_;
+
+	my $history = [];
+
+	return unless $job_id;
+	my $data = $self->do_get('/' . $job_id . '/history');
+
+	if ('ARRAY' eq ref $data) {
+		$history = $data;
+	}
+
+	wantarray ? @$data : $data;
+}
+
+=head2 job_output_files
+
+=cut
 
 sub job_output_files {
 	my ($self, $job_id, $path) = @_;

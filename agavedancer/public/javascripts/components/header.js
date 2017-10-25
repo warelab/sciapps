@@ -139,7 +139,6 @@ const Header=React.createClass({
 				<Nav>
 					<NavItem eventKey='welcome' onSelect={this.showWelcome}><Glyphicon glyph='home' /> Home</NavItem>
 					{workflowMenu}
-					<NavItem eventKey='data' href='http://data.sciapps.org' target='_blank'><Glyphicon glyph='th' /> Data</NavItem>
 					<NavItem eventKey='help' onSelect={this.showHelp}><Glyphicon glyph='question-sign' /> Help</NavItem>
 					{userGreeting}
 					{userMenu}

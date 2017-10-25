@@ -16,7 +16,7 @@ const DsDetail=React.createClass({
 	},
 
 	handleChangeSource: function(event) {
-		DsActions.changeSource('__' + event.target.textContent + '__');
+		DsActions.changeSource('__' + event.target.value + '__');
 	},
 
 	handleGoup: function() {
@@ -41,7 +41,8 @@ const DsDetail=React.createClass({
 		let sourceButtons=setting.datastore_types.map(function(name) {
 			let disabled=!(name === 'exampleData' || user.logged_in);
 			let isActive=type === '__' + name + '__';
-			return <Button key={name} onClick={disabled ? null : this.handleChangeSource} disabled={disabled} bsStyle={isActive ? 'primary' : 'default'}>{name}</Button>
+			let showName=name.replace(/_+/g, ' ');
+			return <Button key={name} onClick={disabled ? null : this.handleChangeSource} disabled={disabled} bsStyle={isActive ? 'primary' : 'default'} value={name}>{showName}</Button>
 		}.bind(this));
 		let goupButton=<Button key='goup' onClick={dsDetail.is_root ? null : this.handleGoup} >Go up</Button>;
 		let refreshButton=<Button key='refresh' onClick={this.handleRefresh} >Refresh</Button>;
@@ -49,7 +50,11 @@ const DsDetail=React.createClass({
 		let path;
 		if (dsDetail.list) {
 			dsFileNodes=_.cloneDeep(dsDetail.list).sort(function (a,b) {
-				return a.type.localeCompare(b.type) || a.name.localeCompare(b.name); 
+				if(type.includes('recent') && a.lastModified && b.lastModified) {
+					return a.type.localeCompare(b.type) || (Date.parse(b.lastModified) - Date.parse(a.lastModified)) || a.name.localeCompare(b.name);
+				} else {
+					return a.type.localeCompare(b.type) || a.name.localeCompare(b.name);
+				}
 			}).map(function(dsItem) {
 				let isChecked=targetPath && targetPath.type === type && targetPath.path === dsDetail.path && targetPath.name === dsItem.name;
 				return (
@@ -62,7 +67,7 @@ const DsDetail=React.createClass({
 		return (
 			<Modal show={showDataStore} onHide={this.hideDataStoreDetail}>
 				<Modal.Header closeButton>
-					<Modal.Title>Browse Datastore</Modal.Title>
+					<Modal.Title>Browse CyVerse Data Store</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<ButtonToolbar>

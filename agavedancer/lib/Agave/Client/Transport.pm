@@ -313,6 +313,7 @@ use vars qw($VERSION $AGENT);
 			$END_POINT .= $params{_sub_end_point} =~ m|^/| 
 				? $params{_sub_end_point}
 				: '/' . $params{_sub_end_point};
+			delete $params{_sub_end_point};
 		}
         
         # Check for a request path

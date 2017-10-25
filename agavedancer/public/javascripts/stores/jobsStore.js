@@ -318,14 +318,14 @@ const JobsStore=Reflux.createStore({
 
 	setFile: function(fileId, url) {
 		let setting=_config.setting;
-		let path=url.replace('^(agave|https?)://', '');
+		//let path=url.replace('^(agave|https?)://', '');
 		let fileDetail=this.state.fileDetailCache[fileId];
 		let filePromise;
 		if (fileDetail) {
 			filePromise=Q(fileDetail);
 		} else {
 			//filePromise=Q(axios.get(setting.host_url + '/file/' + path, {
-			filePromise=Q(axios.get('/file/' + path, {
+			filePromise=Q(axios.get('/file/' + url, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			}))
 			.then(function(res) {

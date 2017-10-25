@@ -227,17 +227,13 @@ get qr{/browse/?(.*)} => sub {
 	$datastore_path=~s/__user__/$username/;
 	my $result={};
 	my $datastore_homepath=$datastore_home .'/' . $datastore_path;
-	if ($type eq '__CyVerseUserData__') {
-		$result=browse_files($path, $datastore_system, $datastore_path);
-	} elsif ($type eq '__CyVerseSharedData__') {
-		$result=browse_files($path, $datastore_system, $datastore_path);
-	} elsif ($type eq '__ArchivedJobs__') {
-		$result=browse_files($path, $datastore_system, $datastore_path);
-	} elsif ($type eq '__exampleData__') {
+	if ($type eq '__exampleData__') {
 		$result=browse_ls($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__system__') {
 		my ($system, $filepath)=split /\//, $path, 2;
 		$result=browse_files($filepath, $system);
+	} else {
+		$result=browse_files($path, $datastore_system, $datastore_path);
 	}
 
 	to_json($result);
@@ -304,7 +300,7 @@ sub browse_ls {
 		}, keys %$dir_list];
 }
 
-ajax '/apps/:id' => sub {
+get '/apps/:id' => sub {
 	my $app_id = param("id");
 	my $app=retrieveApps($app_id);
 	to_json($app);
@@ -326,7 +322,7 @@ sub retrieveApps {
 	my $return=[];
 	if ($api) {
 		my $apps = $api->apps;
-		$return = $app_id ? $apps->find_by_id($app_id) : $apps->list;
+		$return = $app_id ? $apps->find_by_id($app_id) : $apps->list(limit => 1000);
 	}
 	$return or raise InvalidRequest => 'no apps found';
 }
@@ -504,7 +500,7 @@ sub retrieveJob {
 			};
 		}
 	}
-	return $job;
+	$job or raise InvalidRequest => 'no jobs found';
 }
 
 get '/job/:id/remove' => sub {
@@ -566,7 +562,7 @@ ajax '/workflow/:id/update' => sub {
 	my $wfname=param('_workflow_name');
 	my $wfdesc=param('_workflow_desc');
 	my $status='success';
-	my $data={name => $wfname, description => $wfdesc, modified_at => \"datetime('now')"};
+	my $data={name => $wfname, description => $wfdesc, modified_at => \"now()"};
 	try {
 		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or raise 'InvalidRequest' => 'Invalid Workflow';
 		database->quick_update('workflow', {workflow_id => $wfid}, $data);
@@ -675,16 +671,10 @@ sub prepareJob {
 
 	my $job_id=iPC::Utils::uuid();
 
-	my ($inputs, $parameters) = ([], []);
-	if ($app) {
-		$inputs = $app->inputs;
-		$parameters = $app->parameters;
-	}
-
 	my $step_prefix = defined $step ? setting("wf_step_prefix") . $step->{id} . ':' : '';
 
 	my %job_form;
-	foreach my $key (@$inputs, @$parameters) {
+	foreach my $key (@{$app->inputs}, @{$app->parameters}) {
 		my $name=defined $step ? $step_prefix . $key->{id} : $key->{id};
 		$job_form{$name}=$form->{$name};
 	}
@@ -701,12 +691,6 @@ sub prepareJob {
 			$job_form{$name}=~s#https://agave.iplantc.org/files/v2/download/[\w]+/system/#agave://#;
 		}
 	}
-	#	} elsif ($job_form{$name}=~m#^http://www.maizecode.org#) {
-	#		$job_form{$name}=~s#^http://www.maizecode.org#agave://$archive_system#;
-	#	} else {
-	#		$job_form{$name}=~s#^$output_url#agave://$archive_system#;
-	#	}
-	#}
 
 	# TODO - check arguments
 
@@ -731,6 +715,13 @@ sub prepareJob {
 	foreach my $k (keys %{$step->{parameters}}) {
 		my $v=$step->{parameters}{$k};
 		$step->{parameters}{$k}=$job_form{$k};
+	}
+
+	foreach my $group (qw/inputs parameters/) {
+		foreach my $key ($app->$group) {
+			next unless exists $job_form{$key->{id}};
+			$job_form{$group}{$key->{id}}=delete $job_form{$key->{id}};
+		}
 	}
 
 	my $host_url=request->uri_base;
@@ -768,7 +759,7 @@ sub prepareJob {
 		while (my ($k, $v)=each %{$step->{inputs}}) {
 			if ($v && ref($v)) {
 				my $prev=$prev_job->[$v->{step}]{job_id};
-				my $row=database->quick_insert('nextstep', {prev => $prev, next => $job_id, input_name => $job_form{$k}});
+				my $row=database->quick_insert('nextstep', {prev => $prev, next => $job_id, input_name => $job_form{inputs}{$k}});
 			}
 		}
 	} catch {
@@ -896,7 +887,8 @@ sub submitNextJob {
 	my $prev=database->quick_select('job', {job_id => $job->{job_id}});
 	my $jobObj=from_json($prev->{agave_json});
 	#my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->{executionSystem}, $jobObj->{outputPath});
-	my $source=sprintf("https://agave.iplantc.org/jobs/v2/%s/outputs/media", $jobObj->{id});
+	#my $source=sprintf("https://agave.iplantc.org/jobs/v2/%s/outputs/media", $jobObj->{id});
+	my $source=sprintf("agave://data.iplantcollaborative.org/%s", $jobObj->{archivePath});
 	my @next=database->quick_select('nextstep', {prev => $prev->{job_id}, status => 0});
 	if (scalar @next) {
 		database->quick_update('nextstep', {prev => $prev->{job_id}}, {input_source => $source, status => 1});
@@ -913,9 +905,9 @@ sub submitNextJob {
 			my (undef, $filename)=split /:/, $_->{input_name};
 			$input{$_->{input_name}}=$_->{input_source} . '/' . $filename;
 		}
-		while (my ($k, $v) = each %$job_form) {
+		while (my ($k, $v) = each %{$job_form->{inputs}}) {
 			if (defined $v && exists $input{$v}) {
-				$job_form->{$k}=$input{$v};
+				$job_form->{inputs}{$k}=$input{$v};
 				$count++;
 			}
 		}
