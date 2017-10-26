@@ -28,8 +28,10 @@ const JobsDetail=React.createClass({
 		if (jobDetail) {
 			if (jobDetail.status && jobDetail.status === 'FINISHED') {
 				let archivePath=jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path);
-				let link_url=setting.output_url[setting.archive_system] + '/' + archivePath;
-				output_link=(<a href={link_url} target='_blank'>{link_url}</a>);
+				let href=setting.output_url[setting.archive_system];
+				href=href.replace(/__system__/, setting.archive_system);
+				href=href.replace(/__path__/, archivePath);
+				output_link=(<a href={href} target='_blank'>{href}</a>);
 			}
 			let job_info=(
 				<Table striped condensed hover>
