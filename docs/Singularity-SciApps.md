@@ -16,7 +16,7 @@ Execute an image like "**singularity exec -B /scratch:/scratch /scratch/tacc/ima
 * impute2_2.3.2--0.img                                  
 * macs2_2.1.1.20160309--py27r3.3.2_0.img                    
 * maker_2.31.9--0.img            
-* picard_2.11.0--py27_0.img                                  
+* picard_2.11.0--py27_0.img picard MarkDuplicates
 * plink_1.90b4–0.img
 * samtools_1.5--2.img
 * scythe-2017-09-18-c7268f0a8cd0.img
