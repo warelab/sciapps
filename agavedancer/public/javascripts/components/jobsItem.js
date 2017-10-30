@@ -22,8 +22,7 @@ const JobsItem=React.createClass({
 
 	showJobOutputs: function() {
 		if (! this.state.isOpen && this.props.job.job_id) {
-			//JobsActions.showJobOutputs(this.props.job.job_id);
-			JobsActions.setJob(this.props.job.job_id);
+			JobsActions.setJobOutputs(this.props.job.job_id);
 		}
 		this.setState({ isOpen: !this.state.isOpen });
 	},
@@ -46,6 +45,7 @@ const JobsItem=React.createClass({
 	render: function() {
 		let app=this.props.app;
 		let job=this.props.job
+		let outpus=this.props.outpus;
 		let setting=_config.setting;
 		let appId=job.appId;
 		let jobId=job.job_id;

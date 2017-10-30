@@ -106,6 +106,7 @@ const UserStore=Reflux.createStore({
 	_updateUser: function(data) {
 		let setting=_config.setting;
 		_.assign(this.state, data);
+		setting.archive_path.replace('__user__', data.username);
 		_.forEach(setting.datastore, function(v, k) {
 			if (v.path) {
 				let path=v.path.replace('__user__', data.username);

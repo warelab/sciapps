@@ -247,7 +247,7 @@ const JobsStore=Reflux.createStore({
 
 		let funcs=jobIds.map(function(jobId) {
 			return function() {
-				return this.setJobOutputs(jobId).then(function(jobOutputs) {
+				return this._setJobOutputs(jobId).then(function(jobOutputs) {
 					return jobOutputs;
 				}.bind(this));
 			}.bind(this);
@@ -262,7 +262,7 @@ const JobsStore=Reflux.createStore({
 		}.bind(this));
 	},
 
-	setJobOutputs: function(jobId) {
+	_setJobOutputs: function(jobId) {
 		let jobOutputs=this.state.jobOutputs[jobId];
 		let setting=_config.setting;
 		let jobOutputsPromise;
@@ -305,8 +305,8 @@ const JobsStore=Reflux.createStore({
 		return jobOutputsPromise;
 	},
 
-	showJobOutputs: function(jobId) {
-		let jobOutputsPromise=this.setJobOutputs(jobId);
+	setJobOutputs: function(jobId) {
+		let jobOutputsPromise=this._setJobOutputs(jobId);
 		jobOutputsPromise.then(function() {
 			this.complete();
 		}.bind(this))

@@ -28,8 +28,9 @@ const JobsList=React.createClass({
 					}
 					let checked=jobsStore.workflowBuilderJobIndex[index];
 					let app=appsStore.appDetailCache[jobsItem.appId];
+					let outputs=jobsStore.jobOutputs[jobsItem.job_id];
 					return (
-						<JobsItem key={index} job={jobsItem} index={index} checked={checked} app={app}/>
+						<JobsItem key={index} job={jobsItem} index={index} checked={checked} app={app} outputs={outputs} />
 					);
 				} else {
 					return undefined;
