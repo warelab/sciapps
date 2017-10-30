@@ -26,12 +26,14 @@ For security reasons, installation of SciApps on your pc is not supported. To ad
   
   7. git commit -m **"Added app BWA_index_mem-0.7.13"**
   
-  8. git push
+  8. git checkout -b 'my_branch'
   
-  9. Share the app with the **maizecode** user
+  9. git push origin my_branch
+  
+  10. Share the app with the **maizecode** user
       - e.g. **apps-pems-update -v -u maizecode -p READ_EXECUTE BWA_index_mem-0.7.13**
 
-  10. Notify support@sciapps.org
+  11. Notify support@sciapps.org
 
 # For SciApps community version (under development)
 
