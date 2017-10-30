@@ -24,11 +24,11 @@ route_cache: 1
 
 # production config
 agave_config: ".agave"
-host_url: "https://de.sciapps.org"
+host_url: "https://www.sciapps.org"
 archive_system: 'sciapps.org'
 archive_home: '/agave_data'
 archive_path: 'results'
-input_system: 'brebiou.cshl.edu'
+input_system: 'halcott.cshl.edu'
 input_home: '/agave_data'
 input_path: 'inputs'
 email: 'noreply@sciapps.org'
@@ -56,7 +56,7 @@ datastore:
     system: ''
     home: ''
     path: ''
-datastore_types: ['CyVerse', 'sorghumDB', 'MaizeCODE', 'exampleData']
+datastore_types: ['CyVerse', 'exampleData']
 uncompress_suffix: '.open.tar.gz'
 use_file_server: 1
 irodsEnvFile: '/usr/share/httpd/irodsEnv'
