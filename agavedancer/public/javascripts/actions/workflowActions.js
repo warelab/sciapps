@@ -18,6 +18,7 @@ const WorkflowActions=Reflux.createActions([
 	'deleteWorkflow',
 	'updateWorkflowJob',
 	'workflowJobsReady',
+	'setRemoteWorkflow',
 	'setWorkflowSteps',
 	'buildWorkflow',
 	'submitWorkflow'

@@ -81,7 +81,6 @@ const WorkflowStore=Reflux.createStore({
 
 	listWorkflow: function() {
 		let setting=_config.setting;
-		//Q(axios.get(setting.host_url + '/workflow', {
 		Q(axios.get('/workflow', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))
@@ -218,6 +217,24 @@ const WorkflowStore=Reflux.createStore({
 			});
 		}
 		this.complete();
+	},
+
+	setRemoteWorkflow: function(formData) {
+		Q(axios.post('/workflow/remote', formData, {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+			transformRequest: function(data) { return data; }
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				return;
+			}
+			let wfDetail=JSON.parse(res.data);
+			this.state.workflowDetail=wfDetail;
+		}.bind(this))
+		.catch(function(error) {
+				console.log(error);
+		})
+		.done();
 	},
 
 	setWorkflowSteps: function(wfDetail) {

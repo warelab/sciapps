@@ -505,6 +505,10 @@ ajax '/workflow/:id/jobStatus' => sub {
 	return to_json($jobs);
 };
 
+ajax '/workflow/remote' => sub {
+};
+
+
 ajax '/workflow/new' => sub {
 	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
 	my $username=$user->{username};
