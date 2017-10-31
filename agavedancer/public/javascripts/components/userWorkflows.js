@@ -70,7 +70,8 @@ const UserWorkflows=React.createClass({
 		if (workflowStore.workflows.length) {
 			workflowItems=workflowStore.workflows.map(function(workflow, i) {
 				let onEdit=this.state.onEdit[workflow.workflow_id];
-				let loadButton=<Button key='load' bsStyle='link' onClick={this.handleLoad} value={workflow.workflow_id}><Glyphicon glyph='repeat'/></Button>;
+				let tooltipload=<Tooltip id="tooltipload">Load</Tooltip>;
+				let loadButton=<OverlayTrigger placement="bottom" overlay={tooltipload}><Button key='load' bsStyle='link' onClick={this.handleLoad} value={workflow.workflow_id}><Glyphicon glyph='repeat'/></Button></OverlayTrigger>;
 				let delButton=<Button key='del' bsStyle='link' onClick={this.handleDel} value={workflow.workflow_id}><Glyphicon glyph='remove'/></Button>;
 				let editButton=<Button key='edit' bsStyle='link' onClick={this.handleEdit} value={workflow.workflow_id}><Glyphicon glyph='edit'/></Button>;
 				let downloadButton=<Button key='download' bsStyle='link' onClick={this.handleDownload} value={workflow.workflow_id}><Glyphicon glyph='download'/></Button>;
