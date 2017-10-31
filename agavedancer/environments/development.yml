@@ -61,7 +61,7 @@ datastore:
     system: ''
     home: ''
     path: ''
-datastore_types: ['CyVerse', 'sorghumDB', 'MaizeCODE', 'exampleData']
+datastore_types: ['CyVerse', 'exampleData']
 uncompress_suffix: '.open.tar.gz'
 use_file_server: 1
 irodsEnvFile: '/usr/share/httpd/irodsEnv'
