@@ -1,22 +1,22 @@
 {
-  "id": "BWA_index-0.7.13",
-  "name": "BWA_index",
+  "id": "HOMER_makeTagDir-2015.11.10",
+  "name": "HOMER_makeTagDir",
   "icon": null,
-  "uuid": "6242336320096038425-242ac117-0001-005",
+  "uuid": "5352854921423950311-242ac117-0001-005",
   "parallelism": "PARALLEL",
   "defaultProcessorsPerNode": 16,
   "defaultMemoryPerNode": 32,
   "defaultNodeCount": 1,
   "defaultMaxRunTime": "35:56:00",
-  "defaultQueue": "debug",
-  "version": "0.7.13",
+  "defaultQueue": "debug2",
+  "version": "2015.11.10",
   "revision": 1,
   "isPublic": false,
-  "helpURI": "http://bio-bwa.sourceforge.net/bwa.shtml",
-  "label": "BWA-index",
+  "helpURI": "http://homer.salk.edu",
+  "label": "HOMER_makeTagDir",
   "owner": "xiaofei_iplant",
-  "shortDescription": "BWA-index",
-  "longDescription": "Index database sequences in the FASTA format",
+  "shortDescription": "Transform alignments to platform independent data structure",
+  "longDescription": "Transform the sequence alignment into platform independent data structure representing the experiment, analogous to loading the data into a database",
   "tags": [
     "Beta"
   ],
@@ -25,17 +25,17 @@
   ],
   "executionType": "HPC",
   "executionSystem": "sciapps.org",
-  "deploymentPath": "xiaofei_iplant/application/BWA-0.7.13",
+  "deploymentPath": "xiaofei_iplant/application/HOMER_singularity",
   "deploymentSystem": "data.iplantcollaborative.org",
-  "templatePath": "bwa_index_wrapper.sh",
-  "testPath": "bwa_index_test.sh",
+  "templatePath": "homer_mkTagDir_wrapper.sh",
+  "testPath": "homer_mkTagDir_test.sh",
   "checkpointable": true,
-  "lastModified": "2017-10-13T10:10:35.000-05:00",
+  "lastModified": "2017-10-30T15:02:43.000-05:00",
   "modules": [],
   "available": true,
   "inputs": [
     {
-      "id": "reference",
+      "id": "bamInput",
       "value": {
         "validator": "",
         "visible": true,
@@ -45,8 +45,8 @@
         "default": ""
       },
       "details": {
-        "label": "Reference Fasta",
-        "description": "Reference genome",
+        "label": "Select SAM/BAM/BED input file",
+        "description": "Alignment input file",
         "argument": null,
         "showArgument": false,
         "repeatArgument": false
@@ -55,29 +55,62 @@
         "minCardinality": 1,
         "maxCardinality": 1,
         "ontology": [
-          "http://sswapmeet.sswap.info/sequence/FASTA"
+          "http://sswapmeet.sswap.info/sequence/"
         ],
         "fileTypes": [
-          "fasta-0"
+          "TEXT-0"
         ]
       }
     }
   ],
   "parameters": [
     {
-      "id": "prefix",
+      "id": "tbp",
       "value": {
         "visible": true,
         "required": false,
-        "type": "string",
-        "order": 0,
+        "type": "number",
+        "order": 1,
         "enquote": false,
-        "default": "",
-        "validator": ""
+        "default": 0,
+        "validator": null
       },
       "details": {
-        "label": "Index Prefix",
-        "description": "Prefix of the index, same as fasta name by default",
+        "label": "tbp",
+        "description": "Maximum tags per bp",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:interger"
+        ]
+      }
+    },
+    {
+      "id": "format",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 2,
+        "enquote": false,
+        "default": "sam",
+        "enum_values": [
+          {
+            "sam": "sam"
+          },
+          {
+            "bed": "bed"
+          }
+        ]
+      },
+      "details": {
+        "label": "FORMAT",
+        "description": "Format of alignment files",
         "argument": null,
         "showArgument": false,
         "repeatArgument": false
@@ -91,29 +124,19 @@
       }
     },
     {
-      "id": "algoType",
+      "id": "single",
       "value": {
         "visible": true,
         "required": false,
-        "type": "enumeration",
-        "order": 1,
+        "type": "bool",
+        "order": 3,
         "enquote": false,
-        "default": "",
-        "enum_values": [
-          {
-            "": "auto"
-          },
-          {
-            "is": "IS"
-          },
-          {
-            "bwtsw": "BWTSW"
-          }
-        ]
+        "default": true,
+        "validator": null
       },
       "details": {
-        "label": "BWT Construction Algorithm",
-        "description": "Algorithm for constructing BWT index",
+        "label": "SINGLE",
+        "description": "Create a single tags.tsv file for all chromosomes",
         "argument": null,
         "showArgument": false,
         "repeatArgument": false
@@ -122,36 +145,36 @@
         "minCardinality": 0,
         "maxCardinality": 1,
         "ontology": [
-          "xs:string"
+          "xs:boolean"
         ]
       }
     }
   ],
   "outputs": [
     {
-      "id": "bwaIndexOut",
+      "id": "homerTagDir",
       "value": {
         "validator": null,
-        "order": 0,
-        "default": "bwaIndexOut.tar.gz"
+        "order": 1,
+        "default": "homerTagDir"
       },
       "details": {
-        "label": "Output File",
-        "description": "The name of the output file."
+        "label": "homerTagDir",
+        "description": "HOMER tag directory output"
       },
       "semantics": {
         "minCardinality": 1,
         "maxCardinality": 1,
         "ontology": [],
         "fileTypes": [
-          "TEXT-0"
+          "directory"
         ]
       }
     }
   ],
   "_links": {
     "self": {
-      "href": "https://agave.iplantc.org/apps/v2/BWA_index-0.7.13"
+      "href": "https://agave.iplantc.org/apps/v2/HOMER_makeTagDir-2015.11.10"
     },
     "executionSystem": {
       "href": "https://agave.iplantc.org/systems/v2/sciapps.org"
@@ -160,16 +183,16 @@
       "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
     },
     "history": {
-      "href": "https://agave.iplantc.org/apps/v2/BWA_index-0.7.13/history"
+      "href": "https://agave.iplantc.org/apps/v2/HOMER_makeTagDir-2015.11.10/history"
     },
     "metadata": {
-      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%226242336320096038425-242ac117-0001-005%22%7D"
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%225352854921423950311-242ac117-0001-005%22%7D"
     },
     "owner": {
       "href": "https://agave.iplantc.org/profiles/v2/xiaofei_iplant"
     },
     "permissions": {
-      "href": "https://agave.iplantc.org/apps/v2/BWA_index-0.7.13/pems"
+      "href": "https://agave.iplantc.org/apps/v2/HOMER_makeTagDir-2015.11.10/pems"
     }
   }
 }

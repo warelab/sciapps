@@ -1,41 +1,41 @@
 {
-  "id": "FastQC-0.11.5",
-  "name": "FastQC",
+  "id": "Picard_MarkDupcates-2.11.0",
+  "name": "Picard_MarkDupcates",
   "icon": null,
-  "uuid": "2658975698279001625-242ac117-0001-005",
+  "uuid": "6810024756145221145-242ac117-0001-005",
   "parallelism": "PARALLEL",
   "defaultProcessorsPerNode": 16,
   "defaultMemoryPerNode": 32,
   "defaultNodeCount": 1,
   "defaultMaxRunTime": "35:56:00",
   "defaultQueue": "debug",
-  "version": "0.11.5",
+  "version": "2.11.0",
   "revision": 1,
   "isPublic": false,
-  "helpURI": "http://www.bioinformatics.babraham.ac.uk/projects/fastqc/",
-  "label": "FastQC",
+  "helpURI": "https://broadinstitute.github.io/picard/command-line-overview.html",
+  "label": "Picard_MarkDup",
   "owner": "xiaofei_iplant",
-  "shortDescription": "Quality control",
-  "longDescription": "A quality control tool for high throughput sequence data",
+  "shortDescription": "Identifies duplicate reads",
+  "longDescription": "This tool locates and tags duplicate reads in a BAM or SAM file, where duplicate reads are defined as originating from a single fragment of DNA. Duplicates can arise during sample preparation e.g. library construction using PCR.",
   "tags": [
     "Beta"
   ],
   "ontology": [
-    "http://sswapmeet.sswap.info/sequenceServices"
+    "http://sswapmeet.sswap.info/sequenceServices/SequenceServices"
   ],
   "executionType": "HPC",
   "executionSystem": "sciapps.org",
-  "deploymentPath": "xiaofei_iplant/application/FastQC_0.11.5",
+  "deploymentPath": "xiaofei_iplant/application/Picard-MarkDuplicates-2.11.0",
   "deploymentSystem": "data.iplantcollaborative.org",
-  "templatePath": "fastqc_wrapper.sh",
-  "testPath": "fastqc_test.sh",
+  "templatePath": "picard_MarkDup_wrapper.sh",
+  "testPath": "picard_MarkDup_test.sh",
   "checkpointable": true,
-  "lastModified": "2017-10-20T11:00:56.000-05:00",
+  "lastModified": "2017-10-26T09:26:18.000-05:00",
   "modules": [],
   "available": true,
   "inputs": [
     {
-      "id": "seqFile",
+      "id": "bamInput",
       "value": {
         "validator": "",
         "visible": true,
@@ -45,8 +45,8 @@
         "default": ""
       },
       "details": {
-        "label": "FASTQ File",
-        "description": "Input fastq file (can take *.gz)",
+        "label": "Input SAM/BAM to be processed",
+        "description": "Input SAM/BAM",
         "argument": null,
         "showArgument": false,
         "repeatArgument": false
@@ -55,35 +55,45 @@
         "minCardinality": 1,
         "maxCardinality": 1,
         "ontology": [
-          "http://sswapmeet.sswap.info/sequence"
+          "http://sswapmeet.sswap.info/sequence/"
         ],
         "fileTypes": [
-          "raw-0"
+          "TEXT-0"
         ]
       }
     }
   ],
   "parameters": [
     {
-      "id": "outdirName",
+      "id": "VALIDATION_STRINGENCY",
       "value": {
         "visible": true,
-        "required": true,
-        "type": "string",
-        "order": 0,
+        "required": false,
+        "type": "enumeration",
+        "order": 1,
         "enquote": false,
-        "default": "fastqcOut",
-        "validator": ""
+        "default": "LENIENT",
+        "enum_values": [
+          {
+            "STRICT": "STRICT"
+          },
+          {
+            "SILENT": "SILENT"
+          },
+          {
+            "LENIENT": "LENIENT"
+          }
+        ]
       },
       "details": {
-        "label": "Output Folder",
-        "description": "Create all outputs in this specified output directory",
+        "label": "VALIDATION_STRINGENCY",
+        "description": "Validation stringency for all SAM files",
         "argument": null,
         "showArgument": false,
         "repeatArgument": false
       },
       "semantics": {
-        "minCardinality": 1,
+        "minCardinality": 0,
         "maxCardinality": 1,
         "ontology": [
           "xs:string"
@@ -91,7 +101,7 @@
       }
     },
     {
-      "id": "extract",
+      "id": "REMOVE_DUPLICATES",
       "value": {
         "visible": true,
         "required": false,
@@ -102,8 +112,8 @@
         "validator": null
       },
       "details": {
-        "label": "Extract",
-        "description": "Uncompressed the zipped outputs",
+        "label": "REMOVE_DUPLICATES",
+        "description": "Locate and tag duplicate reads",
         "argument": null,
         "showArgument": false,
         "repeatArgument": false
@@ -119,15 +129,15 @@
   ],
   "outputs": [
     {
-      "id": "$outdirName",
+      "id": "picardOut",
       "value": {
         "validator": null,
         "order": 0,
-        "default": "fastqc_out"
+        "default": "picardOut"
       },
       "details": {
         "label": "Output Directory",
-        "description": "Output directory."
+        "description": "Output directory"
       },
       "semantics": {
         "minCardinality": 1,
@@ -141,7 +151,7 @@
   ],
   "_links": {
     "self": {
-      "href": "https://agave.iplantc.org/apps/v2/FastQC-0.11.5"
+      "href": "https://agave.iplantc.org/apps/v2/Picard_MarkDupcates-2.11.0"
     },
     "executionSystem": {
       "href": "https://agave.iplantc.org/systems/v2/sciapps.org"
@@ -150,16 +160,17 @@
       "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
     },
     "history": {
-      "href": "https://agave.iplantc.org/apps/v2/FastQC-0.11.5/history"
+      "href": "https://agave.iplantc.org/apps/v2/Picard_MarkDupcates-2.11.0/history"
     },
     "metadata": {
-      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%222658975698279001625-242ac117-0001-005%22%7D"
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%226810024756145221145-242ac117-0001-005%22%7D"
     },
     "owner": {
       "href": "https://agave.iplantc.org/profiles/v2/xiaofei_iplant"
     },
     "permissions": {
-      "href": "https://agave.iplantc.org/apps/v2/FastQC-0.11.5/pems"
+      "href": "https://agave.iplantc.org/apps/v2/Picard_MarkDupcates-2.11.0/pems"
     }
   }
 }
+

@@ -282,6 +282,15 @@
     "name": "Picard_MarkDupcates",
     "version": "2.7.0"
   },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "Picard_MarkDupcates-2.11.0",
+    "label": "Picard_MarkDup",
+    "name": "Picard_MarkDupcates",
+    "version": "2.11.0"
+  },
   {
     "tags": [
       "Beta"
@@ -309,6 +318,33 @@
     "name": "HOMER_annoPeaks",
     "version": "4.8.3"
   },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "HOMER_makeTagDir-2015.11.10",
+    "label": "HOMER_makeTagDir",
+    "name": "HOMER_makeTagDir",
+    "version": "2015.11.10"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "HOMER_findPeaks-2015.11.10",
+    "label": "HOMER_findPeaks",
+    "name": "HOMER_findPeaks",
+    "version": "2015.11.10"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "HOMER_annoPeaks-4.9",
+    "label": "HOMER_annoPeaks",
+    "name": "HOMER_annoPeaks",
+    "version": "4.9"
+  },
   {
     "tags": [
       "Beta"
@@ -318,7 +354,7 @@
     "name": "BWA_index_mem",
     "version": "0.7.13"
   },
-  {
+    {
     "tags": [
       "Beta"
     ],
@@ -331,12 +367,39 @@
     "tags": [
       "Beta"
     ],
+    "id": "BWA_mem-0.7.13",
+    "label": "BWA_mem",
+    "name": "BWA_mem",
+    "version": "0.7.13"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
     "id": "FastQC-0.11.5",
     "label": "FastQC",
     "name": "FastQC",
     "version": "0.11.5"
   },
-  {
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "Scythe-0.991",
+    "label": "Scythe",
+    "name": "Scythe",
+    "version": "0.991"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "Sickle-1.33",
+    "label": "Sickle",
+    "name": "Sickle",
+    "version": "1.33"
+  },
+    {
     "tags": [
       "Beta"
     ],

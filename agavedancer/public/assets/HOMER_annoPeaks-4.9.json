@@ -1,0 +1,196 @@
+{
+  "id": "HOMER_annoPeaks-4.9",
+  "name": "HOMER_annoPeaks",
+  "icon": null,
+  "uuid": "1681840676613189145-242ac117-0001-005",
+  "parallelism": "PARALLEL",
+  "defaultProcessorsPerNode": 16,
+  "defaultMemoryPerNode": 32,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": "35:56:00",
+  "defaultQueue": "debug2",
+  "version": "4.9",
+  "revision": 1,
+  "isPublic": false,
+  "helpURI": "http://homer.salk.edu",
+  "label": "HOMER_annoPeaks",
+  "owner": "xiaofei_iplant",
+  "shortDescription": "Performing peak annotation",
+  "longDescription": "Homer contains a useful, all-in-one program to associate peaks with nearby genes. In addition, it can perform Gene Ontology Analysis, genomic feature association analysis (Genome Ontology), associate peaks with gene expression data, calculate ChIP-Seq Tag densities from different experiments, and find motif occurrences in peaks, as well.",
+  "tags": [
+    "Beta"
+  ],
+  "ontology": [
+    "http://sswapmeet.sswap.info/sequenceServices/SequenceServices"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "sciapps.org",
+  "deploymentPath": "xiaofei_iplant/application/HOMER_singularity",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "homer_annopeaks_wrapper.sh",
+  "testPath": "homer_annopeaks_test.sh",
+  "checkpointable": true,
+  "lastModified": "2017-10-30T14:52:50.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "peakFile",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "ChIP-seq Peak File",
+        "description": "Peak files (in HOMER peak or BED format)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/"
+        ],
+        "fileTypes": [
+          "TEXT-0"
+        ]
+      }
+    },
+    {
+      "id": "reference",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 2,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Reference Fasta",
+        "description": "Using Custom Genomes",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence/FASTA"
+        ],
+        "fileTypes": [
+          "fasta-0"
+        ]
+      }
+    },
+    {
+      "id": "custom_Anno",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": false,
+        "order": 3,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Genome Anno File",
+        "description": "Using Custom Annotations",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "genomeVer",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "string",
+        "order": 1,
+        "enquote": false,
+        "default": null,
+        "validator": null
+      },
+      "details": {
+        "label": "GENOME (e.g. hg18)",
+        "description": "Pre-configured genome",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "homerOut",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "homerAnnoOut.txt"
+      },
+      "details": {
+        "label": "homerOut",
+        "description": "Peaks annotation output file"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [],
+        "fileTypes": [
+          "TEXT-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/HOMER_annoPeaks-4.9"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/sciapps.org"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/HOMER_annoPeaks-4.9/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%221681840676613189145-242ac117-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/xiaofei_iplant"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/HOMER_annoPeaks-4.9/pems"
+    }
+  }
+}
+

@@ -1,22 +1,22 @@
 {
-  "id": "FastQC-0.11.5",
-  "name": "FastQC",
+  "id": "Scythe-0.991",
+  "name": "Scythe",
   "icon": null,
-  "uuid": "2658975698279001625-242ac117-0001-005",
+  "uuid": "1472966458917392871-242ac117-0001-005",
   "parallelism": "PARALLEL",
   "defaultProcessorsPerNode": 16,
   "defaultMemoryPerNode": 32,
   "defaultNodeCount": 1,
   "defaultMaxRunTime": "35:56:00",
   "defaultQueue": "debug",
-  "version": "0.11.5",
+  "version": "0.991",
   "revision": 1,
   "isPublic": false,
-  "helpURI": "http://www.bioinformatics.babraham.ac.uk/projects/fastqc/",
-  "label": "FastQC",
+  "helpURI": "https://github.com/vsbuffalo/scythe",
+  "label": "Scythe",
   "owner": "xiaofei_iplant",
-  "shortDescription": "Quality control",
-  "longDescription": "A quality control tool for high throughput sequence data",
+  "shortDescription": "3'-end adapter trimmer",
+  "longDescription": "A Bayesian adapter trimmer for high throughput sequence data",
   "tags": [
     "Beta"
   ],
@@ -25,12 +25,12 @@
   ],
   "executionType": "HPC",
   "executionSystem": "sciapps.org",
-  "deploymentPath": "xiaofei_iplant/application/FastQC_0.11.5",
+  "deploymentPath": "xiaofei_iplant/application/Scythe_0.991",
   "deploymentSystem": "data.iplantcollaborative.org",
-  "templatePath": "fastqc_wrapper.sh",
-  "testPath": "fastqc_test.sh",
+  "templatePath": "scythe_wrapper.sh",
+  "testPath": "scythe_test.sh",
   "checkpointable": true,
-  "lastModified": "2017-10-20T11:00:56.000-05:00",
+  "lastModified": "2017-10-20T15:34:33.000-05:00",
   "modules": [],
   "available": true,
   "inputs": [
@@ -61,23 +61,61 @@
           "raw-0"
         ]
       }
+    },
+    {
+      "id": "adapters",
+      "value": {
+        "validator": "",
+        "visible": true,
+        "required": true,
+        "order": 2,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Adapters File",
+        "description": "Adapter contaminants file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info/sequence"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
     }
   ],
   "parameters": [
     {
-      "id": "outdirName",
+      "id": "quality",
       "value": {
         "visible": true,
         "required": true,
-        "type": "string",
-        "order": 0,
+        "type": "enumeration",
+        "order": 1,
         "enquote": false,
-        "default": "fastqcOut",
-        "validator": ""
+        "default": "sanger",
+        "enum_values": [
+          {
+            "illumina": "illumina"
+          },
+          {
+            "solexa": "solexa"
+          },
+          {
+            "sanger": "sanger"
+          }
+        ]
       },
       "details": {
-        "label": "Output Folder",
-        "description": "Create all outputs in this specified output directory",
+        "label": "Quality Type",
+        "description": "Quality type, either illumina, solexa, or sanger",
         "argument": null,
         "showArgument": false,
         "repeatArgument": false
@@ -89,41 +127,15 @@
           "xs:string"
         ]
       }
-    },
-    {
-      "id": "extract",
-      "value": {
-        "visible": true,
-        "required": false,
-        "type": "bool",
-        "order": 2,
-        "enquote": false,
-        "default": false,
-        "validator": null
-      },
-      "details": {
-        "label": "Extract",
-        "description": "Uncompressed the zipped outputs",
-        "argument": null,
-        "showArgument": false,
-        "repeatArgument": false
-      },
-      "semantics": {
-        "minCardinality": 0,
-        "maxCardinality": 1,
-        "ontology": [
-          "xs:boolean"
-        ]
-      }
     }
   ],
   "outputs": [
     {
-      "id": "$outdirName",
+      "id": "scytheOut",
       "value": {
         "validator": null,
         "order": 0,
-        "default": "fastqc_out"
+        "default": null
       },
       "details": {
         "label": "Output Directory",
@@ -141,7 +153,7 @@
   ],
   "_links": {
     "self": {
-      "href": "https://agave.iplantc.org/apps/v2/FastQC-0.11.5"
+      "href": "https://agave.iplantc.org/apps/v2/Scythe-0.991"
     },
     "executionSystem": {
       "href": "https://agave.iplantc.org/systems/v2/sciapps.org"
@@ -150,16 +162,16 @@
       "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
     },
     "history": {
-      "href": "https://agave.iplantc.org/apps/v2/FastQC-0.11.5/history"
+      "href": "https://agave.iplantc.org/apps/v2/Scythe-0.991/history"
     },
     "metadata": {
-      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%222658975698279001625-242ac117-0001-005%22%7D"
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%221472966458917392871-242ac117-0001-005%22%7D"
     },
     "owner": {
       "href": "https://agave.iplantc.org/profiles/v2/xiaofei_iplant"
     },
     "permissions": {
-      "href": "https://agave.iplantc.org/apps/v2/FastQC-0.11.5/pems"
+      "href": "https://agave.iplantc.org/apps/v2/Scythe-0.991/pems"
     }
   }
 }
