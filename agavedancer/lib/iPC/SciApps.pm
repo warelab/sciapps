@@ -425,7 +425,7 @@ sub checkWorkflowJobStatus {
 	return \@result;
 }
 
-ajax qr{/file/(.*)} => sub {
+get qr{/file/(.*)} => sub {
 	my ($fullpath)=splat;
 	my ($system, $path)=split /\//, $fullpath, 2;
 	my $input=database->quick_select('file_view', {system => $system, path => $path}) || {system => $system, path => $path};
