@@ -70,12 +70,25 @@ const UserWorkflows=React.createClass({
 		if (workflowStore.workflows.length) {
 			workflowItems=workflowStore.workflows.map(function(workflow, i) {
 				let onEdit=this.state.onEdit[workflow.workflow_id];
-				let loadButton=<Button key='load' bsStyle='link' onClick={this.handleLoad} value={workflow.workflow_id}><Glyphicon glyph='repeat'/></Button>;
-				let delButton=<Button key='del' bsStyle='link' onClick={this.handleDel} value={workflow.workflow_id}><Glyphicon glyph='remove'/></Button>;
-				let editButton=<Button key='edit' bsStyle='link' onClick={this.handleEdit} value={workflow.workflow_id}><Glyphicon glyph='edit'/></Button>;
-				let downloadButton=<Button key='download' bsStyle='link' onClick={this.handleDownload} value={workflow.workflow_id}><Glyphicon glyph='download'/></Button>;
-				let saveButton=<Button key='save' bsStyle='link' onClick={this.handleSave} value={workflow.workflow_id}>Save</Button>;
-				let cancelButton=<Button key='cancel' bsStyle='link' onClick={this.handleCancel} value={workflow.workflow_id}>Cancel</Button>;
+
+				let tooltipload=<Tooltip id="tooltipload">Load</Tooltip>;
+        			let loadButton=<OverlayTrigger placement="bottom" overlay={tooltipload}><Button key='load' bsStyle='link' onClick={this.handleLoad} value={workflow.workflow_id}><Glyphicon glyph='repeat'/></Button></OverlayTrigger>;
+
+				let tooltipdelete=<Tooltip id="tooltipdelete">Delete</Tooltip>;
+        			let delButton=<OverlayTrigger placement="bottom" overlay={tooltipdelete}><Button key='del' bsStyle='link' onClick={this.handleDel} value={workflow.workflow_id}><Glyphicon glyph='remove-circle'/></Button></OverlayTrigger>;				
+
+				let tooltipedit=<Tooltip id="tooltipedit">Edit</Tooltip>;
+        			let editButton=<OverlayTrigger placement="bottom" overlay={tooltipedit}><Button key='edit' bsStyle='link' onClick={this.handleEdit} value={workflow.workflow_id}><Glyphicon glyph='edit'/></Button></OverlayTrigger>;				
+
+				let tooltipdownload=<Tooltip id="tooltipdownload">Download</Tooltip>;
+        			let downloadButton=<OverlayTrigger placement="bottom" overlay={tooltipdownload}><Button key='download' bsStyle='link' onClick={this.handleDownload} value={workflow.workflow_id}><Glyphicon glyph='download-alt'/></Button></OverlayTrigger>;				
+
+				let tooltipsave=<Tooltip id="tooltipsave">Save</Tooltip>;
+        			let saveButton=<OverlayTrigger placement="bottom" overlay={tooltipsave}><Button key='save' bsStyle='link' onClick={this.handleSave} value={workflow.workflow_id}><Glyphicon glyph='ok'/></Button></OverlayTrigger>;				
+
+				let tooltipcancel=<Tooltip id="tooltipcancel">Cancel</Tooltip>;
+        			let cancelButton=<OverlayTrigger placement="bottom" overlay={tooltipcancel}><Button key='cancel' bsStyle='link' onClick={this.handleCancel} value={workflow.workflow_id}><Glyphicon glyph='remove'/></Button></OverlayTrigger>;
+
 				let item;
 				let toolbar;
 				if (onEdit) {
@@ -91,14 +104,14 @@ const UserWorkflows=React.createClass({
 						value: workflow.description,
 						type: 'text'
 					};
-					item=<tr key={workflow.workflow_id}><td><BaseInput data={nameInput} onValidate={true} ref={workflow.workflow_id + '_nameInput'}/></td><td className='text-center'><BaseInput data={descInput} ref={workflow.workflow_id + '_descInput'}/></td><td className='text-center'>{saveButton}{cancelButton}</td></tr>;
+					item=<tr key={workflow.workflow_id}><td><BaseInput data={nameInput} onValidate={true} ref={workflow.workflow_id + '_nameInput'}/></td><td className='text-center'><BaseInput data={descInput} ref={workflow.workflow_id + '_descInput'}/></td><td className='text-right'>{saveButton}{cancelButton}</td></tr>;
 				} else {
 					toolbar=(
 						<ButtonToolbar>
-							{loadButton}{delButton}{editButton}{downloadButton}	
+							{loadButton}{editButton}{downloadButton}{delButton}	
 						</ButtonToolbar>
 					);
-					item=<tr key={workflow.workflow_id}><td>{workflow.name}</td><td>{workflow.description}</td><td className='text-center'>{loadButton}{delButton}{editButton}{downloadButton}</td></tr>;
+					item=<tr key={workflow.workflow_id}><td>{workflow.name}</td><td>{workflow.description}</td><td className='text-right'>{loadButton}{editButton}{downloadButton}{delButton}</td></tr>;
 				}
 				return item;
 			}.bind(this));
@@ -107,7 +120,7 @@ const UserWorkflows=React.createClass({
 			<Panel header="My Workflows">
 				<Table striped condensed hover>
 					<thead>
-						<tr><th className='col-xs-2 col-md-2'>Name</th><th className='col-xs-5 col-md-5'>Description</th><th className='col-xs-3 col-md-3 text-center'>Actions</th></tr>
+						<tr><th className='col-xs-2 col-md-2'>Name</th><th className='col-xs-8 col-md-8'>Description</th><th className='col-xs-2 col-md-2 text-right'>Actions</th></tr>
 					</thead>
 					<tbody>
 						{workflowItems}
