@@ -133,46 +133,26 @@ sub getAgaveClient {
 
 hook on_route_exception => sub {
 	my $e = shift;
-	if (ref($e) eq 'scalar') {
-		raise 'SystemError' => $e;
-	} elsif ($e->can('does') && ($e->does('InvalidCredentials') || $e->does('InvalidRequest'))) {
+	if ($e->can('does') && ($e->does('InvalidCredentials') || $e->does('InvalidRequest'))) {
 		halt(to_json({status => 'error', error => $e->message()}));
-	} else {
+	} elsif ($e->can('rethrow')) {
 		$e->rethrow;
+	} else {
+		raise 'SystemError' => $e;
 	}
 };
 
 hook 'before' => sub {
 	my $path=request->path;
 	unless($path eq '/' || $path=~m#^/(login|logout|notification)/?# || check_agave_login()) {
-	#if(! session('cas_user') && $path=~m#^/(job|workflowJob)/new/?#) {
 		if (request->is_ajax) {
 			content_type(setting('plugins')->{Ajax}{content_type});
-			try {
-				raise InvalidCredentials => 'no username';
-			} catch {
-				my ($e)=@_;
-				halt(to_json({error => $e->message()}));
-			};
+			raise InvalidCredentials => 'no username';
 		} else {
 			request->path('/');
 		}
 	}
 };
-
-#hook 'after' => sub {
-#	my $response = shift;
-#	$response->header('Access-Control-Allow-Origin' => '*');
-#};
-
-#options qr{/.*} => sub {
-#	headers(
-#		'Access-Control-Allow-Origin' => '*',
-#		'Access-Control-Allow-Headers' => 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
-#		'Access-Control-Allow-Methods' => 'GET, POST, OPTIONS',
-#		'Access-Control-Allow-Credentials' => 'true',
-#	);
-#};
 
 sub _index {
 	my %config=map { $_ => param($_) } qw/app_id page_id wf_id/;
@@ -271,13 +251,13 @@ sub browse_ils {
 sub browse_files {
 	my ($path, $system, $homepath)=@_;
 	my $apif=getAgaveClient();
-	my $fullPath=$homepath ? $homepath . '/' . $path : $path;
+	my $fullpath=$homepath ? $homepath . '/' . $path : $path;
 
 	$system='system/' . $system . '/';
 
 	my $io = $apif->io;
 	my $dir_list;
-	$dir_list=$io->readdir('/' . $system . $fullPath);
+	$dir_list=$io->readdir('/' . $system . $fullpath);
 
 	[{
 			is_root => $path ? 0 : 1,
@@ -521,6 +501,21 @@ ajax '/workflow/:id/jobStatus' => sub {
 	return to_json($jobs);
 };
 
+ajax '/workflow/remote' => sub {
+	my $data;
+	my $url=param('_url');
+	my $ua=LWP::UserAgent->new();
+	$ua->timeout(3);
+	my $res=$ua->get($url);
+	if ($res->is_success) {
+		$data=$res->decoded_content;
+	} else {
+		raise InvalidRequest => 'can not fetch json from remote url'; 
+	}
+	return to_json({status => 'success', data => $data});
+};
+
+
 ajax '/workflow/new' => sub {
 	my $username=session('username');
 	my $status='success';
@@ -629,36 +624,6 @@ ajax '/job/new/:id' => sub {
 	if ($job_id && $job && $job->{id}) {
 		return to_json($job);
 	}
-};
-
-any ['get', 'post'] => '/job/new/:id' => sub {
-	my $username=session('username') or raise InvalidCredentials => 'no username';
-	my @err = ();
-	my $app_id = param("id");
-	my $apif = getAgaveClient();
-
-	my $apps = $apif->apps;
-	my ($app) = $apps->find_by_id($app_id);
-
-	my $form = params();
-	if ( request->method() eq "POST" ) {
-		my ($job_id, $job_form)=prepareJob($username, $app, $form);
-		my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
-		if ($job_id && $job && $job->{id}) {
-			return redirect '/job/' . $job_id;
-		} else {
-			push @err, $err;
-		}
-	}
- 	template 'job_new', {
-		errors => \@err,
- 		app => $app,
-		app_inputs => $app->inputs || [],
-		app_params => $app->parameters || [],
-		name => $app_id,
-		username => session('username'),
-		form => $form,
-	};
 };
 
 sub prepareJob {

@@ -12,7 +12,8 @@ const WorkflowLoadBox=React.createClass({
 	
 	getInitialState: function() {
 		return {
-			value: ''
+			value: '',
+			type: ''
 		};
 	},
 
@@ -31,16 +32,24 @@ const WorkflowLoadBox=React.createClass({
 	render: function() {
 		let workflowStore=this.state.workflowStore;
 		let showWorkflowLoadBox=workflowStore.showWorkflowLoadBox;
-		let props={
+		let fileprops={
 			type: 'file',
 			value: this.state.value,
 			className: 'wf-load-box',
 			label: 'Upload a workflow json file saved on your computer',
 			onChange: this.handleValueChange
-		}
+		};
+		let textprops={
+			type: 'text',
+
+		};
 		let markup=(
 			<Modal show={showWorkflowLoadBox} onHide={this.hideWorkflowLoadBox}>
+				<Modal.Header closeButton>
+					<Modal.Title>Load a workflow json file</Modal.Title>
+				</Modal.Header>
 				<Modal.Body>
+					<Input {...fileprops} />
 					<Input {...props} />
 				</Modal.Body>
 				<Modal.Footer>

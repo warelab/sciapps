@@ -69,8 +69,6 @@ const JobsItem=React.createClass({
 		if (app && job.archivePath) {
 			outputsItemNodes=app.outputs.map(function(o, i) {
 				let oname=o.value.default;
-				//let href=job.archivePath ? setting.output_url[job.archiveSystem] + '/' + job.archivePath + '/' + oname : setting.output_url[setting.archive_system] + '/' + job.outputPath.replace(job.owner, setting.archive_path) + '/' + oname;
-				//let href=['https://agave.iplantc.org/files/v2/download', job.owner, 'system', job.archiveSystem, job.archivePath, oname].join('/'); 
 				let href=setting.output_url[job.archiveSystem];
 				href=href.replace(/__owner__/, job.owner);
 				href=href.replace(/__system__/, job.archiveSystem);

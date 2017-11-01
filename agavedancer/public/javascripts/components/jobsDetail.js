@@ -26,11 +26,6 @@ const JobsDetail=React.createClass({
 		let markup=<div />;
 		//let output_link;
 		if (jobDetail) {
-			if (jobDetail.status && jobDetail.status === 'FINISHED') {
-				//let archivePath=jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path);
-				//let link_url=setting.output_url[setting.archive_system] + '/' + archivePath;
-				//output_link=(<a href={link_url} target='_blank'>{link_url}</a>);
-			}
 			let job_info=(
 				<Table striped condensed hover>
 					<tbody>
@@ -43,7 +38,6 @@ const JobsDetail=React.createClass({
 					</tbody>
 				</Table>
 			);
-						//<tr key='job_info_results'><th>Results:</th><td>{output_link}</td></tr>
 			markup=(
 				<Modal show={showJob} onHide={this.hideJob}>
 					<Modal.Header closeButton>

@@ -26,12 +26,10 @@ const FilesInfo=React.createClass({
 				}
 			});
 			let jobOwner=fileDetail.path.replace(/\/.*/, '');
-			//let link=setting.output_url[fileDetail['system']] + '/' + fileDetail['path'];
 			let href=setting.output_url[fileDetail.system];
 			href=href.replace(/__owner__/, jobOwner);
 			href=href.replace(/__system__/, fileDetail.system);
 			href=href.replace(/__path__/, fileDetail.path);
-			//let link=fileDetail.system === '['https://agave.iplantc.org/files/v2/download', jobOwner, 'system', fileDetail.system, fileDetail.path].join('/');
 			tbody.push(<tr key={'source'}><th><a href={href} target="_blank">Link to File</a></th><td></td></tr>);
 			markup=(
 				<Table striped condensed hover>

@@ -164,6 +164,7 @@ const AppsStore=Reflux.createStore({
 			if (jobDetail) {
 				appDetail._jobDetail=jobDetail;
 			}
+			this.state.pageId='appsDeail';
 			this.state.appDetail=appDetail;
 			this.complete();
 		}.bind(this))

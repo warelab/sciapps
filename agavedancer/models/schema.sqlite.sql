@@ -164,6 +164,6 @@ drop index if exists file_id;
 create index file_id on file(file_id);
 
 drop view if exists file_view;
-create view file_view as 
-select file.system as system, file.path as path, line.name as line_name, organism.name as organism_name, organism.scientific_name as organism_scientific_name, organism.taxon_id as organism_taxon_id 
+create view file_view as
+select file.system as system, file.path as path, file.type as file_type, file.format as file_format, file.description as file_description, line.name as line_name, organism.name as organism_name, organism.scientific_name as organism_scientific_name, organism.taxon_id as organism_taxon_id
 from file join line on (file.line = line.line_id) join organism on (line.organism = organism.organism_id);

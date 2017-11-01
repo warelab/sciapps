@@ -13,6 +13,7 @@ import Welcome from './welcome.js';
 import UserWorkflows from './userWorkflows.js';
 import Workflows from './workflows.js';
 import WorkflowBuilder from './workflowBuilder.js';
+import WorkflowLoader from './workflowLoader.js';
 import WorkflowRunner from './workflowRunner.js';
 import Help from './help.js';
 
@@ -57,6 +58,9 @@ const AppsDetail=React.createClass({
 					break;
 				case 'workflowBuilder':
 					markup=<WorkflowBuilder user={user} />
+					break;
+				case 'workflowLoader':
+					markup=<WorkflowLoader user={user} />
 					break;
 				case 'workflowRunner':
 					markup=<WorkflowRunner user={user} />

@@ -59,6 +59,18 @@ const Header=React.createClass({
 		}
 	},
 
+	showWorkflowLoader: function() {
+		AppsActions.showPage('workflowLoader');
+		let title="Loading Scientific Workflows";
+		let url="/?page_id=workflowLoader";
+		if (typeof (history.pushState) !== "undefined") {
+			let obj = { Title: title, Url: url };
+			history.pushState(obj, obj.Title, obj.Url);
+		} else {
+			alert("Browser does not support HTML5.");
+		}
+	},
+
 	showWorkflowRunner: function() {
 		AppsActions.showPage('workflowRunner');
 		WorkflowActions.showWorkflowLoadBox();
@@ -115,7 +127,7 @@ const Header=React.createClass({
 		let userGreeting, userMenu, workflowMenu;
 		let workflowMenuItem=[
 			<MenuItem key='showWorkflowBuilder' eventKey='showWorkflowBuilder' onSelect={this.showWorkflowBuilder}><Glyphicon glyph='wrench' /> Build a workflow</MenuItem>,
-			<MenuItem key='showWorkflowRunner' eventKey='showWorkflowRunner' onSelect={this.showWorkflowRunner}><Glyphicon glyph='cloud-upload' /> Load a workflow</MenuItem>,
+			<MenuItem key='showWorkflowLoader' eventKey='showWorkflowLoader' onSelect={this.showWorkflowLoader}><Glyphicon glyph='cloud-upload' /> Load a workflow</MenuItem>,
 			<MenuItem key='showWorkflows' eventKey='showWorkflows' onSelect={this.showWorkflows}><Glyphicon glyph='th-list' /> Public workflows</MenuItem>
 		];
 		if (user.logged_in) {
