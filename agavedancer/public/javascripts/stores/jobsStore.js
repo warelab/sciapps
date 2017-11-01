@@ -54,7 +54,6 @@ const JobsStore=Reflux.createStore({
 		}.bind(this));
 		this.state.workflow={};
 		this.complete();
-		//Q(axios.post(setting.host_url + '/workflowJob/new', formData, {
 		Q(axios.post('/workflowJob/new', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
@@ -91,7 +90,6 @@ const JobsStore=Reflux.createStore({
 		let setting=_config.setting;
 		this.state.jobs[submitNumber]={appId: appId};
 		this.complete();
-		//Q(axios.post(setting.host_url + '/job/new/' + appId , formData, {
 		Q(axios.post('/job/new/' + appId , formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
@@ -157,7 +155,6 @@ const JobsStore=Reflux.createStore({
 		if (jobDetail && _.includes(['FINISHED','FAILED'], jobDetail.status)) {
 			jobPromise=Q(jobDetail);
 		} else {
-			//jobPromise=Q(axios.get(setting.host_url + '/job/' + jobId, {
 			jobPromise=Q(axios.get('/job/' + jobId, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			}))
@@ -196,7 +193,6 @@ const JobsStore=Reflux.createStore({
 		let jobIds=this.state.jobs.map(function(job) {
 			return job.job_id;
 		});
-		//Q(axios.get(setting.host_url + '/job/save/' + jobIds.join(','), {
 		Q(axios.get('/job/save/' + jobIds.join(','), {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))
@@ -272,7 +268,6 @@ const JobsStore=Reflux.createStore({
 			let jobPromise=this._setJob(jobId);
 			jobOutputsPromise=jobPromise.then(function(jobDetail) {
 				let path='__system__/' + jobDetail.archiveSystem + '/' + jobDetail.archivePath;
-				//return Q(axios.get(setting.host_url + '/browse/' + path, {
 				return Q(axios.get('/browse/' + path, {
 					headers: {'X-Requested-With': 'XMLHttpRequest'},
 				}))
@@ -324,7 +319,6 @@ const JobsStore=Reflux.createStore({
 		if (fileDetail) {
 			filePromise=Q(fileDetail);
 		} else {
-			//filePromise=Q(axios.get(setting.host_url + '/file/' + path, {
 			filePromise=Q(axios.get('/file/' + path, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			}))
@@ -345,7 +339,6 @@ const JobsStore=Reflux.createStore({
 
 	checkWorkflowJobStatus: function(wfId) {
 		let setting=_config.setting;
-		//let jobStatusPromise=Q(axios.get(setting.host_url + '/workflow/' + wfId + '/jobStatus', {
 		let jobStatusPromise=Q(axios.get('/workflow/' + wfId + '/jobStatus', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))

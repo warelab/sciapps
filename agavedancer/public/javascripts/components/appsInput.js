@@ -114,7 +114,7 @@ const AppsInput=React.createClass({
 				value: this.state.textValue,
 				type: 'text',
         buttonBefore: dataStoreButton,
-				placeholder: 'or Enter URL',
+				placeholder: 'or Enter a URL',
 				className: 'form-control',
 				onChange: this.handleTextChange
 			};

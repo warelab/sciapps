@@ -133,12 +133,12 @@ create table file (
 	index(file_id)
 );
 
-insert into file (file_id, system, path, line, type, format, description) values ('9125563603084045850-242ac1111-0001-012', 'data.sciapps.org', 'example_data/maker/test_genome.fasta', '7673478939677757926-242ac1111-0001-012', 'Reference genome', 'fasta', 'A scaled-down genome (test_genome.fasta) that is comprised of the first 300kb of three chromosomes of rice');
-insert into file (file_id, system, path, line, type, format, description) values ('2098345582533939686-242ac1111-0001-012', 'data.sciapps.org', 'example_data/maker/mRNA.fasta', '7673478939677757926-242ac1111-0001-012', 'Annotation evidence', 'fasta', 'mRNA sequences from NCBI');
-insert into file (file_id, system, path, line, type, format, description) values ('7293065577372979686-242ac1111-0001-012', 'data.sciapps.org', 'example_data/maker/msu-irgsp-proteins.fasta', '7673478939677757926-242ac1111-0001-012', 'Annotation evidence', 'fasta', 'Publicly available annotated protein sequences of rice (MSU7.0 and IRGSP1.0)');
-insert into file (file_id, system, path, line, type, format, description) values ('5471780361112251930-242ac1111-0001-012', 'data.sciapps.org', 'example_data/maker/plant_repeats.fasta', '7673478939677757926-242ac1111-0001-012', 'Annotation evidence', 'fasta', 'A collection of plant repeats');
+insert into file (file_id, system, path, line, type, format, description) values ('9125563603084045850-242ac1111-0001-012', 'sciapps.org', 'example_data/maker/test_genome.fasta', '7673478939677757926-242ac1111-0001-012', 'Reference genome', 'fasta', 'A scaled-down genome (test_genome.fasta) that is comprised of the first 300kb of three chromosomes of rice');
+insert into file (file_id, system, path, line, type, format, description) values ('2098345582533939686-242ac1111-0001-012', 'sciapps.org', 'example_data/maker/mRNA.fasta', '7673478939677757926-242ac1111-0001-012', 'Annotation evidence', 'fasta', 'mRNA sequences from NCBI');
+insert into file (file_id, system, path, line, type, format, description) values ('7293065577372979686-242ac1111-0001-012', 'sciapps.org', 'example_data/maker/msu-irgsp-proteins.fasta', '7673478939677757926-242ac1111-0001-012', 'Annotation evidence', 'fasta', 'Publicly available annotated protein sequences of rice (MSU7.0 and IRGSP1.0)');
+insert into file (file_id, system, path, line, type, format, description) values ('5471780361112251930-242ac1111-0001-012', 'sciapps.org', 'example_data/maker/plant_repeats.fasta', '7673478939677757926-242ac1111-0001-012', 'Annotation evidence', 'fasta', 'A collection of plant repeats');
 
 drop view if exists file_view;
-create view file_view as 
-select file.system as system, file.path as path, line.name as line_name, organism.name as organism_name, organism.scientific_name as organism_scientific_name, organism.taxon_id as organism_taxon_id 
+create view file_view as
+select file.system as system, file.path as path, file.type as file_type, file.format as file_format, file.description as file_description, line.name as line_name, organism.name as organism_name, organism.scientific_name as organism_scientific_name, organism.taxon_id as organism_taxon_id
 from file join line on (file.line = line.line_id) join organism on (line.organism = organism.organism_id);
