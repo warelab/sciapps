@@ -21,16 +21,17 @@ const WorkflowLoader=React.createClass({
 	handleFileValueChange: function(event) {
 		this.setState({fileValue: event.target.value});
 		utilities.readAsText(event.target, function(e) {
-			WorkflowActions.setWorkflowSteps(JSON.parse(e.target.result));
+			WorkflowActions.setRemoteWorkflow(e.target.result, 'json');
 		}.bind(this));
 	},
 
 	handleTextValueChange: function(event) {
 		this.setState({textValue: event.target.value});
-		WorkflowActions.setRemoteWorkflow(event.target.value);
+		WorkflowActions.setRemoteWorkflow(event.target.value, 'url');
 	},
 
 	handleSubmit: function() {
+		WorkflowActions.loadRemoteWorkflow();
 		AppsActions.showPage('workflowRunner');
 	},
 
@@ -39,13 +40,13 @@ const WorkflowLoader=React.createClass({
 		let showWorkflowLoadBox=workflowStore.showWorkflowLoadBox;
 		let fileprops={
 			type: 'file',
-			value: this.state.value,
-			className: 'wf-load-box',
+			value: this.state.fileValue,
 			label: 'Upload a workflow json file saved on your computer',
 			onChange: this.handleFileValueChange
 		};
 		let textprops={
 			type: 'text',
+			value: this.state.textValue,
 			label: 'or using an url',
 			onChange: this.handleTextValueChange
 		};

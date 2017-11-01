@@ -116,27 +116,21 @@ sub uncompress_result {
 
 hook on_route_exception => sub {
 	my $e = shift;
-	if (ref($e) eq 'scalar') {
-		raise 'SystemError' => $e;
-	} elsif ($e->can('does') && ($e->does('InvalidCredentials') || $e->does('InvalidRequest'))) {
+	if ($e->can('does') && ($e->does('InvalidCredentials') || $e->does('InvalidRequest'))) {
 		halt(to_json({status => 'error', error => $e->message()}));
-	} else {
+	} elsif ($e->can('rethrow')) {
 		$e->rethrow;
+	} else {
+		raise 'SystemError' => $e;
 	}
 };
 
 hook 'before' => sub {
 	my $path=request->path;
-	#unless(session('cas_user') || $path eq '/' || $path=~m#^/(login|logout|notification)/?#) {
 	if(! session('cas_user') && $path=~m#^/(job|workflowJob)/new/?#) {
 		if (request->is_ajax) {
 			content_type(setting('plugins')->{Ajax}{content_type});
-			try {
-				raise InvalidCredentials => 'no cas user';
-			} catch {
-				my ($e)=@_;
-				halt(to_json({error => $e->message()}));
-			};
+			raise InvalidCredentials => 'no cas user';
 		} else {
 			request->path('/');
 		}
@@ -506,6 +500,17 @@ ajax '/workflow/:id/jobStatus' => sub {
 };
 
 ajax '/workflow/remote' => sub {
+	my $data;
+	my $url=param('_url');
+	my $ua=LWP::UserAgent->new();
+	$ua->timeout(3);
+	my $res=$ua->get($url);
+	if ($res->is_success) {
+		$data=$res->decoded_content;
+	} else {
+		raise InvalidRequest => 'can not fetch json from remote url'; 
+	}
+	return to_json({status => 'success', data => $data});
 };
 
 

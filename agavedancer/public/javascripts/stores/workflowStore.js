@@ -35,6 +35,7 @@ const WorkflowStore=Reflux.createStore({
 			showWorkflowDiagram: false,
 			showWorkflowLoadBox: false,
 			workflowDetail: undefined,
+			remoteWorkflowDetailPromise: undefined,
 			workflowDetailCache: {},
 			workflows: [],
 			build: {},
@@ -162,7 +163,6 @@ const WorkflowStore=Reflux.createStore({
 		formData.append('_workflow_desc',  wf.description);
 		formData.append('_workflow_json',  JSON.stringify(wf));
 
-		//Q(axios.post(setting.host_url + '/workflow/new', formData, {
 		Q(axios.post('/workflow/new', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
@@ -184,7 +184,6 @@ const WorkflowStore=Reflux.createStore({
 
 	deleteWorkflow: function(wfId) {
 		let setting=_config.setting;
-		//Q(axios.get(setting.host_url + '/workflow/' + wfId + '/delete', {
 		Q(axios.get('/workflow/' + wfId + '/delete', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'}
 		}))
@@ -219,22 +218,43 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
-	setRemoteWorkflow: function(formData) {
-		Q(axios.post('/workflow/remote', formData, {
-			headers: {'X-Requested-With': 'XMLHttpRequest'},
-			transformRequest: function(data) { return data; }
-		}))
-		.then(function(res) {
-			if (res.data.error) {
-				return;
-			}
-			let wfDetail=JSON.parse(res.data);
-			this.state.workflowDetail=wfDetail;
-		}.bind(this))
-		.catch(function(error) {
+	setRemoteWorkflow: function(value, type) {
+		let promise;
+		if ('json' === type) {
+			promise=Q(value);
+		} else if ('url' === type) {
+			let formData=new FormData();
+			formData.append('_url', value);
+			promise=Q(axios.post('/workflow/remote', formData, {
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+				transformRequest: function(data) { return data; }
+			}))
+			.then(function(res) {
+				if (res.data.error) {
+					console.log(res.data.error);
+					return;
+				} else if (res.data.status === 'success') {
+					return res.data.data;
+				}
+			}.bind(this))
+			.catch(function(error) {
 				console.log(error);
-		})
-		.done();
+			})
+		}
+		this.state.remoteWorkflowPromise=promise;
+		return promise;
+	},
+
+	loadRemoteWorkflow: function() {
+		if (this.state.remoteWorkflowPromise) {
+			let promise=this.state.remoteWorkflowPromise;
+			promise.then(function(json) {
+				let wfDetail=JSON.parse(json);
+				this.setWorkflowSteps(wfDetail);
+				return wfDetail;
+			}.bind(this))
+			.done();
+		}
 	},
 
 	setWorkflowSteps: function(wfDetail) {
