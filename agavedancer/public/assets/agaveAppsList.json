@@ -263,5 +263,194 @@
         "name": "CloudSTRUCTURE", 
     	"tags": ["Clustering"], 
         "version": "2.3.4"
-    }
+    },
+  {
+    "tags": [
+      "Beta"
+    ],
+    "id": "intersectBed-2.26.0",
+    "label": "intersectBed",
+    "name": "intersectBed",
+    "version": "2.26.0"
+  },
+  {
+    "tags": [
+      "Beta"
+    ],
+    "id": "Picard_MarkDupcates-2.7.0",
+    "label": "Picard_MarkDup",
+    "name": "Picard_MarkDupcates",
+    "version": "2.7.0"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "Picard_MarkDupcates-2.11.0",
+    "label": "Picard_MarkDup",
+    "name": "Picard_MarkDupcates",
+    "version": "2.11.0"
+  },
+  {
+    "tags": [
+      "Beta"
+    ],
+    "id": "HOMER_makeTagDir-4.8.3",
+    "label": "HOMER_makeTagDir",
+    "name": "HOMER_makeTagDir",
+    "version": "4.8.3"
+  },
+  {
+    "tags": [
+      "Beta"
+    ],
+    "id": "HOMER_findPeaks-4.8.3",
+    "label": "HOMER_findPeaks",
+    "name": "HOMER_findPeaks",
+    "version": "4.8.3"
+  },
+  {
+    "tags": [
+      "Beta"
+    ],
+    "id": "HOMER_annoPeaks-4.8.3",
+    "label": "HOMER_annoPeaks",
+    "name": "HOMER_annoPeaks",
+    "version": "4.8.3"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "HOMER_makeTagDir-2015.11.10",
+    "label": "HOMER_makeTagDir",
+    "name": "HOMER_makeTagDir",
+    "version": "2015.11.10"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "HOMER_findPeaks-2015.11.10",
+    "label": "HOMER_findPeaks",
+    "name": "HOMER_findPeaks",
+    "version": "2015.11.10"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "HOMER_annoPeaks-4.9",
+    "label": "HOMER_annoPeaks",
+    "name": "HOMER_annoPeaks",
+    "version": "4.9"
+  },
+  {
+    "tags": [
+      "Beta"
+    ],
+    "id": "BWA_index_mem-0.7.13",
+    "label": "BWA-index-mem",
+    "name": "BWA_index_mem",
+    "version": "0.7.13"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "BWA_index-0.7.13",
+    "label": "BWA-index",
+    "name": "BWA_index",
+    "version": "0.7.13"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "BWA_mem-0.7.13",
+    "label": "BWA_mem",
+    "name": "BWA_mem",
+    "version": "0.7.13"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "FastQC-0.11.5",
+    "label": "FastQC",
+    "name": "FastQC",
+    "version": "0.11.5"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "Scythe-0.991",
+    "label": "Scythe",
+    "name": "Scythe",
+    "version": "0.991"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "Sickle-1.33",
+    "label": "Sickle",
+    "name": "Sickle",
+    "version": "1.33"
+  },
+    {
+    "tags": [
+      "Beta"
+    ],
+    "id": "Ballgown-2.6.0",
+    "label": "Ballgown-2.6.0",
+    "name": "Ballgown",
+    "version": "2.6.0"
+  },
+  {
+    "tags": [
+      "Beta"
+    ],
+    "id": "Taco-merge-0.6.3",
+    "label": "Taco-merge-v0.6.3",
+    "name": "Taco-merge",
+    "version": "0.6.3"
+  },
+  {
+    "tags": [
+      "Beta"
+    ],
+    "id": "StringTie-gtftobigbed-1.0",
+    "label": "StringTie-gtftobigbed-1.0",
+    "name": "StringTie-gtftobigbed",
+    "version": "1.0"
+  },
+  {
+    "tags": [
+      "Beta"
+    ],
+    "id": "StringTie-merge-1.3.1",
+    "label": "StringTie-merge-1.3.1",
+    "name": "StringTie-merge",
+    "version": "1.3.1"
+  },
+  {
+    "tags": [
+      "Beta"
+    ],
+    "id": "StringTie-1.3.1",
+    "label": "StringTie-1.3.1",
+    "name": "StringTie",
+    "version": "1.3.1"
+  },
+  {
+    "tags": [
+      "Beta"
+    ],
+    "id": "star_index_align-2.5.2",
+    "label": "Star-index-align",
+    "name": "star_index_align",
+    "version": "2.5.2"
+  }
 ]
