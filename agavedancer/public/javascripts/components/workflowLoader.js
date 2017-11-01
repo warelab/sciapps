@@ -41,21 +41,21 @@ const WorkflowLoader=React.createClass({
 		let fileprops={
 			type: 'file',
 			value: this.state.fileValue,
-			label: 'Upload a workflow json file saved on your computer',
+			label: 'Select a workflow json file',
 			onChange: this.handleFileValueChange
 		};
 		let textprops={
 			type: 'text',
 			value: this.state.textValue,
-			label: 'or using an url',
+			placeholder: 'or Enter URL',
 			onChange: this.handleTextValueChange
 		};
-		let header="Load a workflow json file";
+		let header="Workflow loading form: load a workflow from a json file";
 		let markup=(
 			<Panel header={header}>
 				<Input {...fileprops} />
 				<Input {...textprops} />
-				<Button bsStyle='primary' onClick={this.handleSubmit}>Load Workflow</Button>;
+				<Button bsStyle='primary' onClick={this.handleSubmit}>Submit</Button>
 			</Panel>
 		);
 		return markup;
