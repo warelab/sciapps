@@ -47,7 +47,7 @@ const WorkflowLoader=React.createClass({
 		let textprops={
 			type: 'text',
 			value: this.state.textValue,
-			placeholder: 'or Enter URL',
+			placeholder: 'or Enter a URL',
 			onChange: this.handleTextValueChange
 		};
 		let header="Workflow loading form: load a workflow from a json file";
