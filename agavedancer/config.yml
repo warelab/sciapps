@@ -43,12 +43,8 @@ plugins:
   Ajax:
     content_type: 'application/json'
   Database:
-    driver: 'mysql'
-    database: 'sciapps'
-    host: 'localhost'
-    username: 'sciapps'
-    password: 'mXPpA9ZM'
-    on_connect_do: ["SET NAMES 'utf8'", "SET CHARACTER SET 'utf8'"]
+    driver: 'SQLite'
+    database: 'database'
     dbi_params:
       RaiseError: 1
       PrintError: 0
