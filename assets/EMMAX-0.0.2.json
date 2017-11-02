@@ -1,0 +1,328 @@
+{
+  "id": "EMMAX-0.0.2",
+  "name": "EMMAX",
+  "icon": null,
+  "uuid": "5722984207304888806-242ac118-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": "debug",
+  "version": "0.0.2",
+  "revision": 7,
+  "isPublic": false,
+  "helpURI": "http://genetics.cs.ucla.edu/emmax/",
+  "label": "EMMAX",
+  "owner": "lwang",
+  "shortDescription": "Efficient Mixed-Model Association eXpedited",
+  "longDescription": "EMMAX is a statistical test for large scale human or model organism association mapping accounting for the sample structure",
+  "tags": [
+    "GWAS"
+  ],
+  "ontology": [],
+  "executionType": "HPC",
+  "executionSystem": "cshl-compute-10",
+  "deploymentPath": "/lwang/applications/emmax/bin",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "emmax_wrapper.sh",
+  "testPath": "emmax_test_wrapper.sh",
+  "checkpointable": false,
+  "lastModified": "2017-04-25T18:13:54.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "tped",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select marker file in Plink tped format",
+        "description": "marker file in plink tped format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "pheno",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select trait file",
+        "description": "trait file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "tfam",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 2,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select map file in Plink tfam format",
+        "description": "map file in Plink tfam format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "covariate",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 3,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select covariate file",
+        "description": "covariate file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "kinship",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 4,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select kinship file",
+        "description": "kinship file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "kin_method",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "BN",
+        "enum_values": [
+          {
+            "BN": "BN"
+          },
+          {
+            "IBS": "IBS"
+          }
+        ]
+      },
+      "details": {
+        "label": "Select kinship estimation method",
+        "description": "Method to estimate kinship matrix",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "header",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "number",
+        "order": 1,
+        "enquote": false,
+        "default": 1,
+        "validator": null
+      },
+      "details": {
+        "label": "Enter number of header lines in trait file",
+        "description": "Number of header lines",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:integer"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "export",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "EMMAX.reml"
+      },
+      "details": {
+        "label": "Output filename",
+        "description": "Numerical file"
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "manp",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "manhattan.plot"
+      },
+      "details": {
+        "label": "Manhattan plot",
+        "description": "File for Manhattan plot"
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "pval",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "EMMAX.ps"
+      },
+      "details": {
+        "label": "Output file with Pvalues",
+        "description": "Pvalues file"
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/EMMAX-0.0.2"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/EMMAX-0.0.2/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%225722984207304888806-242ac118-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/lwang"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/EMMAX-0.0.2/pems"
+    }
+  }
+}

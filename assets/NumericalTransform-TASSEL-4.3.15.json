@@ -1,0 +1,308 @@
+{
+  "id": "NumericalTransform-TASSEL-4.3.15",
+  "name": "NumericalTransform-TASSEL",
+  "icon": null,
+  "uuid": "7366083315625881115-e0bd34dffff8de6-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": "debug",
+  "version": "4.3.15",
+  "revision": 6,
+  "isPublic": false,
+  "helpURI": "http://www.maizegenetics.net",
+  "label": "NumericalTransform",
+  "owner": "lwang",
+  "shortDescription": "Numerical Transform of marker data",
+  "longDescription": "Numerical Transform of marker data using TASSEL and PLINK",
+  "tags": [
+    "GWAS"
+  ],
+  "ontology": [],
+  "executionType": "HPC",
+  "executionSystem": "cshl-compute-10",
+  "deploymentPath": "/lwang/applications/tassel/nt",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "nt_wrapper.sh",
+  "testPath": "nt_test_wrapper.sh",
+  "checkpointable": false,
+  "lastModified": "2017-04-03T21:51:20.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "h",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select marker file",
+        "description": "marker file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "mapfile",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 1,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select map file (if marker file in Plink or Flapjack format)",
+        "description": "map file for marker file in Plink or Flapjack format",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "markerformat",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "Hapmap",
+        "enum_values": [
+          {
+            "Hapmap": "Hapmap"
+          },
+          {
+            "HDF5": "HDF5"
+          },
+          {
+            "VCF": "VCF"
+          },
+          {
+            "Plink": "Plink"
+          },
+          {
+            "Flapjack": "Flapjack"
+          }
+        ]
+      },
+      "details": {
+        "label": "Select format of marker file",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "numericalGenoTransform",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "enumeration",
+        "order": 1,
+        "enquote": false,
+        "default": "collapse",
+        "enum_values": [
+          {
+            "collapse": "collapse"
+          },
+          {
+            "separated": "separated"
+          }
+        ]
+      },
+      "details": {
+        "label": "Select transform method",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "minfreq",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "number",
+        "order": 2,
+        "enquote": false,
+        "default": 0.05,
+        "validator": null
+      },
+      "details": {
+        "label": "Enter minimal allele frequency for filtering",
+        "description": null,
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:float"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "export1",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "nt.txt"
+      },
+      "details": {
+        "label": "Output file1",
+        "description": "output1 filename"
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "export3",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "nt.txt.tfam"
+      },
+      "details": {
+        "label": "Output file3",
+        "description": "output3 filename"
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "export2",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "mlmm_nt.txt"
+      },
+      "details": {
+        "label": "Output file2",
+        "description": "output2 filename"
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "export4",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "nt.txt.tped"
+      },
+      "details": {
+        "label": "Output file4",
+        "description": "output4 filename"
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/NumericalTransform-TASSEL-4.3.15"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/NumericalTransform-TASSEL-4.3.15/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%227366083315625881115-e0bd34dffff8de6-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/lwang"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/NumericalTransform-TASSEL-4.3.15/pems"
+    }
+  }
+}

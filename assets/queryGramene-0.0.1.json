@@ -1,0 +1,454 @@
+{
+  "id": "queryGramene-0.0.1",
+  "name": "queryGramene",
+  "icon": null,
+  "uuid": "779240180914590181-242ac115-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 1,
+  "defaultMemoryPerNode": 1,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": "debug",
+  "version": "0.0.1",
+  "revision": 11,
+  "isPublic": false,
+  "helpURI": "http://www.gramene.org",
+  "label": "queryGramene",
+  "owner": "lwang",
+  "shortDescription": "Query the Gramene database",
+  "longDescription": "Query the Gramene database and return the intervals for each region in bed format",
+  "tags": [
+    "GWAS"
+  ],
+  "ontology": [],
+  "executionType": "HPC",
+  "executionSystem": "cshl-compute-10",
+  "deploymentPath": "/lwang/applications/gramene",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "queryGramene_wrapper.sh",
+  "testPath": "queryGramene_test_wrapper.sh",
+  "checkpointable": false,
+  "lastModified": "2017-04-27T10:12:31.000-05:00",
+  "modules": [],
+  "available": true,
+  "inputs": [
+    {
+      "id": "geneslist",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": false,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Gene list file",
+        "description": "File with list of gene names in each row",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "species",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "4577",
+        "enum_values": [
+          {
+            "4577": "Zea mays (AGPv3)"
+          },
+          {
+            "4558": "Sorghum bicolor (Sorbi1)"
+          },
+          {
+            "3702": "Arabidopsis thaliana (TAIR10)"
+          },
+          {
+            "39947": "Oryza sativa Japonica (IRGSP-1.0)"
+          },
+          {
+            "4565": "Triticum aestivum (IWGC1.0)"
+          }
+        ]
+      },
+      "details": {
+        "label": "Genome",
+        "description": "Choose the Genome",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "canonical",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 1,
+        "enquote": false,
+        "default": "canonical",
+        "enum_values": [
+          {
+            "canonical": "canonical"
+          },
+          {
+            "all": "all"
+          }
+        ]
+      },
+      "details": {
+        "label": "Transcript type",
+        "description": "Choose either canonical or all transcripts (isoforms)",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    },
+    {
+      "id": "CDS",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 2,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "CDS",
+        "description": "CDS region",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "utr3",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 3,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "UTR3",
+        "description": "3-prime UTR region",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "utr5",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 4,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "UTR5",
+        "description": "5-prime UTR region",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "intron",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 5,
+        "enquote": false,
+        "default": true,
+        "validator": null
+      },
+      "details": {
+        "label": "Intron",
+        "description": "Intron region",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "exon",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 6,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Exon",
+        "description": "Exon region",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    },
+    {
+      "id": "gene",
+      "value": {
+        "visible": true,
+        "required": false,
+        "type": "bool",
+        "order": 7,
+        "enquote": false,
+        "default": false,
+        "validator": null
+      },
+      "details": {
+        "label": "Gene",
+        "description": "Gene region",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 0,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:boolean"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "cds_output",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "cds.bed"
+      },
+      "details": {
+        "label": "List of CDSs in bed format",
+        "description": "Output filename for CDS"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "utr3_output",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "utr3.bed"
+      },
+      "details": {
+        "label": "List of 3 prime UTRs in bed format",
+        "description": "Output filename for 3 prime UTR"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "gene_output",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "gene.bed"
+      },
+      "details": {
+        "label": "List of genes in bed format",
+        "description": "Output filename"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "utr5_output",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "utr5.bed"
+      },
+      "details": {
+        "label": "List of 5 prime UTRs in bed format",
+        "description": "Output filename for 5 prime UTR"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "intron_output",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "intron.bed"
+      },
+      "details": {
+        "label": "List of introns in bed format",
+        "description": "Output filename for introns"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    },
+    {
+      "id": "exon_output",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "exon.bed"
+      },
+      "details": {
+        "label": "List of exons in bed format",
+        "description": "Output filename for exons"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/queryGramene-0.0.1"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/queryGramene-0.0.1/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%22779240180914590181-242ac115-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/lwang"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/queryGramene-0.0.1/pems"
+    }
+  }
+}
