@@ -1,4 +1,27 @@
 {
+    "_links": {
+        "executionSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/sciapps.org"
+        },
+        "history": {
+            "href": "https://agave.iplantc.org/apps/v2/BWA_mem_cshl-0.7.13/history"
+        },
+        "metadata": {
+            "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%2284044466582187545-242ac118-0001-005%22%7D"
+        },
+        "owner": {
+            "href": "https://agave.iplantc.org/profiles/v2/lwang"
+        },
+        "permissions": {
+            "href": "https://agave.iplantc.org/apps/v2/BWA_mem_cshl-0.7.13/pems"
+        },
+        "self": {
+            "href": "https://agave.iplantc.org/apps/v2/BWA_mem_cshl-0.7.13"
+        },
+        "storageSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+        }
+    },
     "available": true,
     "checkpointable": false,
     "defaultMaxRunTime": "24:00:00",
@@ -12,6 +35,7 @@
     "executionType": "HPC",
     "helpURI": "https://github.com/ianimal/pipelines",
     "icon": null,
+    "id": "BWA_mem_cshl-0.7.13",
     "inputs": [
         {
             "details": {
@@ -98,28 +122,36 @@
             }
         }
     ],
+    "isPublic": false,
     "label": "Single Animal Variant Pipeline BWA MEM step",
+    "lastModified": "2017-11-02T20:01:33.000-05:00",
     "longDescription": "Prepare bam and bam.bai files from fasta or fastq single/paired inputs",
-    "modules": [
-    ],
+    "modules": [],
     "name": "BWA_mem_cshl",
     "ontology": [
         "http://sswapmeet.sswap.info/agave/apps/Application"
     ],
     "outputs": [
-     {
-      "id": "bwa_align_out",
-      "value": {
-        "validator": null,
-        "order": 0,
-        "default": "bwa_align_out"
-      },
-      "details": {
-        "label": "Alignment output",
-        "description": "Aligned bam file with index file"
-      }
-     }
+        {
+            "details": {
+                "description": "Aligned bam file with index file",
+                "label": "Alignment output"
+            },
+            "id": "bwa_align_out",
+            "semantics": {
+                "fileTypes": [],
+                "maxCardinality": -1,
+                "minCardinality": 0,
+                "ontology": []
+            },
+            "value": {
+                "default": "bwa_align_out",
+                "order": 0,
+                "validator": null
+            }
+        }
     ],
+    "owner": "lwang",
     "parallelism": "SERIAL",
     "parameters": [
         {
@@ -149,7 +181,7 @@
             }
         }
     ],
-    "revision": 1,
+    "revision": 6,
     "shortDescription": "Prepare bam and bam.bai files",
     "tags": [
         "variants",
@@ -157,6 +189,6 @@
     ],
     "templatePath": "bwa-mem.template",
     "testPath": "test-savp-refprep.sh",
-    "uuid": "19530208761998875-242ac115-0001-005",
+    "uuid": "84044466582187545-242ac118-0001-005",
     "version": "0.7.13"
 }
