@@ -113,7 +113,7 @@
                 ]
             },
             "value": {
-                "default": "reference.tar",
+                "default": "",
                 "enquote": false,
                 "order": 3,
                 "required": true,

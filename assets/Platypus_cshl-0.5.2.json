@@ -57,7 +57,7 @@
                 ]
             },
             "value": {
-                "default": "foo.bam",
+                "default": "",
                 "enquote": false,
                 "order": 1,
                 "required": true,
@@ -85,7 +85,7 @@
                 ]
             },
             "value": {
-                "default": "ref.tar",
+                "default": "",
                 "enquote": false,
                 "order": 3,
                 "required": true,
