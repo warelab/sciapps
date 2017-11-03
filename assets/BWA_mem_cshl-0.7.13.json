@@ -97,7 +97,7 @@
             "details": {
                 "argument": null,
                 "description": "",
-                "label": "Reference .tar w/ (.fa .dict .fa.{.amb .ann .bwt .fai .pac .sa})",
+                "label": "Reference folder containing .tar w/ (.fa .dict .fa{.amb .ann .bwt .fai .pac .sa})",
                 "repeatArgument": false,
                 "showArgument": false
             },
