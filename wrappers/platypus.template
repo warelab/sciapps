@@ -11,7 +11,7 @@
 #--------------------------------------------
 # Inputs and parameters
 #--------------------------------------------
-set -x
+#set -x
 
 # The bam file to analyze - required
 inp_name=$(ls ${inputBam})
