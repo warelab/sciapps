@@ -21,8 +21,8 @@ if [ ${data_ext} = "gz" ]; then gunzip ${data_b}; data_b=${data_b%.*}; fi
 
 # get input name
 inp_name=$(ls ${reference_bundle})
-inp_array=(${inp_name////})
-inp_name=${inp_array[0]}
+#inp_array=(${inp_name////})
+#inp_name=${inp_array[0]}
 mv ${reference_bundle}/${inp_name} .
 rm -rf ${reference_bundle}
 reference_bundle=${inp_name}

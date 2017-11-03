@@ -15,8 +15,8 @@
 
 # The bam file to analyze - required
 inp_name=$(ls ${inputBam})
-inp_array=(${inp_name////})
-inp_name=${inp_array[0]}
+#inp_array=(${inp_name////})
+#inp_name=${inp_array[0]}
 mv ${inputBam}/${inp_name} .
 rm -rf ${inputBam}
 inputBam=${inp_name}
@@ -26,8 +26,8 @@ inputBam=${inp_name}
 # Warning - bundle must be have common base name as contents
 # Warning - contents must include .dict   .fa    .fa.fai    .fa.{amb, ann, bwt, pac, sa}
 inp_name=$(ls ${reference_bundle})
-inp_array=(${inp_name////})
-inp_name=${inp_array[0]}
+#inp_array=(${inp_name////})
+#inp_name=${inp_array[0]}
 mv ${reference_bundle}/${inp_name} .
 rm -rf ${reference_bundle}
 reference_bundle=${inp_name}
