@@ -14,23 +14,45 @@
 #set -x
 
 # The bam file to analyze - required
-inp_name=$(ls ${inputBam})
-#inp_array=(${inp_name////})
-#inp_name=${inp_array[0]}
-mv ${inputBam}/${inp_name} .
-rm -rf ${inputBam}
-inputBam=${inp_name}
+# assume directly fed input is file all the time
+if [ -d ${inputBam} ]; then
+	inp_name=$(ls ${inputBam})
+	#inp_array=(${inp_name////})
+	#inp_name=${inp_array[0]}
+	# deal with situation when inputBam and inp_name are the same
+	if [ "$inputBam" == "$inp_name" ]; then
+		mv ${inputBam}/${inp_name} temp
+		rm -rf ${inputBam}
+		inputBam=${inp_name}
+		mv temp $inputBam
+	else
+		mv ${inputBam}/${inp_name} .
+		rm -rf ${inputBam}
+		inputBam=${inp_name}
+	fi
+fi
 
 # The reference files.  - required
 # Warning - must be the same as used to create the bam
 # Warning - bundle must be have common base name as contents
 # Warning - contents must include .dict   .fa    .fa.fai    .fa.{amb, ann, bwt, pac, sa}
-inp_name=$(ls ${reference_bundle})
-#inp_array=(${inp_name////})
-#inp_name=${inp_array[0]}
-mv ${reference_bundle}/${inp_name} .
-rm -rf ${reference_bundle}
-reference_bundle=${inp_name}
+# assume directly fed input is file all the time
+if [ -d ${reference_bundle} ]; then
+	inp_name=$(ls ${reference_bundle})
+	#inp_array=(${inp_name////})
+	#inp_name=${inp_array[0]}
+        # deal with situation when reference_bundle and inp_name are the same
+        if [ "$reference_bundle" == "$inp_name" ]; then
+		mv ${reference_bundle}/${inp_name} temp
+		rm -rf ${reference_bundle}
+		reference_bundle=${inp_name}
+		mv temp $reference_bundle
+	else
+		mv ${reference_bundle}/${inp_name} .
+		rm -rf ${reference_bundle}
+		reference_bundle=${inp_name}
+	fi
+fi
 
 # number of cores to use per function
 n=8

@@ -13,6 +13,37 @@ echo ${cleanup}
 
 ## PRE-PROCESSING INPUTS
 
+# Get read file if preprocessed 
+if [ -d "$data_a" ]; then
+	inp_name=$(ls $data_a)
+	# deal with situation when data_a and inp_name are the same
+	if [ "$data_a" == "$inp_name" ]; then
+		mv $data_a/$inp_name temp
+		rm -rf $data_a
+        	data_a=${inp_name}
+		mv temp $data_a
+	else
+		mv $data_a/$inp_name .
+		rm -rf $data_a
+		data_a=${inp_name}
+	fi
+fi
+
+if [ -d "$data_b" ]; then
+        inp_name=$(ls $data_b)
+	# deal with situation when data_b and inp_name are the same
+        if [ "$data_b" == "$inp_name" ]; then
+                mv $data_b/$inp_name temp
+                rm -rf $data_b
+                data_b=${inp_name}
+                mv temp $data_b
+        else
+        	mv $data_b/$inp_name .
+        	rm -rf $data_b
+        	data_b=${inp_name}
+	fi
+fi
+
 # gunzip input files if needed
 data_ext="${data_a##*.}"
 if [ ${data_ext} = "gz" ]; then gunzip ${data_a}; data_a=${data_a%.*}; fi
@@ -20,12 +51,22 @@ data_ext="${data_b##*.}"
 if [ ${data_ext} = "gz" ]; then gunzip ${data_b}; data_b=${data_b%.*}; fi
 
 # get input name
-inp_name=$(ls ${reference_bundle})
-#inp_array=(${inp_name////})
-#inp_name=${inp_array[0]}
-mv ${reference_bundle}/${inp_name} .
-rm -rf ${reference_bundle}
-reference_bundle=${inp_name}
+if [ -d ${reference_bundle} ]; then
+	inp_name=$(ls ${reference_bundle})
+	#inp_array=(${inp_name////})
+	#inp_name=${inp_array[0]}
+        # deal with situation when reference_bundle and inp_name are the same
+        if [ "$reference_bundle" == "$inp_name" ]; then
+                mv ${reference_bundle}/${inp_name} temp
+                rm -rf ${reference_bundle}
+                reference_bundle=${inp_name}
+                mv temp $reference_bundle
+        else
+                mv ${reference_bundle}/${inp_name} .
+                rm -rf ${reference_bundle}
+                reference_bundle=${inp_name}
+        fi
+fi
 
 # untar reference bundle
 tar -xvf ${reference_bundle}
