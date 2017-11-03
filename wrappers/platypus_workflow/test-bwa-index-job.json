@@ -5,7 +5,7 @@
     "archive": false,
     "archivePath": "",
     "inputs": {
-        "referenceFasta": "agave://data.iplantcollaborative.org/shared/iplant_training/savp_example_data/e-coli-K-12.fa"
+        "referenceFasta": "agave://sciapps.org/example_data/platypus/e-coli-K-12.fa.gz"
     },
     "parameters": {
     }
