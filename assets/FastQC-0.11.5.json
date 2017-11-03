@@ -68,7 +68,7 @@
     ],
     "isPublic": false,
     "label": "FastQC",
-    "lastModified": "2017-11-01T15:01:47.000-05:00",
+    "lastModified": "2017-11-03T10:02:51.000-05:00",
     "longDescription": "A quality control tool for high throughput sequence data",
     "modules": [],
     "name": "FastQC",
@@ -153,7 +153,7 @@
             }
         }
     ],
-    "revision": 2,
+    "revision": 3,
     "shortDescription": "Quality control",
     "tags": [
         "Beta"
