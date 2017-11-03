@@ -1,0 +1,69 @@
+## INPUTS
+#set -x
+data_a=${inputSequence1}
+data_b=${inputSequence2}  
+reference_bundle=${referenceBundle}
+
+## INPUT PARAMETERS
+barcode=${inputBarcode} 
+cleanup=${cleanupParameter}
+
+echo "Clean up parameter is now set to:"
+echo ${cleanup}
+
+## PRE-PROCESSING INPUTS
+
+# gunzip input files if needed
+data_ext="${data_a##*.}"
+if [ ${data_ext} = "gz" ]; then gunzip ${data_a}; data_a=${data_a%.*}; fi
+data_ext="${data_b##*.}"
+if [ ${data_ext} = "gz" ]; then gunzip ${data_b}; data_b=${data_b%.*}; fi
+
+# get input name
+inp_name=$(ls ${reference_bundle})
+inp_array=(${inp_name////})
+inp_name=${inp_array[0]}
+mv ${reference_bundle}/${inp_name} .
+rm -rf ${reference_bundle}
+reference_bundle=${inp_name}
+
+# untar reference bundle
+tar -xvf ${reference_bundle}
+ref=`echo "$reference_bundle" | sed 's/.tar//g'`
+reference=${ref}.fa
+dictionary=${ref}.dict
+
+# Fixed parameters
+n=8		# number of cores to use per function (40 tested as optimal on LS5.  Hyper-threading allows up to 48)
+
+## MAIN FUNCTIONS
+
+# Check if not paired
+if [ -z ${data_b} ] 
+then
+    singularity exec -B /scratch:/scratch /scratch/tacc/images/bwa_0.7.13--1.img \
+	bwa mem -t ${n} ${reference} ${data_a} > out.sam
+else
+    singularity exec -B /scratch:/scratch /scratch/tacc/images/bwa_0.7.13--1.img \
+	bwa mem -t ${n} ${reference} ${data_a} ${data_b} > out.sam
+fi
+
+singularity exec -B /scratch:/scratch /scratch/tacc/images/samtools_1.5--2.img \
+	samtools view -bhS -@${n} out.sam > out1.sam
+
+singularity exec -B /scratch:/scratch /scratch/tacc/images/samtools_1.5--2.img \
+	samtools sort -@${n} out1.sam > out_fasta_sorted.bam
+
+rm out.sam out1.sam
+
+singularity exec -B /scratch:/scratch /scratch/tacc/images/picard_2.11.0--py27_0.img picard AddOrReplaceReadGroups  INPUT=out_fasta_sorted.bam OUTPUT=${barcode}.mem.bam RGLB=1 RGPL=illumina RGPU=all RGSM=${barcode} VALIDATION_STRINGENCY=SILENT
+
+#samtools index ${barcode}.mem.bam
+
+# move output to output_id folder
+output_id1="bwa_align_out"
+mkdir ${output_id1}
+mv ${barcode}.mem.bam ${output_id1}/.
+
+# Remove temporary and input files upon exit
+trap "rm -rf ${data_a} ${data_b} out_fasta_sorted.bam ${ref} ${ref}.* ${rb}.* *.template *.sh" exit

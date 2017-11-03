@@ -1,0 +1,68 @@
+#---------------------------------------------
+# Script for variant calling 
+#
+# Original author: marlies dolezal (may-june 2013)
+# Alterations: christine baes (june, july, august 2013)
+# Modifications: eric fritz-waters (september, october 2013)
+# Testing mods for tacc systems:james carson (january 2015 - march 2016)
+# Testing SciApps workflow liya wang (november 2017)
+#---------------------------------------------
+
+#--------------------------------------------
+# Inputs and parameters
+#--------------------------------------------
+set -x
+
+# The bam file to analyze - required
+inp_name=$(ls ${inputBam})
+inp_array=(${inp_name////})
+inp_name=${inp_array[0]}
+mv ${inputBam}/${inp_name} .
+rm -rf ${inputBam}
+inputBam=${inp_name}
+
+# The reference files.  - required
+# Warning - must be the same as used to create the bam
+# Warning - bundle must be have common base name as contents
+# Warning - contents must include .dict   .fa    .fa.fai    .fa.{amb, ann, bwt, pac, sa}
+inp_name=$(ls ${reference_bundle})
+inp_array=(${inp_name////})
+inp_name=${inp_array[0]}
+mv ${reference_bundle}/${inp_name} .
+rm -rf ${reference_bundle}
+reference_bundle=${inp_name}
+
+# number of cores to use per function
+n=8
+
+# memory per function
+m=48
+
+#---------------------------------------------
+# PARAMETER FILES
+#---------------------------------------------
+bull=`echo "$inputBam" | sed 's/.bam//g'`
+
+# eventually update the following lines to access other types of bundles
+tar -xvf $reference_bundle
+ref=`echo "$reference_bundle" | sed 's/.tar//g'`
+reference=${ref}.fa
+dictionary=${ref}.dict
+
+# index
+singularity exec -B /scratch:/scratch /scratch/tacc/images/samtools_1.5--2.img \
+	samtools index $inputBam
+
+# run
+singularity exec -B /scratch:/scratch /scratch/tacc/images/platypus-variant_0.8.1.1--htslib1.6_0.img \
+	platypus callVariants --nCPU=${n} --refFile=${reference} --bamFiles=$inputBam \
+	--output=${bull}.platypus.vcf 
+
+# move output to output_id folder
+output_id1="platypus_out"
+mkdir ${output_id1}
+mv ${bull}.platypus.vcf ${output_id1}/.
+
+# Remove temporary and input files upon exit
+trap "rm -rf $inputBam *.bai $ref.* *.template *.sh" exit
+	

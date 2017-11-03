@@ -1,0 +1,30 @@
+#----
+# Script for creating tar bundle of reference fasta and its index files for savp pipeline
+# Creates index files
+# Bundles everything up
+#----
+#set -x
+
+ref=${referenceFasta}
+
+# is input compressed? if so, uncompress and update with new filename
+ref_ext="${ref##*.}"
+if [ ${ref_ext} = "gz" ]; then gunzip ${ref}; ref=${ref%.*}; fi
+
+# standardize extension to .fa
+rb="${ref%%.*}"   # reference basename
+mv ${ref} ${rb}.fa
+ref=${rb}.fa
+
+singularity exec -B /scratch:/scratch /scratch/tacc/images/samtools_1.5--2.img samtools faidx ${ref}
+singularity exec -B /scratch:/scratch /scratch/tacc/images/bwa_0.7.13--1.img bwa index ${ref}
+singularity exec -B /scratch:/scratch /scratch/tacc/images/picard_2.11.0--py27_0.img picard CreateSequenceDictionary  R= ${ref} O= ${rb}.dict
+
+# Compress and move into the output_id folder
+tar -cf ${rb}.tar ${ref} ${ref}.fai ${rb}.dict ${ref}.amb ${ref}.ann ${ref}.bwt ${ref}.pac ${ref}.sa
+output_id1="bwa_index"
+mkdir ${output_id1}
+mv ${rb}.tar ${output_id1}/.
+
+# Remove temporary and input files upon exit
+trap "rm -rf ${ref} ${ref}.* ${rb}.* *.template *.sh" exit

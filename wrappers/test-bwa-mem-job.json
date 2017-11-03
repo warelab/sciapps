@@ -1,0 +1,16 @@
+{
+    "jobName": "test",
+    "softwareName": "BWA_mem_cshl-0.7.13",
+    "requestedTime": "04:00:00",
+    "archive": false,
+    "archivePath": "",
+    "inputs": {
+	"inputSequence1": "agave://sciapps.org/example_data/GATK/SRR2601691_1.fastq",
+        "inputSequence2": "agave://sciapps.org/example_data/GATK/SRR2601691_2.fastq",
+        "referenceBundle": "https://agave.iplantc.org/jobs/v2/4302860761918214631-242ac114-0001-007/outputs/media/bwa_index"
+    },
+    "parameters": {
+        "inputBarcode": "SRR2601691",
+        "cleanupParameter": true
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "jobName": "test",
+    "softwareName": "Platypus_cshl-0.5.2",
+    "requestedTime": "04:00:00",
+    "archive": false,
+    "archivePath": "",
+    "inputs": {
+        "inputBam": "https://agave.iplantc.org/jobs/v2/5014760112449982951-242ac114-0001-007/outputs/media/bwa_align_out",
+        "reference_bundle": "https://agave.iplantc.org/jobs/v2/4302860761918214631-242ac114-0001-007/outputs/media/bwa_index"
+    },
+    "parameters": {
+    }
+}

@@ -1,0 +1,112 @@
+{
+ "defaultMemoryPerNode":64,
+ "defaultProcessorsPerNode":24,
+ "defaultMaxRunTime":"24:00:00",
+ "defaultNodeCount":1,
+ "defaultQueue":"debug",
+ "deploymentPath":"lwang/applications/savp",
+ "deploymentSystem":"data.iplantcollaborative.org",
+ "executionSystem":"sciapps.org",
+ "executionType":"HPC",
+ "helpURI":"http://www.broadinstitute.org/gatk",
+ "label": "Single Animal Variant Pipeline",
+ "longDescription":"Platypus variant callers",
+ "modules":[],
+ "name":"Platypus_cshl",
+ "ontology":["http://sswapmeet.sswap.info/agave/apps/Application"],
+ "parallelism":"SERIAL",
+ "shortDescription":"Detect variants in bam",
+ "storageSystem":"data.iplantcollaborative.org",
+ "tags":["variants","NGS"],
+ "templatePath":"platypus.template",
+ "testPath":"test-savp-refprep.sh",
+ "version":"0.5.2",
+ "inputs":[
+    {"id":"inputBam",
+     "value":
+        {"default":"foo.bam",
+         "order":1,
+         "required":true,
+         "validator":"",
+         "visible":true},
+     "semantics":
+        {"ontology":["http://sswapmeet.sswap.info/mime/application/X-bam"],
+         "minCardinality":1,
+         "fileTypes":["raw-0"]},
+     "details":
+        {"description":"",
+         "label":"The BAM file to variant call",
+         "argument":null,
+         "showArgument":false}},
+     {"id":"reference_bundle",
+     "value":
+        {"default":"ref.tar",
+         "order":3,
+         "required":true,
+         "validator":"",
+         "visible":true},
+     "semantics":
+        {"ontology":["http://sswapmeet.sswap.info/mime/application/X-tar"],
+         "minCardinality":1,
+         "fileTypes":["raw-0"]},
+     "details":
+        {"description":"",
+         "label":"Reference .tar w/ (.fa .dict .fa.{.amb .ann .bwt .fai .pac .sa})",
+         "argument":null,
+         "showArgument":false}},
+    {"id":"knownVariants",
+     "value":
+        {"default":"",
+         "order":4,
+         "required":false,
+         "visible":true},
+     "semantics":
+        {"ontology":["http://sswapmeet.sswap.info/mime/application/X-vcf"],
+         "fileTypes":["raw-0"]},
+     "details":
+        {"description":"",
+         "label":"Known variants - optional; skips BaseRecalibrator if blank",
+         "argument":null,
+         "showArgument":false}}],
+ "parameters":[
+    {"id":"regionName",
+     "value":
+        {"default":"",
+         "order":1,
+         "required":false,
+         "type":"string",
+         "validator":"",
+         "visible":true},
+     "semantics":
+        {"ontology":["xs:string"]},
+     "details":
+        {"description":null,
+         "label":"Region name - optional; processes complete .bam if blank",
+         "argument":null,
+         "showArgument":false}}
+ ],
+ "outputs":[
+     {
+      "id": "platypus_out",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "platypus_out"
+      },
+      "details": {
+        "label": "Platypus_output",
+        "description": "Platypus output VCF file"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+     }
+   }
+ ]
+ }

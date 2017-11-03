@@ -1,0 +1,162 @@
+{
+    "available": true,
+    "checkpointable": false,
+    "defaultMaxRunTime": "24:00:00",
+    "defaultMemoryPerNode": 64,
+    "defaultNodeCount": 1,
+    "defaultProcessorsPerNode": 24,
+    "defaultQueue": "debug",
+    "deploymentPath": "lwang/applications/savp",
+    "deploymentSystem": "data.iplantcollaborative.org",
+    "executionSystem": "sciapps.org",
+    "executionType": "HPC",
+    "helpURI": "https://github.com/ianimal/pipelines",
+    "icon": null,
+    "inputs": [
+        {
+            "details": {
+                "argument": null,
+                "description": "",
+                "label": "A fasta or fastq file. Can be gzipped.",
+                "repeatArgument": false,
+                "showArgument": false
+            },
+            "id": "inputSequence1",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "http://sswapmeet.sswap.info/mime/application/X-fastq"
+                ]
+            },
+            "value": {
+                "default": "",
+                "enquote": false,
+                "order": 1,
+                "required": true,
+                "validator": null,
+                "visible": true
+            }
+        },
+        {
+            "details": {
+                "argument": null,
+                "description": "",
+                "label": "Optional paired fasta or fastq file. Can be gzipped.",
+                "repeatArgument": false,
+                "showArgument": false
+            },
+            "id": "inputSequence2",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "http://sswapmeet.sswap.info/mime/application/X-fastq"
+                ]
+            },
+            "value": {
+                "default": "",
+                "enquote": false,
+                "order": 2,
+                "required": false,
+                "validator": null,
+                "visible": true
+            }
+        },
+        {
+            "details": {
+                "argument": null,
+                "description": "",
+                "label": "Reference .tar w/ (.fa .dict .fa.{.amb .ann .bwt .fai .pac .sa})",
+                "repeatArgument": false,
+                "showArgument": false
+            },
+            "id": "referenceBundle",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "http://sswapmeet.sswap.info/mime/application/X-tar"
+                ]
+            },
+            "value": {
+                "default": "reference.tar",
+                "enquote": false,
+                "order": 3,
+                "required": true,
+                "validator": "",
+                "visible": true
+            }
+        }
+    ],
+    "label": "Single Animal Variant Pipeline BWA MEM step",
+    "longDescription": "Prepare bam and bam.bai files from fasta or fastq single/paired inputs",
+    "modules": [
+    ],
+    "name": "BWA_mem_cshl",
+    "ontology": [
+        "http://sswapmeet.sswap.info/agave/apps/Application"
+    ],
+    "outputs": [
+     {
+      "id": "bwa_align_out",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "bwa_align_out"
+      },
+      "details": {
+        "label": "Alignment output",
+        "description": "Aligned bam file with index file"
+      }
+     }
+    ],
+    "parallelism": "SERIAL",
+    "parameters": [
+        {
+            "details": {
+                "argument": null,
+                "description": null,
+                "label": "Barcode. Will be base of output filename",
+                "repeatArgument": false,
+                "showArgument": false
+            },
+            "id": "inputBarcode",
+            "semantics": {
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "xs:string"
+                ]
+            },
+            "value": {
+                "default": "ID",
+                "enquote": false,
+                "order": 1,
+                "required": true,
+                "type": "string",
+                "validator": null,
+                "visible": true
+            }
+        }
+    ],
+    "revision": 1,
+    "shortDescription": "Prepare bam and bam.bai files",
+    "tags": [
+        "variants",
+        "NGS"
+    ],
+    "templatePath": "bwa-mem.template",
+    "testPath": "test-savp-refprep.sh",
+    "uuid": "19530208761998875-242ac115-0001-005",
+    "version": "0.7.13"
+}

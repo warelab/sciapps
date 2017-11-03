@@ -1,0 +1,87 @@
+{
+    "available": true,
+    "checkpointable": false,
+    "defaultMaxRunTime": "24:00:00",
+    "defaultMemoryPerNode": 32,
+    "defaultNodeCount": 1,
+    "defaultProcessorsPerNode": 16,
+    "defaultQueue": "debug",
+    "deploymentPath": "lwang/applications/savp",
+    "deploymentSystem": "data.iplantcollaborative.org",
+    "executionSystem": "sciapps.org",
+    "executionType": "HPC",
+    "helpURI": "http://bio-bwa.sourceforge.net/bwa.shtml",
+    "icon": null,
+    "inputs": [
+        {
+            "details": {
+                "argument": null,
+                "description": "",
+                "label": "Reference fasta",
+                "repeatArgument": false,
+                "showArgument": false
+            },
+            "id": "referenceFasta",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "http://sswapmeet.sswap.info/mime/application/X-fasta"
+                ]
+            },
+            "value": {
+                "default": "",
+                "enquote": false,
+                "order": 0,
+                "required": true,
+                "validator": null,
+                "visible": true
+            }
+        }
+    ],
+    "label": "Prepare index files with BWA",
+    "longDescription": "Index reference using samtools faidx, bwa index, and CreateSequenceDictionary. Bundles all files into tar",
+    "modules": [
+    ],
+    "name": "BWA_index_cshl",
+    "ontology": [
+        "http://sswapmeet.sswap.info/agave/apps/Application"
+    ],
+    "outputs": [
+        {
+            "details": {
+                "description": "index file",
+                "label": "Compressed index file"
+            },
+            "id": "bwa_index",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "http://sswapmeet.sswap.info"
+                ]
+            },
+            "value": {
+                "default": "bwa_index",
+                "order": 0,
+                "validator": null
+            }
+        }
+    ],
+    "parallelism": "SERIAL",
+    "parameters": [],
+    "revision": 1,
+    "shortDescription": "Index reference files; bundle into tar",
+    "tags": [
+        "NGS"
+    ],
+    "templatePath": "bwa-index.template",
+    "testPath": "test-savp-refprep.sh",
+    "version": "0.7.13"
+}
