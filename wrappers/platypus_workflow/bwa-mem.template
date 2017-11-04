@@ -6,42 +6,22 @@ reference_bundle=${referenceBundle}
 
 ## INPUT PARAMETERS
 barcode=${inputBarcode} 
-cleanup=${cleanupParameter}
-
-echo "Clean up parameter is now set to:"
-echo ${cleanup}
 
 ## PRE-PROCESSING INPUTS
 
 # Get read file if preprocessed 
-if [ -d "$data_a" ]; then
+if [ -d "$data_a" -a $(ls $data_a | wc -l) == 1 ]; then
 	inp_name=$(ls $data_a)
-	# deal with situation when data_a and inp_name are the same
-	if [ "$data_a" == "$inp_name" ]; then
-		mv $data_a/$inp_name temp
-		rm -rf $data_a
-        	data_a=${inp_name}
-		mv temp $data_a
-	else
-		mv $data_a/$inp_name .
-		rm -rf $data_a
-		data_a=${inp_name}
-	fi
+	mv $data_a/$inp_name .
+	rm -rf $data_a
+	data_a=${inp_name}
 fi
 
-if [ -d "$data_b" ]; then
+if [ -d "$data_b" -a $(ls $data_b | wc -l) == 1 ]; then
         inp_name=$(ls $data_b)
-	# deal with situation when data_b and inp_name are the same
-        if [ "$data_b" == "$inp_name" ]; then
-                mv $data_b/$inp_name temp
-                rm -rf $data_b
-                data_b=${inp_name}
-                mv temp $data_b
-        else
-        	mv $data_b/$inp_name .
-        	rm -rf $data_b
-        	data_b=${inp_name}
-	fi
+       	mv $data_b/$inp_name .
+       	rm -rf $data_b
+       	data_b=${inp_name}
 fi
 
 # gunzip input files if needed
@@ -51,21 +31,11 @@ data_ext="${data_b##*.}"
 if [ ${data_ext} = "gz" ]; then gunzip ${data_b}; data_b=${data_b%.*}; fi
 
 # get input name
-if [ -d ${reference_bundle} ]; then
+if [ -d ${reference_bundle} -a $(ls $reference_bundle | wc -l) == 1 ]; then
 	inp_name=$(ls ${reference_bundle})
-	#inp_array=(${inp_name////})
-	#inp_name=${inp_array[0]}
-        # deal with situation when reference_bundle and inp_name are the same
-        if [ "$reference_bundle" == "$inp_name" ]; then
-                mv ${reference_bundle}/${inp_name} temp
-                rm -rf ${reference_bundle}
-                reference_bundle=${inp_name}
-                mv temp $reference_bundle
-        else
-                mv ${reference_bundle}/${inp_name} .
-                rm -rf ${reference_bundle}
-                reference_bundle=${inp_name}
-        fi
+        mv ${reference_bundle}/${inp_name} .
+        rm -rf ${reference_bundle}
+        reference_bundle=${inp_name}
 fi
 
 # untar reference bundle
