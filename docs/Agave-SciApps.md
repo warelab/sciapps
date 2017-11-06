@@ -3,7 +3,7 @@ Optimizing modular Agave apps for SciApps
 * Follow the [CyVerse Agave app development guide](https://github.com/cyverse/cyverse-sdk)
 * Register the app on sciapps.org system
   * Use the 'debug' queue of the system for testing and building workflow
-  * Use 'public' data for testing and building workflow
+  * Use 'exampleData' for testing and building workflow
   * Contact support@SciApps.org if you don't have access or you need to add example data to 'public'
   * The system and public data is set up to avoid unnecessary data transfer among TACC, CSHL and UA
 * Define an output explicitly if you want to use it in building automated SciApps workflows
