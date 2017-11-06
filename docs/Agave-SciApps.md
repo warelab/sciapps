@@ -7,7 +7,7 @@ Optimizing modular Agave apps for SciApps
   * Contact support@SciApps.org if you don't have access or you need to add example data to 'public'
   * The system and public data is set up to avoid unnecessary data transfer among TACC, CSHL and UA
 * Define an output explicitly if you want to use it in building automated SciApps workflows
-  * For an example, check the examplar [variant calling workflow] (../../wrappers/platypus_workflow/README.md)
+  * For an example, check the examplar [variant calling workflow](../wrappers/platypus_workflow/README.md)
     * The basic idea is to build one-to-one relationship between output_id and output_file
       * Such relationship is built by placing the output_file in the output_id folder
       * The wrapper script of 'next app' is extracting the name of output_file if input is a folder with a single item inside
