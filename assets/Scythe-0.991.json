@@ -96,7 +96,7 @@
     ],
     "isPublic": false,
     "label": "Scythe",
-    "lastModified": "2017-11-03T09:57:46.000-05:00",
+    "lastModified": "2017-11-06T11:59:45.000-06:00",
     "longDescription": "A Bayesian adapter trimmer for high throughput sequence data",
     "modules": [],
     "name": "Scythe",
@@ -165,7 +165,7 @@
             }
         }
     ],
-    "revision": 4,
+    "revision": 5,
     "shortDescription": "3'-end adapter trimmer",
     "tags": [
         "Beta"
