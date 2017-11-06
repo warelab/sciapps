@@ -12,9 +12,10 @@ Optimizing modular Agave apps for SciApps
       * Such relationship is built by placing the output_file in the output_id folder
       * The wrapper script of 'next app' will extract the name of output_file if the input is a folder with a single item inside it
     * Such modifications are necessary for following situations
-      * SciApps workflow can capture input_output relationship
+      * SciApps workflow can capture input_output relationship (make sure output_id and default output are the same in app JSON)
       * Retain sample name in output_file name
-      * Support merging of replicates at run time (not collapse on filename)  
+      * Support merging of replicates at run time (not collapse on filename)
+  * Alternatively, SciApps supports fixed output name if provided as default output name  
   * Defined outputs (in app JSON) are the only ones that will be displayed on SciApps right panel for building workflow
 * Use [installed Singularity images](Singularity-SciApps.md) if you can, and put wrapper scripts in your CyVerse Data Store
   * Remove existing code that handles installation of any packages
