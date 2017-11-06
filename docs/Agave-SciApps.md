@@ -10,7 +10,7 @@ Optimizing modular Agave apps for SciApps
   * For an example, check the examplar [variant calling workflow](../wrappers/platypus_workflow/README.md)
     * The basic idea is to build one-to-one relationship between output_id and output_file
       * Such relationship is built by placing the output_file in the output_id folder
-      * The wrapper script of 'next app' will extract the name of output_file if the input is a folder with a single item inside
+      * The wrapper script of 'next app' will extract the name of output_file if the input is a folder with a single item inside it
     * Such modifications are necessary for following situations
       * SciApps workflow can capture input_output relationship
       * Retain sample name in output_file name
