@@ -7,9 +7,14 @@ Optimizing modular Agave apps for SciApps
   * Contact support@SciApps.org if you don't have access or you need to add example data to 'public'
   * The system and public data is set up to avoid unnecessary data transfer among TACC, CSHL and UA
 * Define an output explicitly if you want to use it in building automated SciApps workflows
-  * If, in the workflow, you have the chance to merge two output files with exactly same name, a workaround solution is to define your output as a folder (in app JSON), add additional label to the output (e.g., XX.fastq to XX-1.fastq, 1 is for sample 1), then put XX-1.fastq in the output folder (in wrapper script) 
-    * At run time, XX-1.fastq and XX-2.fastq will then not collapse with each other
-    * Modify your merge script to access both of them in the "same" output folder
+  * For an example, check the examplar [variant calling workflow] (../wrappers/platypus_workflow/README.md)
+    * The basic idea is to build one-to-one relationship between output_id and output_file
+      * Such relationship is built by placing the output_file in the output_id folder
+      * The wrapper script of 'next app' is extracting the name of output_file if input is a folder with a single item inside
+    * Such modifications are necessary for following situations
+      * SciApps workflow can capture input_output relationship
+      * Retain sample name in output_file name
+      * Support merging of replicates at run time (not collapse on filename)  
   * Defined outputs (in app JSON) are the only ones that will be displayed on SciApps right panel for building workflow
 * Use [installed Singularity images](Singularity-SciApps.md) if you can, and put wrapper scripts in your CyVerse Data Store
   * Remove existing code that handles installation of any packages
