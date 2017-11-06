@@ -1,0 +1,12 @@
+{
+    "jobName": "test",
+    "softwareName": "BWA_index_cshl-0.7.13",
+    "requestedTime": "04:00:00",
+    "archive": false,
+    "archivePath": "",
+    "inputs": {
+        "referenceFasta": "agave://sciapps.org/example_data/platypus/e-coli-K-12.fa.gz"
+    },
+    "parameters": {
+    }
+}
