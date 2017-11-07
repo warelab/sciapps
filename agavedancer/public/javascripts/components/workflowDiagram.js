@@ -119,7 +119,7 @@ const WorkflowDiagram=React.createClass({
 				}
 				let appNodeId=(setting.wf_step_prefix + step.id).replace(/\W/g, '_').toLowerCase();
 				diagramDefStmts.push(appNodeId + '[' + that.truncate(showAppId) + ']; class ' + appNodeId + ' appsNode' + appClass);
-				diagramDefStmts.push('click ' + appNodeId + ' clickAppsNode');
+				diagramDefStmts.push('click ' + appNodeId + ' clickAppsNode "' + appDetail.longDescription + '"');
 				_.forEach(appDetail.outputs, function(v) {
 					let value=v.value.default;
 					let output_name, url;

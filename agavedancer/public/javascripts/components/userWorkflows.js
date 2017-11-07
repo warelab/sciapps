@@ -9,6 +9,7 @@ import WorkflowActions from '../actions/workflowActions.js';
 import AppsActions from '../actions/appsActions.js';
 import BaseInput from './baseInput.js';
 import Dialog from 'react-bootstrap-dialog';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 import utilities from '../libs/utilities.js';
 
 const UserWorkflows=React.createClass({
@@ -118,14 +119,10 @@ const UserWorkflows=React.createClass({
 		}
 		return (
 			<Panel header="My Workflows">
-				<Table striped condensed hover>
-					<thead>
-						<tr><th className='col-xs-2 col-md-2'>Name</th><th className='col-xs-8 col-md-8'>Description</th><th className='col-xs-2 col-md-2 text-right'>Actions</th></tr>
-					</thead>
-					<tbody>
-						{workflowItems}
-					</tbody>
-				</Table>
+				<BootstrapTable data={workflowItems} striped={true} hover={true}>
+					<TableHeaderColumn dataField="name" dataAlign="left" dataSort={true}>Name</TableHeaderColumn>
+					<TableHeaderColumn dataField="description" dataAlign="left" dataSort={true}>Description</TableHeaderColumn>
+				</BootstrapTable>
 				<Dialog ref='dialog' />
 			</Panel>
 		);
