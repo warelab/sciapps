@@ -1,0 +1,20 @@
+{
+    "jobName": "bismark-01",
+    "softwareName": "Bismark-0.14.4",
+    "processorsPerNode": 12,
+    "requestedTime": "02:00:00",
+    "memoryPerNode": 24,
+    "nodeCount": 1,
+    "batchQueue": "debug",
+    "archive": true,
+    "inputs": {
+        "genome_dir": "agave://data.iplantcollaborative.org/shared/iplantcollaborative/example_data/bismark/bismark_genome_preparation_output_bt2",
+				"input1": "agave://data.iplantcollaborative.org/shared/iplantcollaborative/example_data/bismark/test_reads_bs.fq"
+    },
+    "parameters":{
+		"lib_type": "directional",
+		"mismatch": 1,
+		"length": 25,
+		"qual": "phred64"
+    }
+}
