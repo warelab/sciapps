@@ -452,5 +452,32 @@
     "label": "Star-index-align",
     "name": "star_index_align",
     "version": "2.5.2"
+  },
+  {
+    "tags": [
+      "Methylation"
+    ],
+    "id": "Bismark_genome_preparation-0.14.4",
+    "label": "Bismark (genome preparation)",
+    "name": "Bismark_genome_preparationi",
+    "version": "0.14.4"
+  },
+  {
+    "tags": [
+      "Methylation"
+    ],
+    "id": "Bismark-0.14.4",
+    "label": "Bismark",
+    "name": "Bismark",
+    "version": "0.14.4"
+  },
+  {
+    "tags": [
+      "Methylation"
+    ],
+    "id": "Bismark_methylation_extractor-0.18.0",
+    "label": "Bismark (methylation extractor)",
+    "name": "Bismark_methylation_extractor",
+    "version": "0.18.0"
   }
 ]
