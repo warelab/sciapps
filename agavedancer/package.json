@@ -19,6 +19,7 @@
     "react-bootstrap-dialog": "^0.9.1",
     "react-dom": "^0.14.2",
     "react-layout-pane": "^0.1.14",
+    "react-resizable": "^1.7.5",
     "reflux": "^0.3.0",
     "uglifyify": "^3.0.1"
   },

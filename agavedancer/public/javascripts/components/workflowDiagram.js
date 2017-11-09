@@ -14,6 +14,7 @@ import Mermaid from './mermaid.js';
 import FilesInfo from './filesInfo.js';
 import AppsInfo from './appsInfo.js';
 import utilities from '../libs/utilities.js';
+import {Resizable, ResizableBox} from 'react-resizable';
 
 const WorkflowDiagram=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore'), Reflux.connect(JobsStore, 'jobsStore'), Reflux.connect(AppsStore, 'appsStore')],
@@ -27,8 +28,14 @@ const WorkflowDiagram=React.createClass({
 
 	getInitialState: function() {
 		return {
+			width: 500,
+			height: 400,
 			activeNode: {}
 		}
+	},
+
+	onResize: function(event, {element, size})  {
+		this.setState({width: size.width, height: size.height});
 	},
 
 	componentWillMount: function() {
@@ -289,8 +296,10 @@ const WorkflowDiagram=React.createClass({
 						<Modal.Title>Workflow Diagram: {workflowDetail.name}</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
+				<ResizableBox width={this.state.width} height={this.state.height} onResize={this.onResize} minConstraints={[100, 100]} >
 						{body}
 						{info}
+				</ResizableBox>
 					</Modal.Body>
 					<Modal.Footer>
 						{saveBtn}
