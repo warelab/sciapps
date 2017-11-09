@@ -14,6 +14,7 @@ import Mermaid from './mermaid.js';
 import FilesInfo from './filesInfo.js';
 import AppsInfo from './appsInfo.js';
 import utilities from '../libs/utilities.js';
+import {Resizable, ResizableBox} from 'react-resizable';
 
 const WorkflowDiagram=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore'), Reflux.connect(JobsStore, 'jobsStore'), Reflux.connect(AppsStore, 'appsStore')],
@@ -27,8 +28,14 @@ const WorkflowDiagram=React.createClass({
 
 	getInitialState: function() {
 		return {
+			width: 500,
+			height: 400,
 			activeNode: {}
 		}
+	},
+
+	onResize: function(event, {element, size})  {
+		this.setState({width: size.width, height: size.height});
 	},
 
 	componentWillMount: function() {
@@ -119,7 +126,8 @@ const WorkflowDiagram=React.createClass({
 				}
 				let appNodeId=(setting.wf_step_prefix + step.id).replace(/\W/g, '_').toLowerCase();
 				diagramDefStmts.push(appNodeId + '[' + that.truncate(showAppId) + ']; class ' + appNodeId + ' appsNode' + appClass);
-				diagramDefStmts.push('click ' + appNodeId + ' clickAppsNode');
+				//diagramDefStmts.push('click ' + appNodeId + ' clickAppsNode');
+				diagramDefStmts.push('click ' + appNodeId + ' "' + appDetail.helpURI +'" "' + appDetail.longDescription + '"');
 				_.forEach(appDetail.outputs, function(v) {
 					let value=v.value.default;
 					let output_name, url;
@@ -285,17 +293,19 @@ const WorkflowDiagram=React.createClass({
 			let saveBtn=user.logged_in ? <Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved' || unfinished !== undefined}>{saveBtnTxt}</Button> : undefined;
 			markup=(
 				<Modal dialogClassName={nodeClass} show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
+				<ResizableBox width={this.state.width} height={this.state.height} onResize={this.onResize} minConstraints={[100, 100]} >
 					<Modal.Header closeButton>
 						<Modal.Title>Workflow Diagram: {workflowDetail.name}</Modal.Title>
 					</Modal.Header>
 					<Modal.Body>
 						{body}
 						{info}
-					</Modal.Body>
 					<Modal.Footer>
 						{saveBtn}
 						<Button onClick={this.hideWorkflowDiagram}>Close</Button>
 					</Modal.Footer>
+					</Modal.Body>
+				</ResizableBox>
 				</Modal>
 			);
 		}
