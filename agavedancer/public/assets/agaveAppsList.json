@@ -1,4 +1,39 @@
 [
+  {
+    "tags": ["Validation"],
+    "id": "MultiQC-0.1.2",
+    "label": "MultiQC",
+    "name": "MultiQC",
+    "version": "0.1.2"
+  },
+  {
+    "tags": ["Validation"],
+    "id": "FastQC-0.11.5",
+    "label": "FastQC",
+    "name": "FastQC",
+    "version": "0.11.5"
+  },
+  {
+    "tags": ["Annotation"],
+    "id": "Prokka-0.1.12",
+    "label": "Prokka: rapid prokaryotic genome annotation",
+    "name": "Prokka",
+    "version": "0.1.12"
+  },
+  {
+    "tags": ["Assembly"],
+    "id": "Unicycler-0.4.1",
+    "label": "Unicycler assembler",
+    "name": "Unicycler",
+    "version": "0.4.1"
+  },
+  {
+    "tags": ["Validation"],
+    "id": "QUAST-0.4.5",
+    "label": "QUAST for quality assesment",
+    "name": "QUAST",
+    "version": "0.4.5"
+  },
    {
         "_links": {
             "self": {
