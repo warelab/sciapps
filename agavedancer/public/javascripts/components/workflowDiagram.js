@@ -223,6 +223,14 @@ const WorkflowDiagram=React.createClass({
 		let workflowDirection=1;
 		if (showWorkflowDiagram) {
 			if (workflowDetail) {
+				let stepDepth=_.reduce(workflowDetail.steps, function(depth, step) {
+					let prev=_.map(step.inputs, function(input) {
+						return _.isPlainObject(input) ? depth[input.step] : 0;
+					});
+					depth.push(_.max(prev)+1);
+					return depth;
+				},[]);
+				let maxStepDepth=_.max(stepDepth);
 				jobCount=workflowDetail.steps.length;
 				if (jobCount < 8) {
 					workflowDirection=0;
