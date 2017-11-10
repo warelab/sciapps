@@ -218,7 +218,6 @@ const WorkflowDiagram=React.createClass({
 		let body=<div />;
 		let info=<div />;
 		let nodeClass="modal-lg";
-		let jobCount=0;
 		let workflowDetail=workflowStore.workflowDetail;
 		let workflowDirection=1;
 		if (showWorkflowDiagram) {
@@ -231,10 +230,9 @@ const WorkflowDiagram=React.createClass({
 					return depth;
 				},[]);
 				let maxStepDepth=_.max(stepDepth);
-				jobCount=workflowDetail.steps.length;
-				if (jobCount < 8) {
+				if (maxStepDepth < 6) {
 					workflowDirection=0;
-					switch (jobCount) {
+					switch (maxStepDepth) {
 						case 2:
 							nodeClass="twoNodes";
 							break;
@@ -245,14 +243,6 @@ const WorkflowDiagram=React.createClass({
 							nodeClass="fourNodes";
 							break;
 						case 5:
-							nodeClass="fiveNodes";
-					}
-				} else {
-					switch (jobCount) {
-						case 8:
-							nodeClass="fiveNodes";
-							break;
-						case 9:
 							nodeClass="fiveNodes";
 					}
 				}
@@ -267,9 +257,6 @@ const WorkflowDiagram=React.createClass({
 				if (unfinished) {
 					setTimeout((wfId) => JobsActions.debouncedCheckWorkflowJobStatus(wfId), this.props.timeout, workflow.id); 
 				}
-			}
-			if (workflowDetail) {
-				jobCount=workflowDetail.steps.length;
 			}
 		
 			if (activeNode.id !== undefined) {
