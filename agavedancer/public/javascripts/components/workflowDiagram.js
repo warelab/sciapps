@@ -77,13 +77,6 @@ const WorkflowDiagram=React.createClass({
 		WorkflowActions.hideWorkflowDiagram();
 	},
 
-	truncate: function(s) {
-		if (s.length > 12)
-			return (s.substr(0,11)).concat(" ...");
-		else
-			return s;
-	},
-
 	buildWorkflowDiagramDef: function(workflowStore, appsStore, jobsStore, workflowDirection) {
 		let that=this;
 		let setting=_config.setting;
@@ -118,7 +111,7 @@ const WorkflowDiagram=React.createClass({
 					appClass='RUNNING';
 				}
 				let appNodeId=(setting.wf_step_prefix + step.id).replace(/\W/g, '_').toLowerCase();
-				diagramDefStmts.push(appNodeId + '[' + that.truncate(showAppId) + ']; class ' + appNodeId + ' appsNode' + appClass);
+				diagramDefStmts.push(appNodeId + '[' + utilities.truncate(showAppId) + ']; class ' + appNodeId + ' appsNode' + appClass);
 				diagramDefStmts.push('click ' + appNodeId + ' "' + appDetail.helpURI +'" "' + appDetail.longDescription + '"');
 				_.forEach(appDetail.outputs, function(v) {
 					let value=v.value.default;
@@ -135,10 +128,19 @@ const WorkflowDiagram=React.createClass({
 					}
 					output_name=['file', output_name, value].join('_');
 					output_name=output_name.replace(/\W/g, '_').toLowerCase();
-					diagramDefStmts.push(output_name + '(' + that.truncate(value) + '); class ' + output_name + ' fileNode');
+					diagramDefStmts.push(output_name + '(' + utilities.truncate(value) + '); class ' + output_name + ' fileNode');
 					if (url) {
-						JobsActions.setFile(output_name, url);
-						diagramDefStmts.push('click ' + output_name + ' clickFileNode');
+						//JobsActions.setFile(output_name, url);
+						//diagramDefStmts.push('click ' + output_name + ' clickFileNode');
+						let splitUrl=url.match(/([^\/]+)\/(.*)/);
+						let href=setting.output_url[splitUrl[1]];
+						if (href) {
+							href=href.replace(/__system__/, splitUrl[1]);
+							href=href.replace(/__path__/, splitUrl[2]);
+							diagramDefStmts.push('click ' + output_name + ' "' + href + '" "' + value + '"');
+						} else {
+							diagramDefStmts.push('click ' + output_name + ' clickFileNode "' + value + '"');
+						}
 					}
 					diagramDefStmts.push(appNodeId + '-->' + output_name);
 				});
@@ -169,8 +171,8 @@ const WorkflowDiagram=React.createClass({
 						value=_.last(ic.split('/'));
 						let url=ic.replace('agave://', '');
 						let input_name=url.replace(/\W/g, '_').toLowerCase();
-						diagramDefStmts.push(input_name + '(' + that.truncate(value) + '); class ' + input_name + ' fileNode');
-						diagramDefStmts.push('click ' + input_name + ' clickFileNode');
+						diagramDefStmts.push(input_name + '(' + utilities.truncate(value) + '); class ' + input_name + ' fileNode');
+						diagramDefStmts.push('click ' + input_name + ' clickFileNode "' + value + '"');
 						diagramDefStmts.push(input_name + '-->' + appNodeId);
 						JobsActions.setFile(input_name, url);
 					}
@@ -198,12 +200,12 @@ const WorkflowDiagram=React.createClass({
 	},
 
 	render: function() {
-		let showWorkflowDiagram=this.state.workflowStore.showWorkflowDiagram;
 		let user=this.props.user;
 		let setting=_config.setting;
 		let appsStore=this.state.appsStore;
 		let jobsStore=this.state.jobsStore;
 		let workflowStore=this.state.workflowStore;
+		let showWorkflowDiagram=workflowStore.showWorkflowDiagram;
 		let workflow=jobsStore.workflow;
 		let activeNode=this.state.activeNode;
 		let fileId=jobsStore.fileId;

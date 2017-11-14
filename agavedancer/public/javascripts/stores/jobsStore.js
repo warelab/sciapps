@@ -330,6 +330,7 @@ const JobsStore=Reflux.createStore({
 			if (! fileDetail && data.system) {
 				this.state.fileDetailCache[fileId]=data;
 			}
+			return data;
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);

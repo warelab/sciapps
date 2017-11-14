@@ -22,7 +22,8 @@ const WorkflowActions=Reflux.createActions([
 	'loadRemoteWorkflow',
 	'setWorkflowSteps',
 	'buildWorkflow',
-	'submitWorkflow'
+	'submitWorkflow',
+	'buildWorkflowDiagramDef'
 ]);
 
 module.exports = WorkflowActions;
