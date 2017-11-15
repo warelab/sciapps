@@ -27,9 +27,12 @@ const FilesInfo=React.createClass({
 			});
 			let jobOwner=fileDetail.path.replace(/\/.*/, '');
 			let href=setting.output_url[fileDetail.system];
-			href=href.replace(/__owner__/, jobOwner);
-			href=href.replace(/__system__/, fileDetail.system);
-			href=href.replace(/__path__/, fileDetail.path);
+			if (href) {
+				href=href.replace(/__owner__/, jobOwner);
+				href=href.replace(/__system__/, fileDetail.system);
+				href=href.replace(/__path__/, fileDetail.path);
+			}
+			//let link=setting.output_url[fileDetail['system']] + '/' + fileDetail['path'];
 			tbody.push(<tr key={'source'}><th><a href={href} target="_blank">Link to File</a></th><td></td></tr>);
 			markup=(
 				<Table striped condensed hover>

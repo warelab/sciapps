@@ -50,5 +50,10 @@ module.exports = {
 
 	getValueOrder: function(o) { 
 		return o.value.order 
+	},
+
+	truncate: function(string, length = 12) {
+		let result=string.length > length ? string.substr(0,length-1).concat(" ...") : string;
+		return result;
 	}
 };

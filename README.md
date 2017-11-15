@@ -104,4 +104,3 @@ To install, follow steps below (for local install, skip step 8)
       git pull
       
       git push origin master
-      
