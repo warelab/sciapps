@@ -302,7 +302,14 @@ sub retrieveApps {
 	my $return=[];
 	if ($api) {
 		my $apps = $api->apps;
-		$return = $app_id ? $apps->find_by_id($app_id) : $apps->list(limit => 1000);
+		if ($app_id) {
+			$return = $apps->find_by_id($app_id);
+			if ($return->{inputs}[0] && $return->{inputs}[0]{value}{visible} ne 'true') {
+				$return=$apps->find_by_id($app_id);
+			}
+		} else {
+			$return = $apps->list(limit => 1000);
+		}
 	}
 	$return or raise InvalidRequest => 'no apps found';
 }

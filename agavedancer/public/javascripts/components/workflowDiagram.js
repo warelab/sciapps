@@ -115,8 +115,9 @@ const WorkflowDiagram=React.createClass({
 				diagramDefStmts.push('click ' + appNodeId + ' "' + appDetail.helpURI +'" "' + appDetail.longDescription + ' - click for documentation"');
 				_.forEach(appDetail.outputs, function(v) {
 					let value=v.value.default;
-					let output_name, url;
+					let output_name, url, jobOwner;
 					if (jobDetail) {
+						jobOwner=jobDetail.owner;
 						output_name=jobDetail.id;
 						if (jobDetail.archive) {
 							url=[jobDetail.archiveSystem, jobDetail.archivePath, value].join('/');
@@ -135,6 +136,7 @@ const WorkflowDiagram=React.createClass({
 						let splitUrl=url.match(/([^\/]+)\/(.*)/);
 						let href=setting.output_url[splitUrl[1]];
 						if (href) {
+							href=href.replace(/__owner__/, jobOwner);
 							href=href.replace(/__system__/, splitUrl[1]);
 							href=href.replace(/__path__/, splitUrl[2]);
 							diagramDefStmts.push('click ' + output_name + ' "' + href + '" "' + value + ' - click to open"');
