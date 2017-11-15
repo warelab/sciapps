@@ -11,6 +11,7 @@ import AppsInfo from './appsInfo.js';
 import AppsForm from './appsForm.js';
 import Welcome from './welcome.js';
 import UserWorkflows from './userWorkflows.js';
+import UserJobs from './userJobs.js';
 import Workflows from './workflows.js';
 import WorkflowBuilder from './workflowBuilder.js';
 import WorkflowLoader from './workflowLoader.js';
@@ -50,6 +51,9 @@ const AppsDetail=React.createClass({
 			);
 		} else {
 			switch (appsStore.pageId) {
+				case 'userJobs':
+					markup=<UserJobs user={user} />
+					break;
 				case 'userWorkflows':
 					markup=<UserWorkflows user={user} />
 					break;

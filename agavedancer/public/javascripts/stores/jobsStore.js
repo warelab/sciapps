@@ -31,6 +31,7 @@ const JobsStore=Reflux.createStore({
 			showJob: false,
 			showJobId: undefined,
 			jobs: [],
+			joblist: [],
 			workflowBuilderJobIndex: [],
 			jobDetail: {},
 			jobOutputs: {},
@@ -44,6 +45,26 @@ const JobsStore=Reflux.createStore({
 	resetState: function() {
 		this._resetState();
 		this.complete();
+	},
+
+	listJob: function() {
+		let setting=_config.setting;
+		Q(axios.get('/job', {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				console.log(res.data.error);
+				return;
+			}
+			this.state.joblist=res.data;
+			this.complete();
+			return res.data;
+		}.bind(this))
+		.catch(function(error) {
+			console.log(error);
+		})
+		.done();
 	},
 
 	submitWorkflowJobs: function(wf, formData) {
@@ -124,6 +145,7 @@ const JobsStore=Reflux.createStore({
 						let jobDetail=this.state.jobDetailCache[job.job_id];
 						if (jobDetail) {
 							this.state.jobs[submitNumber++]=_.pick(jobDetail, ['job_id', 'appId']);
+							AppsActions.setApp(jobDetail.appId);
 						}
 					}
 					return job;

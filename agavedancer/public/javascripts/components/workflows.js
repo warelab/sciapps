@@ -11,14 +11,14 @@ const Workflows=React.createClass({
 	showWorkflowRunner: function(event) {
 		AppsActions.showPage('workflowRunner');
 		WorkflowActions.showWorkflow(event.target.textContent);
-		let title="Running Scientific Workflows";
-		let url="/?page_id=workflowRunner";
-		if (typeof (history.pushState) !== "undefined") {
-			let obj = { Title: title, Url: url };
-			history.pushState(obj, obj.Title, obj.Url);
-		} else {
-			alert("Browser does not support HTML5.");
-		}
+		//let title="Running Scientific Workflows";
+		//let url="/?page_id=workflowRunner";
+		//if (typeof (history.pushState) !== "undefined") {
+		//	let obj = { Title: title, Url: url };
+		//	history.pushState(obj, obj.Title, obj.Url);
+		//} else {
+		//	alert("Browser does not support HTML5.");
+		//}
 	},
 
 	render: function() {
