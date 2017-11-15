@@ -177,7 +177,7 @@ ajax '/user' => sub {
 	to_json($user);
 };
 
-get qr{/browse/?(.*)} => sub {
+ajax qr{/browse/?(.*)} => sub {
 	my ($typePath) = splat;
 	my ($type, $path)=split /\//, $typePath, 2;
 	$path||='';
@@ -301,19 +301,26 @@ sub retrieveApps {
 	my $return=[];
 	if ($api) {
 		my $apps = $api->apps;
-		$return = $app_id ? $apps->find_by_id($app_id) : $apps->list(limit => 1000);
+		if ($app_id) {
+			$return = $apps->find_by_id($app_id);
+			if ($return->{inputs} && $return->{inputs}[0]{value}{visible} ne 'true') {
+				$return = $apps->find_by_id($app_id);
+			}
+		} else {
+			$return=$apps->list(limit => 1000);
+		}
 	}
 	$return or raise InvalidRequest => 'no apps found';
 }
 
-get '/schema/:id' => sub {
+ajax '/schema/:id' => sub {
 	my $schema_id = param("id");
 
 	my $schema=retrieveSchema($schema_id);
 	return to_json($schema);
 };
 
-get '/schema' => sub {
+ajax '/schema' => sub {
 	my $schema=retrieveSchema();
 
 	return to_json($schema);
@@ -328,19 +335,19 @@ sub retrieveSchema {
 	$meta->list($schema_id);
 }
 
-get '/metadata/new' => sub {
+ajax '/metadata/new' => sub {
 	my $json = param("json");
 	return to_json({status => "successful"});
 };
 
-get '/metadata/:id' => sub {
+ajax '/metadata/:id' => sub {
 	my $metadata_id = param("id");
 
 	my $metadata=retrieveMetadata($metadata_id);
 	return to_json($metadata);
 };
 
-get '/metadata' => sub {
+ajax '/metadata' => sub {
 	my $q=param("q");
 	my $metadata;
 	if ($q) {
@@ -418,19 +425,6 @@ ajax '/job/:id' => sub {
 	return $job ? to_json($job) : to_json({status => 'error'});
 };
 
-get '/job/:id' => sub {
-	my $job_id = param("id");
-
-	my $job=retrieveJob($job_id);
-	return $job ? to_json($job) : to_json({status => 'error'});
-	if ($job) {
-		return template 'job', {
-			job => $job,
-			job_id => $job_id,
-		};
-	}
-};
-
 sub retrieveJob {
 	my ($job_id)=@_;
 	my $agave_id=$job_id;
@@ -479,18 +473,6 @@ sub retrieveJob {
 	}
 	$job or raise InvalidRequest => 'no jobs found';
 }
-
-get '/job/:id/remove' => sub {
-	my $job_id = param("id");
-
-	my $apif = getAgaveClient();
-
-	my $job_ep = $apif->job;
-	my $row = database->quick_select('job', {job_id => $job_id});
-	my $st = $job_ep->delete_job($row->{'agave_id'});
-
-	return redirect '/apps';
-};
 
 ajax '/workflow/:id/jobStatus' => sub {
 	my $wfid=param('id');
@@ -627,6 +609,20 @@ ajax '/job/new/:id' => sub {
 		return to_json($job);
 	}
 };
+
+get '/job' => sub {
+	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
+	my @result=database->quick_select('job', {username => $user->{username}}, {columns =>[qw/job_id app_id status agave_json/], order_by => {desc => 'id'}});
+	foreach (@result) {
+		if (my $json=delete $_->{agave_json}) {
+			my $job=from_json($json);
+			$_->{submitTime}=$job->{submitTime};
+			$_->{endTime}=$job->{endTime};
+		}
+	}
+	return to_json(\@result);
+};
+
 
 sub prepareJob {
 	my ($username, $app, $form, $step, $step_form, $prev_job)=@_;

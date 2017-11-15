@@ -35,18 +35,6 @@ const Header=React.createClass({
 		}
 	},
 
-	showWorkflows: function() {
-		AppsActions.showPage('workflows');
-		let title="Scientific Workflows";
-		let url="/?page_id=workflows";
-		if (typeof (history.pushState) !== "undefined") {
-			let obj = { Title: title, Url: url };
-			history.pushState(obj, obj.Title, obj.Url);
-		} else {
-			alert("Browser does not support HTML5.");
-		}
-	},
-
 	showWorkflowBuilder: function() {
 		AppsActions.showPage('workflowBuilder');
 		let title="Building Scientific Workflows";
@@ -74,14 +62,14 @@ const Header=React.createClass({
 	showWorkflowRunner: function() {
 		AppsActions.showPage('workflowRunner');
 		WorkflowActions.showWorkflowLoadBox();
-		let title="Running Scientific Workflows";
-		let url="/?page_id=workflowRunner";
-		if (typeof (history.pushState) !== "undefined") {
-			let obj = { Title: title, Url: url };
-			history.pushState(obj, obj.Title, obj.Url);
-		} else {
-			alert("Browser does not support HTML5.");
-		}
+		//let title="Running Scientific Workflows";
+		//let url="/?page_id=workflowRunner";
+		//if (typeof (history.pushState) !== "undefined") {
+		//	let obj = { Title: title, Url: url };
+		//	history.pushState(obj, obj.Title, obj.Url);
+		//} else {
+		//	alert("Browser does not support HTML5.");
+		//}
 	},
 
 	showWorkflows: function() {
@@ -98,6 +86,10 @@ const Header=React.createClass({
 
 	showUserWorkflows: function() {
 		AppsActions.showPage('userWorkflows');
+	},
+
+	showUserJobs: function() {
+		AppsActions.showPage('userJobs');
 	},
 
 	handleLogin: function() {
@@ -134,7 +126,8 @@ const Header=React.createClass({
 			userMenu=<NavItem eventKey='logout' pullRight onSelect={this.handleLogout}>Logout <Glyphicon glyph='log-out' /></NavItem>;
 			workflowMenuItem.push(
 				<MenuItem key='workflowDivder' eventKey='workflowDivder' divider />,
-				<MenuItem key='userWorkflows' eventKey='userWorkflows' onSelect={this.showUserWorkflows}><Glyphicon glyph='list-alt' /> My workflows</MenuItem>
+				<MenuItem key='userWorkflows' eventKey='userWorkflows' onSelect={this.showUserWorkflows}><Glyphicon glyph='list-alt' /> My workflows</MenuItem>,
+				<MenuItem key='userJobs' eventKey='userJobs' onSelect={this.showUserJobs}><Glyphicon glyph='list-alt' /> My jobs</MenuItem>
 			);
 		} else {
 			userMenu=(<NavItem eventKey='login' pullRight onSelect={this.handleLogin}>Login <Glyphicon glyph='log-in' /></NavItem>);
