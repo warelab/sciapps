@@ -1,0 +1,186 @@
+{
+  "id": "vcfValidator-0.4.0",
+  "name": "vcfValidator",
+  "icon": null,
+  "uuid": "2971648012411399705-242ac117-0001-005",
+  "parallelism": "SERIAL",
+  "defaultProcessorsPerNode": 12,
+  "defaultMemoryPerNode": 2,
+  "defaultNodeCount": 1,
+  "defaultMaxRunTime": null,
+  "defaultQueue": "debug",
+  "version": "0.4.0",
+  "revision": 1,
+  "isPublic": false,
+  "helpURI": "https://github.com/EBIvariation/vcf-validator",
+  "label": "vcf-validator",
+  "owner": "lwang",
+  "shortDescription": "Validator for the Variant Call Format (VCF)",
+  "longDescription": "It includes all the checks from the vcftools suite, and some more that involve lexical, syntactic and semantic analysis of the VCF input",
+  "tags": [
+    "VCF",
+    "Variant"
+  ],
+  "ontology": [
+    "genomics",
+    "sequencing"
+  ],
+  "executionType": "HPC",
+  "executionSystem": "sciapps.org",
+  "deploymentPath": "/lwang/applications/vcf_validator",
+  "deploymentSystem": "data.iplantcollaborative.org",
+  "templatePath": "vcfv_wrapper.sh",
+  "testPath": "vcfv_test_wrapper.sh",
+  "checkpointable": false,
+  "lastModified": "2017-08-31T21:04:08.000-05:00",
+  "modules": [
+    "purge",
+    "load TACC"
+  ],
+  "available": true,
+  "inputs": [
+    {
+      "id": "input",
+      "value": {
+        "validator": null,
+        "visible": true,
+        "required": true,
+        "order": 0,
+        "enquote": false,
+        "default": ""
+      },
+      "details": {
+        "label": "Select gzipped VCF file",
+        "description": "Variant file",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "parameters": [
+    {
+      "id": "l",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 0,
+        "enquote": false,
+        "default": "error",
+        "enum_values": [
+          {
+            "error": "Display only syntax errors"
+          },
+          {
+            "stop": "Stop after the first syntax error is found"
+          }
+        ]
+      },
+      "details": {
+        "label": "Select the validation level",
+        "description": "Set the validation level",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "cs:string"
+        ]
+      }
+    },
+    {
+      "id": "r",
+      "value": {
+        "visible": true,
+        "required": true,
+        "type": "enumeration",
+        "order": 1,
+        "enquote": false,
+        "default": "stdout",
+        "enum_values": [
+          {
+            "stdout": "Human-readable report"
+          },
+          {
+            "database": "structured report to a database file"
+          }
+        ]
+      },
+      "details": {
+        "label": "Select the ways to export validation report",
+        "description": "Set how to export report",
+        "argument": null,
+        "showArgument": false,
+        "repeatArgument": false
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "xs:string"
+        ]
+      }
+    }
+  ],
+  "outputs": [
+    {
+      "id": "output",
+      "value": {
+        "validator": null,
+        "order": 0,
+        "default": "validator_log.txt.gz"
+      },
+      "details": {
+        "label": "Output error file",
+        "description": "Output file with possible errors and warnings"
+      },
+      "semantics": {
+        "minCardinality": 1,
+        "maxCardinality": 1,
+        "ontology": [
+          "http://sswapmeet.sswap.info"
+        ],
+        "fileTypes": [
+          "raw-0"
+        ]
+      }
+    }
+  ],
+  "_links": {
+    "self": {
+      "href": "https://agave.iplantc.org/apps/v2/vcfValidator-0.4.0"
+    },
+    "executionSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/sciapps.org"
+    },
+    "storageSystem": {
+      "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+    },
+    "history": {
+      "href": "https://agave.iplantc.org/apps/v2/vcfValidator-0.4.0/history"
+    },
+    "metadata": {
+      "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%222971648012411399705-242ac117-0001-005%22%7D"
+    },
+    "owner": {
+      "href": "https://agave.iplantc.org/profiles/v2/lwang"
+    },
+    "permissions": {
+      "href": "https://agave.iplantc.org/apps/v2/vcfValidator-0.4.0/pems"
+    }
+  }
+}

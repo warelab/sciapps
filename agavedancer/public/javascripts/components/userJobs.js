@@ -21,10 +21,15 @@ const UserJobs=React.createClass({
 		}
 	},
 
+	handleRefresh: function(e) {
+		JobsActions.listJob();
+	},
+
 	createCustomButtonGroup: function(props) {
 		return (
 			<ButtonGroup>
 				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/>Load</Button>
+				<Button key='refresh' bsStyle='info' onClick={this.handleRefresh}><Glyphicon glyph='refresh'/>Refresh</Button>
 			</ButtonGroup>
 		);
 	},

@@ -1,0 +1,196 @@
+{
+    "_links": {
+        "executionSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/sciapps.org"
+        },
+        "history": {
+            "href": "https://agave.iplantc.org/apps/v2/MultiQC-0.1.2/history"
+        },
+        "metadata": {
+            "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%227795474908982022631-242ac117-0001-005%22%7D"
+        },
+        "owner": {
+            "href": "https://agave.iplantc.org/profiles/v2/lwang"
+        },
+        "permissions": {
+            "href": "https://agave.iplantc.org/apps/v2/MultiQC-0.1.2/pems"
+        },
+        "self": {
+            "href": "https://agave.iplantc.org/apps/v2/MultiQC-0.1.2"
+        },
+        "storageSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+        }
+    },
+    "available": true,
+    "checkpointable": false,
+    "defaultMaxRunTime": "9:00:00",
+    "defaultMemoryPerNode": 1,
+    "defaultNodeCount": 1,
+    "defaultProcessorsPerNode": 1,
+    "defaultQueue": "debug",
+    "deploymentPath": "/lwang/applications/multiqc/bin",
+    "deploymentSystem": "data.iplantcollaborative.org",
+    "executionSystem": "sciapps.org",
+    "executionType": "HPC",
+    "helpURI": "http://multiqc.info",
+    "icon": null,
+    "id": "MultiQC-0.1.2",
+    "inputs": [
+        {
+            "details": {
+                "argument": null,
+                "description": "",
+                "label": "Select FastQC output folder 1",
+                "repeatArgument": false,
+                "showArgument": false
+            },
+            "id": "input_folder1",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "xs:string"
+                ]
+            },
+            "value": {
+                "default": "",
+                "enquote": false,
+                "order": 1,
+                "required": true,
+                "validator": null,
+                "visible": true
+            }
+        },
+        {
+            "details": {
+                "argument": null,
+                "description": "",
+                "label": "Select FastQC output folder 2",
+                "repeatArgument": false,
+                "showArgument": false
+            },
+            "id": "input_folder2",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "xs:string"
+                ]
+            },
+            "value": {
+                "default": "",
+                "enquote": false,
+                "order": 2,
+                "required": false,
+                "validator": null,
+                "visible": true
+            }
+        },
+        {
+            "details": {
+                "argument": null,
+                "description": "",
+                "label": "Select FastQC output folder 3",
+                "repeatArgument": false,
+                "showArgument": false
+            },
+            "id": "input_folder3",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "xs:string"
+                ]
+            },
+            "value": {
+                "default": "",
+                "enquote": false,
+                "order": 3,
+                "required": false,
+                "validator": null,
+                "visible": true
+            }
+        },
+        {
+            "details": {
+                "argument": null,
+                "description": "",
+                "label": "Select FastQC output folder 4",
+                "repeatArgument": false,
+                "showArgument": false
+            },
+            "id": "input_folder4",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "xs:string"
+                ]
+            },
+            "value": {
+                "default": "",
+                "enquote": false,
+                "order": 4,
+                "required": false,
+                "validator": null,
+                "visible": true
+            }
+        }
+    ],
+    "isPublic": false,
+    "label": "MultiQC",
+    "lastModified": "2017-11-08T14:23:05.000-06:00",
+    "longDescription": "MultiQC is a tool to create a single report with interactive plots for multiple bioinformatics analyses across many samples, making it ideal for routine fast quality control",
+    "modules": [],
+    "name": "MultiQC",
+    "ontology": [],
+    "outputs": [
+        {
+            "details": {
+                "description": "Output report file",
+                "label": "Output report file"
+            },
+            "id": "out",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "http://sswapmeet.sswap.info"
+                ]
+            },
+            "value": {
+                "default": "multiqc_report.html",
+                "order": 0,
+                "validator": null
+            }
+        }
+    ],
+    "owner": "lwang",
+    "parallelism": "SERIAL",
+    "parameters": [],
+    "revision": 8,
+    "shortDescription": "MultiQC creates a single HTML report across many samples",
+    "tags": [
+        "Quality control"
+    ],
+    "templatePath": "multiqc_wrapper.sh",
+    "testPath": "multiqc_test_wrapper.sh",
+    "uuid": "7795474908982022631-242ac117-0001-005",
+    "version": "0.1.2"
+}

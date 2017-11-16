@@ -1,0 +1,198 @@
+{
+    "_links": {
+        "executionSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/sciapps.org"
+        },
+        "history": {
+            "href": "https://agave.iplantc.org/apps/v2/Platypus_cshl-0.5.2/history"
+        },
+        "metadata": {
+            "href": "https://agave.iplantc.org/meta/v2/data/?q=%7B%22associationIds%22%3A%227351904012227571225-242ac118-0001-005%22%7D"
+        },
+        "owner": {
+            "href": "https://agave.iplantc.org/profiles/v2/lwang"
+        },
+        "permissions": {
+            "href": "https://agave.iplantc.org/apps/v2/Platypus_cshl-0.5.2/pems"
+        },
+        "self": {
+            "href": "https://agave.iplantc.org/apps/v2/Platypus_cshl-0.5.2"
+        },
+        "storageSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+        }
+    },
+    "available": true,
+    "checkpointable": false,
+    "defaultMaxRunTime": "24:00:00",
+    "defaultMemoryPerNode": 64,
+    "defaultNodeCount": 1,
+    "defaultProcessorsPerNode": 24,
+    "defaultQueue": "debug",
+    "deploymentPath": "lwang/applications/savp",
+    "deploymentSystem": "data.iplantcollaborative.org",
+    "executionSystem": "sciapps.org",
+    "executionType": "HPC",
+    "helpURI": "http://www.broadinstitute.org/gatk",
+    "icon": null,
+    "id": "Platypus_cshl-0.5.2",
+    "inputs": [
+        {
+            "details": {
+                "argument": null,
+                "description": "",
+                "label": "The BAM file to variant call",
+                "repeatArgument": false,
+                "showArgument": false
+            },
+            "id": "inputBam",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "http://sswapmeet.sswap.info/mime/application/X-bam"
+                ]
+            },
+            "value": {
+                "default": "",
+                "enquote": false,
+                "order": 1,
+                "required": true,
+                "validator": "",
+                "visible": true
+            }
+        },
+        {
+            "details": {
+                "argument": null,
+                "description": "",
+                "label": "Reference .tar w/ (.fa .dict .fa.{.amb .ann .bwt .fai .pac .sa})",
+                "repeatArgument": false,
+                "showArgument": false
+            },
+            "id": "reference_bundle",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "http://sswapmeet.sswap.info/mime/application/X-tar"
+                ]
+            },
+            "value": {
+                "default": "",
+                "enquote": false,
+                "order": 3,
+                "required": true,
+                "validator": "",
+                "visible": true
+            }
+        },
+        {
+            "details": {
+                "argument": null,
+                "description": "",
+                "label": "Known variants - optional; skips BaseRecalibrator if blank",
+                "repeatArgument": false,
+                "showArgument": false
+            },
+            "id": "knownVariants",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 0,
+                "ontology": [
+                    "http://sswapmeet.sswap.info/mime/application/X-vcf"
+                ]
+            },
+            "value": {
+                "default": "",
+                "enquote": false,
+                "order": 4,
+                "required": false,
+                "validator": null,
+                "visible": true
+            }
+        }
+    ],
+    "isPublic": false,
+    "label": "Single Animal Variant Pipeline",
+    "lastModified": "2017-11-03T02:51:43.000-05:00",
+    "longDescription": "Platypus variant callers",
+    "modules": [],
+    "name": "Platypus_cshl",
+    "ontology": [
+        "http://sswapmeet.sswap.info/agave/apps/Application"
+    ],
+    "outputs": [
+        {
+            "details": {
+                "description": "Platypus output VCF file",
+                "label": "Platypus_output"
+            },
+            "id": "platypus_out",
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ],
+                "maxCardinality": 1,
+                "minCardinality": 1,
+                "ontology": [
+                    "http://sswapmeet.sswap.info"
+                ]
+            },
+            "value": {
+                "default": "platypus_out",
+                "order": 0,
+                "validator": null
+            }
+        }
+    ],
+    "owner": "lwang",
+    "parallelism": "SERIAL",
+    "parameters": [
+        {
+            "details": {
+                "argument": null,
+                "description": null,
+                "label": "Region name - optional; processes complete .bam if blank",
+                "repeatArgument": false,
+                "showArgument": false
+            },
+            "id": "regionName",
+            "semantics": {
+                "maxCardinality": 1,
+                "minCardinality": 0,
+                "ontology": [
+                    "xs:string"
+                ]
+            },
+            "value": {
+                "default": "",
+                "enquote": false,
+                "order": 1,
+                "required": false,
+                "type": "string",
+                "validator": "",
+                "visible": true
+            }
+        }
+    ],
+    "revision": 4,
+    "shortDescription": "Detect variants in bam",
+    "tags": [
+        "variants",
+        "NGS"
+    ],
+    "templatePath": "platypus.template",
+    "testPath": "test-savp-refprep.sh",
+    "uuid": "7351904012227571225-242ac118-0001-005",
+    "version": "0.5.2"
+}

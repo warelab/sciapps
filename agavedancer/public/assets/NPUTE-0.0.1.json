@@ -1,0 +1,331 @@
+{
+    "_links": {
+        "executionSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/cshl-compute-10"
+        }, 
+        "metadata": {
+            "href": "https://agave.iplantc.org/meta/v2/data/?q={\"associationIds\":\"4246165608057794075-e0bd34dffff8de6-0001-005\"}"
+        }, 
+        "owner": {
+            "href": "https://agave.iplantc.org/profiles/v2/lwang"
+        }, 
+        "permissions": {
+            "href": "https://agave.iplantc.org/apps/v2/NPUTE-0.0.1/pems"
+        }, 
+        "self": {
+            "href": "https://agave.iplantc.org/apps/v2/NPUTE-0.0.1"
+        }, 
+        "storageSystem": {
+            "href": "https://agave.iplantc.org/systems/v2/data.iplantcollaborative.org"
+        }
+    }, 
+    "available": true, 
+    "checkpointable": false, 
+    "defaultMaxRunTime": null, 
+    "defaultMemoryPerNode": 1, 
+    "defaultNodeCount": 1, 
+    "defaultProcessorsPerNode": 1, 
+    "defaultQueue": "parallel", 
+    "deploymentPath": "/lwang/applications/npute/bin", 
+    "deploymentSystem": "data.iplantcollaborative.org", 
+    "executionSystem": "cshl-compute-10", 
+    "executionType": "HPC", 
+    "helpURI": "http://compgen.unc.edu/NPUTE_README.html", 
+    "icon": null, 
+    "id": "NPUTE-0.0.1", 
+    "inputs": [
+        {
+            "details": {
+                "argument": null, 
+                "description": "marker file", 
+                "label": "Select marker file", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "i", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "", 
+                "enquote": false, 
+                "order": 0, 
+                "required": true, 
+                "validator": null, 
+                "visible": true
+            }
+        }
+    ], 
+    "isPublic": false, 
+    "label": "NPUTE", 
+    "lastModified": "2015-10-03T21:08:14.000-05:00", 
+    "longDescription": "NPUTE is a parallel version of the NPUTE software that imputes missing markers via voting from K-nearest-neighbors (KNN)", 
+    "modules": [], 
+    "name": "NPUTE", 
+    "ontology": [], 
+    "outputs": [
+        {
+            "details": {
+                "description": "Numerical file", 
+                "label": "Imputed marker file"
+            }, 
+            "id": "o", 
+            "semantics": {
+                "fileTypes": [
+                    "raw-0"
+                ], 
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "imputed.txt", 
+                "order": 0, 
+                "validator": null
+            }
+        }
+    ], 
+    "parallelism": "SERIAL", 
+    "parameters": [
+        {
+            "details": {
+                "argument": null, 
+                "description": null, 
+                "label": "Select running mode", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "mode", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "Imputing", 
+                "enquote": false, 
+                "enum_values": [
+                    {
+                        "Testing": "Testing"
+                    }, 
+                    {
+                        "Imputing": "Imputing"
+                    }
+                ], 
+                "order": 0, 
+                "required": true, 
+                "type": "enumeration", 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Or actual window size for imputation", 
+                "label": "Enter (start) window size for imputing (testing)", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "startWindow", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 1, 
+                "enquote": false, 
+                "order": 1, 
+                "required": true, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "End window size for screening", 
+                "label": "Enter the end window size for testing", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "endWindow", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 0, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 5, 
+                "enquote": false, 
+                "order": 2, 
+                "required": false, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Intervals between window sizes", 
+                "label": "Enter the screening step for testing optimal window size", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "stepWindow", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 0, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 1, 
+                "enquote": false, 
+                "order": 3, 
+                "required": false, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Genotype can be coded with one letter (A) or two letters (AA)", 
+                "label": "Select the number of letters used for coding genotype", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "ploidy", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "1", 
+                "enquote": false, 
+                "enum_values": [
+                    {
+                        "1": "1"
+                    }, 
+                    {
+                        "2": "2"
+                    }
+                ], 
+                "order": 4, 
+                "required": true, 
+                "type": "enumeration", 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Value given to missing marker data", 
+                "label": "Enter character(s) representing missing genotype data", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "missing", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:string"
+                ]
+            }, 
+            "value": {
+                "default": "N", 
+                "enquote": false, 
+                "order": 5, 
+                "required": true, 
+                "type": "string", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Number of extra columns", 
+                "label": "Enter number of extra columns before genotype data start", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "extracols", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 11, 
+                "enquote": false, 
+                "order": 6, 
+                "required": true, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }, 
+        {
+            "details": {
+                "argument": null, 
+                "description": "Rows of header lines", 
+                "label": "Enter number of header rows before genotype data", 
+                "repeatArgument": false, 
+                "showArgument": false
+            }, 
+            "id": "header", 
+            "semantics": {
+                "maxCardinality": 1, 
+                "minCardinality": 1, 
+                "ontology": [
+                    "xs:integer"
+                ]
+            }, 
+            "value": {
+                "default": 1, 
+                "enquote": false, 
+                "order": 7, 
+                "required": true, 
+                "type": "number", 
+                "validator": null, 
+                "visible": true
+            }
+        }
+    ], 
+    "revision": 3, 
+    "shortDescription": "Imputing missing SNPs", 
+    "tags": [
+        "GWAS"
+    ], 
+    "templatePath": "npute_wrapper_cshl.sh", 
+    "testPath": "npute_test_wrapper.sh", 
+    "uuid": "4246165608057794075-e0bd34dffff8de6-0001-005", 
+    "version": "0.0.1"
+}
