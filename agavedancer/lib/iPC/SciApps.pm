@@ -616,8 +616,16 @@ get '/job' => sub {
 	foreach (@result) {
 		if (my $json=delete $_->{agave_json}) {
 			my $job=from_json($json);
-			$_->{submitTime}=$job->{submitTime};
-			$_->{endTime}=$job->{endTime};
+			my $submitTime=$job->{submitTime};
+			my $endTime=$job->{endTime};
+			$submitTime =~ s/T/ /;
+			$endTime =~ s/T/ /;
+			$submitTime=substr($submitTime, 0, 19);
+			$endTime=substr($endTime, 0, 19);
+			$_->{submitTime}=$submitTime;
+			$_->{endTime}=$endTime;
+			#$_->{submitTime}=Time::Piece->strptime($submitTime, '%Y %b %d %H:%M:%S');
+			#$_->{endTime}=Time::Piece->strptime($endTime, '%Y %b %d %H:%M:%S');
 		}
 	}
 	return to_json(\@result);
