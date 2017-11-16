@@ -90,6 +90,9 @@ const JobsStore=Reflux.createStore({
 				this.state.jobs[index].job_id=job.job_id;
 				this.state.jobDetailCache[job.job_id]=job;
 				jobs[i]=job.job_id;
+				let joblistData=_.pick(job, ['job_id', 'appId', 'status', 'submitTime', 'endTime']);
+				joblistData.app_id=joblistData.appId;
+				this.state.joblist.unshift(joblistData);
 			}.bind(this));
 			this.state.workflow={
 				id: res.data.workflow_id,
@@ -123,6 +126,9 @@ const JobsStore=Reflux.createStore({
 				let job=res.data;
 				this.state.jobs[submitNumber].job_id=job.job_id;
 				this.state.jobDetailCache[job.job_id]=job;
+				let joblistData=_.pick(job, ['job_id', 'appId', 'status', 'submitTime', 'endTime']);
+				joblistData.app_id=joblistData.appId;
+				this.state.joblist.unshift(joblistData);
 			} else {
 				//this.state.jobs[submitNumber].job_id=undefined;
 				this.state.jobs[submitNumber].job_id=0;
