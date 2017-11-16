@@ -618,10 +618,14 @@ get '/job' => sub {
 			my $job=from_json($json);
 			my $submitTime=$job->{submitTime};
 			my $endTime=$job->{endTime};
-			$submitTime =~ s/T/ /;
-			$endTime =~ s/T/ /;
-			$submitTime=substr($submitTime, 0, 19);
-			$endTime=substr($endTime, 0, 19);
+			if ($submitTime) {
+				$submitTime =~ s/T/ /;
+				$submitTime=substr($submitTime, 0, 19);
+			}
+			if ($endTime) {
+				$endTime =~ s/T/ /;
+				$endTime=substr($endTime, 0, 19);
+			}
 			$_->{submitTime}=$submitTime;
 			$_->{endTime}=$endTime;
 			#$_->{submitTime}=Time::Piece->strptime($submitTime, '%Y %b %d %H:%M:%S');
