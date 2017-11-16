@@ -28,10 +28,8 @@ const WorkflowBuilderForm=React.createClass({
 
 	componentDidUpdate: function(prevProps, prevState) {
 		let workflowStore=this.state.workflowStore;
-		//let wf=this.state.wfid ? workflowStore.build[this.state.wfid] : undefined;
 		let wf=this.state.wfid ? workflowStore.workflowDetailCache[this.state.wfid] : undefined;
 		if (this.state.onSubmit && wf) {
-			//WorkflowActions.showWorkflow(wf.id);
 			WorkflowActions.showWorkflowDiagram();
 			this.setState({ onSubmit: false });
 		}
@@ -55,16 +53,10 @@ const WorkflowBuilderForm=React.createClass({
 		let validated=utilities.validateForm(form, required);
 		if (changed) {
 			if (validated) {
-				let workflows=this.state.workflowStore.workflows;
-				if (_.find(workflows, 'name', formData['workflowName'])) {
-					//alert('Please choose a unique name.');
-					this.refs.dialog.showAlert('A workflow with that name already exists. Please enter a different name');
-				} else {
-					let wfid=utilities.uuid();
-					this.setState({onSubmit: true, wfid: wfid});
-					let workflow=this.buildWorkflow(wfid, formData['workflowName'], formData['workflowDesc'], this.state.jobsStore, this.state.appsStore);
-					WorkflowActions.setWorkflow(wfid, workflow);
-				}
+				let wfid=utilities.uuid();
+				this.setState({onSubmit: true, wfid: wfid});
+				let workflow=this.buildWorkflow(wfid, formData['workflowName'], formData['workflowDesc'], this.state.jobsStore, this.state.appsStore);
+				WorkflowActions.setWorkflow(wfid, workflow);
 			} 
 			this.setState({ formData: formData });
 		} else {

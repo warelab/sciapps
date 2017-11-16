@@ -7,9 +7,8 @@ import {Panel, Table, Button, ButtonToolbar, ButtonGroup, Tooltip, OverlayTrigge
 import WorkflowStore from '../stores/workflowStore.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import AppsActions from '../actions/appsActions.js';
-//import BaseInput from './baseInput.js';
 import Dialog from 'react-bootstrap-dialog';
-import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
+import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import utilities from '../libs/utilities.js';
 
 const UserWorkflows=React.createClass({
@@ -17,7 +16,6 @@ const UserWorkflows=React.createClass({
 
 	handleLoad: function(e) {
 		let table=this.refs.table;
-		//let wfid=e.target.value || e.target.parentElement.value;
 		let wfid=table.store.selected[0];
 		if (wfid) {
 			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
@@ -54,7 +52,6 @@ const UserWorkflows=React.createClass({
 
 	handleDownload: function(e) {
 		let table=this.refs.table;
-		//let wfid=e.target.value || e.target.parentElement.value;
 		let wfid=table.store.selected[0];
 		if (wfid) {
 			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
@@ -89,19 +86,7 @@ const UserWorkflows=React.createClass({
 		let workflowItems;
 		if (workflowStore.workflows.length) {
 			workflowItems=workflowStore.workflows.map(function(workflow, i) {
-				let tooltipload=<Tooltip id="tooltipload">Load</Tooltip>;
-        let loadButton=<OverlayTrigger placement="bottom" overlay={tooltipload}><Button key='load' bsStyle='link' onClick={this.handleLoad} value={workflow.workflow_id}><Glyphicon glyph='repeat'/></Button></OverlayTrigger>;
-
-				let tooltipdownload=<Tooltip id="tooltipdownload">Download</Tooltip>;
-        let downloadButton=<OverlayTrigger placement="bottom" overlay={tooltipdownload}><Button key='download' bsStyle='link' onClick={this.handleDownload} value={workflow.workflow_id}><Glyphicon glyph='download-alt'/></Button></OverlayTrigger>;				
-
-				let toolbar=(
-					<ButtonToolbar>
-						{loadButton}{downloadButton}
-					</ButtonToolbar>
-				);
 				let item=_.pick(workflow, ['workflow_id', 'name', 'description']);
-				//item.actions=toolbar;
 				return item;
 			}.bind(this));
 		}
@@ -109,14 +94,11 @@ const UserWorkflows=React.createClass({
 		let cellEditProp={
 			mode: 'dbclick',
 			blurToSave: true
-			//afterSaveCell: this.handleCellSave
 		};
 		let selectRowProp={
 			mode: 'radio'
 		};
 		let options={
-			//handleConfirmDeleteRow: this.handleConfirmDeleteRow,
-			//onDeleteRow: this.handleDeleteRow,
 			btnGroup: this.createCustomButtonGroup
 		};
 		return (
@@ -129,7 +111,6 @@ const UserWorkflows=React.createClass({
 				<Dialog ref='dialog' />
 			</Panel>
 		);
-					//<TableHeaderColumn dataField="actions" dataAlign="left" dataFormat={this.actionsFormatter} editable={false} width="90">Actions</TableHeaderColumn>
 	}
 });
 
