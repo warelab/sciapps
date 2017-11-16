@@ -735,19 +735,27 @@ sub prepareJob {
 	
 	my $host_url=request->uri_base;
 	#my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archiveSystem=${JOB_ARCHIVE_SYSTEM}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}';
+	my $notepolicy={
+		retryLimit => 100,
+		saveOnFailure => 1,
+		retryStrategy => "EXPONENTIAL"
+	};
 	my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&message=${JOB_ERROR}';
 	my $notifications=[
 	{
 		event	=> "FINISHED",
 		url		=> $host_url . $noteinfo,
+		policy => $notepolicy,
 	},
 	{
 		event	=> "RUNNING",
 		url		=> $host_url . $noteinfo,
+		policy => $notepolicy,
 	},
 	{
 		event	=> "FAILED",
 		url		=> $host_url . $noteinfo,
+		policy => $notepolicy,
 	},
 	];
 
