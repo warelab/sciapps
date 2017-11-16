@@ -36,4 +36,4 @@ tmp
 database
 config.yml
 environments
-public/assets
+public/assets/
