@@ -22,7 +22,7 @@ const publicWorkflows=React.createClass({
 		let table=this.refs.table;
 		let wfid=table.store.selected[0];
 		if (wfid) {
-			let wfDetail=../../assets/wfid.json ? JSON.parse(wf.json) : undefined;
+			let wfDetail=wfid.json ? JSON.parse(wf.json) : undefined;
 			AppsActions.showPage('workflowRunner');
 			WorkflowActions.showWorkflow(wfid, wfDetail);
 		}
