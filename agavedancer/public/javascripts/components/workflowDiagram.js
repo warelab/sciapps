@@ -237,6 +237,9 @@ const WorkflowDiagram=React.createClass({
 				if (maxStepDepth < 6) {
 					workflowDirection=0;
 					switch (maxStepDepth) {
+						case 1:
+							nodeClass="oneNode";
+							break;
 						case 2:
 							nodeClass="twoNodes";
 							break;

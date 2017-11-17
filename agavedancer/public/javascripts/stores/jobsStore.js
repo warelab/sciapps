@@ -31,6 +31,7 @@ const JobsStore=Reflux.createStore({
 			showJob: false,
 			showJobId: undefined,
 			jobs: [],
+			joblist: [],
 			workflowBuilderJobIndex: [],
 			jobDetail: {},
 			jobOutputs: {},
@@ -44,6 +45,26 @@ const JobsStore=Reflux.createStore({
 	resetState: function() {
 		this._resetState();
 		this.complete();
+	},
+
+	listJob: function() {
+		let setting=_config.setting;
+		Q(axios.get('/job', {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				console.log(res.data.error);
+				return;
+			}
+			this.state.joblist=res.data;
+			this.complete();
+			return res.data;
+		}.bind(this))
+		.catch(function(error) {
+			console.log(error);
+		})
+		.done();
 	},
 
 	submitWorkflowJobs: function(wf, formData) {
@@ -69,6 +90,9 @@ const JobsStore=Reflux.createStore({
 				this.state.jobs[index].job_id=job.job_id;
 				this.state.jobDetailCache[job.job_id]=job;
 				jobs[i]=job.job_id;
+				let joblistData=_.pick(job, ['job_id', 'appId', 'status', 'submitTime', 'endTime']);
+				joblistData.app_id=joblistData.appId;
+				this.state.joblist.unshift(joblistData);
 			}.bind(this));
 			this.state.workflow={
 				id: res.data.workflow_id,
@@ -102,6 +126,9 @@ const JobsStore=Reflux.createStore({
 				let job=res.data;
 				this.state.jobs[submitNumber].job_id=job.job_id;
 				this.state.jobDetailCache[job.job_id]=job;
+				let joblistData=_.pick(job, ['job_id', 'appId', 'status', 'submitTime', 'endTime']);
+				joblistData.app_id=joblistData.appId;
+				this.state.joblist.unshift(joblistData);
 			} else {
 				//this.state.jobs[submitNumber].job_id=undefined;
 				this.state.jobs[submitNumber].job_id=0;
@@ -124,6 +151,7 @@ const JobsStore=Reflux.createStore({
 						let jobDetail=this.state.jobDetailCache[job.job_id];
 						if (jobDetail) {
 							this.state.jobs[submitNumber++]=_.pick(jobDetail, ['job_id', 'appId']);
+							AppsActions.setApp(jobDetail.appId);
 						}
 					}
 					return job;
