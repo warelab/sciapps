@@ -47,7 +47,11 @@ const Help=React.createClass({
 					<li>Submit Job, then job history will show up in the right panel</li>
 					<li>Select at least 2 jobs from the right panel, then click on <b>Workflow</b> (from top menu), then <b>Build a workflow</b></li>
 				</ul>
-                        <h5>5. Why building/using SciApps workflow?</h5>
+			<h5>5. More questions?</h5>
+				<ul className="list">
+					<li>Post in CyVerse's <a href="http://www.cyverse.org/learning-center/ask-cyverse">ASK forum</a></li>
+				</ul>
+                        <h5>6. Extra: why building/using SciApps workflow?</h5>
                                 <ul className="list">
                                         <li>For convenience</li>
                                                 <ul className="list">
@@ -67,10 +71,6 @@ const Help=React.createClass({
                                                         <li>Analysis of a workflow can be shared and completely reproduced with passing (and loading) a lightweight JSON file</li>
                                                 </ul>
                                 </ul>
-			<h5>6. More questions?</h5>
-				<ul className="list">
-					<li>Post in CyVerse's <a href="http://www.cyverse.org/learning-center/ask-cyverse">ASK forum</a></li>
-				</ul>
 			</div>
 			</div>
 		)
