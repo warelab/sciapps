@@ -55,17 +55,6 @@ const publicWorkflows=React.createClass({
 				</BootstrapTable>
 				<Dialog ref='dialog' />
 			</Panel>
-			<div className="welcome">
-				<div className="section">
-				<h5>Public workflows</h5>
-				Click on any workflow below will load both the pipeline (main panel) and data (History panel). Workflow diagram can be shown from the bottom of the main panel.
-				<ul className="list">
-					<li><a href="#" onClick={this.showWorkflowRunner}>Association</a></li>
-					<li><a href="#" onClick={this.showWorkflowRunner}>Annotation</a></li>
-					<li><a href="#" onClick={this.showWorkflowRunner}>Assembly</a></li>
-				</ul>
-			</div>
-		</div>
 		);
 	}
 });
