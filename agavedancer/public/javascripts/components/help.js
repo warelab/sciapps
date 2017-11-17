@@ -8,7 +8,7 @@ const Help=React.createClass({
 			<div className="welcome">
 			<div className="section">
 			<div>
-				<b>SciApps</b> is a free, public, internet accessible platform for exploring public data, loading app form, public workflows and job histories, and building worklfows (with the loaded job histories). To execute any jobs or workflows, a CyVerse user account is needed.
+				<b>SciApps</b> is a free, public, internet accessible platform for building, running, and sharing scientific workflows. To get started, follow steps below or check the <a href="https://cyverse-sciapps-guide.readthedocs-hosted.com">SciApps platform guide</a>.
 			</div>
 			<h5>1. Create a CyVerse Account</h5>
 				<ul className="list">
@@ -35,7 +35,7 @@ const Help=React.createClass({
                         			</ul>
 					<li>Fill the form for required inputs (from any sources below) and parameters</li>
 						<ul className="list">
-							<li><b>Choose File</b> from your computer (&lt; 1.9GB files)</li>
+							<li><b>Choose File</b> from your computer (&lt; 10MB files)</li>
 							<li><b>Enter a URL</b> (or paste in the URL field)</li>
 							<li><b>Browse DataStore</b></li>
 								<ul className="list">
@@ -47,7 +47,28 @@ const Help=React.createClass({
 					<li>Submit Job, then job history will show up in the right panel</li>
 					<li>Select at least 2 jobs from the right panel, then click on <b>Workflow</b> (from top menu), then <b>Build a workflow</b></li>
 				</ul>
-			<h5>5. More questions?</h5>
+                        <h5>5. Why building/using SciApps workflow?</h5>
+                                SciApps workflows are built on top of Agave API to leverage distributed compute and storage systems on the cloud. The backend is designed to provide convenience, increase performance, and ensure reproducibility.
+                                <ul className="list">
+                                        <li>For convenience</li>
+                                                <ul className="list">
+                                                        <li>Submitting multiple analysis jobs simultaneously</li>
+                                                        <li>Data relationships, metadata, and real time job status are available on the workflow diagram</li>
+                                                        <li>Larger workflow can grow from existing workflows by chaining additional apps</li>
+                                                        <li>Smaller workflow can be created from existing workflows by selecting less steps</li>
+                                                </ul>
+                                        <li>For performance</li>
+                                                <ul className="list">
+                                                        <li>Jobs are running in parallel (jobs in a workflow will be submitted to cluster once inputs are ready (or dependency is clear))</li>
+                                                        <li>Intermediate results are kept close to cluster (avoid unnecessary cross sites data transfer)</li>
+                                                </ul>
+                                        <li>For reproducibility</li>
+                                                <ul className="list">
+                                                        <li>Workflow = pipeline + data (which means every re-run will create a new workflow)</li>
+                                                        <li>Analysis of a workflow can be shared and completely reproduced with passing (and loading) a lightweight JSON file</li>
+                                                </ul>
+                                </ul>
+			<h5>6. More questions?</h5>
 				<ul className="list">
 					<li>Post in CyVerse's <a href="http://www.cyverse.org/learning-center/ask-cyverse">ASK forum</a></li>
 				</ul>
