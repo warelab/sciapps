@@ -130,7 +130,7 @@ hook 'before' => sub {
 	if(! session('cas_user') && $path=~m#^/(job|workflowJob)/new/?#) {
 		if (request->is_ajax) {
 			content_type(setting('plugins')->{Ajax}{content_type});
-			raise InvalidCredentials => 'no cas user';
+			halt(to_json({status => 'error', error => 'no username'}));
 		} else {
 			request->path('/');
 		}
