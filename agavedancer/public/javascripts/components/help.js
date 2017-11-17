@@ -48,7 +48,6 @@ const Help=React.createClass({
 					<li>Select at least 2 jobs from the right panel, then click on <b>Workflow</b> (from top menu), then <b>Build a workflow</b></li>
 				</ul>
                         <h5>5. Why building/using SciApps workflow?</h5>
-                                SciApps workflows are built on top of Agave API to leverage distributed compute and storage systems on the cloud. The backend is designed to provide convenience, increase performance, and ensure reproducibility.
                                 <ul className="list">
                                         <li>For convenience</li>
                                                 <ul className="list">
