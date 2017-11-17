@@ -147,7 +147,7 @@ hook 'before' => sub {
 	unless($path eq '/' || $path=~m#^/(login|logout|notification)/?# || check_agave_login()) {
 		if (request->is_ajax) {
 			content_type(setting('plugins')->{Ajax}{content_type});
-			raise InvalidCredentials => 'no username';
+			halt(to_json({status => 'error', error => 'no username'}));
 		} else {
 			request->path('/');
 		}
