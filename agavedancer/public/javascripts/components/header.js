@@ -99,7 +99,7 @@ const Header=React.createClass({
 
 	handleLogout: function() {
 		this.refs.dialog.show({
- 			body: 'You will lose all job histories if you have not saved them as a workflow',
+ 			body: 'History panel will be cleared, you can reload jobs to History from "My jobs"',
  			actions: [
  				Dialog.CancelAction(),
  				Dialog.Action(

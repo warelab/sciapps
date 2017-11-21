@@ -280,7 +280,7 @@ sub browse_ls {
 		}, keys %$dir_list];
 }
 
-get '/apps/:id' => sub {
+ajax '/apps/:id' => sub {
 	my $app_id = param("id");
 	my $app=retrieveApps($app_id);
 	to_json($app);
@@ -447,7 +447,7 @@ sub retrieveJob {
 		}
 		$user=_get_user($row->{username});
 	}
-	unless ($job) {
+	unless ($job || ! $user) {
 		my $apif = getAgaveClient($user);
 		my $job_ep = $apif->job;
 		my $retry=2;
@@ -465,13 +465,16 @@ sub retrieveJob {
 		} while (!$job && sleep(1) && $retry);
 		if ($job) {
 			$job->{job_id}=$job_id;
-			my $data={job_id => $job_id, agave_id => $agave_id, app_id => $job->{appId}, agave_json => to_json($job), status => $job->{status}};
+			my %data=(agave_id => $agave_id, app_id => $job->{appId}, agave_json => to_json($job), status => $job->{status});
 			try {
-				database->quick_insert('job', $data);
+				database->quick_insert('job', {job_id => $job_id, %data});
 			} catch {
-				delete $data->{job_id};
-				database->quick_update('job', {job_id => $job_id}, $data);
+				database->quick_update('job', {job_id => $job_id}, \%data);
 			};
+			if ($job->{status} eq 'FINISHED') {
+				submitNextJob({job_id => $job_id});
+				shareOutput({job_id => $job_id}, $user);
+			}
 		}
 	}
 	$job or raise InvalidRequest => 'no jobs found';
@@ -817,9 +820,8 @@ any ['get', 'post'] => '/notification/:id' => sub {
 		}
 	}
 	if ($params->{status} eq 'FINISHED') {
-		submitNextJob($job, $user);
-		#shareJob($job, $user);
-		shareOutput($job, $user);
+		#submitNextJob($job);
+		#shareOutput($job, $user);
 		#archiveJob($job);
 	} elsif ($params->{status} eq 'FAILED') {
 		#resubmitJob($params->{id});

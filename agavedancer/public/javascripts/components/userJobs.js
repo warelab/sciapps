@@ -53,9 +53,9 @@ const UserJobs=React.createClass({
 				<BootstrapTable ref='table' data={jobsItems} striped={true} hover={true} pagination={true} selectRow={selectRowProp} options={options}>
 					<TableHeaderColumn isKey={true} dataField="job_id" hidden={true}>ID</TableHeaderColumn>
 					<TableHeaderColumn dataField="app_id" dataAlign="left" dataSort={true}>App Name</TableHeaderColumn>
-					<TableHeaderColumn dataField="status" dataAlign="left" dataSort={true}>Status</TableHeaderColumn>
-					<TableHeaderColumn dataField="submitTime" dataAlign="left" dataSort={true}>Submit Time</TableHeaderColumn>
-					<TableHeaderColumn dataField="endTime" dataAlign="left" dataSort={true}>End Time</TableHeaderColumn>
+					<TableHeaderColumn dataField="submitTime" dataAlign="center" width="155" dataSort={true}>Submit Time</TableHeaderColumn>
+					<TableHeaderColumn dataField="endTime" dataAlign="center" width="155" dataSort={true}>End Time</TableHeaderColumn>
+                                        <TableHeaderColumn dataField="status" dataAlign="center" width="88" dataSort={true}>Status</TableHeaderColumn>
 				</BootstrapTable>
 				<Dialog ref='dialog' />
 			</Panel>
