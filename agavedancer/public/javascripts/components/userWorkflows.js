@@ -105,7 +105,7 @@ const UserWorkflows=React.createClass({
 			<Panel header="My Workflows">
 				<BootstrapTable ref='table' data={workflowItems} striped={true} hover={true} cellEdit={cellEditProp} pagination={true} selectRow={selectRowProp} options={options}>
 					<TableHeaderColumn isKey={true} dataField="workflow_id" hidden={true}>ID</TableHeaderColumn>
-					<TableHeaderColumn dataField="name" dataAlign="left" dataSort={true}>Name</TableHeaderColumn>
+					<TableHeaderColumn dataField="name" dataAlign="left" width='250' dataSort={true}>Name</TableHeaderColumn>
 					<TableHeaderColumn dataField="description" dataAlign="left">Description</TableHeaderColumn>
 				</BootstrapTable>
 				<Dialog ref='dialog' />
