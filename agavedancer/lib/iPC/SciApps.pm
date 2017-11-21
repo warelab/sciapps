@@ -462,13 +462,15 @@ sub retrieveJob {
 		} while (!$job && sleep(1) && $retry);
 		if ($job) {
 			$job->{job_id}=$job_id;
-			my $data={job_id => $job_id, agave_id => $agave_id, app_id => $job->{appId}, agave_json => to_json($job), status => $job->{status}};
+			my %data=(agave_id => $agave_id, app_id => $job->{appId}, agave_json => to_json($job), status => $job->{status});
 			try {
-				database->quick_insert('job', $data);
+				database->quick_insert('job', {job_id => $job_id, %data});
 			} catch {
-				delete $data->{job_id};
-				database->quick_update('job', {job_id => $job_id}, $data);
+				database->quick_update('job', {job_id => $job_id}, \%data);
 			};
+			if ($job->{status} eq 'FINISHED') {
+				submitNextJob({job_id => $job_id});
+			}
 		}
 	}
 	$job or raise InvalidRequest => 'no jobs found';
@@ -867,7 +869,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 		}
 	}
 	if ($params->{status} eq 'FINISHED') {
-		submitNextJob($job);
+		#submitNextJob($job);
 		#archiveJob($job);
 		#uncompress_result($params->{archivePath});
 	} elsif ($params->{status} eq 'FAILED') {
@@ -888,16 +890,6 @@ sub archiveJob {
 	my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->{executionSystem}, $jobObj->{outputPath});
 	my $target=sprintf("/system/%s/%s", $archive_system, $archive_path);
 	my $res=$io->import_file($target, {urlToIngest => $source});
-}
-
-sub updateJob {
-	my ($job)=@_;
-	my $data={ status => $job->{status} };
-	if ($job->{status} eq 'FINISHED' || $job->{status} eq 'FAILED') {
-		#$job->{agave_json}=$data->{agave_json}=to_json(retrieveJob($job->{job_id}));
-		retrieveJob($job->{job_id});
-	};
-	#database->quick_update('job', {job_id => $job->{job_id}}, $data);
 }
 
 sub submitNextJob {
