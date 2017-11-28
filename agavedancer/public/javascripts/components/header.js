@@ -98,7 +98,7 @@ const Header=React.createClass({
 
 	handleLogout: function() {
 		this.refs.dialog.show({
- 			body: 'History panel will be cleared, you can reload jobs to History from "My jobs"',
+ 			body: 'History panel will be cleared. You can reload jobs to History from "My jobs"',
  			actions: [
  				Dialog.CancelAction(),
  				Dialog.Action(
