@@ -93,7 +93,8 @@ const UserWorkflows=React.createClass({
 
 		let cellEditProp={
 			mode: 'dbclick',
-			blurToSave: true
+			blurToSave: true,
+			afterSaveCell: this.handleCellSave
 		};
 		let selectRowProp={
 			mode: 'radio'
