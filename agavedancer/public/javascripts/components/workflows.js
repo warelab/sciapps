@@ -31,7 +31,7 @@ const publicWorkflows=React.createClass({
 		let tooltipload=<Tooltip id="tooltipload">Load</Tooltip>;
 		return (
 			<ButtonGroup>
-				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/>Load</Button>
+				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/> Load</Button>
 			</ButtonGroup>
 		);
 	},
