@@ -74,9 +74,9 @@ const UserWorkflows=React.createClass({
 		let tooltipdelete=<Tooltip id="tooltipdelete">Delete</Tooltip>;
 		return (
 			<ButtonGroup>
-				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/>Load</Button>
-				<Button key='download' bsStyle='info' onClick={this.handleDownload}><Glyphicon glyph='download-alt'/>Download</Button>
-				<Button key='delete' bsStyle='warning' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/>Delete</Button>
+				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/> Load</Button>
+				<Button key='download' bsStyle='info' onClick={this.handleDownload}><Glyphicon glyph='download-alt'/> Download</Button>
+				<Button key='delete' bsStyle='warning' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
 			</ButtonGroup>
 		);
 	},
