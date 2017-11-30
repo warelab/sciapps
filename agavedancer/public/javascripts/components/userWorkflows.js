@@ -40,7 +40,8 @@ const UserWorkflows=React.createClass({
 			body: 'Are you sure you want to delete this workflow?',
 			actions: [
 				Dialog.CancelAction(),
-				Dialog.OKAction(
+				Dialog.Action(
+					'Delete',
 					() => {
 						next();
 					},

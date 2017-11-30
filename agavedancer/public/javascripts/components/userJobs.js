@@ -40,7 +40,8 @@ const UserJobs=React.createClass({
 			body: 'Are you sure you want to delete the job(s)?',
 			actions: [
 				Dialog.CancelAction(),
-				Dialog.OKAction(
+				Dialog.Action(
+					'Delete',
 					() => {
 						next();
 					},
