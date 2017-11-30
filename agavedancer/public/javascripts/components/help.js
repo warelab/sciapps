@@ -39,8 +39,8 @@ const Help=React.createClass({
 							<li><b>Enter a URL</b> (or paste in the URL field)</li>
 							<li><b>Browse DataStore</b></li>
 								<ul className="list">
-									<li>CyVerse DataStore (under 'shared' or 'user', after login)</li>
-									<li>SciApps DataStore (under 'public')</li>
+									<li>CyVerse DataStore (under 'CyVerse', after login)</li>
+									<li>SciApps DataStore (under 'exampleData')</li>
 								</ul>
 							<li>Holding and dragging the results file URL from the right panel (History) to the URL field</li>
 						</ul>
@@ -56,9 +56,9 @@ const Help=React.createClass({
                                         <li>For convenience</li>
                                                 <ul className="list">
                                                         <li>Submitting multiple analysis jobs simultaneously</li>
-                                                        <li>Data relationships, metadata, and real time job status are available on the workflow diagram</li>
+                                                        <li>Data relationships, metadata, and real-time job status are available in the workflow diagram</li>
                                                         <li>Larger workflow can grow from existing workflows by chaining additional apps</li>
-                                                        <li>Smaller workflow can be created from existing workflows by selecting less steps</li>
+                                                        <li>Smaller workflow can be created from existing workflows by selecting fewer: steps</li>
                                                 </ul>
                                         <li>For performance</li>
                                                 <ul className="list">

@@ -39,6 +39,7 @@ input_path: 'inputs'
 email: 'noreply@sciapps.org'
 wf_step_prefix: 'wf_step_'
 maxRunTime: "96:00:00"
+defaultUser: 'maizecode'
 datastore:
   __home__: 
     system: 'data.iplantcollaborative.org'

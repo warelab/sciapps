@@ -195,6 +195,7 @@ const WorkflowStore=Reflux.createStore({
 			} else if (res.data.status === 'success') {
 				_.remove(this.state.workflows, {workflow_id: wfId});
 				this.complete();
+				return wfId;
 			}
 		}.bind(this))
 		.catch(function(error) {

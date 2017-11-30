@@ -25,11 +25,38 @@ const UserJobs=React.createClass({
 		JobsActions.listJob();
 	},
 
+	handleDeleteRow: function(e) {
+		let table=this.refs.table;
+		let jobIds=table.store.selected;
+		if (jobIds && jobIds.length) {
+			this.handleConfirmDeleteRow(function() {
+				JobsActions.deleteJobs(jobIds);
+			});
+		}
+	},
+
+	handleConfirmDeleteRow: function(next) {
+		this.refs.dialog.show({
+			body: 'Are you sure you want to delete the job(s)?',
+			actions: [
+				Dialog.CancelAction(),
+				Dialog.Action(
+					'Delete',
+					() => {
+						next();
+					},
+					'btn-warning'
+				),
+			]
+		})
+	},
+
 	createCustomButtonGroup: function(props) {
 		return (
 			<ButtonGroup>
-				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/>Load</Button>
-				<Button key='refresh' bsStyle='info' onClick={this.handleRefresh}><Glyphicon glyph='refresh'/>Refresh</Button>
+				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/> Load</Button>
+				<Button key='refresh' bsStyle='info' onClick={this.handleRefresh}><Glyphicon glyph='refresh'/> Refresh</Button>
+				<Button key='delete' bsStyle='warning' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
 			</ButtonGroup>
 		);
 	},
@@ -50,7 +77,7 @@ const UserJobs=React.createClass({
 		};
 		return (
 			<Panel header="My Jobs">
-				<BootstrapTable ref='table' data={jobsItems} striped={true} hover={true} pagination={true} selectRow={selectRowProp} options={options}>
+				<BootstrapTable ref='table' data={jobsItems} search={true} striped={true} hover={true} pagination={true} selectRow={selectRowProp} options={options}>
 					<TableHeaderColumn isKey={true} dataField="job_id" hidden={true}>ID</TableHeaderColumn>
 					<TableHeaderColumn dataField="app_id" dataAlign="left" dataSort={true}>App Name</TableHeaderColumn>
 					<TableHeaderColumn dataField="submitTime" dataAlign="center" width="155" dataSort={true}>Submit Time</TableHeaderColumn>

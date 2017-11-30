@@ -527,7 +527,6 @@ ajax '/workflow/:id/delete' => sub {
 	my $wfid=param('id');
 	my $result;
 	try {
-		#$result=database->quick_delete('workflow', {workflow_id => $wfid});
 		$result=database->quick_delete('user_workflow', {username => $username, workflow_id => $wfid});
 	} catch {
 		$status='error';
@@ -611,7 +610,7 @@ ajax '/job/new/:id' => sub {
 	}
 };
 
-get '/job' => sub {
+ajax '/job' => sub {
 	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
 	my @result=database->quick_select('job', {username => $user->{username}}, {columns =>[qw/job_id app_id status agave_json/], order_by => {desc => 'id'}});
 	foreach (@result) {
@@ -629,13 +628,24 @@ get '/job' => sub {
 			}
 			$_->{submitTime}=$submitTime;
 			$_->{endTime}=$endTime;
-			#$_->{submitTime}=Time::Piece->strptime($submitTime, '%Y %b %d %H:%M:%S');
-			#$_->{endTime}=Time::Piece->strptime($endTime, '%Y %b %d %H:%M:%S');
 		}
 	}
 	return to_json(\@result);
 };
 
+ajax '/job/:id/delete' => sub {
+	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
+	my $job_id = param("id");
+	my $result;
+	try {
+		database->quick_update('job', {job_id => $job_id}, {username => setting("defaultUser")});
+	} catch {
+		my ($e)=@_;
+		$result={status => 'error', error => $e};
+	};
+	$result||={status => 'success', data => {job_id => $job_id}};
+	to_json($result);
+};
 
 sub prepareJob {
 	my ($username, $app, $form, $step, $step_form, $prev_job)=@_;

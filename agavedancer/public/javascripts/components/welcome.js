@@ -7,13 +7,13 @@ const Welcome=React.createClass({
 		return(
 			<div className="welcome">
 				<div className="section">
-					<b>SciApps</b> is a web-based platform for building, executing, & sharing scientific applications (Apps) and workflows, powered by  a federated CyVerse system at Cold Spring Harbor Laboratory. 
+					<b>SciApps</b> is a web-based platform for building, executing, & sharing scientific applications (Apps) and workflows, powered by a CyVerse system at Cold Spring Harbor Laboratory. 
 					<br /><br />
 					<center><img className="mylogo"src="sciapps.gif" hspace="10" align="middle" /></center>
 					<br /><br />
 					<br />
 					<div>
-						The SciApps platform is supported in part by <a href="http://nsf.gov" target="_blank">National Science Foundation</a> DBI-1265383 (the CyVerse project), and <a href="https://cshl.edu">Cold Spring Harbor Laboratory</a>. 
+						The SciApps platform is supported by <a href="http://nsf.gov" target="_blank">National Science Foundation</a> (DBI-1265383), and in part by  <a href="https://cshl.edu">Cold Spring Harbor Laboratory</a>. 
 					</div>
 					<br /><br />
 					<div id="myimages">

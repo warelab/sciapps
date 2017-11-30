@@ -67,6 +67,37 @@ const JobsStore=Reflux.createStore({
 		.done();
 	},
 
+	_deleteJob: function(jobId) {
+		let setting=_config.setting;
+		let jobPromise=Q(axios.get('/job/' + jobId + '/delete', {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				console.log(res.data.error);
+				return;
+			} else {
+				_.remove(this.state.joblist, {job_id: jobId});
+				this._removeJob(jobId);
+				return jobId;
+			}
+		}.bind(this))
+		.catch(function(error) {
+			console.log(error);
+		});
+		return jobPromise;
+	},
+
+	deleteJobs: function(jobIds) {
+		let promises=jobIds.map(function(jobId) {
+			return this._deleteJob(jobId);
+		}.bind(this));
+		Q.allSettled(promises)
+		.then(function(results) {
+			this.complete();
+		}.bind(this));
+	},
+
 	submitWorkflowJobs: function(wf, formData) {
 		let submitNumber=this.state.jobs.length;
 		let setting=_config.setting;
@@ -169,8 +200,8 @@ const JobsStore=Reflux.createStore({
 	},
 
 	setJob: function(jobId) {
-		let jobPromise=this._setJob(jobId);
-		jobPromise.then(function(job) {
+		let jobPromise=this._setJob(jobId)
+		.then(function(job) {
 			this.complete();
 		}.bind(this));
 		return jobPromise;
@@ -207,14 +238,8 @@ const JobsStore=Reflux.createStore({
 		return jobPromise;
 	},
 
-	removeJobs: function(index) {
-		if (!_.isArray(index)) {
-			index=[index];
-		} 
-		index.forEach(function(i) {
-			this.state.jobs[i]=undefined;
-		}.bind(this));
-		this.complete();
+	_removeJob: function(jobId) {
+		_.remove(this.state.jobs, {job_id: jobId});
 	},
 
 	saveJobs: function() {
