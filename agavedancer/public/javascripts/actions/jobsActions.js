@@ -13,7 +13,7 @@ const JobsActions=Reflux.createActions([
 	'hideJob',
 	'setJob',
 	'setJobs',
-	'removeJobs',
+	'deleteJobs',
 	'setWorkflowJobOutputs',
 	'resetWorkflowJobs',
 	'showJobOutputs',
