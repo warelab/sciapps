@@ -469,7 +469,7 @@ sub retrieveJob {
 				database->quick_update('job', {job_id => $job_id}, \%data);
 			};
 			if ($job->{status} eq 'FINISHED') {
-				submitNextJob({job_id => $job_id});
+				submitNextJob({job_id => $job_id, %data});
 			}
 		}
 	}
@@ -903,13 +903,11 @@ sub archiveJob {
 }
 
 sub submitNextJob {
-	my ($job)=@_;
+	my ($prev)=@_;
 
 	my $apif = getAgaveClient();
-
 	my $apps = $apif->apps;
 
-	my $prev=database->quick_select('job', {job_id => $job->{job_id}});
 	my $jobObj=from_json($prev->{agave_json});
 	#my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->{executionSystem}, $jobObj->{outputPath});
 	my $source=sprintf("https://agave.iplantc.org/jobs/v2/%s/outputs/media", $jobObj->{id});
