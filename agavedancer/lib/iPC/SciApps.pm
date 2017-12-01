@@ -219,6 +219,7 @@ ajax qr{/browse/?(.*)} => sub {
 		$result=browse_files($filepath, $system);
 	} else {
 		$result=browse_files($path, $datastore_system, $datastore_path);
+		#$result=browse_ils($path, $datastore_system, $datastore_homepath);
 	}
 
 	to_json($result);
@@ -477,8 +478,8 @@ sub retrieveJob {
 				database->quick_update('job', {job_id => $job_id}, \%data);
 			};
 			if ($job->{status} eq 'FINISHED') {
-				submitNextJob({job_id => $job_id}, $user);
-				shareOutput({job_id => $job_id}, $user);
+				submitNextJob({job_id => $job_id, %data}, $user);
+				shareOutput({job_id => $job_id, %data}, $user);
 			}
 		}
 	}
@@ -676,10 +677,11 @@ sub prepareJob {
 	foreach my $name (keys %job_form) {
 		next unless $job_form{$name};
 		if ($job_form{$name}=~m#^https://\w+.sciapps.org/results/job-(\w+\-\w+\-\w+\-\w+)[^\/]*/(.*)#) {
-			#$job_form{$name}=~s#^https://data.sciapps.org#agave://halcott.cshl.edu#;
 			$job_form{$name}='https://agave.iplantc.org/jobs/v2/' . $1 . '/outputs/media/' . $2;
-		} elsif ($job_form{$name}=~m#^https://agave.iplantc.org/files/v2/download#) {
-			$job_form{$name}=~s#https://agave.iplantc.org/files/v2/download/[\w]+/system/#agave://#;
+		} elsif ($job_form{$name}=~m#^http://datacommons.cyverse.org/browse/iplant/home/#) {
+			$job_form{$name}=~s#^http://datacommons.cyverse.org/browse/iplant/home/#agave://$archive_system/#;
+			#} elsif ($job_form{$name}=~m#^https://agave.iplantc.org/files/v2/download#) {
+		#$job_form{$name}=~s#https://agave.iplantc.org/files/v2/download/[\w]+/system/#agave://#;
 		}
 	}
 
@@ -743,7 +745,7 @@ sub prepareJob {
 
 	$job_form{archive}=1;
 	#$job_form{archiveSystem}=$archive_system;
-	#$job_form{archivePath}=$archive_path;
+	$job_form{archivePath}=join('/', $archive_path, $app_id . '_' . $job_id);
 	$job_form{notifications}=$notifications;
 
 	my $job_json=to_json(\%job_form);
@@ -861,10 +863,7 @@ sub shareOutput {
 	my $jobObj=from_json($job->{agave_json});
 	my $path=$archive_home . '/' . $jobObj->{archivePath};
 	my $cmd="export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ichmod -r read public $path;ichmod -r read anonymous $path";
-	print STDERR "AA|$cmd\n";
-	my @r=`$cmd`;
-	print STDERR "AA2|@r\n";
-	#system($cmd) == 0 or raise 'SystemError' => 'can not share output';
+	system($cmd) == 0 or raise 'SystemError' => 'can not share output';
 }
 
 sub shareJob {
@@ -890,12 +889,11 @@ sub archiveJob {
 }
 
 sub submitNextJob {
-	my ($job, $user)=@_;
+	my ($prev, $user)=@_;
 
 	my $apif = getAgaveClient($user);
 	my $apps = $apif->apps;
 
-	my $prev=database->quick_select('job', {job_id => $job->{job_id}});
 	my $jobObj=from_json($prev->{agave_json});
 	#my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->{executionSystem}, $jobObj->{outputPath});
 	#my $source=sprintf("https://agave.iplantc.org/jobs/v2/%s/outputs/media", $jobObj->{id});

@@ -138,7 +138,7 @@ const WorkflowDiagram=React.createClass({
 						if (href) {
 							href=href.replace(/__owner__/, jobOwner);
 							href=href.replace(/__system__/, splitUrl[1]);
-							href=href.replace(/__home__/, setting.archive_home);
+							href=href.replace(/\/__home__/, setting.archive_home);
 							href=href.replace(/__path__/, splitUrl[2]);
 							diagramDefStmts.push('click ' + output_name + ' "' + href + '" "' + value + ' - click to open"');
 						} else {

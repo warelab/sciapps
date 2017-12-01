@@ -72,7 +72,7 @@ const JobsItem=React.createClass({
 				let href=setting.output_url[job.archiveSystem];
 				href=href.replace(/__owner__/, job.owner);
 				href=href.replace(/__system__/, job.archiveSystem);
-				href=href.replace(/__home__/, setting.archive_home);
+				href=href.replace(/\/__home__/, setting.archive_home);
 				href=href.replace(/__path__/, (job.archivePath + '/' + oname));
 
 				return (

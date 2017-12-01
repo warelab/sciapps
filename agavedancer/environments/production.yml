@@ -27,7 +27,7 @@ agave_config: ".agave"
 host_url: "https://www.sciapps.org"
 archive_system: 'data.iplantcollaborative.org'
 archive_home: '/iplant/home'
-archive_path: '__user__/archive/jobs'
+archive_path: '__user__/sci_data/results'
 input_system: 'brebiou.cshl.edu'
 input_home: '/agave_data'
 input_path: 'inputs'
