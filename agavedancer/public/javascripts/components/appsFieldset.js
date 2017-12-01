@@ -11,7 +11,7 @@ import utilities from '../libs/utilities.js';
 const AppsFieldset=React.createClass({
 
 	render: function() {
-		let appDetail=this.props.appDetail;
+		let appDetail=_.cloneDeep(this.props.appDetail);
 		let index=this.props.index;
 		let onValidate=this.props.onValidate;
 		let app_inputs, app_params, header='Step ' + (index + 1) + ': ' + appDetail.name + ' (SciApps Version ' + appDetail.version + ')';
