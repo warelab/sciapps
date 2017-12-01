@@ -152,6 +152,11 @@ hook 'before' => sub {
 			request->path('/');
 		}
 	}
+	if (my $username=session('username')) {
+		my $archive_path=setting('archive_path');
+		$archive_path=~s/__user__/$username/;
+		set archive_path => $archive_path;
+	}
 };
 
 sub _index {
@@ -237,7 +242,7 @@ sub browse_ils {
 	my ($path, $system, $homepath)=@_;
 	my $irodsEnvFile=setting('irodsEnvFile');
 	my $fullPath=$homepath . '/' . $path;
-	my @ils=`export irodsEnvFile=$irodsEnvFile;export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ils -l '$fullPath'`;
+	my @ils=`export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ils -l '$fullPath'`;
 	chomp (@ils);
 	my $dir_list=iPC::Utils::parse_ils(\@ils, $homepath);
 
@@ -472,7 +477,7 @@ sub retrieveJob {
 				database->quick_update('job', {job_id => $job_id}, \%data);
 			};
 			if ($job->{status} eq 'FINISHED') {
-				submitNextJob({job_id => $job_id});
+				submitNextJob({job_id => $job_id}, $user);
 				shareOutput({job_id => $job_id}, $user);
 			}
 		}
@@ -611,8 +616,8 @@ ajax '/job/new/:id' => sub {
 };
 
 ajax '/job' => sub {
-	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
-	my @result=database->quick_select('job', {username => $user->{username}}, {columns =>[qw/job_id app_id status agave_json/], order_by => {desc => 'id'}});
+	my $username=session('username') or raise InvalidCredentials => 'no username';
+	my @result=database->quick_select('job', {username => $username}, {columns =>[qw/job_id app_id status agave_json/], order_by => {desc => 'id'}});
 	foreach (@result) {
 		if (my $json=delete $_->{agave_json}) {
 			my $job=from_json($json);
@@ -634,7 +639,7 @@ ajax '/job' => sub {
 };
 
 ajax '/job/:id/delete' => sub {
-	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
+	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $job_id = param("id");
 	my $result;
 	try {
@@ -839,7 +844,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	return;
 };
  
-sub shareOutput {
+sub shareOutputByAgave {
 	my ($job, $user)=@_;
 
 	my $apif = getAgaveClient($user);
@@ -847,6 +852,19 @@ sub shareOutput {
 	my $jobObj=from_json($job->{agave_json});
 	my $path=$jobObj->{archivePath};
 	my $res=$io->share($path, 'public', 'READ', 1);
+}
+
+sub shareOutput {
+	my ($job, $user)=@_;
+	my $irodsEnvFile=setting('irodsEnvFile');
+	my $archive_home=setting('archive_home');
+	my $jobObj=from_json($job->{agave_json});
+	my $path=$archive_home . '/' . $jobObj->{archivePath};
+	my $cmd="export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ichmod -r read public $path;ichmod -r read anonymous $path";
+	print STDERR "AA|$cmd\n";
+	my @r=`$cmd`;
+	print STDERR "AA2|@r\n";
+	#system($cmd) == 0 or raise 'SystemError' => 'can not share output';
 }
 
 sub shareJob {
