@@ -152,11 +152,6 @@ hook 'before' => sub {
 			request->path('/');
 		}
 	}
-	if (my $username=session('username')) {
-		my $archive_path=setting('archive_path');
-		$archive_path=~s/__user__/$username/;
-		set archive_path => $archive_path;
-	}
 };
 
 sub _index {
@@ -660,6 +655,7 @@ sub prepareJob {
 	my $archive_home=setting("archive_home");
 	my $archive_path=setting("archive_path");
 	my $output_url=setting("output_url");
+	$archive_path=~s/__user__/$username/;
 
 	my $job_id=iPC::Utils::uuid();
 
@@ -799,7 +795,7 @@ sub submitJob {
 				error($err);
 			}
 		}
-		sleep(60) if $retry;
+		sleep(5) if $retry;
 	}
 	return (undef, $err);
 }
