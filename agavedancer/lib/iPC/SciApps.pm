@@ -183,7 +183,7 @@ ajax '/logout' => sub {
 	to_json({status => "successful"});
 };
 
-get '/user' => sub {
+ajax '/user' => sub {
 	my $user={username => session('username')};
 	$user->{logged_in}=$user->{username} && check_agave_login() ? 1 : 0;
 	to_json($user);
@@ -213,8 +213,8 @@ ajax qr{/browse/?(.*)} => sub {
 		my ($system, $filepath)=split /\//, $path, 2;
 		$result=browse_files($filepath, $system);
 	} else {
-		$result=browse_files($path, $datastore_system, $datastore_path);
-		#$result=browse_ils($path, $datastore_system, $datastore_homepath);
+		#$result=browse_files($path, $datastore_system, $datastore_path);
+		$result=browse_ils($path, $datastore_system, $datastore_homepath);
 	}
 
 	to_json($result);
@@ -655,6 +655,7 @@ sub prepareJob {
 	my $archive_home=setting("archive_home");
 	my $archive_path=setting("archive_path");
 	my $output_url=setting("output_url");
+	my $irodsEnvFile=setting('irodsEnvFile');
 	$archive_path=~s/__user__/$username/;
 
 	my $job_id=iPC::Utils::uuid();
@@ -698,6 +699,11 @@ sub prepareJob {
 			$job_form{$k}=$prev_job->[$v->{step}]{job_id} . ':' . $v->{output_name};
 		} else {
 			$step->{inputs}{$k}=$job_form{$k};
+			if ($job_form{$k}=~m#agave://data.iplantcollaborative.org/(.+)#) {
+				my $path=$archive_home . '/' . $1;
+				my $cmd="export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ichmod read public $path;ichmod read anonymous $path";
+				system($cmd) == 0 or raise 'SystemError' => "can not share $path";
+			}
 		}
 	}
 
@@ -859,7 +865,7 @@ sub shareOutput {
 	my $jobObj=from_json($job->{agave_json});
 	my $path=$archive_home . '/' . $jobObj->{archivePath};
 	my $cmd="export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ichmod -r read public $path;ichmod -r read anonymous $path";
-	system($cmd) == 0 or raise 'SystemError' => 'can not share output';
+	system($cmd) == 0 or raise 'SystemError' => "can not share $path";
 }
 
 sub shareJob {

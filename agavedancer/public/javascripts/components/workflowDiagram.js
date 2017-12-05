@@ -175,9 +175,20 @@ const WorkflowDiagram=React.createClass({
 						let url=ic.replace('agave://', '');
 						let input_name=url.replace(/\W/g, '_').toLowerCase();
 						diagramDefStmts.push(input_name + '(' + utilities.truncate(value) + '); class ' + input_name + ' fileNode');
-						diagramDefStmts.push('click ' + input_name + ' clickFileNode "' + value + ' - click for metadata"');
+						let reg=new RegExp('agave://data.iplantcollaborative.org/(.+)', 'i');
+						let found=ic.match(reg);
+						let href;
+						if (found && found[1]) {
+							href=setting.output_url["data.iplantcollaborative.org"];
+							href=href.replace(/\/__home__/, setting.archive_home);
+							href=href.replace(/__path__/, found[1]);
+						} else {
+							href=ic;
+						}
+						diagramDefStmts.push('click ' + input_name + ' "' + href + '" "' + value + ' - click to open"');
+						//diagramDefStmts.push('click ' + input_name + ' clickFileNode "' + value + ' - click for metadata"');
 						diagramDefStmts.push(input_name + '-->' + appNodeId);
-						JobsActions.setFile(input_name, url);
+						//JobsActions.setFile(input_name, url);
 					}
 				});
 			});

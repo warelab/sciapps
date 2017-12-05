@@ -38,16 +38,21 @@ sub parse_ils {
 	my @content;
 	my %result=($1 => \@content);
 	$path=$datastore_root . ($1 ? '/' . $1 : '');
+	my $seen;
 	foreach my $line (@$ils) {
+		my $name;
 		if ($line=~m#^\s+C\-\s+$path/(.*)#) {
-			my $name=$1;
+			$name=$1;
 			$name=~s/\s+$//;
+			$seen{$name}++ or
 			push @content, +{
 				name	=> $name,
 				type	=> 'dir',	
 			};
 		} else {
 			my @f=split /\s+/, $line, 8;
+			$name=$f[7];
+			$seen{$name}++ or
 			push @content, +{
 				name => $f[7],
 				type => 'file',
