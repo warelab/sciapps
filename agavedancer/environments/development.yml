@@ -44,7 +44,7 @@ datastore:
   __home__: 
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
-    path: '__user__'
+    path: '__user__/sci_data'
   __shared__:
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'

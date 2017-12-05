@@ -30,6 +30,7 @@ const FilesInfo=React.createClass({
 			if (href) {
 				href=href.replace(/__owner__/, jobOwner);
 				href=href.replace(/__system__/, fileDetail.system);
+				href=href.replace(/\/__home__/, setting.archive_home);
 				href=href.replace(/__path__/, fileDetail.path);
 			}
 			//let link=setting.output_url[fileDetail['system']] + '/' + fileDetail['path'];
