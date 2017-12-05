@@ -80,7 +80,7 @@ const WorkflowDiagram=React.createClass({
 	buildWorkflowDiagramDef: function(workflowStore, appsStore, jobsStore, workflowDirection) {
 		let that=this;
 		let setting=_config.setting;
-		let jobs=jobsStore.workflow.jobs;
+		//let jobs=jobsStore.workflow.jobs;
 		//let jobStatus={};
 		//if (jobs) {
 		//	jobs.forEach(function(job_id) {
@@ -101,17 +101,19 @@ const WorkflowDiagram=React.createClass({
 				let jobDetail=step.jobId ? jobsStore.jobDetailCache[step.jobId] || _.find(jobsStore.jobDetailCache, 'id', step.jobId) : undefined;
 				let showAppId=appId.replace(/\-[\.\d]+$/, '');
 				let appClass='PENDING';
+				let jobNum='';
 				//if (typeof jobs === 'object' && jobs[i] !== undefined && jobStatus[jobs[i]] !== undefined) {
 				//	appClass=jobStatus[jobs[i]];
 				//}
 				if (jobDetail) {
+					jobNum=(_.findIndex(jobsStore.jobs, 'job_id', jobDetail.job_id)+1) + ': ';
 					appClass=jobDetail.status;
 				}
 				if (! _.includes(['PENDING', 'FINISHED', 'FAILED'], appClass)) {
 					appClass='RUNNING';
 				}
 				let appNodeId=(setting.wf_step_prefix + step.id).replace(/\W/g, '_').toLowerCase();
-				diagramDefStmts.push(appNodeId + '[' + utilities.truncate(showAppId) + ']; class ' + appNodeId + ' appsNode' + appClass);
+				diagramDefStmts.push(appNodeId + '[' + jobNum + utilities.truncate(showAppId) + ']; class ' + appNodeId + ' appsNode' + appClass);
 				diagramDefStmts.push('click ' + appNodeId + ' "' + appDetail.helpURI +'" "' + appDetail.longDescription + ' - click for documentation"');
 				_.forEach(appDetail.outputs, function(v) {
 					let value=v.value.default;
