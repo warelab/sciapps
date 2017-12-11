@@ -33,7 +33,7 @@ const App=React.createClass({
 		let app_id=_config.app_id, wf_id=_config.wf_id, page_id=_config.page_id || 'welcome';
 		if (wf_id) {
 			AppsActions.showPage('workflowRunner');
-			WorkflowActions.showWorkflow(wf_id);
+			WorkflowActions.showWorkflow(wf_id, undefined, true);
 		} else if (app_id) {
 			AppsActions.showApp(app_id);
 		} else {

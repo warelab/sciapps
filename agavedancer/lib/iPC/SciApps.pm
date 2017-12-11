@@ -134,10 +134,12 @@ sub getAgaveClient {
 hook on_route_exception => sub {
 	my $e = shift;
 	if ($e->can('does') && ($e->does('InvalidCredentials') || $e->does('InvalidRequest'))) {
+		error("Error: " . $e->message() . "\n");
 		halt(to_json({status => 'error', error => $e->message()}));
 	} elsif ($e->can('rethrow')) {
 		$e->rethrow;
 	} else {
+		error("Error: " . $e . "\n");
 		raise 'SystemError' => $e;
 	}
 };
@@ -284,7 +286,7 @@ sub browse_ls {
 ajax '/apps/:id' => sub {
 	my $app_id = param("id");
 	my $app=retrieveApps($app_id);
-	to_json($app);
+	$app && to_json($app) or raise InvalidRequest => 'no apps found';
 };
 
 ajax '/apps' => sub {
@@ -312,7 +314,7 @@ sub retrieveApps {
 			$return=$apps->list(limit => 1000);
 		}
 	}
-	$return or raise InvalidRequest => 'no apps found';
+	$return;
 }
 
 ajax '/schema/:id' => sub {
@@ -421,19 +423,20 @@ get qr{/file/(.*)} => sub {
 };
 
 ajax '/job/:id' => sub {
+	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $job_id = param("id");
 
-	my $job=retrieveJob($job_id);
-	return $job ? to_json($job) : to_json({status => 'error'});
+	my $job=retrieveJob($job_id, $username);
+	$job && to_json($job) or raise InvalidRequest => 'no job found';
 };
 
 sub retrieveJob {
-	my ($job_id)=@_;
+	my ($job_id, $username)=@_;
 	my $agave_id=$job_id;
 	my $job;
 
+	my $user=$username ? _get_user($username) : undef;
 	my $row = database->quick_select('job', {job_id => $job_id}) || database->quick_select('job', {agave_id => $job_id});
-	my $user;
 	if ($row) {
 		if ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED') {
 			my $jobObj=from_json($row->{agave_json});
@@ -446,7 +449,7 @@ sub retrieveJob {
 		} elsif ($row->{agave_id} eq $job_id) {
 			$job_id=$row->{job_id};
 		}
-		$user=_get_user($row->{username});
+		$user||=_get_user($row->{username});
 	}
 	unless ($job || ! $user) {
 		my $apif = getAgaveClient($user);
@@ -460,6 +463,8 @@ sub retrieveJob {
 				error("Error: $e");
 				if ($e=~/token (?:expired|inactive)/i || $@=~/invalid credentials/i) {
 					raise 'InvalidCredentials' => 'agave login falied';
+				} elsif ($e=~/User does not have permission/) {
+					raise 'InvalidCredentials' => 'user has no permission';
 				}
 			};
 			$retry--;
@@ -478,7 +483,7 @@ sub retrieveJob {
 			}
 		}
 	}
-	$job or raise InvalidRequest => 'no jobs found';
+	$job;
 }
 
 ajax '/workflow/:id/jobStatus' => sub {
@@ -503,8 +508,7 @@ ajax '/workflow/remote' => sub {
 
 
 ajax '/workflow/new' => sub {
-	my $username=session('username');
-	my $status='success';
+	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $wfid=param('_workflow_id');
 	my $wfjson=param('_workflow_json');
 	my $wfname=param('_workflow_name');
@@ -516,24 +520,20 @@ ajax '/workflow/new' => sub {
 	try {
 		database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
 	} catch {
-		$status='error';
-		$data={};
+		raise InvalidRequest => 'can not create workflow';
 	};
-	to_json({status => $status, data => $data});
+	to_json({status => 'success', data => $data});
 };
 
 ajax '/workflow/:id/delete' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
-	my $status='success';
 	my $wfid=param('id');
-	my $result;
 	try {
-		$result=database->quick_delete('user_workflow', {username => $username, workflow_id => $wfid});
+		database->quick_delete('user_workflow', {username => $username, workflow_id => $wfid});
 	} catch {
-		$status='error';
+		raise InvalidRequest => 'can not delete workflow';
 	};
-	$result or $status='error';
-	to_json({status => $status});
+	to_json({status => 'success'});
 };
 
 ajax '/workflow/:id/update' => sub {
@@ -541,15 +541,23 @@ ajax '/workflow/:id/update' => sub {
 	my $wfid=param('id');
 	my $wfname=param('_workflow_name');
 	my $wfdesc=param('_workflow_desc');
-	my $status='success';
 	my $data={name => $wfname, description => $wfdesc, modified_at => \"now()"};
 	try {
 		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or raise 'InvalidRequest' => 'Invalid Workflow';
 		database->quick_update('workflow', {workflow_id => $wfid}, $data);
 	} catch {
-		$status='error';
+		raise InvalidRequest => 'can not update workflow';
 	};
-	to_json({status => $status});
+	to_json({status => 'success'});
+};
+
+ajax '/workflow/:id' => sub {
+	my $wfid=param('id');
+	my $data=database->quick_select('workflow', {workflow_id => $wfid});
+	unless ($data) {
+		raise InvalidRequest => 'no workflow found';
+	}
+	$data->{json};
 };
 
 ajax '/workflow' => sub {
@@ -590,7 +598,11 @@ ajax '/workflowJob/new' => sub {
 	try {
 		database->quick_insert('workflow', {workflow_id => $wfid, json => $wfjson, name => $wfname, description => $wfdesc, derived_from => $derived_from});
 	};
-	return to_json({workflow_id => $wfid, jobs => \@jobs, workflow => $wf});
+	if ($wfid && $wf && scalar(@{$wf->{'steps'}}) == scalar(@jobs)) {
+		return to_json({workflow_id => $wfid, jobs => \@jobs, workflow => $wf});
+	} else {
+		raise InvalidRequest => 'can not submit workflow';
+	}
 };
 
 ajax '/job/new/:id' => sub {
@@ -608,6 +620,8 @@ ajax '/job/new/:id' => sub {
 	#return;
 	if ($job_id && $job && $job->{id}) {
 		return to_json($job);
+	} else {
+		raise InvalidRequest => 'can not submit job';
 	}
 };
 
@@ -637,15 +651,13 @@ ajax '/job' => sub {
 ajax '/job/:id/delete' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $job_id = param("id");
-	my $result;
 	try {
 		database->quick_update('job', {job_id => $job_id}, {username => setting("defaultUser")});
 	} catch {
 		my ($e)=@_;
-		$result={status => 'error', error => $e};
+		raise InvalidRequest => 'can not delete job';
 	};
-	$result||={status => 'success', data => {job_id => $job_id}};
-	to_json($result);
+	to_json({status => 'success', data => {job_id => $job_id}}); 
 };
 
 sub prepareJob {
@@ -865,7 +877,11 @@ sub shareOutput {
 	my $jobObj=from_json($job->{agave_json});
 	my $path=$archive_home . '/' . $jobObj->{archivePath};
 	my $cmd="export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ichmod -r read public $path;ichmod -r read anonymous $path";
-	system($cmd) == 0 or raise 'SystemError' => "can not share $path";
+	try {
+		system($cmd);
+	} catch {
+		error("Error: can not share $path, @_");
+	};
 }
 
 sub shareJob {
