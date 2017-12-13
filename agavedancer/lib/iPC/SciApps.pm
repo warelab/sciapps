@@ -291,12 +291,14 @@ ajax '/apps/:id' => sub {
 
 ajax '/apps' => sub {
 	my $app_list=retrieveApps();
+	my @apps;
 	foreach (@$app_list) {
 		my $tag=$_->{isPublic} ? 'Public' : 'Private';
 		$_->{tags}||=[];
 		push @{$_->{tags}}, $tag;
+		push @apps, $_ if $_->{isPublic} eq 'Private';
 	}
-	to_json($app_list);
+	to_json(\@apps);
 };
 
 sub retrieveApps {
@@ -307,7 +309,7 @@ sub retrieveApps {
 		my $apps = $api->apps;
 		if ($app_id) {
 			$return = $apps->find_by_id($app_id);
-			if ($return->{inputs} && $return->{inputs}[0]{value}{visible} ne 'true') {
+			if ($return->{inputs} && ! $return->{inputs}[0]{value}{visible}) {
 				$return = $apps->find_by_id($app_id);
 			}
 		} else {

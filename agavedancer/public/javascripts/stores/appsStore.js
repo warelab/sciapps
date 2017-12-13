@@ -51,27 +51,31 @@ const AppsStore=Reflux.createStore({
 	},
 
 	_listApps: function() {
-		let apps=this.state.appsCache;
 		let setting=_config.setting;
 		let appPromise;
-		if (apps.length) {
-			appPromise=Q(apps);
+		if (this.state.appsCache.length) {
+			appPromise=Q();
 		} else {
-			appPromise=Q(axios.get('/apps', {
+			let userAppPromise=Q(axios.get('/apps', {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
-			}))
-			//appPromise=Q(axios.get('/assets/agaveAppsList.json'))
-			.then(function(res) {
-				if (res.data.error) {
-					return;
-				}
-				this.state.appsCache=res.data;
-				return res.data;
-			}.bind(this));
+			}));
+			let curatedAppPromise=Q(axios.get('/assets/agaveAppsList.json', {
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+			}));
+			appPromise=Q.all([userAppPromise, curatedAppPromise])
+			.then(function(results) {
+				results.forEach(function(res) {
+					if (res.data.error) {
+						return;
+					}
+					this.state.appsCache=this.state.appsCache.concat(res.data);
+					return res.data;
+				}.bind(this));
+			}.bind(this))
 		}
-		appPromise.then(function(appsList) {
-			if (appsList) {
-				this.state.apps=appsList;
+		appPromise.then(function() {
+			if (this.state.appsCache.length) {
+				this.state.apps=_.cloneDeep(this.state.appsCache);
 				this.filterApps();
 				this.complete();
 			}
