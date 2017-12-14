@@ -44,25 +44,37 @@ const UserStore=Reflux.createStore({
 		};
 	},
 
+	resetUser: function() {
+		this._resetState();
+		AppsActions.resetState('welcome');
+		JobsActions.resetState();
+		WorkflowActions.resetState();
+		DsActions.resetState();
+	},
+
 	setUser: function(user) {
 		let setting=_config.setting;
+		let logged_in=this.state.logged_in;
 		//Q(axios.get(setting.host_url + '/user', {
 		Q(axios.get('/user', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))
 		.then(function(res) {
 			if (res.data.error) {
-				if (res.data.error.startsWith('InvalidCredentials')) {
-					this.logout();
-				}
+				this.resetUser();
+				//if (res.data.error.startsWith('InvalidCredentials')) {
+				//	this.logout();
+				//}
 				console.log(res.data.error);
-			} else if (res.data.logged_in) {
+			} else if (! logged_in && res.data.logged_in) {
 				this._updateUser(res.data);
 				WorkflowActions.listWorkflow();
 				JobsActions.listJob();
-				AppsActions.debouncedListApps();
-				this.complete();
+			} else {
+				this.resetUser();
 			}
+			AppsActions.debouncedListApps();
+			this.complete();
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
@@ -122,18 +134,14 @@ const UserStore=Reflux.createStore({
 	},
 
 	_logout: function() {
-		this._resetState();
-		AppsActions.resetState('welcome');
-		JobsActions.resetState();
-		WorkflowActions.resetState();
-		DsActions.resetState();
+		this.resetUser();
 		Q(axios.get('/logout', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))
 		.then(function(res) {
 		}.bind(this))
 		.catch(function(error) {
-				console.log(error);
+			console.log(error);
 		})
 		.done();
 	},

@@ -39,6 +39,7 @@ const App=React.createClass({
 		} else {
 			AppsActions.showPage(page_id);
 		}
+		setInterval(() => {UserActions.setUser();}, 1800000);
 	},
 
 	render: function () {

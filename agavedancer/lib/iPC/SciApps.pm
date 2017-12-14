@@ -146,7 +146,7 @@ hook on_route_exception => sub {
 
 hook 'before' => sub {
 	my $path=request->path;
-	unless($path eq '/' || $path=~m#^/(login|logout|notification)/?# || check_agave_login()) {
+	unless($path eq '/' || $path=~m#^/(login|logout|notification|apps)/?# || check_agave_login()) {
 		if (request->is_ajax) {
 			content_type(setting('plugins')->{Ajax}{content_type});
 			halt(to_json({status => 'error', error => 'no username'}));
@@ -283,20 +283,37 @@ sub browse_ls {
 		}, keys %$dir_list];
 }
 
-ajax '/apps/:id' => sub {
+get '/apps/:id' => sub {
 	my $app_id = param("id");
-	my $app=retrieveApps($app_id);
+	my $app;
+	try {
+		my $appsFile='public/assets/' . $app_id . '.json';
+		my $appsJson=`cat $appsFile`;
+		$app=from_json($appsJson);
+	};
+	$app || try {
+		$app=retrieveApps($app_id);
+	};
 	$app && to_json($app) or raise InvalidRequest => 'no apps found';
 };
 
 ajax '/apps' => sub {
-	my $app_list=retrieveApps();
+	my $default_list=setting('defaultAppsList');
 	my @apps;
+	try {
+		my $appsListJson=`cat $default_list`;
+		@apps=@{from_json($appsListJson)};
+	};
+
+	my $app_list=[];
+	try {
+		$app_list=retrieveApps();
+	};
 	foreach (@$app_list) {
 		my $tag=$_->{isPublic} ? 'Public' : 'Private';
 		$_->{tags}||=[];
 		push @{$_->{tags}}, $tag;
-		push @apps, $_ if $_->{isPublic} eq 'Private';
+		push @apps, $_ unless $_->{isPublic};
 	}
 	to_json(\@apps);
 };

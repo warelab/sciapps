@@ -56,3 +56,4 @@ datastore:
 datastore_types: ['recent_jobs', 'shared', 'home']
 uncompress_suffix: '.open.tar.gz'
 irodsEnvFile: '/usr/share/httpd/irodsEnv'
+defaultAppsList: 'public/assets/agaveAppsList.json'
