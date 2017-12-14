@@ -146,7 +146,8 @@ hook on_route_exception => sub {
 
 hook 'before' => sub {
 	my $path=request->path;
-	unless($path eq '/' || $path=~m#^/(login|logout|notification|apps)/?# || check_agave_login()) {
+	#unless($path eq '/' || $path=~m#^/(login|logout|notification|apps)/?# || check_agave_login()) {
+	if ($path=~m#^/(job|workflowJob)/new/?# && ! check_agave_login()) {
 		if (request->is_ajax) {
 			content_type(setting('plugins')->{Ajax}{content_type});
 			halt(to_json({status => 'error', error => 'no username'}));
@@ -442,7 +443,8 @@ get qr{/file/(.*)} => sub {
 };
 
 ajax '/job/:id' => sub {
-	my $username=session('username') or raise InvalidCredentials => 'no username';
+	#my $username=session('username') or raise InvalidCredentials => 'no username';
+	my $username=session('username');
 	my $job_id = param("id");
 
 	my $job=retrieveJob($job_id, $username);

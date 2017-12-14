@@ -50,6 +50,7 @@ const UserStore=Reflux.createStore({
 		JobsActions.resetState();
 		WorkflowActions.resetState();
 		DsActions.resetState();
+		AppsActions.debouncedListApps();
 	},
 
 	setUser: function(user) {
