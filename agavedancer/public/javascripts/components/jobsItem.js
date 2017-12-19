@@ -66,14 +66,22 @@ const JobsItem=React.createClass({
 		let addedornot=this.state.checked ? 'Click to Remove' : 'Add to Workflow';
 		let tooltipadd = (<Tooltip id="tooltipadd">{addedornot}</Tooltip>);
 		let outputsItemNodes='Loading ...';
-		if (app && job.archivePath) {
+		if (app) {
 			outputsItemNodes=app.outputs.map(function(o, i) {
 				let oname=o.value.default;
-				let href=setting.output_url[job.archiveSystem];
+				let href;
+				if (job.archivePath) {
+					href=setting.output_url[job.archiveSystem];
+					href=href.replace(/__system__/, job.archiveSystem);
+					href=href.replace(/__path__/, (job.archivePath + '/' + oname));
+				} else if (job.outputPath) {
+					href=setting.output_url[setting.archive_system];
+					href=href.replace(/__system__/, setting.archive_system);
+					let archivePath=job.outputPath.replace('/', '/sci_data/results/');
+					href=href.replace(/__path__/, (archivePath + '/' + oname));
+				}
 				href=href.replace(/__owner__/, job.owner);
-				href=href.replace(/__system__/, job.archiveSystem);
 				href=href.replace(/\/__home__/, setting.archive_home);
-				href=href.replace(/__path__/, (job.archivePath + '/' + oname));
 
 				return (
 					<ListGroupItem key={i}><a href={href} target='_blank'>{oname}</a></ListGroupItem>

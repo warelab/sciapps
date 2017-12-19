@@ -53,20 +53,16 @@ const AppsStore=Reflux.createStore({
 	_listApps: function() {
 		let setting=_config.setting;
 		let appPromise;
-		if (this.state.appsCache.length) {
-			appPromise=Q(this.state.appsCache);
-		} else {
-			appPromise=Q(axios.get('/apps', {
-				headers: {'X-Requested-With': 'XMLHttpRequest'},
-			}))
-			.then(function(res) {
-				if (res.data.error) {
-					return;
-				}
-				this.state.appsCache=res.data;
-				return res.data;
-			}.bind(this))
-		}
+		appPromise=Q(axios.get('/apps', {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				return;
+			}
+			this.state.appsCache=res.data;
+			return res.data;
+		}.bind(this))
 		appPromise.then(function(appsList) {
 			if (appsList) {
 				this.state.apps=appsList;

@@ -27,6 +27,7 @@ const WorkflowDiagram=React.createClass({
 
 	getInitialState: function() {
 		return {
+			direction: 0,
 			activeNode: {}
 		}
 	},
@@ -77,6 +78,10 @@ const WorkflowDiagram=React.createClass({
 		WorkflowActions.hideWorkflowDiagram();
 	},
 
+	changeDirection: function() {
+		this.setState({direction: this.state.direction ? 0 : 1});
+	},
+
 	buildWorkflowDiagramDef: function(workflowStore, appsStore, jobsStore, workflowDirection) {
 		let that=this;
 		let setting=_config.setting;
@@ -124,7 +129,8 @@ const WorkflowDiagram=React.createClass({
 						if (jobDetail.archive) {
 							url=[jobDetail.archiveSystem, jobDetail.archivePath, value].join('/');
 						} else if (jobDetail.outputPath) {
-							url=[setting.archive_system, jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path), value].join('/');
+							//url=[setting.archive_system, jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path), value].join('/');
+							url=[setting.archive_system, jobDetail.outputPath.replace('/', '/sci_data/results/'), value].join('/');
 						}
 					} else {
 						output_name=setting.wf_step_prefix + step.id + ':';
@@ -237,7 +243,7 @@ const WorkflowDiagram=React.createClass({
 		let info=<div />;
 		let nodeClass="modal-lg";
 		let workflowDetail=workflowStore.workflowDetail;
-		let workflowDirection=1;
+		let workflowDirection=this.state.direction;
 		if (showWorkflowDiagram) {
 			if (workflowDetail) {
 				let stepDepth=_.reduce(workflowDetail.steps, function(depth, step) {
@@ -249,7 +255,6 @@ const WorkflowDiagram=React.createClass({
 				},[]);
 				let maxStepDepth=_.max(stepDepth);
 				if (maxStepDepth < 6) {
-					workflowDirection=0;
 					switch (maxStepDepth) {
 						case 1:
 							nodeClass="oneNode";
@@ -310,6 +315,7 @@ const WorkflowDiagram=React.createClass({
 					</Modal.Body>
 					<Modal.Footer>
 						{saveBtn}
+						<Button onClick={this.changeDirection}>Change Direction</Button>
 						<Button onClick={this.hideWorkflowDiagram}>Close</Button>
 					</Modal.Footer>
 				</Modal>
