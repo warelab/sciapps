@@ -122,7 +122,8 @@ const WorkflowRunnerForm=React.createClass({
 		let markup=<div />, appsFieldsets;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
 		let required=this.state.required={};
-		if (workflowStore.workflowDetail && appsStore.wid[workflowStore.workflowDetail.id]) {
+		//if (workflowStore.workflowDetail && appsStore.wid[workflowStore.workflowDetail.id]) {
+		if (workflowStore.workflowDetail) {
 			let workflowDetail=workflowStore.workflowDetail;
 			let steps=workflowDetail.steps;
 			appsFieldsets=steps.map(function(step, i) {

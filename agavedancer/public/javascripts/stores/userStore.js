@@ -56,8 +56,8 @@ const UserStore=Reflux.createStore({
 					this.logout();
 				}
 				console.log(res.data.error);
-			} else if (res.data.logged_in) {
-				this._updateUser(res.data);
+			} else if (res.data.data.logged_in) {
+				this._updateUser(res.data.data);
 				WorkflowActions.listWorkflow();
 				JobsActions.listJob();
 				AppsActions.debouncedListApps();

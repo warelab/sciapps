@@ -174,7 +174,7 @@ ajax '/user' => sub {
 	} else {
 		$user={logged_in => 0};
 	}
-	to_json($user);
+	to_json({status => 'success', data => $user});
 };
 
 ajax qr{/browse/?(.*)} => sub {
@@ -194,7 +194,7 @@ ajax qr{/browse/?(.*)} => sub {
 	my $datastore_path=$datastore->{path};
 	my $datastore_system=$datastore->{system};
 	$datastore_path=~s/__user__/$username/;
-	my $result={};
+	my $result=[];
 	my $datastore_homepath=$datastore_home .'/' . $datastore_path;
 	if ($type eq '__CyVerse__') {
  		$result=browse_ils($path, $datastore_system, $datastore_homepath);
@@ -211,7 +211,7 @@ ajax qr{/browse/?(.*)} => sub {
 		$result=browse_output_files($path, $datastore_system, $datastore_homepath);
 	}
 
-	to_json($result);
+	to_json({status => 'success', data => $result});
 };
 
 sub browse_output_files {
@@ -281,18 +281,18 @@ sub browse_ls {
 
 ajax '/apps/:id' => sub {
 	my $app_id = param("id");
-	my $app=retrieveApps($app_id);
-	to_json($app);
+	my $app=retrieveApps($app_id) || raise InvalidRequest => 'no apps found';
+	to_json({status => 'success', data => $app});
 };
 
 ajax '/apps' => sub {
-	my $app_list=retrieveApps();
+	my $app_list=retrieveApps() || raise InvalidRequest => 'no apps found';
 	foreach (@$app_list) {
 		my $tag=$_->{isPublic} ? 'Public' : 'Private';
 		$_->{tags}||=[];
 		push @{$_->{tags}}, $tag;
 	}
-	to_json($app_list);
+	to_json({status => 'success', $app_list});
 };
 
 sub retrieveApps {
@@ -310,7 +310,7 @@ sub retrieveApps {
 			$return=$apps->list(limit => 1000);
 		}
 	}
-	$return or raise InvalidRequest => 'no apps found';
+	$return;
 }
 
 ajax '/schema/:id' => sub {
@@ -376,23 +376,6 @@ sub retrieveMetadataByQuery {
 	$meta->query($query);
 }
 
-ajax '/job/status/' => sub {
-	my @job_ids = param_array("id");
-	my $jobs=checkJobStatus(@job_ids);
-	return to_json($jobs);
-};
-
-sub checkJobStatus {
-	my @job_ids = @_;
-	my $job_ids=join(',', map {"'$_'"} @job_ids);
-	my $sql='SELECT * FROM JOB WHERE job_id IN (' . join(',', ('?') x scalar(@job_ids)). ')';
-	my $sth=database->prepare_cached($sql);
-	$sth->execute(@job_ids);
-	my $jobs=$sth->fetchall_arrayref({job_id => 1, status => 1});;
-	$sth->finish;
-	return $jobs;
-}
-
 sub checkWorkflowJobStatus {
 	my ($wfid)=@_;
 	my @jobs=database->quick_select('job', {workflow_id => $wfid}, {order_by => 'id'});
@@ -422,20 +405,22 @@ ajax '/job/:id' => sub {
 	my $job_id = param("id");
 
 	my $job=retrieveJob($job_id);
-	return $job ? to_json($job) : to_json({status => 'error'});
+	$job ? to_json({status => 'success', data => $job}) : raise InvalidRequest => 'no jobs found';
 };
 
 sub retrieveJob {
 	my ($job_id)=@_;
 	my $agave_id=$job_id;
 	my $job;
+	my $retry_interval=1;
 
 	my $row = database->quick_select('job', {job_id => $job_id}) || database->quick_select('job', {agave_id => $job_id});
 	if ($row) {
 		if ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED') {
 			my $jobObj=from_json($row->{agave_json});
 			if ($jobObj->{status} && $jobObj->{status} eq $row->{status}) {
-				$job=Agave::Client::Object::Job->new($jobObj);
+				#$job=Agave::Client::Object::Job->new($jobObj);
+				$job=$jobObj;
 				$job->{job_id}=$row->{job_id};
 			}
 		} elsif ($row->{job_id} eq $job_id) {
@@ -459,7 +444,7 @@ sub retrieveJob {
 				}
 			};
 			$retry--;
-		} while (!$job && sleep(1) && $retry);
+		} while (!$job && sleep($retry_interval) && $retry);
 		if ($job) {
 			$job->{job_id}=$job_id;
 			my %data=(agave_id => $agave_id, app_id => $job->{appId}, agave_json => to_json($job), status => $job->{status});
@@ -473,13 +458,20 @@ sub retrieveJob {
 			}
 		}
 	}
-	$job or raise InvalidRequest => 'no jobs found';
+	if (! $job && $row) {
+		$job={
+			job_id => $row->{job_id},
+			status => $row->{status},
+			appId => $row->{app_id},
+		};
+	}
+	$job;
 }
 
 ajax '/workflow/:id/jobStatus' => sub {
 	my $wfid=param('id');
 	my $jobs=checkWorkflowJobStatus($wfid);
-	return to_json($jobs);
+	return to_json({status => 'success', data => $jobs});
 };
 
 ajax '/workflow/remote' => sub {
@@ -500,22 +492,31 @@ ajax '/workflow/remote' => sub {
 ajax '/workflow/new' => sub {
 	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
 	my $username=$user->{username};
-	my $status='success';
 	my $wfid=param('_workflow_id');
 	my $wfjson=param('_workflow_json');
 	my $wfname=param('_workflow_name');
 	my $wfdesc=param('_workflow_desc');
-	my $data={workflow_id => $wfid, json => $wfjson, name => $wfname, description => $wfdesc};
+	my $wf=from_json($wfjson);
+	my @jobs=database->quick_select('job', {workflow_id => $wfid});
+	my %jobs=map {$_->{job_id} => $_} @jobs;
+	foreach my $step (@{$wf->{steps}}) {
+		if (my $job=$jobs{$step->{jobId}}) {
+			$job->{agave_id} and $step->{jobId}=$job->{agave_id};
+		}
+	}
+
+	my %data=(json => to_json($wf), name => $wfname, description => $wfdesc);
 	try {
-		database->quick_insert('workflow', $data);
+		database->quick_insert('workflow', {workflow_id => $wfid, %data});
+	} catch {
+		database->quick_update('workflow', {workflow_id => $wfid}, \%data);
 	};
 	try {
 		database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
 	} catch {
-		$status='error';
-		$data={};
+		raise 'InvalidRequest' => 'workflow not saved'; 
 	};
-	to_json({status => $status, data => $data});
+	to_json({status => 'success', data => {workflow_id => $wfid, %data}});
 };
 
 ajax '/workflow/:id/delete' => sub {
@@ -539,22 +540,21 @@ ajax '/workflow/:id/update' => sub {
 	my $wfid=param('id');
 	my $wfname=param('_workflow_name');
 	my $wfdesc=param('_workflow_desc');
-	my $status='success';
 	my $data={name => $wfname, description => $wfdesc, modified_at => \"now()"};
 	try {
 		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or raise 'InvalidRequest' => 'Invalid Workflow';
 		database->quick_update('workflow', {workflow_id => $wfid}, $data);
 	} catch {
-		$status='error';
+		raise 'InvalidRequest' => 'workflow not updated'; 
 	};
-	to_json({status => $status});
+	to_json({status => 'success'});
 };
 
 ajax '/workflow' => sub {
 	my @result;
 	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
 	@result=database->quick_select('user_workflow_view', {username => $user->{username}});
-	return to_json(\@result);
+	return to_json({status => 'success', data => \@result});
 };
 
 ajax '/workflowJob/new' => sub {
@@ -575,7 +575,7 @@ ajax '/workflowJob/new' => sub {
 	my $wfname=$wf->{name};
 	my $wfdesc=$wf->{workflowJob};
 	my $derived_from=$wf->{derived_from};
-	foreach my $step (@{$wf->{'steps'}}) {
+	foreach my $step (@{$wf->{steps}}) {
 		my $app_id=$step->{appId};
 		my ($app) = $apps->find_by_id($app_id);
 		my ($job_id, $job_form)=prepareJob($username, $app, $form, $step, \@step_form, \@jobs);
@@ -584,12 +584,13 @@ ajax '/workflowJob/new' => sub {
 		if ($job_id) {
 			push @jobs, $job;
 			push @step_form, $job_form;
+			$step->{jobId}=$job_id;
 		}
 	}
 	try {
-		database->quick_insert('workflow', {workflow_id => $wfid, json => $wfjson, name => $wfname, description => $wfdesc, derived_from => $derived_from});
+		database->quick_insert('workflow', {workflow_id => $wfid, json => to_json($wf), name => $wfname, description => $wfdesc, derived_from => $derived_from});
 	};
-	return to_json({workflow_id => $wfid, jobs => \@jobs, workflow => $wf});
+	scalar(@jobs) == scalar(@{$wf->{steps}}) ? to_json({status => 'success', data => {workflow_id => $wfid, jobs => \@jobs, workflow => $wf}}) : raise InvalidRequest => 'workflow submission failed';
 };
 
 ajax '/job/new/:id' => sub {
@@ -605,10 +606,7 @@ ajax '/job/new/:id' => sub {
 	my $form = params();
 	my ($job_id, $job_form)=prepareJob($username, $app, $form);
 	my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
-	#return;
-	if ($job_id && $job && $job->{id}) {
-		return to_json($job);
-	}
+	$job_id && $job && $job->{id} ? to_json({status => 'success', data => $job}) : raise InvalidRequest => 'job submission failed';
 };
 
 ajax '/job' => sub {
@@ -631,7 +629,7 @@ ajax '/job' => sub {
 			$_->{endTime}=$endTime;
 		}
 	}
-	return to_json(\@result);
+	return to_json({status => 'success', data => \@result});
 };
 
 ajax '/job/:id/delete' => sub {
@@ -728,8 +726,6 @@ sub prepareJob {
 	foreach my $k (keys %{$step->{inputs}}) {
 		my $v=$step->{inputs}{$k};
 		if ($v && ref($v)) {
-			#my $sf=$step_form->[$v->{step}];
-			#$job_form{$k}='agave://' . $input_system . '/' . $sf->{archivePath} . '/' . $v->{output_name};
 			$job_form{$k}=$prev_job->[$v->{step}]{job_id} . ':' . $v->{output_name};
 		} else {
 			$step->{inputs}{$k}=$job_form{$k};
@@ -741,8 +737,6 @@ sub prepareJob {
 		$step->{parameters}{$k}=$job_form{$k};
 	}
 
-	#my ($result_folder)=map {my $t=$_; $t=~s/\W+/-/g; lc($t) . "-" . iPC::Utils::tempname()} ($app_id);
-	#$archive_path.= "/" . $result_folder;
 	foreach my $group (qw/inputs parameters/) {
 		foreach my $key ($app->$group) {
 			next unless exists $job_form{$key->{id}};
@@ -750,13 +744,6 @@ sub prepareJob {
 		}
 	}
 
-	#my $archive_path_abs=$archive_home . "/" . $archive_path;
-	#mkdir($archive_path_abs) or print STDERR "Error: can't mkdir $archive_path_abs, $!\n";
-	#chmod(0775, $archive_path_abs);
-	#open FH, ">", "$archive_path_abs/.htaccess" or error("Error: can't open  ${archive_path_abs}/.htaccess, $!\n") && raise 'SystemError' => 'file system error';
-	#print FH "DirectoryIndex ../.index.php?dir=$result_folder\n";
-	#close FH;
-	
 	my $host_url=request->uri_base;
 	#my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archiveSystem=${JOB_ARCHIVE_SYSTEM}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}';
 	my $notepolicy={
@@ -833,8 +820,9 @@ sub submitJob {
 		if ($st) {
 			if ($st->{status} eq 'success') {
 				my $job = $st->{data};
-				database->quick_update('job', {job_id => $job_id}, {agave_id => $job->{id}, agave_json => to_json($job), status => 'PENDING'});
 				$job->{job_id}=$job_id;
+				updateJob($job_id, $job);
+				updateWorkflowJob($job_id);
 				$job_ep->share_job($job->{id}, $username, 'READ');
 				return ($job);
 			} else {
@@ -842,9 +830,32 @@ sub submitJob {
 				error($err);
 			}
 		}
-		sleep(60) if $retry;
+		sleep(3) if $retry;
 	}
 	return (undef, $err);
+}
+
+sub updateJob {
+	my ($job_id, $job)=@_;
+	database->quick_update('job', {job_id => $job_id}, {agave_id => $job->{id}, agave_json => to_json($job), status => 'PENDING'});
+}
+
+sub updateWorkflowJob {
+	my ($job_id)=@_;
+	my $job=database->quick_select('job', {job_id => $job_id});
+	if ($job && $job->{workflow_id}) {
+		if (my $wf=database->quick_select('workflow', {workflow_id => $job->{workflow_id}})) {
+			my $wfObj=from_json($wf->{json});
+			my $changed;
+			foreach my $step (@{$wfObj->{steps}}) {
+				if ($step->{jobId} eq $job_id && $job->{agave_id}) {
+					$step->{jobId}=$job->{agave_id};
+					$changed=1;
+				}
+			}
+			$changed && database->quick_update('workflow', {workflow_id => $job->{workflow_id}}, {json => to_json($wfObj)});
+		}
+	}
 }
 
 sub resubmitJob {

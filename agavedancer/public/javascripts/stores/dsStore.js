@@ -107,18 +107,19 @@ const DsStore=Reflux.createStore({
 				if (res.data.error) {
 					console.log(res.data.error);
 					return;
+				} else {
+					let data=res.data.data;
+					res.data.data.forEach(function(dsDetail) {
+						let filtered=dsDetail.list.filter(function(item) {
+							return ! item.name.startsWith('.');
+						});
+						//if (! dsDetail.is_root) {
+						//  dsDetail.list.unshift({name: '..', type: 'dir'});
+						//}
+						_.set(this.state.dsDetailCache, [type, dsDetail.path], dsDetail);
+					}.bind(this));
+					return _.get(this.state.dsDetailCache, [type, path]);
 				}
-				for (let dsDetail of res.data) {
-					let filtered=dsDetail.list.filter(function(item) {
-						return ! item.name.startsWith('.');
-					});
-					dsDetail.list=filtered;
-					//if (! dsDetail.is_root) {
-					//	dsDetail.list.unshift({name: '..', type: 'dir'});
-					//}
-					_.set(this.state.dsDetailCache, [type, dsDetail.path], dsDetail);
-				}
-				return _.get(this.state.dsDetailCache, [type, path]);
 			}.bind(this))
 			.catch(function(res) {
 				console.log(res);

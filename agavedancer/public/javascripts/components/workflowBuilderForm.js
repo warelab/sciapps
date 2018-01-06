@@ -188,7 +188,7 @@ const WorkflowBuilderForm=React.createClass({
 							bsStyle='primary'
 							disabled={onSubmit}
 							onClick={this.handleSelectAll}>
-						Select All
+							Select All
 						</Button>
 					</ButtonToolbar>
 				</form>
