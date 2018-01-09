@@ -292,7 +292,7 @@ ajax '/apps' => sub {
 		$_->{tags}||=[];
 		push @{$_->{tags}}, $tag;
 	}
-	to_json({status => 'success', $app_list});
+	to_json({status => 'success', data => $app_list});
 };
 
 sub retrieveApps {

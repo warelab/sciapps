@@ -47,7 +47,10 @@ const AppsStore=Reflux.createStore({
 
 	listApps: function(searchString) {
 		this.state.searchString=searchString;
-		this._listApps();
+		let promise=this._listApps();
+		promise.then(function() {
+			this.complete();
+		}.bind(this));
 	},
 
 	_listApps: function() {
@@ -72,17 +75,16 @@ const AppsStore=Reflux.createStore({
 				}
 			}.bind(this));
 		}
-		appPromise.then(function(appsList) {
+		return appPromise.then(function(appsList) {
 			if (appsList) {
 				this.state.apps=appsList;
 				this.filterApps();
-				this.complete();
+				return appsList;
 			}
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
-		})
-		.done();
+		});
 	},
 
 	filterApps: function() {

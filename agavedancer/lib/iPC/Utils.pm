@@ -40,7 +40,7 @@ sub parse_ils {
 	$path=$datastore_root . ($1 ? '/' . $1 : '');
 	my $seen;
 	foreach my $line (@$ils) {
-		my $seen;
+		my $name;
 		if ($line=~m#^\s+C\-\s+$path/(.*)#) {
 			$name=$1;
 			$name=~s/\s+$//;
