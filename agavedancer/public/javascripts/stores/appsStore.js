@@ -47,7 +47,10 @@ const AppsStore=Reflux.createStore({
 
 	listApps: function(searchString) {
 		this.state.searchString=searchString;
-		this._listApps();
+		let promise=this._listApps();
+		promise.then(function() {
+			this.complete();
+		}.bind(this));
 	},
 
 	_listApps: function() {
@@ -58,22 +61,24 @@ const AppsStore=Reflux.createStore({
 		}))
 		.then(function(res) {
 			if (res.data.error) {
+				console.log(res.data.error);
 				return;
+			} else {
+				let data=res.data.data || res.data;
+				this.state.appsCache=data;
+				return data;
 			}
-			this.state.appsCache=res.data;
-			return res.data;
-		}.bind(this))
-		appPromise.then(function(appsList) {
+		}.bind(this));
+		return appPromise.then(function(appsList) {
 			if (appsList) {
 				this.state.apps=appsList;
 				this.filterApps();
-				this.complete();
+				return appsList;
 			}
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
-		})
-		.done();
+		});
 	},
 
 	filterApps: function() {
@@ -95,20 +100,29 @@ const AppsStore=Reflux.createStore({
 	},
 
 	setWorkflowApps: function(appIds, wid) {
+		let promise=this.setApps(appIds);
+		promise.then(function() {
+			if (wid !== undefined) {
+				this.state.wid[wid]=true;
+				this.complete();
+			}
+		}
+		.bind(this));
+	},
+
+	setApps: function(appIds) {
 		let funcs=appIds.map(function(appId) {
 			return function() {
-				return this.setApp(appId).then(function(app) {
+				return this._setApp(appId).then(function(app) {
 					return app;
 				}.bind(this));
 			}.bind(this);
 		}.bind(this));
 
-		funcs.reduce(Q.when, Q(1)).then(function() {
-			if (wid !== undefined) {
-				this.state.wid[wid]=true;
-				this.complete();
-			}
+		let promise=funcs.reduce(Q.when, Q(1)).then(function() {
+			this.complete();
 		}.bind(this));
+		return promise;
 	},
 
 	resetWorkflowApps: function(wid) {
@@ -116,6 +130,14 @@ const AppsStore=Reflux.createStore({
 	},
 
 	setApp: function(appId) {
+		let appPromise=this._setApp(appId)
+		.then(function(app) {
+			this.complete();
+		}.bind(this));
+		return appPromise;
+	},
+
+	_setApp: function(appId) {
 		let appDetail=this.state.appDetailCache[appId];
 		let setting= _config.setting;
 		let appPromise;
@@ -128,10 +150,13 @@ const AppsStore=Reflux.createStore({
 			//appPromise=Q(axios.get('/assets/' + appId + '.json'))
 			.then(function(res) {
 				if (res.data.error) {
+					console.log(res.data.error);
 					return;
+				} else {
+					let data=res.data.data || res.data;
+					this.state.appDetailCache[appId]=data;
+					return data;
 				}
-				this.state.appDetailCache[appId]=res.data;
-				return res.data;
 			}.bind(this))
 			.catch(function(error) {
 				console.log(error);
@@ -153,7 +178,7 @@ const AppsStore=Reflux.createStore({
 	},
 
 	_showApp: function(appId, jobDetail) {
-		let appPromise=this.setApp(appId);
+		let appPromise=this._setApp(appId);
 		appPromise.then(function(appDetail) {
 			if (jobDetail) {
 				appDetail._jobDetail=jobDetail;

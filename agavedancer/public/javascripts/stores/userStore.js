@@ -67,8 +67,8 @@ const UserStore=Reflux.createStore({
 				//	this.logout();
 				//}
 				console.log(res.data.error);
-			} else if (! logged_in && res.data.logged_in) {
-				this._updateUser(res.data);
+			} else if (res.data.data.logged_in) {
+				this._updateUser(res.data.data);
 				WorkflowActions.listWorkflow();
 				JobsActions.listJob();
 			} else {

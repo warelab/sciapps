@@ -14,6 +14,8 @@ import Mermaid from './mermaid.js';
 import FilesInfo from './filesInfo.js';
 import AppsInfo from './appsInfo.js';
 import utilities from '../libs/utilities.js';
+import BaseInput from './baseInput.js';
+import Dialog from 'react-bootstrap-dialog';
 
 const WorkflowDiagram=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore'), Reflux.connect(JobsStore, 'jobsStore'), Reflux.connect(AppsStore, 'appsStore')],
@@ -85,13 +87,6 @@ const WorkflowDiagram=React.createClass({
 	buildWorkflowDiagramDef: function(workflowStore, appsStore, jobsStore, workflowDirection) {
 		let that=this;
 		let setting=_config.setting;
-		//let jobs=jobsStore.workflow.jobs;
-		//let jobStatus={};
-		//if (jobs) {
-		//	jobs.forEach(function(job_id) {
-		//		jobStatus[job_id]=jobsStore.jobDetailCache[job_id].status;
-		//	});
-		//}
 		let def;
 		let fileNode={};
 		let diagramDefStmts=['graph LR'];
@@ -114,8 +109,11 @@ const WorkflowDiagram=React.createClass({
 					jobNum=(_.findIndex(jobsStore.jobs, 'job_id', jobDetail.job_id)+1) + ': ';
 					appClass=jobDetail.status;
 				}
-				if (! _.includes(['PENDING', 'FINISHED', 'FAILED'], appClass)) {
+				if (_.includes(['RUNNING', 'CLEANING_UP', 'ARCHIVING', 'ARCHIVING_FINISHED'], appClass)) {
 					appClass='RUNNING';
+				}
+				if (!_.includes(['RUNNING', 'FINISHED', 'FAILED'], appClass)) {
+					appClass='PENDING';
 				}
 				let appNodeId=(setting.wf_step_prefix + step.id).replace(/\W/g, '_').toLowerCase();
 				diagramDefStmts.push(appNodeId + '[' + jobNum + utilities.truncate(showAppId) + ']; class ' + appNodeId + ' appsNode' + appClass);
@@ -212,10 +210,48 @@ const WorkflowDiagram=React.createClass({
 	},
 
 	handleSave: function() {
-		this.setState({onSave: true});
 		let workflowStore=this.state.workflowStore;
 		let wf=workflowStore.workflowDetail;
-		WorkflowActions.saveWorkflow(wf);
+		let nameInputData={
+			name: 'workflowName',
+			label: '*Workflow Name',
+			required: true,
+			value: wf.name,
+			type: 'text'
+		};
+		let descInputData={
+			name: 'workflowDesc',
+			label: 'Workflow Description',
+			value: wf.description,
+			type: 'text'
+		};
+		let body=(
+			<div>
+				<BaseInput data={nameInputData} onValidate={true} ref={(input) => {this.nameInput=input;}}/>
+				<BaseInput data={descInputData} ref={(input) => {this.descInput=input;}}/>
+			</div>
+		);
+		this.refs.dialog.show({
+			body: body,
+			actions: [
+				Dialog.CancelAction(),
+				Dialog.Action(
+					'Submit',
+					() => {
+						if (this.nameInput.state.value) {
+							wf.name=this.nameInput.state.value;
+						}
+						if (this.descInput.state.value) {
+							wf.description=this.descInput.state.value;
+						}
+						WorkflowActions.saveWorkflow(wf);
+						this.setState({onSave: true});
+					},
+					'btn-primary'
+				)
+			]
+		});
+
 		Q.delay(1000).then(function() {
 			this.setState({onSave: false});
 		}.bind(this));
@@ -228,16 +264,10 @@ const WorkflowDiagram=React.createClass({
 		let jobsStore=this.state.jobsStore;
 		let workflowStore=this.state.workflowStore;
 		let showWorkflowDiagram=workflowStore.showWorkflowDiagram;
-		let workflow=jobsStore.workflow;
 		let activeNode=this.state.activeNode;
 		let fileId=jobsStore.fileId;
-		let jobs=workflow.jobs;
 		let jobStatus={};
-		if (jobs) {
-			jobs.forEach(function(job_id) {
-				jobStatus[job_id]=jobsStore.jobDetailCache[job_id].status;
-			});
-		}
+
 		let markup=<div />;
 		let body=<div />;
 		let info=<div />;
@@ -246,6 +276,12 @@ const WorkflowDiagram=React.createClass({
 		let workflowDirection=this.state.direction;
 		if (showWorkflowDiagram) {
 			if (workflowDetail) {
+				workflowDetail.steps.forEach(function(step) {
+					let jobDetail=step.jobId ? jobsStore.jobDetailCache[step.jobId] || _.find(jobsStore.jobDetailCache, 'id', step.jobId) : undefined;
+					if (jobDetail) {
+						jobStatus[jobDetail.job_id]=jobDetail.status;
+					}
+				});
 				let stepDepth=_.reduce(workflowDetail.steps, function(depth, step) {
 					let prev=_.map(step.inputs, function(input) {
 						return _.isPlainObject(input) ? depth[input.step] : 0;
@@ -275,14 +311,14 @@ const WorkflowDiagram=React.createClass({
 			}
 			let workflowDiagramDef=this.buildWorkflowDiagramDef(workflowStore, appsStore, jobsStore, workflowDirection);
 			body=<Mermaid diagramDef={workflowDiagramDef}/>;
-			let unfinished;
-			if (typeof jobs === 'object') {
-				unfinished=_.find(jobs, function(job) {
-					return jobStatus[job] !== 'FINISHED';
-				});
-				if (unfinished) {
-					setTimeout((wfId) => JobsActions.debouncedCheckWorkflowJobStatus(wfId), this.props.timeout, workflow.id); 
-				}
+			let unfinished=_.findKey(jobStatus, function(v) {
+				return v !== 'FINISHED';
+			});
+			//let unfinished=_.find(jobStatus, function(job) {
+			//		return jobStatus[job] !== 'FINISHED';
+			//	});
+			if (unfinished) {
+				setTimeout((wfId) => JobsActions.debouncedCheckWorkflowJobStatus(wfId), this.props.timeout, workflowDetail.id); 
 			}
 		
 			if (activeNode.id !== undefined) {
@@ -303,8 +339,9 @@ const WorkflowDiagram=React.createClass({
 			if (workflowDetail && _.find(workflowStore.workflows, 'workflow_id', workflowDetail.id)) {
 				saveBtnTxt='Saved';
 			}
-			let saveBtn=user.logged_in ? <Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved' || unfinished !== undefined}>{saveBtnTxt}</Button> : undefined;
+			let saveBtn=user.logged_in ? <Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved'} bsStyle={saveBtnTxt === 'Saved' ? null : 'primary'}>{saveBtnTxt}</Button> : undefined;
 			markup=(
+				<div>
 				<Modal dialogClassName={nodeClass} show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
 					<Modal.Header closeButton>
 						<Modal.Title>Workflow Diagram: {workflowDetail.name}</Modal.Title>
@@ -319,6 +356,8 @@ const WorkflowDiagram=React.createClass({
 						<Button onClick={this.hideWorkflowDiagram}>Close</Button>
 					</Modal.Footer>
 				</Modal>
+				<Dialog ref='dialog' />
+				</div>
 			);
 		}
 		return markup;

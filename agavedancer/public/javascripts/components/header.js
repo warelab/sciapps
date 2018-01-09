@@ -86,10 +86,26 @@ const Header=React.createClass({
 
 	showUserWorkflows: function() {
 		AppsActions.showPage('userWorkflows');
+                let title="My Workflows";
+                let url="/?page_id=userWorkflows";
+                if (typeof (history.pushState) !== "undefined") {
+                        let obj = { Title: title, Url: url };
+                        history.pushState(obj, obj.Title, obj.Url);
+                } else {
+                        alert("Browser does not support HTML5.");
+                }
 	},
 
 	showUserJobs: function() {
 		AppsActions.showPage('userJobs');
+                let title="My Jobs";
+                let url="/?page_id=userJobs";
+                if (typeof (history.pushState) !== "undefined") {
+                        let obj = { Title: title, Url: url };
+                        history.pushState(obj, obj.Title, obj.Url);
+                } else {
+                        alert("Browser does not support HTML5.");
+                }
 	},
 
 	handleLogin: function() {

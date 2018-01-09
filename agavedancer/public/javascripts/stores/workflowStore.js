@@ -90,10 +90,11 @@ const WorkflowStore=Reflux.createStore({
 			if (res.data.error) {
 				console.log(res.data.error);
 				return;
+			} else {
+				this.state.workflows=res.data.data;
+				this.complete();
+				return res.data;
 			}
-			this.state.workflows=res.data;
-			this.complete();
-			return res.data;
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
@@ -119,9 +120,11 @@ const WorkflowStore=Reflux.createStore({
 				if (res.data.error) {
 					console.log(res.data.error);
 					return;
+				} else {
+					let data=res.data.data || res.data;
+					this.state.workflowDetailCache[wfId]=data;
+					return data;
 				}
-				this.state.workflowDetailCache[wfId]=res.data;
-				return res.data;
 			}.bind(this));
 		}
 		workflowPromise.then(function(wfDetail) {
@@ -215,7 +218,7 @@ const WorkflowStore=Reflux.createStore({
 	updateWorkflowJob: function(wfId, jobs) {
 		if (this.state.workflowDetail.id === wfId) {
 			this.state.workflowDetail.steps.forEach(function(v, i) {
-				if (v.jobId === undefined && jobs[i].id) {
+				if (jobs[i].id && jobs[i].id !== v.jobId) {
 					v.jobId=jobs[i].id;
 				}
 			});
@@ -264,15 +267,15 @@ const WorkflowStore=Reflux.createStore({
 
 	setWorkflowSteps: function(wfDetail) {
 		this.state.workflowDetail=wfDetail;
-		let appIds=_.uniq(_.values(wfDetail.steps).map(function(o) {
-			return o.appId;
-		}));
+		//let appIds=_.uniq(_.values(wfDetail.steps).map(function(o) {
+		//	return o.appId;
+		//}));
 		let jobIds=_.uniq(_.values(wfDetail.steps).map(function(o) {
 			return o.jobId;
 		}).filter(function(o){return o}));
-		AppsActions.setWorkflowApps(appIds, wfDetail.id);
+		//AppsActions.setWorkflowApps(appIds, wfDetail.id);
 		JobsActions.setJobs(jobIds);
-		this.complete();
+		//this.complete();
 	},
 
 	buildWorkflow: function(wid, wfName, wfDesc) {

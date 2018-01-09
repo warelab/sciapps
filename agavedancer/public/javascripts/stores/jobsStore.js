@@ -56,10 +56,11 @@ const JobsStore=Reflux.createStore({
 			if (res.data.error) {
 				console.log(res.data.error);
 				return;
+			} else {
+				this.state.joblist=res.data.data;
+				this.complete();
+				return res.data.data;
 			}
-			this.state.joblist=res.data;
-			this.complete();
-			return res.data;
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
@@ -112,30 +113,30 @@ const JobsStore=Reflux.createStore({
 		}))
 		.then(function(res) {
 			if (res.data.error) {
-				return;
+				wf.steps.map(function(step, i) {
+					this.state.jobs[submitNumber + i].job_id=0;
+				}.bind(this));
+				console.log(res.data.error);
+			} else {
+				let data=res.data.data;
+				//let jobs=[];
+				wf.steps.map(function(step, i) {
+					let job=data.jobs[i];
+					this._setJobData(job, submitNumber + i, -1);
+					//jobs[i]=job.job_id;
+				}.bind(this));
+				this.state.workflow={
+					id: data.workflow_id,
+					workflowDetail: data.workflow
+					//jobs: jobs,
+					//steps: []
+				};
+				WorkflowActions.setWorkflow(data.workflow_id, data.workflow);
+				this.complete();
 			}
-			let jobs=[];
-			wf.steps.map(function(step, i) {
-				let index=submitNumber + i;
-				let job=res.data.jobs[i];
-				this.state.jobs[index].job_id=job.job_id;
-				this.state.jobDetailCache[job.job_id]=job;
-				jobs[i]=job.job_id;
-				let joblistData=_.pick(job, ['job_id', 'appId', 'status', 'submitTime', 'endTime']);
-				joblistData.app_id=joblistData.appId;
-				this.state.joblist.unshift(joblistData);
-			}.bind(this));
-			this.state.workflow={
-				id: res.data.workflow_id,
-				workflowDetail: res.data.workflow,
-				jobs: jobs,
-				steps: []
-			};
-			WorkflowActions.setWorkflow(res.data.workflow_id, res.data.workflow);
-			this.complete();
 		}.bind(this))
 		.catch(function(error) {
-				console.log(error);
+			console.log(error);
 		})
 		.done();
 	},
@@ -151,23 +152,19 @@ const JobsStore=Reflux.createStore({
 		}))
 		.then(function(res) {
 			if (res.data.error) {
-				return;
-			}
-			if (res.data) {
-				let job=res.data;
-				this.state.jobs[submitNumber].job_id=job.job_id;
-				this.state.jobDetailCache[job.job_id]=job;
-				let joblistData=_.pick(job, ['job_id', 'appId', 'status', 'submitTime', 'endTime']);
-				joblistData.app_id=joblistData.appId;
-				this.state.joblist.unshift(joblistData);
-			} else {
-				//this.state.jobs[submitNumber].job_id=undefined;
 				this.state.jobs[submitNumber].job_id=0;
+				console.log(error);
+			} else {
+				let job=res.data.data;
+				this._setJobData(job, submitNumber, -1);
+			//} else {
+				//this.state.jobs[submitNumber].job_id=undefined;
+				//this.state.jobs[submitNumber].job_id=0;
 			}
 			this.complete();
 		}.bind(this))
 		.catch(function(error) {
-				console.log(error);
+			console.log(error);
 		})
 		.done();
 	},
@@ -178,13 +175,13 @@ const JobsStore=Reflux.createStore({
 		let funcs=jobIds.map(function(jobId) {
 			return function() {
 				return this._setJob(jobId).then(function(job) {
-					if (job && ! _.find(this.state.jobs, 'job_id', job.job_id)) {
-						let jobDetail=this.state.jobDetailCache[job.job_id];
-						if (jobDetail) {
-							this.state.jobs[submitNumber++]=_.pick(jobDetail, ['job_id', 'appId']);
-							AppsActions.setApp(jobDetail.appId);
-						}
-					}
+					//if (job && ! _.find(this.state.jobs, 'job_id', job.job_id)) {
+					//	let jobDetail=this.state.jobDetailCache[job.job_id];
+					//	if (jobDetail) {
+					//		this.state.jobs[submitNumber++]=_.pick(jobDetail, ['job_id', 'appId']);
+					//		AppsActions.setApp(jobDetail.appId);
+					//	}
+					//}
 					return job;
 				}.bind(this));
 			}.bind(this);
@@ -199,12 +196,35 @@ const JobsStore=Reflux.createStore({
 		delete this.state.wid[wid];
 	},
 
+	isChanged: function(data) {
+		let job_id=data.job_id;
+		let old_data=this.state.jobDetailCache[job_id];
+		return ! old_data || old_data.id === undefined && data.id || old_data.status !== data.status;
+	},
+
 	setJob: function(jobId) {
 		let jobPromise=this._setJob(jobId)
 		.then(function(job) {
 			this.complete();
 		}.bind(this));
 		return jobPromise;
+	},
+
+	_setJobData: function(data, i, j) {
+		let job_id=data.job_id;
+		this.state.jobDetailCache[job_id]=data;
+		let jobListData=_.pick(data, ['job_id', 'appId', 'status', 'submitTime', 'endTime']);
+		jobListData.app_id=jobListData.appId;
+		if (i >= 0) {
+			this.state.jobs[i]=jobListData
+		} else {
+			this.state.jobs.push(jobListData);
+		}
+		if (j >= 0) {
+			this.state.joblist[j]=jobListData;
+		} else {
+			this.state.joblist.unshift(jobListData);
+		}
 	},
 
 	_setJob: function(jobId) {
@@ -221,15 +241,18 @@ const JobsStore=Reflux.createStore({
 				if (res.data.error) {
 					console.log(res.data.error);
 					return;
+				} else {
+					let data=res.data.data;
+					if (data.appId) {
+						AppsActions.setApp(data.appId);
+					}
+					if (this.isChanged(data)) {
+						let i=_.findIndex(this.state.jobs, 'job_id', data.job_id);
+						let j=_.findIndex(this.state.joblist, 'job_id', data.job_id);
+						this._setJobData(data, i, j);
+					}
+					return data;
 				}
-				let i=_.findIndex(this.state.jobs, function(job) {
-					return job.id === res.data.id;
-				});
-				if (i >= 0) {
-					this.state.jobs[i]=res.data;
-				}
-				this.state.jobDetailCache[res.data.job_id]=res.data;
-				return res.data;
 			}.bind(this))
 			.catch(function(error) {
 				console.log(error);
@@ -398,18 +421,24 @@ const JobsStore=Reflux.createStore({
 		}))
 		.then(function(res) {
 			let changed;
-			_.forEach(res.data, function(v) {
-				let job=this.state.jobDetailCache[v.job_id];
-				if (job.id === undefined && v.id || job.status !== v.status) {
-					changed=true;
-					this.state.jobDetailCache[v.job_id]=v;
-				}
-			}.bind(this));
-			if (changed) {
-				WorkflowActions.updateWorkflowJob(wfId, res.data);
+			if (res.data.error) {
+				console.log(res.data.error);
+				return;
+			} else {
+				_.forEach(res.data.data, function(data) {
+					if (this.isChanged(data)) {
+						changed=true;
+						let i=_.findIndex(this.state.jobs, 'job_id', data.job_id);
+						let j=_.findIndex(this.state.joblist, 'job_id', data.job_id);
+						this._setJobData(data, i, j);
+					}
+				}.bind(this));
 			}
+			//if (changed) {
+			//	WorkflowActions.updateWorkflowJob(wfId, res.data.data);
+			//}
 			this.complete();
-			return res.data;
+			return res.data.data;
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
