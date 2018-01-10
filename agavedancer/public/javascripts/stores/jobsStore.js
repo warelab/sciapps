@@ -352,14 +352,16 @@ const JobsStore=Reflux.createStore({
 				if (res.data.error) {
 					console.log(res.data.error);
 					return;
+				} else {
+					let data=res.data.data;
+					let results=data[0].list.filter(function(result) {
+						return ! result.name.startsWith('.');
+					});
+					for (let r of results) {
+						r.path=r.path.replace(setting.archive_home + '/', '');
+					}
+					return results;
 				}
-				let results=res.data[0].list.filter(function(result) {
-					return ! result.name.startsWith('.');
-				});
-				for (let r of results) {
-					r.path=r.path.replace(setting.archive_home + '/', '');
-				}
-				return results;
 			})
 			.then(function(results) {
 				if (results) {

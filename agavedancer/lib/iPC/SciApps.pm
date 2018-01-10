@@ -489,10 +489,10 @@ ajax '/workflow/remote' => sub {
 };
 
 
-ajax '/workflow/new' => sub {
+ajax '/workflow/new/:id' => sub {
 	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
 	my $username=$user->{username};
-	my $wfid=param('_workflow_id');
+	my $wfid=param('id');
 	my $wfjson=param('_workflow_json');
 	my $wfname=param('_workflow_name');
 	my $wfdesc=param('_workflow_desc');
