@@ -165,12 +165,11 @@ const WorkflowStore=Reflux.createStore({
 	saveWorkflow: function(wf) {
 		let setting=_config.setting;
 		let formData=new FormData();
-		formData.append('_workflow_id', wf.id);
 		formData.append('_workflow_name',  wf.name);
 		formData.append('_workflow_desc',  wf.description);
 		formData.append('_workflow_json',  JSON.stringify(wf));
 
-		Q(axios.post('/workflow/new', formData, {
+		Q(axios.post('/workflow/new/' + wf.id, formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
 		}))

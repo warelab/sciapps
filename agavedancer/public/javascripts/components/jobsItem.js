@@ -66,7 +66,7 @@ const JobsItem=React.createClass({
 		let addedornot=this.state.checked ? 'Click to Remove' : 'Add to Workflow';
 		let tooltipadd = (<Tooltip id="tooltipadd">{addedornot}</Tooltip>);
 		let outputsItemNodes='Loading ...';
-		if (app) {
+		if (app && (job.archivePath || job.outputPath)) {
 			outputsItemNodes=app.outputs.map(function(o, i) {
 				let oname=o.value.default;
 				let href;

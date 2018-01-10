@@ -318,7 +318,7 @@ ajax '/apps' => sub {
 		push @apps, $_ unless $_->{isPublic};
 	}
 	scalar(@apps) or raise InvalidRequest => 'no apps found';
-	to_json({status => 'success', data => $apps});
+	to_json({status => 'success', data => \@apps});
 };
 
 sub retrieveApps {
@@ -522,9 +522,9 @@ ajax '/workflow/remote' => sub {
 };
 
 
-ajax '/workflow/new' => sub {
+ajax '/workflow/new/:id' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
-	my $wfid=param('_workflow_id');
+	my $wfid=param('id');
 	my $wfjson=param('_workflow_json');
 	my $wfname=param('_workflow_name');
 	my $wfdesc=param('_workflow_desc');
@@ -583,7 +583,7 @@ ajax '/workflow/:id' => sub {
 	unless ($data) {
 		raise InvalidRequest => 'no workflow found';
 	}
-	to_json({status => 'success' data => $data->{json}};
+	to_json({status => 'success', data => $data->{json}});
 };
 
 ajax '/workflow' => sub {
