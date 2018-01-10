@@ -30,6 +30,7 @@ const WorkflowDiagram=React.createClass({
 	getInitialState: function() {
 		return {
 			direction: 0,
+			label: 'Top Down',
 			activeNode: {}
 		}
 	},
@@ -81,7 +82,8 @@ const WorkflowDiagram=React.createClass({
 	},
 
 	changeDirection: function() {
-		this.setState({direction: this.state.direction ? 0 : 1});
+		let labels = ["Top Down", "Left Right"];
+		this.setState({direction: this.state.direction ? 0 : 1, label: labels[this.state.direction ? 0 : 1]});
 	},
 
 	buildWorkflowDiagramDef: function(workflowStore, appsStore, jobsStore, workflowDirection) {
@@ -352,7 +354,7 @@ const WorkflowDiagram=React.createClass({
 					</Modal.Body>
 					<Modal.Footer>
 						{saveBtn}
-						<Button onClick={this.changeDirection}>Change Direction</Button>
+						<Button onClick={this.changeDirection}>{this.state.label}</Button>
 						<Button onClick={this.hideWorkflowDiagram}>Close</Button>
 					</Modal.Footer>
 				</Modal>
