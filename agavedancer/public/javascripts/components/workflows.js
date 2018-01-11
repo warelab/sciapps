@@ -27,11 +27,21 @@ const publicWorkflows=React.createClass({
 		}
 	},
 
+	showWorkflowDiagram: function(e) {
+		let table=this.refs.table;
+                let wfid=table.store.selected[0];
+                if (wfid) {
+			WorkflowActions.setWorkflow(wfid);
+			WorkflowActions.showWorkflowDiagram();
+		}
+	},
+
 	createCustomButtonGroup: function(props) {
 		let tooltipload=<Tooltip id="tooltipload">Load</Tooltip>;
 		return (
 			<ButtonGroup>
 				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/> Load</Button>
+				<Button key='view' bsStyle='info' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
 			</ButtonGroup>
 		);
 	},
