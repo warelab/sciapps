@@ -29,7 +29,9 @@ const UserWorkflows=React.createClass({
 		let table=this.refs.table;
 		let wfid=table.store.selected[0];
 		if (wfid) {
-			WorkflowActions.showWorkflowDiagram(wfid);
+			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
+			let wfDetail=wf.json ? JSON.parse(wf.json) : undefined;
+			WorkflowActions.showWorkflowDiagram(wfid, wfDetail);
 		}
 	},
 
