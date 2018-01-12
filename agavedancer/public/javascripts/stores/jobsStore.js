@@ -187,7 +187,7 @@ const JobsStore=Reflux.createStore({
 			}.bind(this);
 		}.bind(this));
 
-		funcs.reduce(Q.when, Q(1)).then(function() {
+		return funcs.reduce(Q.when, Q(1)).then(function() {
 			this.complete();
 		}.bind(this));
 	},

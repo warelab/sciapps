@@ -29,10 +29,9 @@ const publicWorkflows=React.createClass({
 
 	showWorkflowDiagram: function(e) {
 		let table=this.refs.table;
-                let wfid=table.store.selected[0];
-                if (wfid) {
-			WorkflowActions.setWorkflow(wfid);
-			WorkflowActions.showWorkflowDiagram();
+		let wfid=table.store.selected[0];
+		if (wfid) {
+			WorkflowActions.showWorkflowDiagram(wfid);
 		}
 	},
 
