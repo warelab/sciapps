@@ -55,8 +55,8 @@ const UserJobs=React.createClass({
 		return (
 			<ButtonGroup>
 				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/> Load</Button>
-				<Button key='refresh' bsStyle='info' onClick={this.handleRefresh}><Glyphicon glyph='refresh'/> Refresh</Button>
-				<Button key='delete' bsStyle='warning' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
+				<Button key='refresh' bsStyle='warning' onClick={this.handleRefresh}><Glyphicon glyph='refresh'/> Refresh</Button>
+				<Button key='delete' bsStyle='danger' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
 			</ButtonGroup>
 		);
 	},
