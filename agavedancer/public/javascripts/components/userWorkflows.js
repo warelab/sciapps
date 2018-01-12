@@ -25,6 +25,16 @@ const UserWorkflows=React.createClass({
 		}
 	},
 
+	showWorkflowDiagram: function(e) {
+		let table=this.refs.table;
+		let wfid=table.store.selected[0];
+		if (wfid) {
+			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
+			let wfDetail=wf.json ? JSON.parse(wf.json) : undefined;
+			WorkflowActions.showWorkflowDiagram(wfid, wfDetail);
+		}
+	},
+
 	handleDeleteRow: function(e) {
 		let table=this.refs.table;
 		let wfid=table.store.selected[0];
@@ -76,8 +86,9 @@ const UserWorkflows=React.createClass({
 		return (
 			<ButtonGroup>
 				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/> Load</Button>
-				<Button key='download' bsStyle='info' onClick={this.handleDownload}><Glyphicon glyph='download-alt'/> Download</Button>
-				<Button key='delete' bsStyle='warning' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
+				<Button key='view' bsStyle='warning' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
+                                <Button key='download' bsStyle='info' onClick={this.handleDownload}><Glyphicon glyph='download-alt'/> Download</Button>
+				<Button key='delete' bsStyle='danger' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
 			</ButtonGroup>
 		);
 	},

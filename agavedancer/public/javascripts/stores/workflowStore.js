@@ -58,11 +58,17 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
-	showWorkflowDiagram: function() {
-		if (this.state.workflowDetail !== undefined) {
-			this.state.showWorkflowDiagram=true;
-			this.complete();
+	showWorkflowDiagram: function(wfId, wfDetail) {
+		let promise=Q(1);
+		if (wfId) {
+			promise=this.setWorkflow(wfId, wfDetail);
 		}
+		promise.then(function(wf) {
+			if (this.state.workflowDetail !== undefined) {
+				this.state.showWorkflowDiagram=true;
+				this.complete();
+			}
+		}.bind(this));
 	},
 
 	hideWorkflowDiagram: function() {
@@ -127,15 +133,15 @@ const WorkflowStore=Reflux.createStore({
 				}
 			}.bind(this));
 		}
-		workflowPromise.then(function(wfDetail) {
+		return workflowPromise.then(function(wfDetail) {
 			if (wfDetail) {
 				this.setWorkflowSteps(wfDetail);
+				return wfDetail;
 			}
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
 		});
-		return workflowPromise;
 	},
 
 	updateWorkflow: function(wf) {
