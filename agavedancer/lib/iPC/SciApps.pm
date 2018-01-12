@@ -284,7 +284,7 @@ sub browse_ls {
 		}, keys %$dir_list];
 }
 
-get '/apps/:id' => sub {
+ajax '/apps/:id' => sub {
 	my $app_id = param("id");
 	my $app;
 	try {
