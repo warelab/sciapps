@@ -29,7 +29,7 @@ auto_reload: 0
 
 # development config
 agave_config: ".agave"
-host_url: "https://dev1.sciapps.org"
+host_url: "https://de.sciapps.org"
 archive_system: 'data.iplantcollaborative.org'
 archive_home: '/iplant/home'
 archive_path: '__user__/sci_data/results'

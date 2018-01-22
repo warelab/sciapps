@@ -12,7 +12,7 @@ import utilities from '../libs/utilities.js';
 
 var workflowItems = [
 	{ workflow_id: 1, name: "Annotation", description: "Performing MAKER based annotation" },
-	{ workflow_id: 2, name: "Assembly", description: "Small genome assembly, quality assessment, and annotation with JBrowse view" },
+	//{ workflow_id: 2, name: "Assembly", description: "Small genome assembly, quality assessment, and annotation with JBrowse view" },
 	{ workflow_id: 3, name: "Association", description: "A GWAS workflow for performing mixed model analysis with three different algorithms" }
 ];
 

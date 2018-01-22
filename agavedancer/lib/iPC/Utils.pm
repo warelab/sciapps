@@ -38,7 +38,7 @@ sub parse_ils {
 	my @content;
 	my %result=($1 => \@content);
 	$path=$datastore_root . ($1 ? '/' . $1 : '');
-	my $seen;
+	my %seen;
 	foreach my $line (@$ils) {
 		my $name;
 		if ($line=~m#^\s+C\-\s+$path/(.*)#) {

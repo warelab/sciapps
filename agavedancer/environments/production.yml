@@ -28,7 +28,7 @@ host_url: "https://www.sciapps.org"
 archive_system: 'data.iplantcollaborative.org'
 archive_home: '/iplant/home'
 archive_path: '__user__/sci_data/results'
-input_system: 'brebiou.cshl.edu'
+input_system: 'brie.cshl.edu'
 input_home: '/agave_data'
 input_path: 'inputs'
 email: 'noreply@sciapps.org'
@@ -40,7 +40,7 @@ datastore:
   __home__: 
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
-    path: '__user__'
+    path: '__user__/sci_data'
   __shared__:
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
@@ -48,7 +48,7 @@ datastore:
   __recent_jobs__: 
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
-    path: '__user__/archive/jobs'
+    path: '__user__/sci_data/results'
   __system__:
     system: ''
     home: ''
