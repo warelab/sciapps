@@ -112,6 +112,10 @@ const WorkflowStore=Reflux.createStore({
 		let setting=_config.setting;
 		if (wfDetail) {
 			this.state.workflowDetailCache[wfId]=wfDetail;
+			let wf=_.find(this.state.workflows, {workflow_id: wfId});
+			if (wf) {
+				wf.json=JSON.stringify(wfDetail);
+			}
 		}
 		let workflowDetail=this.state.workflowDetailCache[wfId];
 		let workflowPromise;

@@ -125,7 +125,7 @@ const WorkflowDiagram=React.createClass({
 					let output_name, url, jobOwner;
 					if (jobDetail) {
 						jobOwner=jobDetail.owner;
-						output_name=jobDetail.id;
+						output_name=jobDetail.job_id;
 						if (jobDetail.archive) {
 							url=[jobDetail.archiveSystem, jobDetail.archivePath, value].join('/');
 						} else if (jobDetail.outputPath) {
@@ -165,7 +165,7 @@ const WorkflowDiagram=React.createClass({
 						let input_name;
 						if (prevJobDetail) {
 							//input_name=prevJobDetail.archive ? prevJobDetail.archiveSystem + '/' + prevJobDetail.archivePath + '/' : setting.archive_system + '/' + prevJobDetail.outputPath.replace(prevJobDetail.owner, setting.archive_path) + '/';
-							input_name=prevJobDetail.id;
+							input_name=prevJobDetail.job_id;
 						} else {
 							input_name=setting.wf_step_prefix + ic.step + ':';
 						}

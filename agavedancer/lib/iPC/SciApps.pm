@@ -332,6 +332,12 @@ sub retrieveApps {
 			if ($return->{inputs} && ! $return->{inputs}[0]{value}{visible}) {
 				$return = $apps->find_by_id($app_id);
 			}
+			try {
+				my $file='public/assets/' . $app_id . '.json';
+				open FILE, ">$file" or error("Error: can't open $file, $!");
+				print FILE to_json($return);
+				close FILE;
+			};
 		} else {
 			$return=$apps->list(limit => 1000);
 		}
@@ -532,7 +538,7 @@ ajax '/workflow/new/:id' => sub {
 	my @jobs=database->quick_select('job', {workflow_id => $wfid});
 	my %jobs=map {$_->{job_id} => $_} @jobs;
 	foreach my $step (@{$wf->{steps}}) {
-		if (my $job=$jobs{$step->{jobId}}) {
+		if ($step->{jobId} and my $job=$jobs{$step->{jobId}}) {
 			$job->{agave_id} and $step->{jobId}=$job->{agave_id};
 		}
 	}
@@ -541,6 +547,7 @@ ajax '/workflow/new/:id' => sub {
 	try {
 		database->quick_insert('workflow', {workflow_id => $wfid, %data});
 	} catch {
+		delete $data{json};
 		database->quick_update('workflow', {workflow_id => $wfid}, \%data);
 	};
 	try {
@@ -614,8 +621,8 @@ ajax '/workflowJob/new' => sub {
 		my $app_id=$step->{appId};
 		my ($app) = $apps->find_by_id($app_id);
 		my ($job_id, $job_form)=prepareJob($username, $app, $form, $step, \@step_form, \@jobs);
-		my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
-		$job||={appId => $app_id, job_id => $job_id, archiveSystem => $archive_system, archivePath => $job_form->{archivePath}, status => 'PENDING'};
+		#my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
+		my $job={appId => $app_id, job_id => $job_id, archiveSystem => $archive_system, archivePath => $job_form->{archivePath}, status => 'PENDING'};
 		if ($job_id) {
 			push @jobs, $job;
 			push @step_form, $job_form;
@@ -624,8 +631,36 @@ ajax '/workflowJob/new' => sub {
 	}
 	try {
 		database->quick_insert('workflow', {workflow_id => $wfid, json => to_json($wf), name => $wfname, description => $wfdesc, derived_from => $derived_from});
+	} catch {
+		my $old_wf=database->quick_select('workflow', {workflow_id => $wfid});
+		$wf->{name}=$old_wf->{name};
+		$wf->{description}=$old_wf->{description};
+		database->quick_update('workflow', {workflow_id => $wfid}, {json => to_json($wf)});
 	};
 	scalar(@jobs) == scalar(@{$wf->{steps}}) ? to_json({status => 'success', data => {workflow_id => $wfid, jobs => \@jobs, workflow => $wf}}) : raise InvalidRequest => 'workflow submission failed';
+};
+
+
+ajax '/workflowJob/run/:id' => sub {
+	my $username=session('username') or raise InvalidCredentials => 'no username';
+	my $apif = getAgaveClient();
+	my $apps = $apif->apps;
+	my @jobs;
+
+	my $wfid=param("id");
+	my $wf=database->quick_select('workflow', {workflow_id => $wfid});
+	if ($wf) {
+		my $wfObj=from_json($wf->{json});
+		foreach my $step (@{$wfObj->{steps}}) {
+			my $app_id=$step->{appId};
+			my ($app) = $apps->find_by_id($app_id);
+			my $job=database->quick_select('job', {job_id => $step->{jobId}});
+			my $job_form=from_json($job->{job_json});
+			my ($res, $err)=submitJob($username, $apif, $app, $job->{job_id}, $job_form);
+			push @jobs, $job;
+		}
+	};
+	$wf ? to_json({status => 'success', data => {workflow_id => $wfid, jobs => \@jobs}}) : raise InvalidRequest => 'workflow not found';
 };
 
 ajax '/job/new/:id' => sub {
@@ -727,11 +762,11 @@ sub prepareJob {
 			$job_form{$k}=$prev_job->[$v->{step}]{job_id} . ':' . $v->{output_name};
 		} else {
 			$step->{inputs}{$k}=$job_form{$k};
-			if ($job_form{$k}=~m#agave://data.iplantcollaborative.org/(.+)#) {
-				my $path=$archive_home . '/' . $1;
-				my $cmd="export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ichmod read public $path;ichmod read anonymous $path";
-				system($cmd) == 0 or raise 'SystemError' => "can not share $path";
-			}
+			#if ($job_form{$k}=~m#agave://data.iplantcollaborative.org/(.+)#) {
+			#	my $path=$archive_home . '/' . $1;
+			#	my $cmd="export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ichmod read public $path;ichmod read anonymous $path";
+			#	system($cmd) == 0 or raise 'SystemError' => "can not share $path";
+			#}
 		}
 	}
 
@@ -778,6 +813,13 @@ sub prepareJob {
 	$job_form{archivePath}=join('/', $archive_path, $app_id . '_' . $job_id);
 	$job_form{notifications}=$notifications;
 
+	my $cmd="export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;imkdir -p $archive_home/$job_form{archivePath}";
+	try {
+		system($cmd);
+	} catch {
+		error("Error: can not mkdir $archive_home/$job_form{archivePath}, @_");
+	};
+
 	my $job_json=to_json(\%job_form);
 	my $wfid=$form->{'_workflow_id'};
 	my $data={username => $username, job_id => $job_id, app_id => $app_id, job_json => $job_json, status => 'PENDING'};
@@ -823,7 +865,7 @@ sub submitJob {
 				$job->{job_id}=$job_id;
 				updateJob($job_id, $job);
 				updateWorkflowJob($job_id);
-				$job_ep->share_job($job->{id}, $username, 'READ');
+				#$job_ep->share_job($job->{id}, $username, 'READ');
 				return ($job);
 			} else {
 				$err='Error: ' . $st->{message};

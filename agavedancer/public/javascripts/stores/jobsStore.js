@@ -106,6 +106,7 @@ const JobsStore=Reflux.createStore({
 			this.state.jobs[submitNumber + i]={appId: step.appId};
 		}.bind(this));
 		this.state.workflow={};
+		WorkflowActions.setWorkflow(wf.id, wf);
 		this.complete();
 		Q(axios.post('/workflowJob/new', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -133,6 +134,15 @@ const JobsStore=Reflux.createStore({
 				};
 				WorkflowActions.setWorkflow(data.workflow_id, data.workflow);
 				this.complete();
+				Q(axios.get('/workflowJob/run/' + data.workflow_id, {
+					headers: {'X-Requested-With': 'XMLHttpRequest'}
+				}))
+				.then(function(res) {
+					if (res.data.error) {
+						console.log(res.data.error);
+						return;
+					}
+				}.bind(this));
 			}
 		}.bind(this))
 		.catch(function(error) {
