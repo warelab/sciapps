@@ -334,9 +334,11 @@ sub retrieveApps {
 			}
 			try {
 				my $file='public/assets/' . $app_id . '.json';
-				open FILE, ">$file" or error("Error: can't open $file, $!");
-				print FILE to_json($return);
-				close FILE;
+				unless (-e $file) {
+					open FILE, ">$file" or error("Error: can't open $file, $!");
+					print FILE to_json($return);
+					close FILE;
+				}
 			};
 		} else {
 			$return=$apps->list(limit => 1000);
