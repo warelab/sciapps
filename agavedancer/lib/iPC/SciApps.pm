@@ -306,6 +306,14 @@ sub retrieveApps {
 			if ($return->{inputs} && $return->{inputs}[0]{value}{visible} ne 'true') {
 				$return = $apps->find_by_id($app_id);
 			}
+			try {
+				my $file='public/assets/' . $app_id . '.json';
+				unless (-e $file) {
+					open FILE, ">$file" or error("Error: can't open $file, $!");
+					print FILE to_json($return);
+					close FILE;
+				}
+			};
 		} else {
 			$return=$apps->list(limit => 1000);
 		}
@@ -500,7 +508,7 @@ ajax '/workflow/new/:id' => sub {
 	my @jobs=database->quick_select('job', {workflow_id => $wfid});
 	my %jobs=map {$_->{job_id} => $_} @jobs;
 	foreach my $step (@{$wf->{steps}}) {
-		if (my $job=$jobs{$step->{jobId}}) {
+		if ($step->{jobId} and my $job=$jobs{$step->{jobId}}) {
 			$job->{agave_id} and $step->{jobId}=$job->{agave_id};
 		}
 	}
@@ -509,6 +517,7 @@ ajax '/workflow/new/:id' => sub {
 	try {
 		database->quick_insert('workflow', {workflow_id => $wfid, %data});
 	} catch {
+		delete $data{json};
 		database->quick_update('workflow', {workflow_id => $wfid}, \%data);
 	};
 	try {
@@ -579,8 +588,8 @@ ajax '/workflowJob/new' => sub {
 		my $app_id=$step->{appId};
 		my ($app) = $apps->find_by_id($app_id);
 		my ($job_id, $job_form)=prepareJob($username, $app, $form, $step, \@step_form, \@jobs);
-		my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
-		$job||={appId => $app_id, job_id => $job_id, archiveSystem => $archive_system, archivePath => $job_form->{archivePath}, status => 'PENDING'};
+		#my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
+		my $job={appId => $app_id, job_id => $job_id, archiveSystem => $archive_system, archivePath => $job_form->{archivePath}, status => 'PENDING'};
 		if ($job_id) {
 			push @jobs, $job;
 			push @step_form, $job_form;
@@ -589,8 +598,36 @@ ajax '/workflowJob/new' => sub {
 	}
 	try {
 		database->quick_insert('workflow', {workflow_id => $wfid, json => to_json($wf), name => $wfname, description => $wfdesc, derived_from => $derived_from});
+	} catch {
+		my $old_wf=database->quick_select('workflow', {workflow_id => $wfid});
+		$wf->{name}=$old_wf->{name};
+		$wf->{description}=$old_wf->{description};
+		database->quick_update('workflow', {workflow_id => $wfid}, {json => to_json($wf)});
 	};
 	scalar(@jobs) == scalar(@{$wf->{steps}}) ? to_json({status => 'success', data => {workflow_id => $wfid, jobs => \@jobs, workflow => $wf}}) : raise InvalidRequest => 'workflow submission failed';
+};
+
+ajax '/workflowJob/run/:id' => sub {
+	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
+	my $username=$user->{username};
+	my $apif = getAgaveClient();
+	my $apps = $apif->apps;
+	my @jobs;
+
+	my $wfid=param("id");
+	my $wf=database->quick_select('workflow', {workflow_id => $wfid});
+	if ($wf) {
+		my $wfObj=from_json($wf->{json});
+		foreach my $step (@{$wfObj->{steps}}) {
+			my $app_id=$step->{appId};
+			my ($app) = $apps->find_by_id($app_id);
+			my $job=database->quick_select('job', {job_id => $step->{jobId}});
+			my $job_form=from_json($job->{job_json});
+			my ($res, $err)=submitJob($username, $apif, $app, $job->{job_id}, $job_form);
+			push @jobs, $job;
+		}
+	};
+	$wf ? to_json({status => 'success', data => {workflow_id => $wfid, jobs => \@jobs}}) : raise InvalidRequest => 'workflow not found';
 };
 
 ajax '/job/new/:id' => sub {
