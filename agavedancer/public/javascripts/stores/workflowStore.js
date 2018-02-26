@@ -108,13 +108,15 @@ const WorkflowStore=Reflux.createStore({
 		.done();
 	},
 
-	setWorkflow: function(wfId, wfDetail, db) {
+	setWorkflow: function(wfId, wfDetail, flag) {
 		let setting=_config.setting;
 		if (wfDetail) {
 			this.state.workflowDetailCache[wfId]=wfDetail;
 			let wf=_.find(this.state.workflows, {workflow_id: wfId});
 			if (wf) {
 				wf.json=JSON.stringify(wfDetail);
+			} else if (flag) {
+				this.state.workflows.push(wf);
 			}
 		}
 		let workflowDetail=this.state.workflowDetailCache[wfId];
@@ -122,9 +124,9 @@ const WorkflowStore=Reflux.createStore({
 		if (workflowDetail) {
 			workflowPromise=Q(workflowDetail);
 		} else {
-			let url=db ? '/workflow/' + wfId : '/assets/' + wfId + '.workflow.json'; 
-			workflowPromise=Q(axios.get(url, {
-				headers: {'X-Requested-With': 'XMLHttpRequest'}
+			//workflowPromise=Q(axios.get('/assets/' + wfId + '.workflow.json'))
+			workflowPromise=Q(axios.get('/workflow/' + wfId,{
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			}))
 			.then(function(res) {
 				if (res.data.error) {

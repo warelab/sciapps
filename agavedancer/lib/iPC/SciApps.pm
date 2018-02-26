@@ -585,13 +585,19 @@ ajax '/workflow/:id/update' => sub {
 
 ajax '/workflow/:id' => sub {
 	my $wfid=param('id');
-	my $data=database->quick_select('workflow', {workflow_id => $wfid});
-	unless ($data) {
-		raise InvalidRequest => 'no workflow found';
-	}
-	my $wf=from_json($data->{json});
-	$wf->{name}=$data->{name};
-	$wf->{description}=$data->{description};
+	my $wf;
+	try {
+		my $wfFile='public/assets/' . $wfid . '.workflow.json';
+		my $wfJson=`cat $wfFile`;
+		$wf=from_json($wfJson);
+	};
+	$wf || try {
+		my $data=database->quick_select('workflow', {workflow_id => $wfid});
+		$wf=from_json($data->{json});
+		$wf->{name}=$data->{name};
+		$wf->{description}=$data->{description};
+	};
+	$wf or raise InvalidRequest => 'no workflow found';
 	to_json({status => 'success', data => $wf});
 };
 
@@ -633,19 +639,14 @@ ajax '/workflowJob/new' => sub {
 	}
 	try {
 		database->quick_insert('workflow', {workflow_id => $wfid, json => to_json($wf), name => $wfname, description => $wfdesc, derived_from => $derived_from});
-		database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
-		my @data=database->quick_select('user_workflow', {username => $username});
-		print STDERR "AA1|" . to_dumper($data[-1]);
 	} catch {
 		my $old_wf=database->quick_select('workflow', {workflow_id => $wfid});
 		$wf->{name}=$old_wf->{name};
 		$wf->{description}=$old_wf->{description};
 		database->quick_update('workflow', {workflow_id => $wfid}, {json => to_json($wf)});
-		print STDERR "BB1|" . to_dumper($wf);
 	};
 	scalar(@jobs) == scalar(@{$wf->{steps}}) ? to_json({status => 'success', data => {workflow_id => $wfid, jobs => \@jobs, workflow => $wf}}) : raise InvalidRequest => 'workflow submission failed';
 };
-
 
 ajax '/workflowJob/run/:id' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
@@ -655,7 +656,6 @@ ajax '/workflowJob/run/:id' => sub {
 
 	my $wfid=param("id");
 	my $wf=database->quick_select('workflow', {workflow_id => $wfid});
-	print STDERR "CC1|" . to_dumper($wf);
 	if ($wf) {
 		my $wfObj=from_json($wf->{json});
 		foreach my $step (@{$wfObj->{steps}}) {
