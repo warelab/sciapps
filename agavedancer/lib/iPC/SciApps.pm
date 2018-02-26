@@ -334,7 +334,7 @@ sub retrieveApps {
 			}
 			try {
 				my $file='public/assets/' . $app_id . '.json';
-				unless (-e $file) {
+				unless (-f $file) {
 					open FILE, ">$file" or error("Error: can't open $file, $!");
 					print FILE to_json($return);
 					close FILE;
@@ -548,14 +548,11 @@ ajax '/workflow/new/:id' => sub {
 	my %data=(json => to_json($wf), name => $wfname, description => $wfdesc);
 	try {
 		database->quick_insert('workflow', {workflow_id => $wfid, %data});
-	} catch {
-		delete $data{json};
-		database->quick_update('workflow', {workflow_id => $wfid}, \%data);
-	};
-	try {
 		database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
 	} catch {
-		raise 'InvalidRequest' => 'workflow not saved'; 
+		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or raise 'InvalidRequest' => 'Invalid Workflow';
+		delete $data{json};
+		database->quick_update('workflow', {workflow_id => $wfid}, \%data);
 	};
 	to_json({status => 'success', data => {workflow_id => $wfid, %data}});
 };
@@ -592,7 +589,10 @@ ajax '/workflow/:id' => sub {
 	unless ($data) {
 		raise InvalidRequest => 'no workflow found';
 	}
-	to_json({status => 'success', data => $data->{json}});
+	my $wf=from_json($data->{json});
+	$wf->{name}=$data->{name};
+	$wf->{description}=$data->{description};
+	to_json({status => 'success', data => $wf});
 };
 
 ajax '/workflow' => sub {
@@ -633,11 +633,15 @@ ajax '/workflowJob/new' => sub {
 	}
 	try {
 		database->quick_insert('workflow', {workflow_id => $wfid, json => to_json($wf), name => $wfname, description => $wfdesc, derived_from => $derived_from});
+		database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
+		my @data=database->quick_select('user_workflow', {username => $username});
+		print STDERR "AA1|" . to_dumper($data[-1]);
 	} catch {
 		my $old_wf=database->quick_select('workflow', {workflow_id => $wfid});
 		$wf->{name}=$old_wf->{name};
 		$wf->{description}=$old_wf->{description};
 		database->quick_update('workflow', {workflow_id => $wfid}, {json => to_json($wf)});
+		print STDERR "BB1|" . to_dumper($wf);
 	};
 	scalar(@jobs) == scalar(@{$wf->{steps}}) ? to_json({status => 'success', data => {workflow_id => $wfid, jobs => \@jobs, workflow => $wf}}) : raise InvalidRequest => 'workflow submission failed';
 };
@@ -651,6 +655,7 @@ ajax '/workflowJob/run/:id' => sub {
 
 	my $wfid=param("id");
 	my $wf=database->quick_select('workflow', {workflow_id => $wfid});
+	print STDERR "CC1|" . to_dumper($wf);
 	if ($wf) {
 		my $wfObj=from_json($wf->{json});
 		foreach my $step (@{$wfObj->{steps}}) {

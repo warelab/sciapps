@@ -20,8 +20,12 @@ const UserWorkflows=React.createClass({
 		if (wfid) {
 			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
 			let wfDetail=wf.json ? JSON.parse(wf.json) : undefined;
-			AppsActions.showPage('workflowRunner');
-			WorkflowActions.showWorkflow(wfid, wfDetail);
+			if(wfDetail) {
+				wfDetail.name=wf.name;
+				wfDetail.description=wf.description;
+				AppsActions.showPage('workflowRunner');
+				WorkflowActions.showWorkflow(wfid, wfDetail);
+			}
 		}
 	},
 

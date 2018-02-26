@@ -134,6 +134,7 @@ const JobsStore=Reflux.createStore({
 				};
 				WorkflowActions.setWorkflow(data.workflow_id, data.workflow);
 				this.complete();
+				WorkflowActions.listWorkflow();
 				Q(axios.get('/workflowJob/run/' + data.workflow_id, {
 					headers: {'X-Requested-With': 'XMLHttpRequest'}
 				}))

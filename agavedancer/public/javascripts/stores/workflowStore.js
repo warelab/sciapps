@@ -188,7 +188,14 @@ const WorkflowStore=Reflux.createStore({
 				console.log(res.data.error);
 				return;
 			} else if (res.data.status === 'success') {
-				this.state.workflows.push(res.data.data);
+				let data=res.data.data;
+				let index=_.findIndex(this.state.workflows, 'workflow_id', data.workflow_id);
+				if (index >= 0) {
+					this.state.workflows[index]=data;
+				} else {
+					this.state.workflows.push(data);
+				}
+				WorkflowActions.setWorkflow(data.workflow_id, data.workflow);
 				this.complete();
 			}
 		}.bind(this))

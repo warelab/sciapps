@@ -19,8 +19,6 @@ const AppsForm=React.createClass({
 		return { onSubmit: false, onValidate: false, required: {} };
 	},
 
-	formName: 'agaveWebAppForm',
-
 	componentWillReceiveProps: function(nextProps) {
 		this.setState({
 			onSubmit: false,
@@ -29,6 +27,7 @@ const AppsForm=React.createClass({
 	},
 
 	componentWillUnmount () {
+		this.formData=undefined;
 		Dialog.resetOptions();
 	},
 
@@ -39,11 +38,15 @@ const AppsForm=React.createClass({
 		let required=[];
 		let appDetail=this.props.appDetail;
 		let user=this.props.user;
+		let data={};
 		if (appDetail && undefined !== appDetail.name) {
 			if (appDetail.inputs && appDetail.inputs.length) {
 				appDetail.inputs.forEach(function(input) {
 					if (input.value.required) {
 						required.push(input.id);
+					}
+					if (input.value.default !== undefined) {
+						data[input.id]=_.isArray(input.value.default) ? input.value.default : [input.value.default]; 
 					}
 				});
 			}
@@ -52,15 +55,43 @@ const AppsForm=React.createClass({
 					if (param.value.required) {
 						required.push(param.id);
 					}
+					if (param.value.default !== undefined) {
+						data[param.id]=param.value.default;
+					}
 				});
 			}
 		}
-		let form=this.refs[this.formName];
-		let validated=utilities.validateForm(form, required, setting.upload_suffix);
-		let confirmed, formData;
+		_.forEach(this.formData, function(v,k) {
+			if (v.state && undefined !== v.state.value) { 
+				let value=_.clone(v.state.value);
+				if (_.isArray(value)) {
+					_.remove(value, function(val) {
+						return undefined === val;
+					});
+					if (0 === value.length) {
+						value=undefined;
+					}
+				}
+				if (undefined !== value) {
+					data[k]=value;
+				}
+			}
+		});
+		let validated=utilities.validateForm(data, required, setting.upload_suffix);
+		let confirmed;
 		if (user.logged_in) {
 			if (validated) {
-				formData=new FormData(this.refs[this.formName]);
+				let formData=new FormData();
+				_.forEach(data, function(v, k) {
+					if (_.isArray(v)) {
+						v.forEach(function(val) {
+							formData.append(k, val);
+						});
+					} else {
+						formData.append(k, v);
+					}
+				});
+
 				this.refs.dialog.show({
 					body: 'Are you sure you want to submit this job?',
 					actions: [
@@ -130,7 +161,7 @@ const AppsForm=React.createClass({
 					if (jobDetail && jobDetail.inputs[input.id] !== undefined) {
 						input.value.value=jobDetail.inputs[input.id][0];
 					}
-					return(<AppsInput key={appDetail.id + ':' + input.id} data={input} reload={reload} onValidate={onValidate} user={this.props.user} />);
+					return(<AppsInput key={appDetail.id + ':' + input.id} data={input} reload={reload} onValidate={onValidate} user={this.props.user} ref={(appsInput) => {this.formData || (this.formData={}); this.formData[input.id]=appsInput;}} />);
 				}.bind(this));
 			}
 			if (appDetail.parameters &&  appDetail.parameters.length) {
@@ -139,7 +170,7 @@ const AppsForm=React.createClass({
 					if (jobDetail && jobDetail.parameters[param.id] !== undefined) {
 						param.value.value=jobDetail.parameters[param.id];
 					}
-					return(<AppsParam key={appDetail.id + ':' + param.id} data={param} reload={reload} onValidate={onValidate} user={this.props.user} />);
+					return(<AppsParam key={appDetail.id + ':' + param.id} data={param} reload={reload} onValidate={onValidate} user={this.props.user} ref={(appsParam) => {this.formData || (this.formData={}); this.formData[param.id]=appsParam;}} />);
 				}.bind(this));
 			}
 		}
@@ -181,7 +212,7 @@ const AppsForm=React.createClass({
 				<form ref={this.formName}>
 					{app_inputs}
 					{app_params}
-					<BaseInput data={emailInput} />
+					<BaseInput data={emailInput} ref={(input) => {this.formData._email=input}} />
 					{submitBtn}
 				</form>
 				<Dialog ref='dialog' />

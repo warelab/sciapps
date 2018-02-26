@@ -248,15 +248,15 @@ const WorkflowDiagram=React.createClass({
 						}
 						WorkflowActions.saveWorkflow(wf);
 						this.setState({onSave: true});
+						Q.delay(1000).then(function() {
+							this.setState({onSave: false});
+						}.bind(this));
 					},
 					'btn-primary'
 				)
 			]
 		});
 
-		Q.delay(1000).then(function() {
-			this.setState({onSave: false});
-		}.bind(this));
 	},
 
 	render: function() {
@@ -338,10 +338,11 @@ const WorkflowDiagram=React.createClass({
 			}
 
 			let saveBtnTxt=this.state.onSave ? 'Saving' : 'Save Workflow';
-			if (workflowDetail && _.find(workflowStore.workflows, 'workflow_id', workflowDetail.id)) {
-				saveBtnTxt='Saved';
-			}
-			let saveBtn=user.logged_in ? <Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved'} bsStyle={saveBtnTxt === 'Saved' ? null : 'primary'}>{saveBtnTxt}</Button> : undefined;
+			//if (workflowDetail && _.find(workflowStore.workflows, 'workflow_id', workflowDetail.id)) {
+			//	saveBtnTxt='Saved';
+			//}
+			//let saveBtn=user.logged_in ? <Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved'} bsStyle={saveBtnTxt === 'Saved' ? null : 'primary'}>{saveBtnTxt}</Button> : undefined;
+			let saveBtn=user.logged_in ? <Button onClick={this.handleSave} bsStyle={'primary'}>{saveBtnTxt}</Button> : undefined;
 			markup=(
 				<div>
 				<Modal dialogClassName={nodeClass} show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>
