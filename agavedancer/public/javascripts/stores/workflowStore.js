@@ -122,7 +122,10 @@ const WorkflowStore=Reflux.createStore({
 		if (workflowDetail) {
 			workflowPromise=Q(workflowDetail);
 		} else {
-			workflowPromise=Q(axios.get('/assets/' + wfId + '.workflow.json'))
+			//workflowPromise=Q(axios.get('/assets/' + wfId + '.workflow.json'))
+			workflowPromise=Q(axios.get('/workflow/' + wfId,{
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+			}))
 			.then(function(res) {
 				if (res.data.error) {
 					console.log(res.data.error);

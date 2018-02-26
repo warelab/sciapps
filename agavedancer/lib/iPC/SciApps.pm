@@ -559,6 +559,24 @@ ajax '/workflow/:id/update' => sub {
 	to_json({status => 'success'});
 };
 
+ajax '/workflow/:id' => sub {
+	my $wfid=param('id');
+	my $wf;
+	try {
+		my $wfFile='public/assets/' . $wfid . '.workflow.json';
+		my $wfJson=`cat $wfFile`;
+		$wf=from_json($wfJson);
+	};
+	$wf || try {
+		my $data=database->quick_select('workflow', {workflow_id => $wfid});
+		$wf=from_json($data->{json});
+		$wf->{name}=$data->{name};
+		$wf->{description}=$data->{description};
+	};
+	$wf or raise InvalidRequest => 'no workflow found';
+	to_json({status => 'success', data => $wf});
+};
+
 ajax '/workflow' => sub {
 	my @result;
 	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
