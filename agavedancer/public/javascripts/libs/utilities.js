@@ -36,9 +36,13 @@ module.exports = {
 		}
 	},
 
-	validateForm: function(formdata, required, upload_suffix) {
+	validateForm: function(form, required, upload_suffix) {
 		upload_suffix=upload_suffix || '';
+		let formdata={};
 		let ret=required.every(function(n) {
+			for (let key of _.keys(form)) {
+				if (form[key].name && form[key].value && form[key].name.toString().length && form[key].value.toString().length) formdata[form[key].name]=form[key].value;
+			}
 			if (undefined !== formdata[n] && formdata[n].toString().length || undefined !== formdata[n + upload_suffix] && formdata[n + upload_suffix].toString().length) return true
 		});
 		return ret;

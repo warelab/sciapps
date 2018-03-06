@@ -71,8 +71,8 @@ const WorkflowBuilderForm=React.createClass({
 				let filePath=job.archivePath ? job.archivePath : job.id + '/outputs/media';
 				//let path=job.archivePath + '/' + output.value.default;
 				//let archivePath=job.outputPath.replace(job.owner, setting.archive_path);
-				let path=filePath + '/' + output.value.default;
-				outputs[path]={step: index, output_name: output.value.default};
+				let path=filePath + '/' + output.id;
+				outputs[path]={step: index, output_name: output.id};
 			});
 		}.bind(this));
 		return workflow;
@@ -87,8 +87,9 @@ const WorkflowBuilderForm=React.createClass({
 			parameters: job.parameters
 		};
 		_.forIn(job.inputs, function(iv, ik) {
+			let input_name=_.isArray(iv) ? iv[0] : iv;
 			let output=_.find(outputs, function(ov, ok) {
-				return _.endsWith(iv, ok);
+				return _.includes(input_name, ok);
 			});
 			step.inputs[ik]=output ? output : iv[0];
 		})

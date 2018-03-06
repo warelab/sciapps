@@ -6,16 +6,15 @@ import _ from 'lodash';
 import AppsActions from '../actions/appsActions.js';
 import DsActions from '../actions/dsActions.js';
 import DsStore from '../stores/dsStore.js';
-import {Input, Button, Glyphicon} from 'react-bootstrap';
+import {Input, Button, ButtonGroup, Glyphicon} from 'react-bootstrap';
 
 const AppsInput=React.createClass({
 	mixins: [Reflux.listenTo(DsStore, 'handleDsStoreChange')],
 
 	getInitialState: function() {
 		let value=[], count=1, active=0;
-		let reload=this.props.relad;
+		let reload=this.props.reload;
 		if (reload === 'resubmit' || this.props.data.value.value !== undefined) {
-			value=this.props.data.value.value;
 			if (_.isArray(this.props.data.value.value)) {
 				input=this.props.data.value.value.length;
 				value=this.props.data.value.value;
@@ -33,7 +32,7 @@ const AppsInput=React.createClass({
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		let reload=this.props.reload;
+		let reload=nextProps.reload;
 		let value=[], count=1;
 		if (reload === 'resubmit') {
 			if (_.isArray(nextProps.data.value.value)) {
@@ -96,8 +95,16 @@ const AppsInput=React.createClass({
 		}
 	},
 
-	handleAddInput: function(event) {
-		this.setState({count: this.state.count + 1});
+	handleInsertInput: function(event) {
+		if (this.state.count < this.props.data.semantics.maxCardinality) {
+			this.setState({count: this.state.count + 1});
+		}
+	},
+
+	handleRemoveInput: function(event) {
+		if (this.state.count > 1) {
+			this.setState({count: this.state.count - 1});
+		}
 	},
 
 	validateState: function() {
@@ -141,10 +148,12 @@ const AppsInput=React.createClass({
 				inputs[i]=<Input {...textProps} />;
 			}
 
+			let insertButton=this.state.count < data.semantics.maxCardinality ? <Button onClick={this.handleInsertInput}><Glyphicon glyph='plus' /> Insert</Button> : undefined;
+			let removeButton=this.state.count > 1 ? <Button onClick={this.handleRemoveInput}><Glyphicon glyph='minus' /> Remove</Button> : undefined;
 			markup=(
 				<div>
 					<Input {...props}>{inputs}</Input>
-					<Button onClick={this.handleAddInput}><Glyphicon glyph='plus' /></Button>
+					{insertButton}{removeButton}
 				</div>
 			);
 		}

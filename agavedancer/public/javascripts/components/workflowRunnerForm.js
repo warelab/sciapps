@@ -48,11 +48,21 @@ const WorkflowRunnerForm=React.createClass({
 		let required=_.keys(this.state.required);
 		let form=this.refs[this.formName];
 		let validated=utilities.validateForm(form, required, setting.upload_suffix);
-		let wid, wf, confirmed, formData;
+		let confirmed;
 		if (validated) {
-			formData=new FormData(this.refs[this.formName]);
-			wid=formData.get('_workflow_id');
-			wf=JSON.parse(formData.get('_workflow_json'));
+			let formData=new FormData(form);
+			let wid=utilities.uuid();
+			formData.set('_workflow_id', wid);
+			let wf=JSON.parse(formData.get('_workflow_json'));
+			wf.steps.forEach(function(step) {
+				step.jobId=undefined;
+			});
+			_.assign(wf, {
+				workflow_id: wid,
+				name: 'workflow-' + wid + '-' + wf.name,
+				derived_from: wf.id || wf.workflow_id
+			});
+			formData.set('_workflow_json', JSON.stringify(wf));
 			//confirmed=confirm('You are going to submit ' + wf.steps.length + ' jobs to cluster, are you sure?');
 			this.refs.dialog.show({
 				body: 'Are you sure you want to submit these ' + wf.steps.length + ' jobs?',
@@ -114,14 +124,12 @@ const WorkflowRunnerForm=React.createClass({
 
 	render: function() {
 		let user=this.props.user;
-		let wid=utilities.uuid();
 		let workflowStore=this.state.workflowStore;
 		let appsStore=this.state.appsStore;
 		let setting=_config.setting;
 		let markup=<div />, appsFieldsets;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
 		let required=this.state.required={};
-		//if (workflowStore.workflowDetail && appsStore.wid[workflowStore.workflowDetail.id]) {
 		if (workflowStore.workflowDetail) {
 			let workflowDetail=workflowStore.workflowDetail;
 			let steps=workflowDetail.steps;
@@ -162,28 +170,12 @@ const WorkflowRunnerForm=React.createClass({
 				label: 'Email',
 				help: 'Optional Email notification upon job completion'
 			};
-			let runDetail=_.cloneDeep(workflowDetail);
-			_.assign(runDetail, {
-				id: wid,
-				name: 'workflow-' + wid + '-' + workflowDetail.name,
-				description: workflowDetail.description || '',
-				derived_from: workflowDetail.id
-			});
 
-			runDetail.steps.forEach(function(step) {
-				step.jobId=undefined;
-			});
 			let workflowJson={
 				type: 'hidden',
 				id: '_workflow_json',
 				name: '_workflow_json',
-				value: JSON.stringify(runDetail)
-			};
-			let workflowId={
-				type: 'hidden',
-				id: '_workflow_id',
-				name: '_workflow_id',
-				value: wid
+				value: JSON.stringify(workflowDetail)
 			};
 			let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
 			let submitBtn=user.logged_in ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit Workflow</Button> : 
@@ -196,7 +188,6 @@ const WorkflowRunnerForm=React.createClass({
 						{appsFieldsets}
 						<BaseInput data={emailInput} />
 						<BaseInput data={workflowJson} />
-						<BaseInput data={workflowId} />
 						{submitBtn}
 						<span> or </span>
 						<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Show Diagram</Button>

@@ -439,13 +439,14 @@ ajax '/job/:id' => sub {
 	#my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $username=session('username');
 	my $job_id = param("id");
+	my $check=param("check");
 
-	my $job=retrieveJob($job_id, $username);
+	my $job=retrieveJob($job_id, $username, $check);
 	$job ? to_json({status => 'success', data => $job}) : raise InvalidRequest => 'no jobs found';
 };
 
 sub retrieveJob {
-	my ($job_id, $username)=@_;
+	my ($job_id, $username, $check)=@_;
 	my $agave_id=$job_id;
 	my $job;
 	my $retry_interval=1;
@@ -467,7 +468,7 @@ sub retrieveJob {
 		}
 		$user||=_get_user($row->{username});
 	}
-	unless ($job || ! $user) {
+	unless ($check || $job || ! $user) {
 		my $apif = getAgaveClient($user);
 		my $job_ep = $apif->job;
 		my $retry=2;
@@ -550,7 +551,7 @@ ajax '/workflow/new/:id' => sub {
 		database->quick_insert('workflow', {workflow_id => $wfid, %data});
 		database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
 	} catch {
-		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or raise 'InvalidRequest' => 'Invalid Workflow';
+		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
 		delete $data{json};
 		database->quick_update('workflow', {workflow_id => $wfid}, \%data);
 	};
@@ -590,12 +591,12 @@ ajax '/workflow/:id' => sub {
 		my $wfFile='public/assets/' . $wfid . '.workflow.json';
 		my $wfJson=`cat $wfFile`;
 		$wf=from_json($wfJson);
+		$wf->{workflow_id}=$wf->{id};
 	};
 	$wf || try {
-		my $data=database->quick_select('workflow', {workflow_id => $wfid});
-		$wf=from_json($data->{json});
-		$wf->{name}=$data->{name};
-		$wf->{description}=$data->{description};
+		$wf=database->quick_select('workflow', {workflow_id => $wfid});
+		my $wfObj=from_json(delete $wf->{json});
+		$wf->{steps}=$wfObj->{steps};
 	};
 	$wf or raise InvalidRequest => 'no workflow found';
 	to_json({status => 'success', data => $wf});
@@ -604,7 +605,7 @@ ajax '/workflow/:id' => sub {
 ajax '/workflow' => sub {
 	my @result;
 	my $username=session('username') or raise InvalidCredentials => 'no username';
-	@result=database->quick_select('user_workflow_view', {username => $username});
+	@result=map {my $obj=from_json(delete $_->{json}); $_->{steps}=$obj->{steps}; $_;} database->quick_select('user_workflow_view', {username => $username});
 	return to_json({status => 'success', data => \@result});
 };
 
@@ -639,6 +640,7 @@ ajax '/workflowJob/new' => sub {
 	}
 	try {
 		database->quick_insert('workflow', {workflow_id => $wfid, json => to_json($wf), name => $wfname, description => $wfdesc, derived_from => $derived_from});
+		database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
 	} catch {
 		my $old_wf=database->quick_select('workflow', {workflow_id => $wfid});
 		$wf->{name}=$old_wf->{name};
@@ -745,12 +747,12 @@ sub prepareJob {
 	# hack for the url input
 	foreach my $name (keys %job_form) {
 		next unless $job_form{$name};
-		if ($job_form{$name}=~m#^https://\w+.sciapps.org/results/job-(\w+\-\w+\-\w+\-\w+)[^\/]*/(.*)#) {
-			$job_form{$name}='https://agave.iplantc.org/jobs/v2/' . $1 . '/outputs/media/' . $2;
-		} elsif ($job_form{$name}=~m#^http://datacommons.cyverse.org/browse/iplant/home/#) {
-			$job_form{$name}=~s#^http://datacommons.cyverse.org/browse/iplant/home/#agave://$archive_system/#;
-			#} elsif ($job_form{$name}=~m#^https://agave.iplantc.org/files/v2/download#) {
-		#$job_form{$name}=~s#https://agave.iplantc.org/files/v2/download/[\w]+/system/#agave://#;
+		if (ref($job_form{$name}) eq 'ARRAY') {
+			foreach (@{$job_form{$name}}) {
+				$_=iPC::Utils::transform_url($_);
+			}
+		} else {
+			$job_form{$name}=iPC::Utils::transform_url($job_form{$name}, $archive_system)
 		}
 	}
 
@@ -1000,6 +1002,7 @@ sub submitNextJob {
 
 	my $apif = getAgaveClient($user);
 	my $apps = $apif->apps;
+	my $job_ep = $apif->job;
 
 	my $jobObj=from_json($prev->{agave_json});
 	#my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->{executionSystem}, $jobObj->{outputPath});
@@ -1018,7 +1021,15 @@ sub submitNextJob {
 		my %input;
 		my $count=0;
 		foreach (@prev) {
+			my $prev_job=database->quick_select('job', {job_id => $_->{prev}});
+			my $output_files=$job_ep->job_output_files($prev_job->{agave_id});
 			my (undef, $filename)=split /:/, $_->{input_name};
+			foreach my $of (@$output_files) {
+				if (substr($of->{name}, 0, length($filename)) eq $filename) {
+					$filename=$of->{name};
+					last;
+				}
+			}
 			$input{$_->{input_name}}=$_->{input_source} . '/' . $filename;
 		}
 		while (my ($k, $v) = each %{$job_form->{inputs}}) {

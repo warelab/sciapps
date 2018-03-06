@@ -16,34 +16,33 @@ const UserWorkflows=React.createClass({
 
 	handleLoad: function(e) {
 		let table=this.refs.table;
-		let wfid=table.store.selected[0];
+		let wfid=table.store.getSelectedRowKeys()[0];
 		if (wfid) {
 			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
-			let wfDetail=wf.json ? JSON.parse(wf.json) : undefined;
-			if(wfDetail) {
-				wfDetail.name=wf.name;
-				wfDetail.description=wf.description;
+			if (wf) {
 				AppsActions.showPage('workflowRunner');
-				WorkflowActions.showWorkflow(wfid, wfDetail);
+				WorkflowActions.showWorkflow(wfid, wf);
 			}
 		}
 	},
 
 	showWorkflowDiagram: function(e) {
 		let table=this.refs.table;
-		let wfid=table.store.selected[0];
+		let wfid=table.store.getSelectedRowKeys()[0];
 		if (wfid) {
 			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
-			let wfDetail=wf.json ? JSON.parse(wf.json) : undefined;
-			WorkflowActions.showWorkflowDiagram(wfid, wfDetail);
+			if (wf) {
+				WorkflowActions.showWorkflowDiagram(wfid, wf);
+			}
 		}
 	},
 
 	handleDeleteRow: function(e) {
 		let table=this.refs.table;
-		let wfid=table.store.selected[0];
+		let wfid=table.store.getSelectedRowKeys()[0];
 		if (wfid) {
 			this.handleConfirmDeleteRow(function() {
+				table.store.setSelectedRowKey([]);
 				WorkflowActions.deleteWorkflow(wfid);
 			});
 		}
@@ -67,10 +66,13 @@ const UserWorkflows=React.createClass({
 
 	handleDownload: function(e) {
 		let table=this.refs.table;
-		let wfid=table.store.selected[0];
+		let wfid=table.store.getSelectedRowKeys()[0];
 		if (wfid) {
 			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
-			utilities.download(wf.name + '.json', 'application/json;charset=utf-8', wf.json);
+			if (wf) {
+				wf.id=wf.workflow_id;
+				utilities.download(wf.name + '.json', 'application/json;charset=utf-8', JSON.stringify(wf));
+			}
 		}
 	},
 

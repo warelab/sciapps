@@ -15,7 +15,7 @@ const UserJobs=React.createClass({
 
 	handleLoad: function(e) {
 		let table=this.refs.table;
-		let jobIds=table.store.selected;
+		let jobIds=table.store.getSelectedRowKeys();
 		if (jobIds && jobIds.length) {
 			JobsActions.setJobs(jobIds);
 		}
@@ -27,9 +27,10 @@ const UserJobs=React.createClass({
 
 	handleDeleteRow: function(e) {
 		let table=this.refs.table;
-		let jobIds=table.store.selected;
+		let jobIds=table.store.getSelectedRowKeys();
 		if (jobIds && jobIds.length) {
 			this.handleConfirmDeleteRow(function() {
+				table.store.setSelectedRowKey([]);
 				JobsActions.deleteJobs(jobIds);
 			});
 		}
@@ -82,7 +83,7 @@ const UserJobs=React.createClass({
 					<TableHeaderColumn dataField="app_id" dataAlign="left" dataSort={true}>App Name</TableHeaderColumn>
 					<TableHeaderColumn dataField="submitTime" dataAlign="center" width="155" dataSort={true}>Submit Time</TableHeaderColumn>
 					<TableHeaderColumn dataField="endTime" dataAlign="center" width="155" dataSort={true}>End Time</TableHeaderColumn>
-                                        <TableHeaderColumn dataField="status" dataAlign="center" width="88" dataSort={true}>Status</TableHeaderColumn>
+        	<TableHeaderColumn dataField="status" dataAlign="center" width="88" dataSort={true}>Status</TableHeaderColumn>
 				</BootstrapTable>
 				<Dialog ref='dialog' />
 			</Panel>

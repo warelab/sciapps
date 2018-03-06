@@ -45,7 +45,7 @@ const JobsItem=React.createClass({
 	render: function() {
 		let app=this.props.app;
 		let job=this.props.job
-		let outpus=this.props.outpus;
+		let outputs=this.props.outputs;
 		let setting=_config.setting;
 		let appId=job.appId;
 		let jobId=job.job_id;
@@ -58,6 +58,8 @@ const JobsItem=React.createClass({
 		displayName=displayName + appId;
 		let isSubmitting=undefined === jobId;
 		let isFailed=0 === jobId;
+		//let enableCheck=this.props.enableCheck;
+		let enableCheck=true;
 		//let outputsItemNodes='Loading ...';
 		let checkedGlyph=this.state.checked ? 'check' : 'unchecked';
 		let tooltipout = (<Tooltip id="tooltipout">Display Outputs</Tooltip>);
@@ -66,9 +68,10 @@ const JobsItem=React.createClass({
 		let addedornot=this.state.checked ? 'Click to Remove' : 'Add to Workflow';
 		let tooltipadd = (<Tooltip id="tooltipadd">{addedornot}</Tooltip>);
 		let outputsItemNodes='Loading ...';
-		if (app && (job.archivePath || job.outputPath)) {
-			outputsItemNodes=app.outputs.map(function(o, i) {
-				let oname=o.value.default;
+		//if (app && (job.archivePath || job.outputPath)) {
+		if (outputs && (job.archivePath || job.outputPath)) {
+			outputsItemNodes=outputs.map(function(o, i) {
+				let oname=o.name;
 				let href;
 				if (job.archivePath) {
 					href=setting.output_url[job.archiveSystem];
@@ -102,7 +105,7 @@ const JobsItem=React.createClass({
 						<Button key='status' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.showJob} ><Glyphicon glyph='info-sign' /></Button>
 					</OverlayTrigger>
           <OverlayTrigger placement="bottom" overlay={tooltipadd}>
-						<Button key='check' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
+						<Button key='check' bsSize='medium' bsStyle='link' disabled={!enableCheck || isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
 					</OverlayTrigger>
 			  </ButtonToolbar>
 				<Panel collapsible expanded={this.state.isOpen}>

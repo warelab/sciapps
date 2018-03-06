@@ -26,11 +26,18 @@ const JobsList=React.createClass({
 					if (jobsItem.job_id) {
 						jobsItem=jobsStore.jobDetailCache[jobsItem.job_id];
 					}
-					let checked=jobsStore.workflowBuilderJobIndex[index];
 					let app=appsStore.appDetailCache[jobsItem.appId];
+					let enableCheck=false;
 					let outputs=jobsStore.jobOutputs[jobsItem.job_id];
+					if (outputs && outputs.length) {
+						enableCheck=true;
+						_.remove(outputs, function(v) {
+							return v.name.match(/^job-for-.*\.(out|err)$/);
+						});
+					}
+					let checked=enableCheck && jobsStore.workflowBuilderJobIndex[index];
 					return (
-						<JobsItem key={index} job={jobsItem} index={index} checked={checked} app={app} outputs={outputs} />
+						<JobsItem key={index} job={jobsItem} index={index} checked={checked} enableCheck={enableCheck} app={app} outputs={outputs} />
 					);
 				} else {
 					return undefined;

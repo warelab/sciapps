@@ -106,7 +106,7 @@ const JobsStore=Reflux.createStore({
 			this.state.jobs[submitNumber + i]={appId: step.appId};
 		}.bind(this));
 		this.state.workflow={};
-		WorkflowActions.setWorkflow(wf.id, wf);
+		WorkflowActions.setWorkflow(wf.workflow_id, wf);
 		this.complete();
 		Q(axios.post('/workflowJob/new', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -179,19 +179,16 @@ const JobsStore=Reflux.createStore({
 		.done();
 	},
 
-	setJobs: function(jobIds) {
-		let submitNumber=this.state.jobs.length;
-
+	setJobs: function(jobIds, check) {
+		if (! jobIds) {
+			jobIds=_.filter(this.state.jobs, function(job) {
+				return job.status && !_.includes(['FINISHED','FAILED'], job.status)
+			})
+			.map(job => job.job_id);
+		}
 		let funcs=jobIds.map(function(jobId) {
 			return function() {
-				return this._setJob(jobId).then(function(job) {
-					//if (job && ! _.find(this.state.jobs, 'job_id', job.job_id)) {
-					//	let jobDetail=this.state.jobDetailCache[job.job_id];
-					//	if (jobDetail) {
-					//		this.state.jobs[submitNumber++]=_.pick(jobDetail, ['job_id', 'appId']);
-					//		AppsActions.setApp(jobDetail.appId);
-					//	}
-					//}
+				return this._setJob(jobId, check).then(function(job) {
 					return job;
 				}.bind(this));
 			}.bind(this);
@@ -212,8 +209,8 @@ const JobsStore=Reflux.createStore({
 		return ! old_data || old_data.id === undefined && data.id || old_data.status !== data.status;
 	},
 
-	setJob: function(jobId) {
-		let jobPromise=this._setJob(jobId)
+	setJob: function(jobId, check) {
+		let jobPromise=this._setJob(jobId, check)
 		.then(function(job) {
 			this.complete();
 		}.bind(this));
@@ -237,14 +234,15 @@ const JobsStore=Reflux.createStore({
 		}
 	},
 
-	_setJob: function(jobId) {
+	_setJob: function(jobId, check) {
 		let jobDetail=this.state.jobDetailCache[jobId];
 		let setting=_config.setting;
 		let jobPromise;
 		if (jobDetail && _.includes(['FINISHED','FAILED'], jobDetail.status)) {
 			jobPromise=Q(jobDetail);
 		} else {
-			jobPromise=Q(axios.get('/job/' + jobId, {
+			let param=check ? '?check=1' : ''
+			jobPromise=Q(axios.get('/job/' + jobId + param, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			}))
 			.then(function(res) {
@@ -260,6 +258,9 @@ const JobsStore=Reflux.createStore({
 						let i=_.findIndex(this.state.jobs, 'job_id', data.job_id);
 						let j=_.findIndex(this.state.joblist, 'job_id', data.job_id);
 						this._setJobData(data, i, j);
+						if ('FINISHED' === data.status) {
+							this._setJobOutputs(data.job_id, true);
+						}
 					}
 					return data;
 				}
@@ -344,22 +345,28 @@ const JobsStore=Reflux.createStore({
 		}.bind(this));
 	},
 
-	_setJobOutputs: function(jobId) {
+	_setJobOutputs: function(jobId, jobIsCached) {
 		let jobOutputs=this.state.jobOutputs[jobId];
 		let setting=_config.setting;
 		let jobOutputsPromise;
 		if (jobOutputs && jobOutputs.length) {
 			jobOutputsPromise=Q(jobOutputs);
 		} else {
-			let jobPromise=this._setJob(jobId);
+			let jobDetail=this.state.jobDetailCache[jobId];
+			let jobPromise=jobIsCached && jobDetail ? Q(jobDetail) : this._setJob(jobId);
 			jobOutputsPromise=jobPromise.then(function(jobDetail) {
-				let path='__system__/' + jobDetail.archiveSystem + '/' + jobDetail.archivePath;
-				return Q(axios.get('/browse/' + path, {
-					headers: {'X-Requested-With': 'XMLHttpRequest'},
-				}))
+				if ('FINISHED' === jobDetail.status && jobDetail.archive) {
+					let path='__system__/' + jobDetail.archiveSystem + '/' + jobDetail.archivePath;
+					return Q(axios.get('/browse/' + path, {
+						headers: {'X-Requested-With': 'XMLHttpRequest'},
+					}))
+				}
+				return Q(0);
 			})
 			.then(function(res) {
-				if (res.data.error) {
+				if (! res) {
+					return;
+				} else if (res.data.error) {
 					console.log(res.data.error);
 					return;
 				} else {
@@ -470,18 +477,21 @@ const JobsStore=Reflux.createStore({
 	},
 
 	addWorkflowBuilderJobIndex: function(index) {
-		if (index !== undefined) {
-			this.state.workflowBuilderJobIndex[index]=true;
-			this.setJob(this.state.jobs[index].job_id);
-		} else {
-			let jobIds=[];
-			this.state.jobs.forEach(function(job, i) {
+		let jobIds=[];
+		this.state.jobs.forEach(function(job, i) {
+			if (undefined === index || index === i) {
+				let job=this.state.jobs[i];
+				//if (job.job_id && this.state.jobOutputs[job.job_id] && this.state.jobOutputs[job.job_id].length > 0) {
+					//this.state.workflowBuilderJobIndex[i]=true;
+				//}
 				this.state.workflowBuilderJobIndex[i]=true;
-				jobIds.push(this.state.jobs[i].job_id);
-			}.bind(this));
+				jobIds.push(job.job_id);
+			}
+		}.bind(this));
+		if (jobIds.length >= 0) {
 			this.setJobs(jobIds);
+			this.complete();
 		}
-		this.complete();
 	},
 
 	removeWorkflowBuilderJobIndex: function(index) {

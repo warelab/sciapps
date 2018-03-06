@@ -87,7 +87,6 @@ const WorkflowDiagram=React.createClass({
 	},
 
 	buildWorkflowDiagramDef: function(workflowStore, appsStore, jobsStore, workflowDirection) {
-		let that=this;
 		let setting=_config.setting;
 		let def;
 		let fileNode={};
@@ -97,19 +96,18 @@ const WorkflowDiagram=React.createClass({
 		}
 		if (workflowStore.workflowDetail) {
 			let steps=workflowStore.workflowDetail.steps;
-			steps.map(function(step, i) {
+			steps.forEach(function(step, i) {
 				let appId=step.appId;
 				let appDetail=appsStore.appDetailCache[appId];
 				let jobDetail=step.jobId ? jobsStore.jobDetailCache[step.jobId] || _.find(jobsStore.jobDetailCache, 'id', step.jobId) : undefined;
 				let showAppId=appId.replace(/\-[\.\d]+$/, '');
 				let appClass='PENDING';
 				let jobNum='';
-				//if (typeof jobs === 'object' && jobs[i] !== undefined && jobStatus[jobs[i]] !== undefined) {
-				//	appClass=jobStatus[jobs[i]];
-				//}
+				let jobOutputs=[];
 				if (jobDetail) {
 					jobNum=(_.findIndex(jobsStore.jobs, 'job_id', jobDetail.job_id)+1) + ': ';
 					appClass=jobDetail.status;
+					jobOutputs=jobsStore.jobOutputs[jobDetail.job_id];
 				}
 				if (_.includes(['RUNNING', 'CLEANING_UP', 'ARCHIVING', 'ARCHIVING_FINISHED'], appClass)) {
 					appClass='RUNNING';
@@ -121,25 +119,28 @@ const WorkflowDiagram=React.createClass({
 				diagramDefStmts.push(appNodeId + '[' + jobNum + utilities.truncate(showAppId) + ']; class ' + appNodeId + ' appsNode' + appClass);
 				diagramDefStmts.push('click ' + appNodeId + ' "' + appDetail.helpURI +'" "' + appDetail.longDescription + ' - click for documentation"');
 				_.forEach(appDetail.outputs, function(v) {
-					let value=v.value.default;
+					let value=v.id;
 					let output_name, url, jobOwner;
+					let output=_.find(jobOutputs, function(op) {
+						return _.startsWith(op.name, value);
+					});
 					if (jobDetail) {
 						jobOwner=jobDetail.owner;
 						output_name=jobDetail.job_id;
-						if (jobDetail.archive) {
-							url=[jobDetail.archiveSystem, jobDetail.archivePath, value].join('/');
-						} else if (jobDetail.outputPath) {
-							//url=[setting.archive_system, jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path), value].join('/');
-							url=[setting.archive_system, jobDetail.outputPath.replace('/', '/sci_data/results/'), value].join('/');
+						if (output && jobDetail.status === 'FINISHED') {
+							if (jobDetail.archive) {
+								url=[jobDetail.archiveSystem, jobDetail.archivePath, output.name].join('/');
+							} else if (jobDetail.outputPath) {
+								url=[setting.archive_system, jobDetail.outputPath.replace('/', '/sci_data/results/'), output.name].join('/');
+							}
 						}
 					} else {
 						output_name=setting.wf_step_prefix + step.id + ':';
 					}
 					output_name=['file', output_name, value].join('_');
 					output_name=output_name.replace(/\W/g, '_').toLowerCase();
-					diagramDefStmts.push(output_name + '(' + utilities.truncate(value) + '); class ' + output_name + ' fileNode');
+					diagramDefStmts.push(output_name + '(' + utilities.truncate(output ? output.name : value) + '); class ' + output_name + ' fileNode');
 					if (url) {
-						//JobsActions.setFile(output_name, url);
 						//diagramDefStmts.push('click ' + output_name + ' clickFileNode');
 						let splitUrl=url.match(/([^\/]+)\/(.*)/);
 						let href=setting.output_url[splitUrl[1]];
@@ -164,19 +165,12 @@ const WorkflowDiagram=React.createClass({
 						let prevJobDetail=prevJobId ? jobsStore.jobDetailCache[prevJobId] || _.find(jobsStore.jobDetailCache, 'id', prevJobId) : undefined;
 						let input_name;
 						if (prevJobDetail) {
-							//input_name=prevJobDetail.archive ? prevJobDetail.archiveSystem + '/' + prevJobDetail.archivePath + '/' : setting.archive_system + '/' + prevJobDetail.outputPath.replace(prevJobDetail.owner, setting.archive_path) + '/';
 							input_name=prevJobDetail.job_id;
 						} else {
 							input_name=setting.wf_step_prefix + ic.step + ':';
 						}
 						input_name=['file', input_name, ic.output_name].join('_');
-						//let url=input_name; 
 						input_name=input_name.replace(/\W/g, '_').toLowerCase();
-						//diagramDefStmts.push(value + '(' + that.truncate(ic.output_name) + '); class ' + value + ' fileNode');
-						//if (prevJobDetail) {
-							//diagramDefStmts.push('click ' + input_name + ' clickFileNode');
-						//}
-						//diagramDefStmts.push(prevAppNodeId + '-->' + input_name);
 						diagramDefStmts.push(input_name + '-->' + appNodeId);
 					} else if (ic) {
 						value=_.last(ic.split('/'));
@@ -194,9 +188,7 @@ const WorkflowDiagram=React.createClass({
 							href=ic;
 						}
 						diagramDefStmts.push('click ' + input_name + ' "' + href + '" "' + value + ' - click to open"');
-						//diagramDefStmts.push('click ' + input_name + ' clickFileNode "' + value + ' - click for metadata"');
 						diagramDefStmts.push(input_name + '-->' + appNodeId);
-						//JobsActions.setFile(input_name, url);
 					}
 				});
 			});
@@ -268,7 +260,6 @@ const WorkflowDiagram=React.createClass({
 		let showWorkflowDiagram=workflowStore.showWorkflowDiagram;
 		let activeNode=this.state.activeNode;
 		let fileId=jobsStore.fileId;
-		let jobStatus={};
 
 		let markup=<div />;
 		let body=<div />;
@@ -280,9 +271,6 @@ const WorkflowDiagram=React.createClass({
 			if (workflowDetail) {
 				workflowDetail.steps.forEach(function(step) {
 					let jobDetail=step.jobId ? jobsStore.jobDetailCache[step.jobId] || _.find(jobsStore.jobDetailCache, 'id', step.jobId) : undefined;
-					if (jobDetail) {
-						jobStatus[jobDetail.job_id]=jobDetail.status;
-					}
 				});
 				let stepDepth=_.reduce(workflowDetail.steps, function(depth, step) {
 					let prev=_.map(step.inputs, function(input) {
@@ -313,15 +301,6 @@ const WorkflowDiagram=React.createClass({
 			}
 			let workflowDiagramDef=this.buildWorkflowDiagramDef(workflowStore, appsStore, jobsStore, workflowDirection);
 			body=<Mermaid diagramDef={workflowDiagramDef}/>;
-			let unfinished=_.findKey(jobStatus, function(v) {
-				return v !== 'FINISHED';
-			});
-			//let unfinished=_.find(jobStatus, function(job) {
-			//		return jobStatus[job] !== 'FINISHED';
-			//	});
-			if (unfinished) {
-				setTimeout((wfId) => JobsActions.debouncedCheckWorkflowJobStatus(wfId), this.props.timeout, workflowDetail.id); 
-			}
 		
 			if (activeNode.id !== undefined) {
 				if (activeNode.type === 'file') {
