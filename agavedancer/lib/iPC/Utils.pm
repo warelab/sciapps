@@ -48,6 +48,7 @@ sub parse_ils {
 			push @content, +{
 				name	=> $name,
 				type	=> 'dir',	
+				path	=> $path . '/' . $name, 
 			};
 		} else {
 			my @f=split /\s+/, $line, 8;
@@ -56,6 +57,7 @@ sub parse_ils {
 			push @content, +{
 				name => $f[7],
 				type => 'file',
+				path	=> $path . '/' . $name, 
 			};
 		}
 	}

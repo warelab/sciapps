@@ -199,10 +199,10 @@ ajax qr{/browse/?(.*)} => sub {
 };
 
 sub browse {
-	my ($typePath) = @_;
+	my ($typePath, $username) = @_;
 	my ($type, $path)=split /\//, $typePath, 2;
 	$path||='';
-	my $username=session('username');
+	$username||= session('username');
 	unless ($type eq '__exampleData__' || $username) {
 		raise InvalidCredentials => 'no username';
 	}
@@ -222,6 +222,10 @@ sub browse {
 		my ($system, $filepath)=split /\//, $path, 2;
 		$result=browse_files($filepath, $system);
 	} else {
+		if (substr($path, 0, length($datastore_path)) eq $datastore_path) {
+			$path=substr($path, length($datastore_path));
+			$path=~s/^\///;
+		}
 		#$result=browse_files($path, $datastore_system, $datastore_path);
 		$result=browse_ils($path, $datastore_system, $datastore_homepath);
 	}
@@ -350,7 +354,6 @@ sub retrieveAppsRemote {
 			}
 			try {
 				my $file=$FindBin::Bin . '/../public/assets/' . $app_id . '.json';
-				print STDERR "AA1|$file\n";
 				unless (-f $file) {
 					open FILE, ">", $file or error("Error: can't open $file, $!");
 					print FILE to_json($return);
@@ -1082,6 +1085,18 @@ sub _submitNextJob {
 	}
 }
 
+get '/test_output/:id' => sub {
+	my $job_id = param("id");
+	my $apif = getAgaveClient();
+	my $apps = $apif->apps;
+	my $job_ep = $apif->job;
+	my $job=database->quick_select('job', {agave_id => $job_id});
+	my $jobObj=from_json($job->{agave_json});
+	my $typePath='__home__/' . $jobObj->{archivePath};
+	my $outputs=browse($typePath);
+	to_dumper($outputs);
+};
+
 sub submitNextJob {
 	my ($prev, $user)=@_;
 
@@ -1107,9 +1122,13 @@ sub submitNextJob {
 		my $count=0;
 		foreach (@prev) {
 			my $prev_job=database->quick_select('job', {job_id => $_->{prev}});
-			my $output_files=$job_ep->job_output_files($prev_job->{agave_id});
+			my $prev_job_obj=from_json($prev_job->{agave_json});
+			my $typePath='__home__/' . $prev_job_obj->{archivePath};
+			my $prev_outputs=browse($typePath, $user->{username});
+			#my $output_files=$job_ep->job_output_files($prev_job->{agave_id});
 			my (undef, $filename)=split /:/, $_->{input_name};
-			foreach my $of (@$output_files) {
+			#foreach my $of (@$output_files) {
+			foreach my $of (@{$prev_outputs->[0]{list}}) {
 				if (substr($of->{name}, 0, length($filename)) eq $filename) {
 					$filename=$of->{name};
 					last;
