@@ -53,7 +53,7 @@ const UserStore=Reflux.createStore({
 		AppsActions.debouncedListApps();
 	},
 
-	setUser: function(user) {
+	setUser: function(reset) {
 		let setting=_config.setting;
 		let logged_in=this.state.logged_in;
 		//Q(axios.get(setting.host_url + '/user', {
@@ -72,7 +72,9 @@ const UserStore=Reflux.createStore({
 				WorkflowActions.listWorkflow();
 				JobsActions.listJob();
 			} else {
-				this.resetUser();
+				if (reset) {
+					this.resetUser();
+				}
 			}
 			AppsActions.debouncedListApps();
 			this.complete();
@@ -135,7 +137,7 @@ const UserStore=Reflux.createStore({
 	},
 
 	_logout: function() {
-		this.resetUser();
+		this.resetUser(true);
 		Q(axios.get('/logout', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))

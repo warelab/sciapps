@@ -194,18 +194,19 @@ ajax '/user' => sub {
 
 ajax qr{/browse/?(.*)} => sub {
 	my ($typePath) = splat;
-	my $result=browse($typePath);
+	my $nopath=param('nopath');
+	my $result=browse($typePath, undef, $nopath);
 	to_json({status => 'success', data => $result});
 };
 
 sub browse {
-	my ($typePath, $username) = @_;
+	my ($typePath, $username, $nopath) = @_;
 	my ($type, $path)=split /\//, $typePath, 2;
 	$path||='';
-	$username||= session('username');
-	unless ($type eq '__exampleData__' || $username) {
-		raise InvalidCredentials => 'no username';
-	}
+	$username||= session('username') || '';
+	#unless ($type eq '__exampleData__' || $username) {
+	#	raise InvalidCredentials => 'no username';
+	#}
 	my $datastore=setting('datastore')->{$type};
 	unless ($datastore) {
 		raise 'InvalidRequest' => 'Invalid Datastore'; 
@@ -215,17 +216,17 @@ sub browse {
 	my $datastore_system=$datastore->{system};
 	$datastore_path=~s/__user__/$username/;
 	my $result=[];
-	my $datastore_homepath=$datastore_home .'/' . $datastore_path;
+	my $datastore_homepath=$nopath ? $datastore_home : $datastore_home .'/' . $datastore_path;
 	if ($type eq '__exampleData__') {
 		$result=browse_ls($path, $datastore_system, $datastore_homepath);
 	} elsif ($type eq '__system__') {
 		my ($system, $filepath)=split /\//, $path, 2;
 		$result=browse_files($filepath, $system);
 	} else {
-		if (substr($path, 0, length($datastore_path)) eq $datastore_path) {
-			$path=substr($path, length($datastore_path));
-			$path=~s/^\///;
-		}
+		#if (substr($path, 0, length($datastore_path)) eq $datastore_path) {
+		#	$path=substr($path, length($datastore_path));
+		#	$path=~s/^\///;
+		#}
 		#$result=browse_files($path, $datastore_system, $datastore_path);
 		$result=browse_ils($path, $datastore_system, $datastore_homepath);
 	}
@@ -633,6 +634,7 @@ sub retrieveWorkflowDB {
 	try {
 		$wf=database->quick_select('workflow', {workflow_id => $wfid});
 		my $wfObj=from_json(delete $wf->{json});
+		$wf->{id}=$wf->{workflow_id};
 		$wf->{steps}=$wfObj->{steps};
 	};
 	$wf;
@@ -1085,18 +1087,6 @@ sub _submitNextJob {
 	}
 }
 
-get '/test_output/:id' => sub {
-	my $job_id = param("id");
-	my $apif = getAgaveClient();
-	my $apps = $apif->apps;
-	my $job_ep = $apif->job;
-	my $job=database->quick_select('job', {agave_id => $job_id});
-	my $jobObj=from_json($job->{agave_json});
-	my $typePath='__home__/' . $jobObj->{archivePath};
-	my $outputs=browse($typePath);
-	to_dumper($outputs);
-};
-
 sub submitNextJob {
 	my ($prev, $user)=@_;
 
@@ -1124,7 +1114,7 @@ sub submitNextJob {
 			my $prev_job=database->quick_select('job', {job_id => $_->{prev}});
 			my $prev_job_obj=from_json($prev_job->{agave_json});
 			my $typePath='__home__/' . $prev_job_obj->{archivePath};
-			my $prev_outputs=browse($typePath, $user->{username});
+			my $prev_outputs=browse($typePath, $user->{username}, 1);
 			#my $output_files=$job_ep->job_output_files($prev_job->{agave_id});
 			my (undef, $filename)=split /:/, $_->{input_name};
 			#foreach my $of (@$output_files) {

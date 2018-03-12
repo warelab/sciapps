@@ -357,7 +357,7 @@ const JobsStore=Reflux.createStore({
 			jobOutputsPromise=jobPromise.then(function(jobDetail) {
 				if ('FINISHED' === jobDetail.status && jobDetail.archivePath) {
 					//let path='__system__/' + jobDetail.archiveSystem + '/' + jobDetail.archivePath;
-					let path='__home__/' + jobDetail.archivePath;
+					let path='__home__/' + jobDetail.archivePath + '/?nopath=1';
 					return Q(axios.get('/browse/' + path, {
 						headers: {'X-Requested-With': 'XMLHttpRequest'},
 					}))
