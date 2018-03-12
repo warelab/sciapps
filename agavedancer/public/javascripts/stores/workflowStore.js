@@ -77,8 +77,8 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
-	showWorkflow: function(wfId, wfDetail, flag) {
-		this.setWorkflow(wfId, wfDetail, flag);
+	showWorkflow: function(wfId, wfDetail, addToList) {
+		this.setWorkflow(wfId, wfDetail, addToList);
 		this.complete();
 	},
 
@@ -108,14 +108,14 @@ const WorkflowStore=Reflux.createStore({
 		.done();
 	},
 
-	setWorkflow: function(wfId, wfDetail, flag) {
+	setWorkflow: function(wfId, wfDetail, addToList, nonSync) {
 		let setting=_config.setting;
 		if (wfDetail) {
 			this.state.workflowDetailCache[wfId]=wfDetail;
 			let index=_.findIndex(this.state.workflows, {workflow_id: wfId});
 			if (index >= 0) {
 				this.state.workflows[index]=wfDetail;
-			} else if (flag) {
+			} else if (addToList) {
 				this.state.workflows.push(wfDetail);
 			}
 		}
@@ -141,7 +141,7 @@ const WorkflowStore=Reflux.createStore({
 		}
 		return workflowPromise.then(function(wfDetail) {
 			if (wfDetail) {
-				this.setWorkflowSteps(wfDetail);
+				this.setWorkflowSteps(wfDetail, nonSync);
 				return wfDetail;
 			}
 		}.bind(this))
@@ -154,7 +154,7 @@ const WorkflowStore=Reflux.createStore({
 		let formData=new FormData();
 		formData.append('_workflow_name',  wf.name);
 		formData.append('_workflow_desc',  wf.description);
-		Q(axios.post('/workflow/' + wf.id + '/update', formData, {
+		Q(axios.post('/workflow/' + wf.workflow_id + '/update', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
 		}))
@@ -163,7 +163,7 @@ const WorkflowStore=Reflux.createStore({
 				console.log(res.data.error);
 				return;
 			} else if (res.data.status === 'success') {
-				let currWf=_.find(this.state.workflows, 'workflow_id', wf.id);
+				let currWf=_.find(this.state.workflows, 'workflow_id', wf.workflow_id);
 				_.assign(currWf, wf);
 				this.complete();
 			}
@@ -181,7 +181,7 @@ const WorkflowStore=Reflux.createStore({
 		formData.append('_workflow_desc',  wf.description);
 		formData.append('_workflow_json',  JSON.stringify(wf));
 
-		Q(axios.post('/workflow/new/' + wf.id, formData, {
+		Q(axios.post('/workflow/new/' + wf.workflow_id, formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
 		}))
@@ -191,13 +191,7 @@ const WorkflowStore=Reflux.createStore({
 				return;
 			} else if (res.data.status === 'success') {
 				let data=res.data.data;
-				let index=_.findIndex(this.state.workflows, 'workflow_id', data.workflow_id);
-				if (index >= 0) {
-					this.state.workflows[index]=data;
-				} else {
-					this.state.workflows.push(data);
-				}
-				WorkflowActions.setWorkflow(data.workflow_id, data.workflow);
+				WorkflowActions.setWorkflow(data.workflow_id, data, true);
 				this.complete();
 			}
 		}.bind(this))
@@ -283,8 +277,10 @@ const WorkflowStore=Reflux.createStore({
 		}
 	},
 
-	setWorkflowSteps: function(wfDetail) {
-		this.state.workflowDetail=wfDetail;
+	setWorkflowSteps: function(wfDetail, nonSync) {
+		if (! nonSync || this.state.workflowDetail.workflow_id === wfDetail.workflow_id) {
+			this.state.workflowDetail=wfDetail;
+		}
 		//let appIds=_.uniq(_.values(wfDetail.steps).map(function(o) {
 		//	return o.appId;
 		//}));

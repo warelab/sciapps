@@ -132,7 +132,7 @@ const JobsStore=Reflux.createStore({
 					//jobs: jobs,
 					//steps: []
 				};
-				WorkflowActions.setWorkflow(data.workflow_id, data.workflow, true);
+				WorkflowActions.setWorkflow(data.workflow_id, data.workflow, true, true);
 				this.complete();
 				Q(axios.get('/workflowJob/run/' + data.workflow_id, {
 					headers: {'X-Requested-With': 'XMLHttpRequest'}
@@ -355,7 +355,7 @@ const JobsStore=Reflux.createStore({
 			let jobDetail=this.state.jobDetailCache[jobId];
 			let jobPromise=jobIsCached && jobDetail ? Q(jobDetail) : this._setJob(jobId);
 			jobOutputsPromise=jobPromise.then(function(jobDetail) {
-				if ('FINISHED' === jobDetail.status && jobDetail.archive) {
+				if ('FINISHED' === jobDetail.status && jobDetail.archivePath) {
 					let path='__system__/' + jobDetail.archiveSystem + '/' + jobDetail.archivePath;
 					return Q(axios.get('/browse/' + path, {
 						headers: {'X-Requested-With': 'XMLHttpRequest'},

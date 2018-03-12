@@ -194,6 +194,12 @@ ajax '/user' => sub {
 
 ajax qr{/browse/?(.*)} => sub {
 	my ($typePath) = splat;
+	my $result=browse($typePath);
+	to_json({status => 'success', data => $result});
+};
+
+sub browse {
+	my ($typePath) = @_;
 	my ($type, $path)=split /\//, $typePath, 2;
 	$path||='';
 	my $username=session('username');
@@ -220,7 +226,7 @@ ajax qr{/browse/?(.*)} => sub {
 		$result=browse_ils($path, $datastore_system, $datastore_homepath);
 	}
 
-	to_json({status => 'success', data => $result});
+	return $result;
 };
 
 sub browse_output_files {
@@ -286,56 +292,67 @@ sub browse_ls {
 
 ajax '/apps/:id' => sub {
 	my $app_id = param("id");
-	my $app;
-	try {
-		my $appsFile='public/assets/' . $app_id . '.json';
-		my $appsJson=`cat $appsFile`;
-		$app=from_json($appsJson);
-	};
-	$app || try {
-		$app=retrieveApps($app_id);
-	};
+	my $app=$app_id && retrieveApps($app_id);
 	$app or raise InvalidRequest => 'no apps found';
 	to_json({status => 'success', data => $app});
 };
 
 ajax '/apps' => sub {
-	my $default_list=setting('defaultAppsList');
-	my @apps;
-	try {
-		my $appsListJson=`cat $default_list`;
-		@apps=@{from_json($appsListJson)};
-	};
+	my $apps=retrieveAppsFile();
+	my $app_list=retrieveAppsRemote();
 
-	my $app_list=[];
-	try {
-		$app_list=retrieveApps();
-	};
 	foreach (@$app_list) {
 		my $tag=$_->{isPublic} ? 'Public' : 'Private';
 		$_->{tags}||=[];
 		push @{$_->{tags}}, $tag;
-		push @apps, $_ unless $_->{isPublic};
+		push @$apps, $_ unless $_->{isPublic};
 	}
-	scalar(@apps) or raise InvalidRequest => 'no apps found';
-	to_json({status => 'success', data => \@apps});
+	scalar(@$apps) or raise InvalidRequest => 'no apps found';
+	to_json({status => 'success', data => $apps});
 };
 
 sub retrieveApps {
 	my ($app_id)=@_;
+	retrieveAppsFile($app_id) || retrieveAppsRemote($app_id);
+}
+
+
+sub retrieveAppsFile {
+	my ($app_id)=@_;
+	my $return;
+	if ($app_id) {
+		try {
+			my $appsFile=$FindBin::Bin . '/../public/assets/' . $app_id . '.json';
+			my $appsJson=`cat $appsFile`;
+			$return=from_json($appsJson);
+		};
+	} else {
+		try {
+			my $default_list=$FindBin::Bin . '/../' . setting('defaultAppsList');
+			my $appsListJson=`cat $default_list`;
+			$return=from_json($appsListJson);
+		}
+	}
+	$return;
+}
+
+sub retrieveAppsRemote {
+	my ($app_id)=@_;
+	my $return;
 	my $api = getAgaveClient();
-	my $return=[];
 	if ($api) {
 		my $apps = $api->apps;
 		if ($app_id) {
-			$return = $apps->find_by_id($app_id);
-			if ($return->{inputs} && ! $return->{inputs}[0]{value}{visible}) {
-				$return = $apps->find_by_id($app_id);
+			my $retry=2;
+			foreach (0 .. $retry) {
+				$return=$apps->find_by_id($app_id);
+				last if (!$return->{inputs} || defined($return->{inputs}[0]{value}{visible})) && (!$return->{parameters} || defined($return->{parameters}[0]{value}{visible})); 
 			}
 			try {
-				my $file='public/assets/' . $app_id . '.json';
+				my $file=$FindBin::Bin . '/../public/assets/' . $app_id . '.json';
+				print STDERR "AA1|$file\n";
 				unless (-f $file) {
-					open FILE, ">$file" or error("Error: can't open $file, $!");
+					open FILE, ">", $file or error("Error: can't open $file, $!");
 					print FILE to_json($return);
 					close FILE;
 				}
@@ -546,16 +563,15 @@ ajax '/workflow/new/:id' => sub {
 		}
 	}
 
-	my %data=(json => to_json($wf), name => $wfname, description => $wfdesc);
+	my %data=(name => $wfname, description => $wfdesc);
 	try {
-		database->quick_insert('workflow', {workflow_id => $wfid, %data});
+		database->quick_insert('workflow', {workflow_id => $wfid, %data, json => to_json($wf)});
 		database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
 	} catch {
 		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
-		delete $data{json};
 		database->quick_update('workflow', {workflow_id => $wfid}, \%data);
 	};
-	to_json({status => 'success', data => {workflow_id => $wfid, %data}});
+	to_json({status => 'success', data => {workflow_id => $wfid, %data, steps => $wf->{steps}}});
 };
 
 ajax '/workflow/:id/delete' => sub {
@@ -586,26 +602,43 @@ ajax '/workflow/:id/update' => sub {
 
 ajax '/workflow/:id' => sub {
 	my $wfid=param('id');
-	my $wf;
-	try {
-		my $wfFile='public/assets/' . $wfid . '.workflow.json';
-		my $wfJson=`cat $wfFile`;
-		$wf=from_json($wfJson);
-		$wf->{workflow_id}=$wf->{id};
-	};
-	$wf || try {
-		$wf=database->quick_select('workflow', {workflow_id => $wfid});
-		my $wfObj=from_json(delete $wf->{json});
-		$wf->{steps}=$wfObj->{steps};
-	};
+	my $wf=retrieveWorkflow($wfid);
 	$wf or raise InvalidRequest => 'no workflow found';
 	to_json({status => 'success', data => $wf});
 };
 
+sub retrieveWorkflow {
+	my ($wfid)=@_;
+	retrieveWorkflowFile($wfid) || retrieveWorkflowDB($wfid);
+}
+
+sub retrieveWorkflowFile {
+	my ($wfid)=@_;
+	my $wf;
+	try {
+		my $wfFile=$FindBin::Bin . '/../public/assets/' . $wfid . '.workflow.json';
+		my $wfJson=`cat $wfFile`;
+		$wf=from_json($wfJson);
+		$wf->{workflow_id}=$wf->{id};
+	};
+	$wf;
+};
+
+sub retrieveWorkflowDB {
+	my ($wfid)=@_;
+	my $wf;
+	try {
+		$wf=database->quick_select('workflow', {workflow_id => $wfid});
+		my $wfObj=from_json(delete $wf->{json});
+		$wf->{steps}=$wfObj->{steps};
+	};
+	$wf;
+}
+
 ajax '/workflow' => sub {
 	my @result;
 	my $username=session('username') or raise InvalidCredentials => 'no username';
-	@result=map {my $obj=from_json(delete $_->{json}); $_->{steps}=$obj->{steps}; $_;} database->quick_select('user_workflow_view', {username => $username});
+	@result=map {delete $_->{username}; my $obj=from_json(delete $_->{json}); $_->{steps}=$obj->{steps}; $_;} database->quick_select('user_workflow_view', {username => $username});
 	return to_json({status => 'success', data => \@result});
 };
 
@@ -801,6 +834,11 @@ sub prepareJob {
 	};
 	my $notifications=[
 	{
+		event	=> "STAGED",
+		url		=> $host_url . $noteinfo,
+		policy => $notepolicy,
+	},
+	{
 		event	=> "FINISHED",
 		url		=> $host_url . $noteinfo,
 		policy => $notepolicy,
@@ -995,6 +1033,53 @@ sub archiveJob {
 	my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->{executionSystem}, $jobObj->{outputPath});
 	my $target=sprintf("/system/%s/%s", $archive_system, $archive_path);
 	my $res=$io->import_file($target, {urlToIngest => $source});
+}
+
+sub submitQueuedJob {
+	my @next=database->quick_select('job', {agave_id => undef}, {order_by => 'id'});
+	foreach my $next (@next) {
+		_submitNextJob($next);
+	}
+}
+
+sub _submitNextJob {
+	my ($next)=@_;
+	my $queue_length=setting('queue_length');
+	my $job_count=database->quick_count('job', "agave_id is not null and status not in ('FINISHED', 'KILLED', 'FAILED', 'STOPPED', 'ARCHIVING_FAILED')");
+	next if $job_count >= $queue_length;
+	next if database->quick_count('nextstep', {next => $next->{next}, status => 0});
+	my $next_job=database->quick_select('job', {job_id => $next->{next}});
+	my $job_form=from_json($next_job->{job_json});
+	my $user=_get_user($next_job->{username});
+	my $apif = getAgaveClient($user);
+	my $apps = $apif->apps;
+	my $job_ep = $apif->job;
+	my @prev=database->quick_select('nextstep', {next => $next->{next}});
+	my %input;
+	my $count=0;
+	foreach (@prev) {
+		my $prev_job=database->quick_select('job', {job_id => $_->{prev}});
+		my $output_files=$job_ep->job_output_files($prev_job->{agave_id});
+		my (undef, $filename)=split /:/, $_->{input_name};
+		foreach my $of (@$output_files) {
+			if (substr($of->{name}, 0, length($filename)) eq $filename) {
+				$filename=$of->{name};
+				last;
+			}
+		}
+		$input{$_->{input_name}}=$_->{input_source} . '/' . $filename;
+	}
+	while (my ($k, $v) = each %{$job_form->{inputs}}) {
+		if (defined $v && exists $input{$v}) {
+			$job_form->{inputs}{$k}=$input{$v};
+			$count++;
+		}
+	}
+	if ($count) {
+		database->quick_update('job', {job_id => $next->{next}}, {job_json => to_json($job_form)});
+		my ($app) = $apps->find_by_id($next_job->{app_id});
+		my ($res, $err)=submitJob($next_job->{username}, $apif, $app, $next_job->{job_id}, $job_form);
+	}
 }
 
 sub submitNextJob {

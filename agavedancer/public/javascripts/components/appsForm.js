@@ -135,9 +135,10 @@ const AppsForm=React.createClass({
 				let sortedInputs=_.sortBy(appDetail.inputs, utilities.getValueOrder);
 				app_inputs=sortedInputs.map(function(input) {
 					if (jobDetail && jobDetail.inputs[input.id] !== undefined) {
-						input.value.value=jobDetail.inputs[input.id][0];
+						input.value.value=JSON.stringify(jobDetail.inputs[input.id]);
 					}
-					return(<AppsInput key={appDetail.id + ':' + input.id} data={input} reload={reload} onValidate={onValidate} user={this.props.user} />);
+					let appsInput=<AppsInput key={appDetail.id + ':' + input.id} data={input} reload={reload} onValidate={onValidate} user={this.props.user} />;
+					return appsInput;
 				}.bind(this));
 			}
 			if (appDetail.parameters &&  appDetail.parameters.length) {

@@ -27,12 +27,14 @@ const JobsList=React.createClass({
 						jobsItem=jobsStore.jobDetailCache[jobsItem.job_id];
 					}
 					let app=appsStore.appDetailCache[jobsItem.appId];
-					let enableCheck=false;
+					let outputIDs=undefined == app ? [] : _.map(app.outputs, "id");
+					//let enableCheck=false;
+					let enableCheck=true;
 					let outputs=jobsStore.jobOutputs[jobsItem.job_id];
 					if (outputs && outputs.length) {
-						enableCheck=true;
+						//enableCheck=true;
 						_.remove(outputs, function(v) {
-							return v.name.match(/^job-for-.*\.(out|err)$/);
+							return ! _.some(outputIDs, (oid) => {return _.startsWith(v.name, oid)});
 						});
 					}
 					let checked=enableCheck && jobsStore.workflowBuilderJobIndex[index];

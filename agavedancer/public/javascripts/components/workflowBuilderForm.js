@@ -54,6 +54,7 @@ const WorkflowBuilderForm=React.createClass({
 	buildWorkflow: function(wfid, wfName, wfDesc, jobsStore, appsStore) {
 		let setting=_config.setting;
 		let workflow={
+				workflow_id: wfid,
 				id: wfid, 
 				name: wfName,
 				description: wfDesc || '',

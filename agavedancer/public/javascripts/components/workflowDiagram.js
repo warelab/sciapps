@@ -149,7 +149,7 @@ const WorkflowDiagram=React.createClass({
 							href=href.replace(/__system__/, splitUrl[1]);
 							href=href.replace(/\/__home__/, setting.archive_home);
 							href=href.replace(/__path__/, splitUrl[2]);
-							diagramDefStmts.push('click ' + output_name + ' "' + href + '" "' + value + ' - click to open"');
+							diagramDefStmts.push('click ' + output_name + ' "' + href + '" "' + (output ? output.name : value) + ' - click to open"');
 						} else {
 							diagramDefStmts.push('click ' + output_name + ' clickFileNode "' + value + '"');
 						}

@@ -137,6 +137,9 @@ const WorkflowRunnerForm=React.createClass({
 				let showAppId=step.appId.replace(/\-[\.\d]+$/, '');
 				let appId=step.appId;
 				let appDetail=_.cloneDeep(appsStore.appDetailCache[appId]);
+				if (undefined === appDetail) {
+					return;
+				}
 				_.forEach(appDetail.inputs, function(v) {
 					let ic=step.inputs[v.id];
 					if (_.isPlainObject(ic)) {
