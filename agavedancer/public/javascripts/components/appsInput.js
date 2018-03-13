@@ -17,8 +17,12 @@ const AppsInput=React.createClass({
 		if (reload === 'resubmit' || this.props.data.value.value !== undefined) {
 			//let dataValue=JSON.parse(this.props.data.value.value);
 			let dataValue=this.props.data.value.value;
+			if (_.isArray(dataValue)) {
 				count=dataValue.length;
 				value=dataValue;
+			} else {
+				value[0]=dataValue;
+			}
 		} else {
 			value[0]=this.props.data.value.default;
 		}
@@ -30,13 +34,17 @@ const AppsInput=React.createClass({
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		let reload=nextProps.reload;
+		let reload=this.props.reload;
 		let value=[], count=1;
 		if (reload === 'resubmit') {
 			//let dataValue=JSON.parse(nextProps.data.value.value);
 			let dataValue=nextProps.data.value.value;
+			if (_.isArray(dataValue)) {
 				count=dataValue.length;
 				value=dataValue;
+			} else {
+				value[0]=dataValue;
+			}
 			this.setState({count: count, value: value});
 		} else if (reload === 'default') {
 			if (_.isArray(nextProps.data.value.default)) {
