@@ -54,6 +54,10 @@ plugins:
       PrintError: 0
       PrintWarn:  0
       AutoCommit: 1
+  Auth::CAS:
+    cas_url: "https://auth.iplantcollaborative.org/cas4"
+    cas_denied_path: "/denied"
+    cas_version: "2.0"
 
 output_url:
   sciapps.org: 'https://data.sciapps.org/__path__'
