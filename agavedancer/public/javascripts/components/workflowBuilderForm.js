@@ -88,11 +88,19 @@ const WorkflowBuilderForm=React.createClass({
 			parameters: job.parameters
 		};
 		_.forIn(job.inputs, function(iv, ik) {
-			let input_name=_.isArray(iv) ? iv[0] : iv;
-			let output=_.find(outputs, function(ov, ok) {
-				return _.includes(input_name, ok);
+			//let input_name=_.isArray(iv) ? iv[0] : iv;
+			let input_name=_.isArray(iv) ? iv : [iv];
+			step.inputs[ik]=[];
+			input_name.forEach(function(name, i) {
+				let output=_.find(outputs, function(ov, ok) {
+					return _.includes(name, ok);
+				});
+				step.inputs[ik][i]=output ? output : name;
 			});
-			step.inputs[ik]=output ? output : iv[0];
+			//let output=_.find(outputs, function(ov, ok) {
+			//	return _.includes(input_name, ok);
+			//});
+			//step.inputs[ik]=output ? output : iv[0];
 		})
 		return step;
 	},

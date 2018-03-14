@@ -14,17 +14,20 @@ const AppsInput=React.createClass({
 	getInitialState: function() {
 		let value=[], count=1, active=0;
 		let reload=this.props.reload;
+		let dataValue;
 		if (reload === 'resubmit' || this.props.data.value.value !== undefined) {
-			//let dataValue=JSON.parse(this.props.data.value.value);
-			let dataValue=this.props.data.value.value;
+			dataValue=this.props.data.value.value;
+		} else {
+			dataValue=this.props.data.value.default;
+		}
+		if (dataValue) {
 			if (_.isArray(dataValue)) {
-				count=dataValue.length;
 				value=dataValue;
+				count=dataValue.length;
 			} else {
 				value[0]=dataValue;
+				count=1;
 			}
-		} else {
-			value[0]=this.props.data.value.default;
 		}
 		return {
 			active: active,
@@ -36,22 +39,19 @@ const AppsInput=React.createClass({
 	componentWillReceiveProps: function(nextProps) {
 		let reload=this.props.reload;
 		let value=[], count=1;
+		let dataValue;
 		if (reload === 'resubmit') {
-			//let dataValue=JSON.parse(nextProps.data.value.value);
-			let dataValue=nextProps.data.value.value;
+			dataValue=nextProps.data.value.value;
+		} else if (reload === 'default') {
+			dataValue=nextProps.data.value.default;
+		}
+		if (dataValue) {
 			if (_.isArray(dataValue)) {
-				count=dataValue.length;
 				value=dataValue;
+				count=dataValue.length;
 			} else {
 				value[0]=dataValue;
-			}
-			this.setState({count: count, value: value});
-		} else if (reload === 'default') {
-			if (_.isArray(nextProps.data.value.default)) {
-				count=nextProps.data.value.default.length;
-				value=nextProps.data.value.default;
-			} else {
-				value[0]=nextProps.data.value.default;
+				count=1;
 			}
 			this.setState({count: count, value: value});
 		}
@@ -67,8 +67,6 @@ const AppsInput=React.createClass({
 		let dsItemPath=dsStore.dsItemPaths[this.props.data.id + '_' + this.state.active];
 		if (dsItemPath) {
 			let datastore=setting.datastore[dsItemPath.type];
-			//dsItemUrl='https://agave.iplantc.org/jobs/v2/' + [datastore.system, 'outputs/media', datastore.path, (dsItemPath.path ? dsItemPath.path + '/' : '') + dsItemPath.name].join('/');
-			//dsItemUrl=setting.public_datastore_type === '__exampleData__' ? 'agave://' + [datastore.system, datastore.path, (dsItemPath.path ? dsItemPath.path + '/' : '') + dsItemPath.name].join('/') : 'https://agave.iplantc.org/jobs/v2/' + [datastore.system, 'outputs/media', datastore.path, (dsItemPath.path ? dsItemPath.path + '/' : '') + dsItemPath.name].join('/');
 			dsItemUrl='agave://' + [datastore.system, datastore.path, (dsItemPath.path ? dsItemPath.path + '/' : '') + dsItemPath.name].join('/');
 		} else if (dsItemPath === '') {
 			dsItemUrl='';

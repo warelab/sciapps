@@ -141,12 +141,20 @@ const WorkflowRunnerForm=React.createClass({
 					return;
 				}
 				_.forEach(appDetail.inputs, function(v) {
-					let ic=step.inputs[v.id];
-					if (_.isPlainObject(ic)) {
-						v.value.default=(setting.wf_step_prefix + ic.step + ':' + ic.output_name).toLowerCase();
-					} else if (ic) {
-						v.value.default=ic;
+					let inputs=step.inputs[v.id] || [];
+					if (! _.isArray(inputs)) {
+						inputs=[inputs];
+						v.value.default=[];
+					} else if (inputs.length) {
+						v.value.default=[];
 					}
+					inputs.forEach(function (ic) {
+						if (_.isPlainObject(ic)) {
+							v.value.default.push((setting.wf_step_prefix + ic.step + ':' + ic.output_name).toLowerCase());
+						} else if (ic) {
+							v.value.default.push(ic);
+						}
+					});
 					v.id=setting.wf_step_prefix + i + ':' + v.id;
 					if (v.value.required) {
 						required[v.id]=1;

@@ -158,39 +158,40 @@ const WorkflowDiagram=React.createClass({
 				});
 				_.forEach(appDetail.inputs, function(v) {
 					let value=v.value.default;
-					let ic=step.inputs[v.id];
-					if (_.isPlainObject(ic)) {
-						let prevAppNodeId=(setting.wf_step_prefix + ic.step).replace(/\W/g, '_').toLowerCase();
-						let prevJobId=steps[ic.step].jobId;
-						let prevJobDetail=prevJobId ? jobsStore.jobDetailCache[prevJobId] || _.find(jobsStore.jobDetailCache, 'id', prevJobId) : undefined;
-						let input_name;
-						if (prevJobDetail) {
-							input_name=prevJobDetail.job_id;
-						} else {
-							input_name=setting.wf_step_prefix + ic.step + ':';
-						}
-						input_name=['file', input_name, ic.output_name].join('_');
-						input_name=input_name.replace(/\W/g, '_').toLowerCase();
-						diagramDefStmts.push(input_name + '-->' + appNodeId);
-					} else if (ic) {
-						value=_.last(ic.split('/'));
-						let url=ic.replace('agave://', '');
-						let input_name=url.replace(/\W/g, '_').toLowerCase();
-						diagramDefStmts.push(input_name + '(' + utilities.truncate(value) + '); class ' + input_name + ' fileNode');
-						let reg=new RegExp('agave://data.iplantcollaborative.org/(.+)', 'i');
-						let found=ic.match(reg);
-						let href;
-						if (found && found[1]) {
-							href=setting.output_url["data.iplantcollaborative.org"];
-							href=href.replace(/\/__home__/, setting.archive_home);
-							href=href.replace(/__path__/, found[1]);
-						} else {
-							href=ic;
-						}
-						diagramDefStmts.push('click ' + input_name + ' "' + href + '" "' + value + ' - click to open"');
-						diagramDefStmts.push(input_name + '-->' + appNodeId);
+					let inputs=step.inputs[v.id] || [];
+					if (! _.isArray(inputs)) {
+						inputs=[inputs];
 					}
+					inputs.forEach(function(ic) {
+						if (_.isPlainObject(ic)) {
+							let prevAppNodeId=(setting.wf_step_prefix + ic.step).replace(/\W/g, '_').toLowerCase();
+							let prevJobId=steps[ic.step].jobId;
+							let prevJobDetail=prevJobId ? jobsStore.jobDetailCache[prevJobId] || _.find(jobsStore.jobDetailCache, 'id', prevJobId) : undefined;
+							let input_name=prevJobDetail ? prevJobDetail.job_id : setting.wf_step_prefix + ic.step + ':';
+							input_name=['file', input_name, ic.output_name].join('_');
+							input_name=input_name.replace(/\W/g, '_').toLowerCase();
+							diagramDefStmts.push(input_name + '-->' + appNodeId);
+						} else if (ic) {
+							value=_.last(ic.split('/'));
+							let url=ic.replace('agave://', '');
+							let input_name=url.replace(/\W/g, '_').toLowerCase();
+							diagramDefStmts.push(input_name + '(' + utilities.truncate(value) + '); class ' + input_name + ' fileNode');
+							let reg=new RegExp('agave://data.iplantcollaborative.org/(.+)', 'i');
+							let found=ic.match(reg);
+							let href;
+							if (found && found[1]) {
+								href=setting.output_url["data.iplantcollaborative.org"];
+								href=href.replace(/\/__home__/, setting.archive_home);
+								href=href.replace(/__path__/, found[1]);
+							} else {
+								href=ic;
+							}
+							diagramDefStmts.push('click ' + input_name + ' "' + href + '" "' + value + ' - click to open"');
+							diagramDefStmts.push(input_name + '-->' + appNodeId);
+						}
+					});
 				});
+				diagramDefStmts.length;
 			});
 			def=_.uniq(diagramDefStmts).join(';\n');
 		}
