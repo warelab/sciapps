@@ -132,12 +132,12 @@ const UserStore=Reflux.createStore({
 	},
 
 	logout: function() {
+		this.resetUser(true);
 		this._logout();
 		this.complete();
 	},
 
 	_logout: function() {
-		this.resetUser(true);
 		Q(axios.get('/logout', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))

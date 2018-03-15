@@ -30,7 +30,7 @@ foreach my $exception (@EXCEPTIONS) {
 }
 
 sub token_valid {
-	my $args=shift;
+	my $args=shift || {};
 	my $token=$args->{token} || session('token');
 	my $tk_expiration=$args->{token_expires_at} || session('token_expiration_at');
 
@@ -66,7 +66,7 @@ sub _agave_login {
 
 sub _get_user {
 	my $username=shift;
-	my $user=database->quick_select('agave_user', {username => $username || ''});
+	defined $username ? database->quick_select('agave_user', {username => $username}) : undef;
 }
 
 sub _store_auth_session {
@@ -124,7 +124,7 @@ sub check_agave_login {
 }
 
 sub getAgaveClient {
-	my $args=shift;
+	my $args=shift || {};
 	check_agave_login($args) ? Agave::Client->new(
 		username => $args->{username} || session('username'),
 		token => $args->{token} || session('token'),
@@ -327,13 +327,13 @@ sub retrieveAppsFile {
 	my $return;
 	if ($app_id) {
 		try {
-			my $appsFile=$FindBin::Bin . '/../public/assets/' . $app_id . '.json';
+			my $appsFile=setting("appdir") . '/public/assets/' . $app_id . '.json';
 			my $appsJson=`cat $appsFile`;
 			$return=from_json($appsJson);
 		};
 	} else {
 		try {
-			my $default_list=$FindBin::Bin . '/../' . setting('defaultAppsList');
+			my $default_list=setting("appdir") . '/' . setting('defaultAppsList');
 			my $appsListJson=`cat $default_list`;
 			$return=from_json($appsListJson);
 		}
@@ -354,7 +354,7 @@ sub retrieveAppsRemote {
 				last if (!$return->{inputs} || defined($return->{inputs}[0]{value}{visible})) && (!$return->{parameters} || defined($return->{parameters}[0]{value}{visible})); 
 			}
 			try {
-				my $file=$FindBin::Bin . '/../public/assets/' . $app_id . '.json';
+				my $file=setting("appdir") . '/public/assets/' . $app_id . '.json';
 				unless (-f $file) {
 					open FILE, ">", $file or error("Error: can't open $file, $!");
 					print FILE to_json($return);
@@ -472,7 +472,7 @@ sub retrieveJob {
 	my $job;
 	my $retry_interval=1;
 
-	my $user=$username ? _get_user($username) : undef;
+	my $user=_get_user($username);
 	my $row = database->quick_select('job', {job_id => $job_id}) || database->quick_select('job', {agave_id => $job_id});
 	if ($row) {
 		if ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED') {
@@ -517,7 +517,7 @@ sub retrieveJob {
 			};
 			if ($job->{status} eq 'FINISHED') {
 				submitNextJob({job_id => $job_id, %data}, $user);
-				shareOutput({job_id => $job_id, %data}, $user);
+				shareOutput({job_id => $job_id, %data});
 			}
 		}
 	}
@@ -620,7 +620,7 @@ sub retrieveWorkflowFile {
 	my ($wfid)=@_;
 	my $wf;
 	try {
-		my $wfFile=$FindBin::Bin . '/../public/assets/' . $wfid . '.workflow.json';
+		my $wfFile=setting("appdir") . '/public/assets/' . $wfid . '.workflow.json';
 		my $wfJson=`cat $wfFile`;
 		$wf=from_json($wfJson);
 		$wf->{workflow_id}=$wf->{id};
@@ -768,15 +768,14 @@ sub prepareJob {
 	my $archive_path=setting("archive_path");
 	my $output_url=setting("output_url");
 	my $irodsEnvFile=setting('irodsEnvFile');
-	$archive_path=~s/__user__/$username/;
-
+	my $wf_step_prefix=setting("wf_step_prefix");
+	my $step_prefix = defined $step ? $wf_step_prefix . $step->{id} . ':' : '';
 	my $job_id=iPC::Utils::uuid();
-
-	my $step_prefix = defined $step ? setting("wf_step_prefix") . $step->{id} . ':' : '';
+	$archive_path=~s/__user__/$username/;
 
 	my %job_form;
 	foreach my $key (@{$app->inputs}, @{$app->parameters}) {
-		my $name=defined $step ? $step_prefix . $key->{id} : $key->{id};
+		my $name=$step_prefix ? $step_prefix . $key->{id} : $key->{id};
 		$job_form{$name}=$form->{$name};
 	}
 
@@ -787,39 +786,56 @@ sub prepareJob {
 		next unless $job_form{$name};
 		if (ref($job_form{$name}) eq 'ARRAY') {
 			foreach (@{$job_form{$name}}) {
-				$_=iPC::Utils::transform_url($_);
+				$_=iPC::Utils::transform_url($_, $archive_system);
 			}
 		} else {
 			$job_form{$name}=iPC::Utils::transform_url($job_form{$name}, $archive_system)
 		}
 	}
 
-	# TODO - check arguments
-
-	foreach my $name (keys %job_form) {
-		my $n=$name;
-		if ($n=~s/^$step_prefix//) {
-			$job_form{$n}=delete $job_form{$name};
+	if ($step_prefix) {
+		foreach my $name (keys %job_form) {
+			my $n=$name;
+			if ($n=~s/^$step_prefix//) {
+				$job_form{$n}=delete $job_form{$name};
+			}
 		}
-	}
 
-	foreach my $k (keys %{$step->{inputs}}) {
-		my $v=$step->{inputs}{$k};
-		if ($v && ref($v)) {
-			$job_form{$k}=$prev_job->[$v->{step}]{job_id} . ':' . $v->{output_name};
-		} else {
-			$step->{inputs}{$k}=$job_form{$k};
-			#if ($job_form{$k}=~m#agave://data.iplantcollaborative.org/(.+)#) {
-			#	my $path=$archive_home . '/' . $1;
-			#	my $cmd="export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ichmod read public $path;ichmod read anonymous $path";
-			#	system($cmd) == 0 or raise 'SystemError' => "can not share $path";
-			#}
+
+		foreach my $key (@{$app->inputs}) {
+			my $k=$key->{id};
+			if (exists $job_form{$k}) {
+				my $fi=$job_form{$k};
+				my $si=[];
+				ref($fi) or $fi=[$fi];
+				foreach my $i (0 .. $#$fi) {
+					if ($fi->[$i]=~m/^$wf_step_prefix([^:]+):(.*)$/) {
+						$fi->[$i]=$prev_job->[$1]{job_id} . ':' . $2;
+						push @$si, {step => $1, output_name => $2};
+					} else {
+						push @$si, $fi->[$i];
+					}
+				}
+				if (1 == scalar(@$si)) {
+					$job_form{$k}=$fi->[0];
+					$step->{inputs}{$k}=$si->[0];
+				} else {
+					$job_form{$k}=$fi;
+					$step->{inputs}{$k}=$si;
+				}
+			} else {
+				exists $step->{inputs}{$k} and delete $step->{inputs}{$k};
+			}
 		}
-	}
 
-	foreach my $k (keys %{$step->{parameters}}) {
-		my $v=$step->{parameters}{$k};
-		$step->{parameters}{$k}=$job_form{$k};
+		foreach my $key (@{$app->parameters}) {
+			my $k=$key->{id};
+			if (exists $job_form{$k}) {
+				$step->{parameters}{$k}=$job_form{$k};
+			} else {
+				exists $step->{parameters}{$k} and delete $step->{parameters}{$k};
+			}
+		}
 	}
 
 	foreach my $group (qw/inputs parameters/) {
@@ -831,7 +847,6 @@ sub prepareJob {
 
 	my $host_url=request->uri_base;
 	my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&archiveSystem=${JOB_ARCHIVE_SYSTEM}&archivePath=${JOB_ARCHIVE_PATH}&message=${JOB_ERROR}';
-	#my $noteinfo='/notification/${JOB_ID}?status=${JOB_STATUS}&name=${JOB_NAME}&startTime=${JOB_START_TIME}&endTime=${JOB_END_TIME}&submitTime=${JOB_SUBMIT_TIME}&message=${JOB_ERROR}';
 	my $notepolicy={
 		retryLimit => 100,
 		saveOnFailure => 1,
@@ -882,9 +897,19 @@ sub prepareJob {
 	try {
 		database->quick_insert('job', $data);
 		while (my ($k, $v)=each %{$step->{inputs}}) {
-			if ($v && ref($v)) {
-				my $prev=$prev_job->[$v->{step}]{job_id};
-				my $row=database->quick_insert('nextstep', {prev => $prev, next => $job_id, input_name => $job_form{inputs}{$k}});
+			if ($v) {
+				my $inputs=[];
+				if (ref($v) eq 'HASH') {
+					$inputs=[$v];
+				} elsif (ref($v) eq 'ARRAY') {
+					$inputs=$v;
+				}
+				foreach (@$inputs) {
+					if (defined && ref($_) eq 'HASH') {
+						my $prev=$prev_job->[$_->{step}]{job_id};
+						my $row=database->quick_insert('nextstep', {prev => $prev, next => $job_id, input_name => $job_form{inputs}{$k}});
+					}
+				}
 			}
 		}
 	} catch {
@@ -1005,7 +1030,7 @@ sub shareOutputByAgave {
 }
 
 sub shareOutput {
-	my ($job, $user)=@_;
+	my ($job)=@_;
 	my $irodsEnvFile=setting('irodsEnvFile');
 	my $archive_home=setting('archive_home');
 	my $jobObj=from_json($job->{agave_json});
@@ -1114,7 +1139,7 @@ sub submitNextJob {
 			my $prev_job=database->quick_select('job', {job_id => $_->{prev}});
 			my $prev_job_obj=from_json($prev_job->{agave_json});
 			my $typePath='__home__/' . $prev_job_obj->{archivePath};
-			my $prev_outputs=browse($typePath, $user->{username}, 1);
+			my $prev_outputs=browse($typePath, $prev_job->{username}, 1);
 			#my $output_files=$job_ep->job_output_files($prev_job->{agave_id});
 			my (undef, $filename)=split /:/, $_->{input_name};
 			#foreach my $of (@$output_files) {
