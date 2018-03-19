@@ -133,7 +133,7 @@ const UserStore=Reflux.createStore({
 
 	logout: function() {
 		this.resetUser(true);
-		//this._logout();
+		this._logout();
 		this.complete();
 	},
 

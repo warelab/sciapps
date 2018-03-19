@@ -278,7 +278,7 @@ const WorkflowStore=Reflux.createStore({
 	},
 
 	setWorkflowSteps: function(wfDetail, nonSync) {
-		if (! nonSync || this.state.workflowDetail.workflow_id === wfDetail.workflow_id) {
+		if (! nonSync || this.state.workflowDetail && this.state.workflowDetail.workflow_id === wfDetail.workflow_id) {
 			this.state.workflowDetail=wfDetail;
 		}
 		//let appIds=_.uniq(_.values(wfDetail.steps).map(function(o) {
