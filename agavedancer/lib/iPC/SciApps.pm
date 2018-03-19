@@ -773,6 +773,8 @@ sub prepareJob {
 	my $job_id=iPC::Utils::uuid();
 	$archive_path=~s/__user__/$username/;
 
+	$app or raise InvalidRequest => 'no apps found';
+
 	my %job_form;
 	foreach my $key (@{$app->inputs}, @{$app->parameters}) {
 		my $name=$step_prefix ? $step_prefix . $key->{id} : $key->{id};
