@@ -516,7 +516,8 @@ sub retrieveJob {
 				database->quick_update('job', {job_id => $job_id}, \%data);
 			};
 			if ($job->{status} eq 'FINISHED') {
-				submitNextJob({job_id => $job_id, %data}, $user);
+				#submitQueuedJob({job_id => $job_id, %data});
+				submitNextJob({job_id => $job_id, %data});
 				shareOutput({job_id => $job_id, %data});
 			}
 		}
@@ -1017,6 +1018,8 @@ any ['get', 'post'] => '/notification/:id' => sub {
 		#archiveJob($job);
 	} elsif ($params->{status} eq 'FAILED') {
 		#resubmitJob($params->{id});
+	} elsif ($params->{status} eq 'STAGED') {
+		#submitQueuedJob($job);
 	}
 	return;
 };
@@ -1068,32 +1071,48 @@ sub archiveJob {
 }
 
 sub submitQueuedJob {
-	my @next=database->quick_select('job', {agave_id => undef}, {order_by => 'id'});
-	foreach my $next (@next) {
-		_submitNextJob($next);
+	my ($prev_job)=@_;
+	_updatePrevJob($prev_job);
+	my @next_job=database->quick_select('job', {agave_id => undef}, {order_by => 'id'});
+	foreach my $next_job (@next_job) {
+		my $queue_length=setting('queue_length');
+		my $job_count=database->quick_count('job', "agave_id is not null and status not in ('FINISHED', 'KILLED', 'FAILED', 'STOPPED', 'ARCHIVING_FAILED')");
+		last if $job_count >= $queue_length;
+		next if database->quick_count('nextstep', {next => $next_job->{job_id}, status => 0});
+		_submitNextJob($next_job);
+	}
+}
+
+sub _updatePrevJob {
+	my ($prev_job)=@_;
+	if ($prev_job->{status} eq 'FINISHED') {
+		my $jobObj=from_json($prev_job->{agave_json});
+		#my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->{executionSystem}, $jobObj->{outputPath});
+		#my $source=sprintf("https://agave.iplantc.org/jobs/v2/%s/outputs/media", $jobObj->{id});
+		my $source=sprintf("agave://data.iplantcollaborative.org/%s", $jobObj->{archivePath});
+		try{
+			database->quick_update('nextstep', {prev => $prev_job->{job_id}}, {input_source => $source, status => 1});
+		};
 	}
 }
 
 sub _submitNextJob {
-	my ($next)=@_;
-	my $queue_length=setting('queue_length');
-	my $job_count=database->quick_count('job', "agave_id is not null and status not in ('FINISHED', 'KILLED', 'FAILED', 'STOPPED', 'ARCHIVING_FAILED')");
-	next if $job_count >= $queue_length;
-	next if database->quick_count('nextstep', {next => $next->{next}, status => 0});
-	my $next_job=database->quick_select('job', {job_id => $next->{next}});
+	my ($next_job)=@_;
 	my $job_form=from_json($next_job->{job_json});
 	my $user=_get_user($next_job->{username});
 	my $apif = getAgaveClient($user);
 	my $apps = $apif->apps;
 	my $job_ep = $apif->job;
-	my @prev=database->quick_select('nextstep', {next => $next->{next}});
+	my @prev=database->quick_select('nextstep', {next => $next_job->{job_id}});
 	my %input;
 	my $count=0;
 	foreach (@prev) {
 		my $prev_job=database->quick_select('job', {job_id => $_->{prev}});
-		my $output_files=$job_ep->job_output_files($prev_job->{agave_id});
+		my $prev_job_obj=from_json($prev_job->{agave_json});
+		my $typePath='__home__/' . $prev_job_obj->{archivePath};
+		my $prev_outputs=browse($typePath, $prev_job->{username}, 1);
 		my (undef, $filename)=split /:/, $_->{input_name};
-		foreach my $of (@$output_files) {
+		foreach my $of (@{$prev_outputs->[0]{list}}) {
 			if (substr($of->{name}, 0, length($filename)) eq $filename) {
 				$filename=$of->{name};
 				last;
@@ -1108,18 +1127,14 @@ sub _submitNextJob {
 		}
 	}
 	if ($count) {
-		database->quick_update('job', {job_id => $next->{next}}, {job_json => to_json($job_form)});
+		database->quick_update('job', {job_id => $next_job->{job_id}}, {job_json => to_json($job_form)});
 		my ($app) = $apps->find_by_id($next_job->{app_id});
 		my ($res, $err)=submitJob($next_job->{username}, $apif, $app, $next_job->{job_id}, $job_form);
 	}
 }
 
 sub submitNextJob {
-	my ($prev, $user)=@_;
-
-	my $apif = getAgaveClient($user);
-	my $apps = $apif->apps;
-	my $job_ep = $apif->job;
+	my ($prev)=@_;
 
 	my $jobObj=from_json($prev->{agave_json});
 	#my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->{executionSystem}, $jobObj->{outputPath});
@@ -1134,7 +1149,11 @@ sub submitNextJob {
 		next if database->quick_count('nextstep', {next => $next->{next}, status => 0});
 		my $next_job=database->quick_select('job', {job_id => $next->{next}});
 		my $job_form=from_json($next_job->{job_json});
-		my @prev=database->quick_select('nextstep', {next => $next->{next}});
+		my $user=_get_user($next_job->{username});
+		my $apif = getAgaveClient($user);
+		my $apps = $apif->apps;
+		my $job_ep = $apif->job;
+		my @prev=database->quick_select('nextstep', {next => $next_job->{job_id}});
 		my %input;
 		my $count=0;
 		foreach (@prev) {
@@ -1160,7 +1179,7 @@ sub submitNextJob {
 			}
 		}
 		if ($count) {
-			database->quick_update('job', {job_id => $next->{next}}, {job_json => to_json($job_form)});
+			database->quick_update('job', {job_id => $next_job->{job_id}}, {job_json => to_json($job_form)});
 			my ($app) = $apps->find_by_id($next_job->{app_id});
 
 			my ($res, $err)=submitJob($next_job->{username}, $apif, $app, $next_job->{job_id}, $job_form);
