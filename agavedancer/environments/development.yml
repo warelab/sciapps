@@ -29,7 +29,6 @@ auto_reload: 0
 
 # development config
 agave_config: ".agave"
-host_url: "https://dev1.sciapps.org"
 archive_system: 'sciapps.org'
 archive_home: '/agave_data'
 archive_path: 'results'
@@ -37,7 +36,6 @@ input_system: 'brie.cshl.edu'
 input_home: '/agave_data'
 input_path: 'inputs'
 email: 'noreply@sciapps.org'
-upload_suffix: ".upload"
 wf_step_prefix: 'wf_step_'
 maxRunTime: "96:00:00"
 defaultUser: 'maizecode'
@@ -62,7 +60,13 @@ datastore:
     system: ''
     home: ''
     path: ''
+  __output__:
+    system: 'sciapps.org'
+    home: '/agave_data'
+    path: 'results'
 datastore_types: ['CyVerse', 'exampleData']
 uncompress_suffix: '.open.tar.gz'
 use_file_server: 1
 irodsEnvFile: '/usr/share/httpd/irodsEnv'
+defaultAppsList: 'public/assets/agaveAppsList.json'
+queue_length: 3

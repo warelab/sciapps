@@ -22,8 +22,7 @@ const JobsItem=React.createClass({
 
 	showJobOutputs: function() {
 		if (! this.state.isOpen && this.props.job.job_id) {
-			//JobsActions.showJobOutputs(this.props.job.job_id);
-			JobsActions.setJob(this.props.job.job_id);
+			JobsActions.setJobOutputs(this.props.job.job_id);
 		}
 		this.setState({ isOpen: !this.state.isOpen });
 	},
@@ -46,6 +45,7 @@ const JobsItem=React.createClass({
 	render: function() {
 		let app=this.props.app;
 		let job=this.props.job
+		let outputs=this.props.outputs;
 		let setting=_config.setting;
 		let appId=job.appId;
 		let jobId=job.job_id;
@@ -58,6 +58,8 @@ const JobsItem=React.createClass({
 		displayName=displayName + appId;
 		let isSubmitting=undefined === jobId;
 		let isFailed=0 === jobId;
+		//let enableCheck=this.props.enableCheck;
+		let enableCheck=true;
 		//let outputsItemNodes='Loading ...';
 		let checkedGlyph=this.state.checked ? 'check' : 'unchecked';
 		let tooltipout = (<Tooltip id="tooltipout">Display Outputs</Tooltip>);
@@ -66,13 +68,23 @@ const JobsItem=React.createClass({
 		let addedornot=this.state.checked ? 'Click to Remove' : 'Add to Workflow';
 		let tooltipadd = (<Tooltip id="tooltipadd">{addedornot}</Tooltip>);
 		let outputsItemNodes='Loading ...';
-		if (app && job.outputPath) {
-			outputsItemNodes=app.outputs.map(function(o, i) {
-				let oname=o.value.default;
-				//let href=job.archivePath ? setting.output_url[job.archiveSystem] + '/' + job.archivePath + '/' + oname : setting.output_url[setting.archive_system] + '/' + job.outputPath.replace(job.owner, setting.archive_path) + '/' + oname;
-				let href=setting.output_url[setting.archive_system];
-				href=href.replace(/__system__/, setting.archive_system);
-				href=href.replace(/__path__/, (job.outputPath.replace(job.owner, setting.archive_path) + '/' + oname));
+		//if (app && (job.archivePath || job.outputPath)) {
+		if (outputs && (job.archivePath || job.outputPath)) {
+			outputsItemNodes=outputs.map(function(o, i) {
+				let oname=o.name;
+				let href;
+				if (job.archivePath) {
+					href=setting.output_url[job.archiveSystem];
+					href=href.replace(/__system__/, job.archiveSystem);
+					href=href.replace(/__path__/, (job.archivePath + '/' + oname));
+				} else if (job.outputPath) {
+					href=setting.output_url[setting.archive_system];
+					href=href.replace(/__system__/, setting.archive_system);
+					href=href.replace(/__path__/, (job.outputPath.replace(job.owner, setting.archive_path) + '/' + oname));
+				}
+				href=href.replace(/__owner__/, job.owner);
+				href=href.replace(/\/__home__/, setting.archive_home);
+
 				return (
 					<ListGroupItem key={i}><a href={href} target='_blank'>{oname}</a></ListGroupItem>
 				);
@@ -92,7 +104,7 @@ const JobsItem=React.createClass({
 						<Button key='status' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.showJob} ><Glyphicon glyph='info-sign' /></Button>
 					</OverlayTrigger>
           <OverlayTrigger placement="bottom" overlay={tooltipadd}>
-						<Button key='check' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
+						<Button key='check' bsSize='medium' bsStyle='link' disabled={!enableCheck || isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
 					</OverlayTrigger>
 			  </ButtonToolbar>
 				<Panel collapsible expanded={this.state.isOpen}>

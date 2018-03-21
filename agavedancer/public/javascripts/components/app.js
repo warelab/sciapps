@@ -7,6 +7,7 @@ import Reflux from 'reflux';
 import UserStore from '../stores/userStore.js';
 import UserActions from  '../actions/userActions.js';
 import AppsActions from '../actions/appsActions.js';
+import JobsActions from '../actions/jobsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import {Layout, Fixed, Flex} from 'react-layout-pane';
 import {Panel, Glyphicon} from 'react-bootstrap';
@@ -25,6 +26,13 @@ import Help from './help.js';
 const App=React.createClass({
 	mixins: [Reflux.connect(UserStore, 'userStore')],
 
+	getDefaultProps: function() {
+		return {
+			userInterval: 1800000,
+			jobsInterval: 10000 
+		};
+	},
+
 	componentWillMount: function() {
 		UserActions.setUser();
 	},
@@ -39,6 +47,8 @@ const App=React.createClass({
 		} else {
 			AppsActions.showPage(page_id);
 		}
+		setInterval(() => {UserActions.setUser(true);}, this.props.userInterval);
+		setInterval(() => {JobsActions.setJobs(undefined, true);}, this.props.jobsInterval);
 	},
 
 	render: function () {

@@ -16,30 +16,33 @@ const UserWorkflows=React.createClass({
 
 	handleLoad: function(e) {
 		let table=this.refs.table;
-		let wfid=table.store.selected[0];
+		let wfid=table.store.getSelectedRowKeys()[0];
 		if (wfid) {
 			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
-			let wfDetail=wf.json ? JSON.parse(wf.json) : undefined;
-			AppsActions.showPage('workflowRunner');
-			WorkflowActions.showWorkflow(wfid, wfDetail);
+			if (wf) {
+				AppsActions.showPage('workflowRunner');
+				WorkflowActions.showWorkflow(wfid, wf);
+			}
 		}
 	},
 
 	showWorkflowDiagram: function(e) {
 		let table=this.refs.table;
-		let wfid=table.store.selected[0];
+		let wfid=table.store.getSelectedRowKeys()[0];
 		if (wfid) {
 			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
-			let wfDetail=wf.json ? JSON.parse(wf.json) : undefined;
-			WorkflowActions.showWorkflowDiagram(wfid, wfDetail);
+			if (wf) {
+				WorkflowActions.showWorkflowDiagram(wfid, wf);
+			}
 		}
 	},
 
 	handleDeleteRow: function(e) {
 		let table=this.refs.table;
-		let wfid=table.store.selected[0];
+		let wfid=table.store.getSelectedRowKeys()[0];
 		if (wfid) {
 			this.handleConfirmDeleteRow(function() {
+				table.store.setSelectedRowKey([]);
 				WorkflowActions.deleteWorkflow(wfid);
 			});
 		}
@@ -63,15 +66,28 @@ const UserWorkflows=React.createClass({
 
 	handleDownload: function(e) {
 		let table=this.refs.table;
-		let wfid=table.store.selected[0];
+		let wfid=table.store.getSelectedRowKeys()[0];
 		if (wfid) {
 			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
-			utilities.download(wf.name + '.json', 'application/json;charset=utf-8', wf.json);
+			if (wf) {
+				wf.id=wf.workflow_id;
+				utilities.download(wf.name + '.json', 'application/json;charset=utf-8', JSON.stringify(wf));
+			}
+		}
+	},
+
+	handleShare: function(e) {
+		let table=this.refs.table;
+		let wfid=table.store.getSelectedRowKeys()[0];
+		if (wfid) {
+			let url=window.location.protocol + "//" + window.location.host + '/?wf_id=' + wfid;
+			let link=<div>Please share this link: <a href={url} target='_blank'>{url}</a></div>;
+			this.refs.dialog.showAlert(link);
 		}
 	},
 
 	handleCellSave: function(row, cellName, cellValue) {
-		let formData={id: row.workflow_id, name: row.name, description: row.description};
+		let formData=_.pick(row, ['workflow_id', 'name', 'description']);
 		WorkflowActions.updateWorkflow(formData);
 	},
 
@@ -87,7 +103,7 @@ const UserWorkflows=React.createClass({
 			<ButtonGroup>
 				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/> Load</Button>
 				<Button key='view' bsStyle='warning' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
-                                <Button key='download' bsStyle='info' onClick={this.handleDownload}><Glyphicon glyph='download-alt'/> Download</Button>
+        <Button key='share' bsStyle='info' onClick={this.handleShare}><Glyphicon glyph='link'/> Share</Button>
 				<Button key='delete' bsStyle='danger' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
 			</ButtonGroup>
 		);

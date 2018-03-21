@@ -54,27 +54,21 @@ const AppsStore=Reflux.createStore({
 	},
 
 	_listApps: function() {
-		let apps=this.state.appsCache;
 		let setting=_config.setting;
 		let appPromise;
-		if (apps.length) {
-			appPromise=Q(apps);
-		} else {
-			//appPromise=Q(axios.get('/apps', {
-			//	headers: {'X-Requested-With': 'XMLHttpRequest'},
-			//}))
-			appPromise=Q(axios.get('/assets/agaveAppsList.json'))
-			.then(function(res) {
-				if (res.data.error) {
-					console.log(res.data.error);
-					return;
-				} else {
-					let data=res.data.data || res.data;
-					this.state.appsCache=data;
-					return data;
-				}
-			}.bind(this));
-		}
+		appPromise=Q(axios.get('/apps', {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				console.log(res.data.error);
+				return;
+			} else {
+				let data=res.data.data || res.data;
+				this.state.appsCache=data;
+				return data;
+			}
+		}.bind(this));
 		return appPromise.then(function(appsList) {
 			if (appsList) {
 				this.state.apps=appsList;
@@ -111,8 +105,8 @@ const AppsStore=Reflux.createStore({
 			if (wid !== undefined) {
 				this.state.wid[wid]=true;
 				this.complete();
-			}}
-			.bind(this));
+			}
+		}.bind(this));
 	},
 
 	setApps: function(appIds) {
@@ -149,10 +143,9 @@ const AppsStore=Reflux.createStore({
 		if (appDetail) {
 			appPromise=Q(appDetail);
 		} else {
-			//appPromise=Q(axios.get('/apps/' + appId, {
-			//	headers: {'X-Requested-With': 'XMLHttpRequest'}
-			//}))
-			appPromise=Q(axios.get('/assets/' + appId + '.json'))
+			appPromise=Q(axios.get('/apps/' + appId, {
+				headers: {'X-Requested-With': 'XMLHttpRequest'}
+			}))
 			.then(function(res) {
 				if (res.data.error) {
 					console.log(res.data.error);

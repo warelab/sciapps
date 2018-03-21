@@ -58,10 +58,10 @@ const AppsForm=React.createClass({
 		}
 		let form=this.refs[this.formName];
 		let validated=utilities.validateForm(form, required, setting.upload_suffix);
-		let confirmed, formData;
+		let confirmed;
 		if (user.logged_in) {
 			if (validated) {
-				formData=new FormData(this.refs[this.formName]);
+				let formData=new FormData(this.refs[this.formName]);
 				this.refs.dialog.show({
 					body: 'Are you sure you want to submit this job?',
 					actions: [
@@ -129,9 +129,12 @@ const AppsForm=React.createClass({
 				let sortedInputs=_.sortBy(appDetail.inputs, utilities.getValueOrder);
 				app_inputs=sortedInputs.map(function(input) {
 					if (jobDetail && jobDetail.inputs[input.id] !== undefined) {
-						input.value.value=jobDetail.inputs[input.id][0];
+						//input.value.value=JSON.stringify(jobDetail.inputs[input.id]);
+						input.value.value=jobDetail.inputs[input.id];
+						//input.value.value=jobDetail.inputs[input.id][0];
 					}
-					return(<AppsInput key={appDetail.id + ':' + input.id} data={input} reload={reload} onValidate={onValidate} user={this.props.user} />);
+					let appsInput=<AppsInput key={appDetail.id + ':' + input.id} data={input} reload={reload} onValidate={onValidate} user={this.props.user} />;
+					return appsInput;
 				}.bind(this));
 			}
 			if (appDetail.parameters &&  appDetail.parameters.length) {
@@ -183,7 +186,7 @@ const AppsForm=React.createClass({
 				<form ref={this.formName}>
 					{app_inputs}
 					{app_params}
-					<AppsBoolParam data={emailInput} />
+					<BaseInput data={emailInput} />
 					{submitBtn}
 				</form>
 				<Dialog ref='dialog' />

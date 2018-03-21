@@ -44,30 +44,50 @@ const UserStore=Reflux.createStore({
 		};
 	},
 
-	setUser: function() {
+	resetUser: function() {
+		this._resetState();
+		AppsActions.resetState('welcome');
+		JobsActions.resetState();
+		WorkflowActions.resetState();
+		DsActions.resetState();
+		AppsActions.debouncedListApps();
+	},
+
+	setUser: function(reset) {
 		let setting=_config.setting;
+		let logged_in=this.state.logged_in;
 		//Q(axios.get(setting.host_url + '/user', {
 		Q(axios.get('/user', {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))
 		.then(function(res) {
 			if (res.data.error) {
-				if (res.data.error.startsWith('InvalidCredentials')) {
-					this.logout();
-				}
+				this.resetUser();
+				//if (res.data.error.startsWith('InvalidCredentials')) {
+				//	this.logout();
+				//}
 				console.log(res.data.error);
 			} else if (res.data.data.logged_in) {
 				this._updateUser(res.data.data);
 				WorkflowActions.listWorkflow();
 				JobsActions.listJob();
-				AppsActions.debouncedListApps();
-				this.complete();
+			} else {
+				if (reset) {
+					this.resetUser();
+				}
 			}
+			AppsActions.debouncedListApps();
+			this.complete();
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
 		})
 		.done();
+	},
+
+	login: function(formData) {
+		this._login(formData);
+		this.complete();
 	},
 
 	_login: function(formData) {
@@ -77,7 +97,6 @@ const UserStore=Reflux.createStore({
 		if (formData === undefined) {
 			formData=new FormData();
 		}
-		//Q(axios.post(setting.host_url + '/login', formData, {
 		Q(axios.post('/login', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
@@ -90,7 +109,7 @@ const UserStore=Reflux.createStore({
 				this.state.error=res.data.error;
 				this.complete();
 			} else if (res.data.logged_in) {
-				this._updateUser(res.data);
+				this.setUser(res.data);
 				this.hideLoginBox();
 			}
 		}.bind(this))
@@ -103,23 +122,30 @@ const UserStore=Reflux.createStore({
 	_updateUser: function(data) {
 		let setting=_config.setting;
 		_.assign(this.state, data);
-		if (setting.datastore['__CyVerse__']) {
-			let path=setting.datastore['__CyVerse__'].path.replace('__user__', data.username);
-			setting.datastore['__CyVerse__'].path=path;
-		}
+		_.forEach(setting.datastore, function(v, k) {
+			if (v.path) {
+				let path=v.path.replace('__user__', data.username);
+				v.path=path;
+			}
+		});
 	},
 
 	logout: function() {
+		this.resetUser(true);
 		this._logout();
 		this.complete();
 	},
 
 	_logout: function() {
-		this._resetState();
-		AppsActions.resetState('welcome');
-		JobsActions.resetState();
-		WorkflowActions.resetState();
-		DsActions.resetState();
+		Q(axios.get('/logout', {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+		}.bind(this))
+		.catch(function(error) {
+			console.log(error);
+		})
+		.done();
 	},
 
 	showLoginBox: function() {

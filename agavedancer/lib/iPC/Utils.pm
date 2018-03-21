@@ -48,6 +48,7 @@ sub parse_ils {
 			push @content, +{
 				name	=> $name,
 				type	=> 'dir',	
+				path	=> $path . '/' . $name, 
 			};
 		} else {
 			my @f=split /\s+/, $line, 8;
@@ -56,6 +57,7 @@ sub parse_ils {
 			push @content, +{
 				name => $f[7],
 				type => 'file',
+				path	=> $path . '/' . $name, 
 			};
 		}
 	}
@@ -85,7 +87,17 @@ sub parse_ls {
 		}
 	}
 	\%result;
-};
+}
+
+sub transform_url {
+	my ($data, $archive_system)=@_;
+	if ($data=~m#^https://\w+.sciapps.org/results/job-(\w+\-\w+\-\w+\-\w+)[^\/]*/(.*)#) {
+		$data='https://agave.iplantc.org/jobs/v2/' . $1 . '/outputs/media/' . $2;
+	} elsif ($data=~m#^http://datacommons.cyverse.org/browse/iplant/home/#) {
+		$data=~s#^http://datacommons.cyverse.org/browse/iplant/home/#agave://$archive_system/#;
+	}
+	$data;
+}
 
 
 1;
