@@ -28,7 +28,14 @@ const AppsGroup=React.createClass({
 				appGroup[tag].push(app);
 			}
 		}
-		let appsPanel=_.keys(appGroup).sort().map(function (tag, index) {
+		let privateApps=appGroup['Private'];
+		delete appGroup['Private'];
+		let tags=_.keys(appGroup).sort();
+		if (privateApps.length) {
+			tags.unshift('Private');
+			appGroup['Private']=privateApps;
+		}
+		let appsPanel=tags.map(function (tag, index) {
 			return <AppsPanel key={index} index={index} header={tag} apps={appGroup[tag]} expanded={appsStore.filtered}/>
 		});
 		return (

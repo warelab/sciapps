@@ -342,7 +342,6 @@ sub retrieveApps {
 	retrieveAppsFile($app_id) || retrieveAppsRemote($app_id);
 }
 
-
 sub retrieveAppsFile {
 	my ($app_id)=@_;
 	my $return;
@@ -363,6 +362,7 @@ sub retrieveAppsFile {
 }
 
 sub retrieveAppsRemote {
+	my $user=session('cas_user') or return [];
 	my ($app_id)=@_;
 	my $return;
 	my $api = getAgaveClient();
@@ -1051,9 +1051,9 @@ any ['get', 'post'] => '/notification/:id' => sub {
 };
  
 sub shareOutputByAgave {
-	my ($job, $user)=@_;
+	my ($job)=@_;
 
-	my $apif = getAgaveClient($user);
+	my $apif = getAgaveClient();
 	my $io = $apif->io;
 	my $jobObj=from_json($job->{agave_json});
 	my $path=$jobObj->{archivePath};
@@ -1075,9 +1075,9 @@ sub shareOutput {
 }
 
 sub shareJob {
-	my ($job, $user)=@_;
+	my ($job)=@_;
 
-	my $apif = getAgaveClient($user);
+	my $apif = getAgaveClient();
 	my $job_ep = $apif->job;
 	my $res=$job_ep->share_job($job->{agave_id}, 'public', 'READ');
 }
@@ -1125,8 +1125,7 @@ sub _updatePrevJob {
 sub _submitNextJob {
 	my ($next_job)=@_;
 	my $job_form=from_json($next_job->{job_json});
-	my $user=_get_user($next_job->{username});
-	my $apif = getAgaveClient($user);
+	my $apif = getAgaveClient();
 	my $apps = $apif->apps;
 	my $job_ep = $apif->job;
 	my @prev=database->quick_select('nextstep', {next => $next_job->{job_id}});
