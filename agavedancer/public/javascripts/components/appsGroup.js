@@ -32,8 +32,10 @@ const AppsGroup=React.createClass({
 		let privateApps=appGroup['Private'];
 		delete appGroup['Private'];
 		let tags=_.keys(appGroup).sort();
-		tags.unshift('Private');
-		appGroup['Private']=privateApps;
+		if (privateApps.length) {
+			tags.unshift('Private');
+			appGroup['Private']=privateApps;
+		}
 		let appsPanel=tags.map(function (tag, index) {
 			return <AppsPanel key={index} index={index} header={tag} apps={appGroup[tag]} expanded={appsStore.filtered}/>
 		});
