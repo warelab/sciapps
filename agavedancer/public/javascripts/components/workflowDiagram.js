@@ -275,7 +275,11 @@ const WorkflowDiagram=React.createClass({
 				});
 				let stepDepth=_.reduce(workflowDetail.steps, function(depth, step) {
 					let prev=_.map(step.inputs, function(input) {
-						return _.isPlainObject(input) ? depth[input.step] : 0;
+						let inp=_.isArray(input) ? input : [input];
+						let inp_depth=inp.map(function(i) {
+							return _.isPlainObject(i) ? depth[i.step] : 0;
+						});
+						return _.max(inp_depth);
 					});
 					depth.push(_.max(prev)+1);
 					return depth;
