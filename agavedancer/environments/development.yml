@@ -29,13 +29,9 @@ auto_reload: 0
 
 # development config
 agave_config: ".agave"
-host_url: "https://de.sciapps.org"
 archive_system: 'data.iplantcollaborative.org'
 archive_home: '/iplant/home'
 archive_path: '__user__/sci_data/results'
-input_system: 'brie.cshl.edu'
-input_home: '/agave_data'
-input_path: 'inputs'
 email: 'noreply@sciapps.org'
 wf_step_prefix: 'wf_step_'
 maxRunTime: "96:00:00"
