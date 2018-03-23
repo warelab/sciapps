@@ -355,7 +355,7 @@ sub retrieveAppsFile {
 }
 
 sub retrieveAppsRemote {
-	my $username=session('username') or return [];
+	my $user=session('cas_user') or return [];
 	my ($app_id)=@_;
 	my $return;
 	my $api = getAgaveClient();
@@ -978,7 +978,7 @@ sub submitJob {
 				$job->{job_id}=$job_id;
 				updateJob($job_id, $job);
 				updateWorkflowJob($job_id);
-				#$job_ep->share_job($job->{id}, $username, 'READ');
+				$job_ep->share_job($job->{id}, $username, 'READ');
 				return ($job);
 			} else {
 				$err='Error: ' . $st->{message};
