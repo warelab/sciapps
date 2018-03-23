@@ -84,7 +84,7 @@ const JobsItem=React.createClass({
 					href=href.replace(/__path__/, (archivePath + '/' + oname));
 				}
 				href=href.replace(/__owner__/, job.owner);
-				href=href.replace(/\/__home__/, setting.archive_home);
+				href=href.replace(/\/__home__/, setting.datastore.__home__.home);
 
 				return (
 					<ListGroupItem key={i}><a href={href} target='_blank'>{oname}</a></ListGroupItem>
