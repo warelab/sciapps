@@ -40,26 +40,22 @@ sub parse_ils {
 	$path=$datastore_root . ($1 ? '/' . $1 : '');
 	my %seen;
 	foreach my $line (@$ils) {
-		my $name;
+		my ($name, $type);
 		if ($line=~m#^\s+C\-\s+$path/(.*)#) {
 			$name=$1;
 			$name=~s/\s+$//;
-			$seen{$name}++ or
-			push @content, +{
-				name	=> $name,
-				type	=> 'dir',	
-				path	=> $path . '/' . $name, 
-			};
+			$type='dir';
 		} else {
 			my @f=split /\s+/, $line, 8;
 			$name=$f[7];
-			$seen{$name}++ or
-			push @content, +{
-				name => $f[7],
-				type => 'file',
-				path	=> $path . '/' . $name, 
-			};
+			$type='file';
 		}
+		$seen{$name}++ or
+		push @content, +{
+			name	=> $name,
+			type	=> $type,	
+			path	=> $path . '/' . $name, 
+		};
 	}
 	\%result;
 }
@@ -82,6 +78,7 @@ sub parse_ls {
 					length  => $f[4],
 					name  => $f[8],
 					type  => substr($f[0], 0, 1) eq 'd' ? 'dir' : 'file',
+					path	=> $path . '/' . $f[8],
 				};
 			}
 		}

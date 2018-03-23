@@ -342,7 +342,7 @@ sub retrieveAppsFile {
 }
 
 sub retrieveAppsRemote {
-	my $user=session('cas_user') or return [];
+	my $username=session('username') or return [];
 	my ($app_id)=@_;
 	my $return;
 	my $api = getAgaveClient();
