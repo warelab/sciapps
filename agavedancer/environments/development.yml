@@ -32,14 +32,15 @@ agave_config: ".agave"
 archive_system: 'sciapps.org'
 archive_home: '/agave_data'
 archive_path: 'results'
-input_system: 'brie.cshl.edu'
-input_home: '/agave_data'
-input_path: 'inputs'
 email: 'noreply@sciapps.org'
 wf_step_prefix: 'wf_step_'
 maxRunTime: "96:00:00"
 defaultUser: 'maizecode'
 datastore:
+  __home__:
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: '__user__/sci_data'
   __CyVerse__:
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'

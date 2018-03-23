@@ -242,6 +242,8 @@ sub browse {
 	} elsif ($type eq '__system__') {
 		my ($system, $filepath)=split /\//, $path, 2;
 		$result=browse_files($filepath, $system);
+	} elsif ($type eq '__output__') {
+		$result=browse_ls($path, $datastore_system, $datastore_homepath);
 	} else {
 		#if (substr($path, 0, length($datastore_path)) eq $datastore_path) {
 		#	$path=substr($path, length($datastore_path));
@@ -1173,8 +1175,7 @@ sub submitNextJob {
 		next if database->quick_count('nextstep', {next => $next->{next}, status => 0});
 		my $next_job=database->quick_select('job', {job_id => $next->{next}});
 		my $job_form=from_json($next_job->{job_json});
-		my $user=_get_user($next_job->{username});
-		my $apif = getAgaveClient($user);
+		my $apif = getAgaveClient();
 		my $apps = $apif->apps;
 		my $job_ep = $apif->job;
 		my @prev=database->quick_select('nextstep', {next => $next_job->{job_id}});
@@ -1183,8 +1184,10 @@ sub submitNextJob {
 		foreach (@prev) {
 			my $prev_job=database->quick_select('job', {job_id => $_->{prev}});
 			my $prev_job_obj=from_json($prev_job->{agave_json});
-			my $typePath='__home__/' . $prev_job_obj->{archivePath};
-			my $prev_outputs=browse($typePath, $prev_job->{username}, 1);
+			my $prev_path=$prev_job_obj->{outputPath};
+			$prev_path=~s/$prev_job_obj->{owner}\///;
+			my $typePath='__output__/' . $prev_path;
+			my $prev_outputs=browse($typePath, $prev_job->{username});
 			#my $output_files=$job_ep->job_output_files($prev_job->{agave_id});
 			my (undef, $filename)=split /:/, $_->{input_name};
 			#foreach my $of (@$output_files) {

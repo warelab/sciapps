@@ -4,7 +4,6 @@ import React from 'react';
 import Reflux from 'reflux';
 import AppsFieldset from './appsFieldset.js';
 import BaseInput from './baseInput.js';
-import AppsBoolParam from './appsBoolParam.js';
 import AppsStore from '../stores/appsStore.js';
 import WorkflowStore from '../stores/workflowStore.js';
 import AppsActions from '../actions/appsActions.js';
@@ -174,13 +173,12 @@ const WorkflowRunnerForm=React.createClass({
 				return <AppsFieldset key={i} appDetail={appDetail} index={i} onValidate={onValidate} />;
 			});
 			let emailInput={
-				type: 'checkbox',
+				type: 'email',
 				required: false,
 				key: '_email',
 				id: '_email',
 				name: '_email',
-				default: 0,
-				label: 'Email Notification',
+				label: 'Email',
 				help: 'Optional Email notification upon job completeion'
 			};
 
@@ -199,7 +197,7 @@ const WorkflowRunnerForm=React.createClass({
 				<div>
 					<form ref={this.formName} >
 						{appsFieldsets}
-						<AppsBoolParam data={emailInput} />
+						<BaseInput data={emailInput} />
 						<BaseInput data={workflowJson} />
 						{submitBtn}
 						<span> or </span>

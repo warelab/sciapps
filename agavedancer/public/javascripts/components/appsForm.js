@@ -6,7 +6,6 @@ import _ from 'lodash';
 import Q from 'q';
 import {Panel, Button, Alert, Tooltip, OverlayTrigger} from 'react-bootstrap';
 import BaseInput from './baseInput.js';
-import AppsBoolParam from './appsBoolParam.js';
 import AppsParam from './appsParam.js';
 import AppsInput from './appsInput.js';
 import AppsActions from '../actions/appsActions.js';
@@ -30,6 +29,7 @@ const AppsForm=React.createClass({
 	},
 
 	componentWillUnmount () {
+		this.formData=undefined;
 		Dialog.resetOptions();
 	},
 
@@ -148,14 +148,13 @@ const AppsForm=React.createClass({
 			}
 		}
 		let emailInput={
-			type: 'checkbox',
+			type: 'email',
 			required: false,
 			key: '_email',
 			id: '_email',
 			name: '_email',
-			default: 0,
-			label: 'Email Notification',
-			help: 'Optional Email notification upon job completeion'
+			label: 'Email',
+			help: 'Optional Email notification upon job completeion',
 		};
 		let submitBtn=<Button bsStyle='primary' onClick={this.handleSubmit}>Submit Job</Button>; 
 		//if (user.logged_in) {

@@ -66,3 +66,4 @@ output_url:
   data.sciapps.org: 'https://data.sciapps.org'
   sciapps.org: 'https://data.sciapps.org/__path__'
   de.sciapps.org: 'https://data.sciapps.org'
+  data.iplantcollaborative.org: 'http://datacommons.cyverse.org/browse/__home__/__path__'

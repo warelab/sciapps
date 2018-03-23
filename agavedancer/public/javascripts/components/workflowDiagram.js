@@ -88,8 +88,6 @@ const WorkflowDiagram=React.createClass({
 
 	buildWorkflowDiagramDef: function(workflowStore, appsStore, jobsStore, workflowDirection) {
 		let setting=_config.setting;
-		let jobs=jobsStore.workflow.jobs;
-
 		let def;
 		let fileNode={};
 		let diagramDefStmts=['graph LR'];
@@ -127,12 +125,13 @@ const WorkflowDiagram=React.createClass({
 						return _.startsWith(op.name, value);
 					});
 					if (jobDetail) {
+						jobOwner=jobDetail.owner;
 						output_name=jobDetail.job_id;
 						if (output && jobDetail.status === 'FINISHED') {
 							if (jobDetail.archive) {
 								url=[jobDetail.archiveSystem, jobDetail.archivePath, output.name].join('/');
 							} else if (jobDetail.outputPath) {
-								url=[setting.archive_system, jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path), value].join('/');
+								url=[setting.archive_system, jobDetail.outputPath.replace(jobOwner, setting.archive_path), value].join('/');
 							}
 						}
 					} else {
@@ -147,6 +146,7 @@ const WorkflowDiagram=React.createClass({
 						let href=setting.output_url[splitUrl[1]];
 						if (href) {
 							href=href.replace(/__system__/, splitUrl[1]);
+							href=href.replace(/\/__home__/, setting.datastore.__home__.home);
 							href=href.replace(/__path__/, splitUrl[2]);
 							diagramDefStmts.push('click ' + output_name + ' "' + href + '" "' + (output ? output.name : value) + ' - click to open"');
 						} else {
@@ -240,15 +240,14 @@ const WorkflowDiagram=React.createClass({
 						}
 						WorkflowActions.saveWorkflow(wf);
 						this.setState({onSave: true});
+						Q.delay(1000).then(function() {
+							this.setState({onSave: false});
+						}.bind(this));
 					},
 					'btn-primary'
 				)
 			]
 		});
-
-		Q.delay(1000).then(function() {
-			this.setState({onSave: false});
-		}.bind(this));
 	},
 
 	render: function() {
@@ -321,10 +320,11 @@ const WorkflowDiagram=React.createClass({
 			}
 
 			let saveBtnTxt=this.state.onSave ? 'Saving' : 'Save Workflow';
-			if (workflowDetail && _.find(workflowStore.workflows, 'workflow_id', workflowDetail.id)) {
-				saveBtnTxt='Saved';
-			}
-			let saveBtn=user.logged_in ? <Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved'} bsStyle={saveBtnTxt === 'Saved' ? null : 'primary'}>{saveBtnTxt}</Button> : undefined;
+			//if (workflowDetail && _.find(workflowStore.workflows, 'workflow_id', workflowDetail.id)) {
+			//	saveBtnTxt='Saved';
+			//}
+			//let saveBtn=user.logged_in ? <Button onClick={saveBtnTxt === 'Saved' ? null : this.handleSave} disabled={saveBtnTxt === 'Saved'} bsStyle={saveBtnTxt === 'Saved' ? null : 'primary'}>{saveBtnTxt}</Button> : undefined;
+			let saveBtn=user.logged_in ? <Button onClick={this.handleSave} bsStyle={'primary'}>{saveBtnTxt}</Button> : undefined;
 			markup=(
 				<div>
 				<Modal dialogClassName={nodeClass} show={showWorkflowDiagram} onHide={this.hideWorkflowDiagram}>

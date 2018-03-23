@@ -356,7 +356,7 @@ const JobsStore=Reflux.createStore({
 			let jobPromise=jobIsCached && jobDetail ? Q(jobDetail) : this._setJob(jobId);
 			jobOutputsPromise=jobPromise.then(function(jobDetail) {
 				if ('FINISHED' === jobDetail.status && jobDetail.outputPath) {
-					let path='__output__/' + jobDetail.outputPath;
+					let path=jobDetail.archivePath ? '__home__/' + jobDetail.archivePath + '/?nopath=1' : '__output__/' + jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path) + '/?nopath=1';
 					//let path='__home__/' + jobDetail.archivePath + '/?nopath=1';
 					return Q(axios.get('/browse/' + path, {
 						headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -372,9 +372,14 @@ const JobsStore=Reflux.createStore({
 					return;
 				} else {
 					let data=res.data.data;
-					let results=data[0].list.filter(function(result) {
-						return ! result.name.startsWith('.');
-					});
+					let results=[];
+					try {
+						results=data[0].list.filter(function(result) {
+							return ! result.name.startsWith('.');
+						});
+					} catch(err) {
+					} finally {
+					};
 					for (let r of results) {
 						r.path=r.path.replace(setting.archive_home + '/', '');
 					}

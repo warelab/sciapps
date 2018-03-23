@@ -24,15 +24,23 @@ const JobsDetail=React.createClass({
 		let jobDetail=jobsStore.jobDetailCache[jobsStore.showJobId];
 		let showJob=jobsStore.showJob;
 		let markup=<div />;
-		let output_link;
+		//let output_link;
 		if (jobDetail) {
-			if (jobDetail.status && jobDetail.status === 'FINISHED') {
-				let archivePath=jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path);
-				let href=setting.output_url[setting.archive_system];
-				href=href.replace(/__system__/, setting.archive_system);
-				href=href.replace(/__path__/, archivePath);
-				output_link=(<a href={href} target='_blank'>{href}</a>);
-			}
+			//if (jobDetail.status && jobDetail.status === 'FINISHED') {
+			//	let href;
+			//	if (jobDetail.archivePath) {
+			//		let archivePath=jobDetail.archivePath.replace(jobDetail.owner, jobDetail.archivePath);
+			//		href=setting.output_url[jobDetail.archiveSystem];
+			//		href=href.replace(/__system__/, jobDetail.archiveSystem);
+			//		href=href.replace(/__path__/, archivePath);
+			//	} else if (jobDetail.outputPath) {
+			//		let archivePath=jobDetail.outputPath.replace(jobDetail.owner, setting.archive_path);
+			//		href=setting.output_url[setting.archive_system];
+			//		href=href.replace(/__system__/, setting.archive_system);
+			//		href=href.replace(/__path__/, archivePath);
+			//	}
+			//	output_link=(<a href={href} target='_blank'>{href}</a>);
+			//}
 			let job_info=(
 				<Table striped condensed hover>
 					<tbody>
@@ -42,7 +50,6 @@ const JobsDetail=React.createClass({
 						<tr key='job_info_submitTime'><th>Submitted on:</th><td>{jobDetail.submitTime ? toLocaleString(jobDetail.submitTime) : ''}</td></tr>
 						<tr key='job_info_startTime'><th>Started on:</th><td>{jobDetail.startTime ? toLocaleString(jobDetail.startTime) : ''}</td></tr>
 						<tr key='job_info_endTime'><th>Finished on:</th><td>{jobDetail.endTime ? toLocaleString(jobDetail.endTime) : ''}</td></tr>
-						<tr key='job_info_results'><th>Results:</th><td>{output_link}</td></tr>
 					</tbody>
 				</Table>
 			);

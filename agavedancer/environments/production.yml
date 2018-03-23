@@ -28,15 +28,16 @@ host_url: "https://www.sciapps.org"
 archive_system: 'sciapps.org'
 archive_home: '/agave_data'
 archive_path: 'results'
-input_system: 'halcott.cshl.edu'
-input_home: '/agave_data'
-input_path: 'inputs'
 email: 'noreply@sciapps.org'
 upload_suffix: ".upload"
 wf_step_prefix: 'wf_step_'
 maxRunTime: "96:00:00"
 defaultUser: 'maizecode'
 datastore:
+  __home__:
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: '__user__/sci_data'
   __CyVerse__:
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'

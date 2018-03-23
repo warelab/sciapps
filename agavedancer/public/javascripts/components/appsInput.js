@@ -71,7 +71,7 @@ const AppsInput=React.createClass({
 		} else if (dsItemPath === '') {
 			dsItemUrl='';
 		}
-		//if (dsItemUrl && dsItemUrl !== this.state.textValue) {
+		//if (dsItemUrl && dsItemUrl !== this.state.value) {
 		if (dsItemUrl !== undefined && dsItemUrl !== this.state.value) {
 			let value=this.state.value;
 			value[this.state.active]=dsItemUrl;
