@@ -178,11 +178,12 @@ const AppsStore=Reflux.createStore({
 	_showApp: function(appId, jobDetail) {
 		let appPromise=this._setApp(appId);
 		appPromise.then(function(appDetail) {
+			let app=_.cloneDeep(appDetail);
 			if (jobDetail) {
-				appDetail._jobDetail=jobDetail;
+				app._jobDetail=_.cloneDeep(jobDetail);
 			}
 			this.state.pageId='appsDeail';
-			this.state.appDetail=appDetail;
+			this.state.appDetail=app;
 			this.complete();
 		}.bind(this))
 		.catch(function(error) {
@@ -205,7 +206,7 @@ const AppsStore=Reflux.createStore({
 	setReload: function(value) {
 		if (value !== this.state.reload) {
 			this._setReload(value);
-			this.complete();
+			//this.complete();
 		}
 	},
 

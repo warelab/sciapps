@@ -118,7 +118,7 @@ const AppsForm=React.createClass({
 
 	render: function() {
 		let user=this.props.user;
-		let appDetail=_.cloneDeep(this.props.appDetail);
+		let appDetail=this.props.appDetail;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
 		let app_inputs=[], app_params=[], header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
 		let reload=this.props.reload;
@@ -127,7 +127,8 @@ const AppsForm=React.createClass({
 			let jobDetail=appDetail._jobDetail;
 			if (appDetail.inputs && appDetail.inputs.length) {
 				let sortedInputs=_.sortBy(appDetail.inputs, utilities.getValueOrder);
-				app_inputs=sortedInputs.map(function(input) {
+				app_inputs=sortedInputs.map(function(app_input) {
+					let input=_.cloneDeep(app_input);
 					if (jobDetail && jobDetail.inputs[input.id] !== undefined) {
 						//input.value.value=JSON.stringify(jobDetail.inputs[input.id]);
 						input.value.value=jobDetail.inputs[input.id];
@@ -139,7 +140,8 @@ const AppsForm=React.createClass({
 			}
 			if (appDetail.parameters &&  appDetail.parameters.length) {
 				let sortedParams=_.sortBy(appDetail.parameters, utilities.getValueOrder);
-				app_params=sortedParams.map(function(param) {
+				app_params=sortedParams.map(function(app_param) {
+					let param=_.cloneDeep(app_param);
 					if (jobDetail && jobDetail.parameters[param.id] !== undefined) {
 						param.value.value=jobDetail.parameters[param.id];
 					}

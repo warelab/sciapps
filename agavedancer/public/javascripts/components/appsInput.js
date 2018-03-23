@@ -20,7 +20,7 @@ const AppsInput=React.createClass({
 		} else {
 			dataValue=this.props.data.value.default;
 		}
-		if (dataValue) {
+		if (undefined !== dataValue) {
 			if (_.isArray(dataValue)) {
 				value=dataValue;
 				count=dataValue.length;
@@ -37,7 +37,8 @@ const AppsInput=React.createClass({
 	},
 
 	componentWillReceiveProps: function(nextProps) {
-		let reload=this.props.reload;
+		//let reload=this.props.reload;
+		let reload=nextProps.reload;
 		let value=[], count=1;
 		let dataValue;
 		if (reload === 'resubmit') {
@@ -45,7 +46,7 @@ const AppsInput=React.createClass({
 		} else if (reload === 'default') {
 			dataValue=nextProps.data.value.default;
 		}
-		if (dataValue) {
+		if (undefined !== dataValue) {
 			if (_.isArray(dataValue)) {
 				value=dataValue;
 				count=dataValue.length;
