@@ -18,7 +18,7 @@ const AppsGroup=React.createClass({
 	render: function() {
 		let appsStore=this.state.appsStore;
 		let apps=appsStore.apps;
-		let appGroup={Private: [], Public: []};
+		let appGroup={Private: []};
 		for (let app of apps) {
 			for (let tag of app.tags) {
 				if (! appGroup[tag]) {
