@@ -472,12 +472,12 @@ get qr{/file/(.*)} => sub {
 
 ajax '/job/:id' => sub {
 	#my $username=session('username') or raise InvalidCredentials => 'no username';
-	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
-	my $username=$user->{username};
+	#my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
+	#my $username=$user->{username};
 	my $job_id = param("id");
 	my $check=param("check");
 
-	my $job=retrieveJob($job_id, $username, $check);
+	my $job=retrieveJob($job_id, undef, $check);
 	$job ? to_json({status => 'success', data => $job}) : raise InvalidRequest => 'no jobs found';
 };
 
