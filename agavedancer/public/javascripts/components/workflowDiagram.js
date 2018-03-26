@@ -131,7 +131,7 @@ const WorkflowDiagram=React.createClass({
 							if (jobDetail.archive) {
 								url=[jobDetail.archiveSystem, jobDetail.archivePath, output.name].join('/');
 							} else if (jobDetail.outputPath) {
-								url=[setting.archive_system, jobDetail.outputPath.replace(jobOwner, setting.archive_path), value].join('/');
+								url=[setting.archive_system, jobDetail.outputPath.replace(jobOwner, setting.archive_path), output.name].join('/');
 							}
 						}
 					} else {
@@ -180,7 +180,7 @@ const WorkflowDiagram=React.createClass({
 							let href;
 							if (found && found[1]) {
 								href=setting.output_url["data.iplantcollaborative.org"];
-								href=href.replace(/\/__home__/, setting.archive_home);
+								href=href.replace(/\/__home__/, setting.datastore.__home__.home);
 								href=href.replace(/__path__/, found[1]);
 							} else {
 								href=ic;
