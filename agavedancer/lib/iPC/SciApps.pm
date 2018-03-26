@@ -1074,7 +1074,7 @@ sub archiveJob {
 sub submitQueuedJob {
 	my ($prev_job)=@_;
 	_updatePrevJob($prev_job);
-	my @next_job=database->quick_select('job', {agave_id => undef}, {order_by => 'id'});
+	my @next_job=database->quick_select('job', {agave_id => undef, id => {gt => $prev_job->{id}}}, {order_by => 'id'});
 	foreach my $next_job (@next_job) {
 		my $queue_length=setting('queue_length');
 		my $job_count=database->quick_count('job', "agave_id is not null and status not in ('FINISHED', 'KILLED', 'FAILED', 'STOPPED', 'ARCHIVING_FAILED')");
