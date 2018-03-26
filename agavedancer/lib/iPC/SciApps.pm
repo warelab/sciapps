@@ -327,7 +327,8 @@ ajax '/apps/:id' => sub {
 
 ajax '/apps' => sub {
 	my $apps=retrieveAppsFile();
-	my $app_list=retrieveAppsRemote();
+	#my $app_list=retrieveAppsRemote();
+	my $app_list=[];
 
 	foreach (@$app_list) {
 		my $tag=$_->{isPublic} ? 'Public' : 'Private';
