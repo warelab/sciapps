@@ -16,13 +16,14 @@ import Dialog from 'react-bootstrap-dialog';
 
 const AppsForm=React.createClass({
 	getInitialState: function() {
-		return { onSubmit: false, onValidate: false, required: {} };
+		return { onSubmit: false, onValidate: false, required: {}, update: true };
 	},
 
 	formName: 'agaveWebAppForm',
 
 	componentWillReceiveProps: function(nextProps) {
 		this.setState({
+			update: true,
 			onSubmit: false,
 			onValidate: false
 		});
@@ -70,7 +71,7 @@ const AppsForm=React.createClass({
 							'Submit',
 							() => {
 								JobsActions.submitJob(this.props.appDetail.id, formData);
-								this.setState({onValidate: false});
+								this.setState({onValidate: false, update: false});
 								Q.delay(1000).then(function() {
 									this.refs.dialog.showAlert('Submitted! Check History panel for status');
 								}.bind(this));
@@ -121,7 +122,7 @@ const AppsForm=React.createClass({
 		let appDetail=this.props.appDetail;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
 		let app_inputs=[], app_params=[], header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
-		let reload=this.props.reload;
+		let reload=this.props.reload && this.state.update;
 
 		if (appDetail && undefined !== appDetail.name) {
 			let jobDetail=appDetail._jobDetail;

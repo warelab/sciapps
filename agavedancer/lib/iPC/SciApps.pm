@@ -315,7 +315,7 @@ sub browse_ls {
 			is_root => $_ ? 0 : 1,
 			path => $_,
 			list => $dir_list->{$_},
-		}, keys %$dir_list];
+		}, sort keys %$dir_list];
 }
 
 ajax '/apps/:id' => sub {
