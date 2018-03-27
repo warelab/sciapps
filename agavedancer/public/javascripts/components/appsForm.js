@@ -36,7 +36,7 @@ const AppsForm=React.createClass({
 
 	handleSubmit: function() {
 		dsActions.clearDataStoreItem();
-		this.setState({onSubmit: true, onValidate: true});
+		this.setState({onSubmit: true, onValidate: true, update: false});
 		let setting=_config.setting;
 		let required=[];
 		let appDetail=this.props.appDetail;
@@ -71,7 +71,7 @@ const AppsForm=React.createClass({
 							'Submit',
 							() => {
 								JobsActions.submitJob(this.props.appDetail.id, formData);
-								this.setState({onValidate: false, update: false});
+								this.setState({onValidate: false});
 								Q.delay(1000).then(function() {
 									this.refs.dialog.showAlert('Submitted! Check History panel for status');
 								}.bind(this));
@@ -122,7 +122,7 @@ const AppsForm=React.createClass({
 		let appDetail=this.props.appDetail;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
 		let app_inputs=[], app_params=[], header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
-		let reload=this.props.reload && this.state.update;
+		let reload=this.state.update ? this.props.reload : undefined;
 
 		if (appDetail && undefined !== appDetail.name) {
 			let jobDetail=appDetail._jobDetail;
