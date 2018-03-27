@@ -157,7 +157,7 @@ const AppsForm=React.createClass({
 			id: '_email',
 			name: '_email',
 			label: 'Email',
-			help: 'Optional Email notification upon job completeion',
+			help: 'Optional Email notification upon job completion',
 		};
 		let submitBtn=<Button bsStyle='primary' onClick={this.handleSubmit}>Submit Job</Button>; 
 		//if (user.logged_in) {

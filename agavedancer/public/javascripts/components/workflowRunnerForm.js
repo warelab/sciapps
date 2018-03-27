@@ -179,7 +179,7 @@ const WorkflowRunnerForm=React.createClass({
 				id: '_email',
 				name: '_email',
 				label: 'Email',
-				help: 'Optional Email notification upon job completeion'
+				help: 'Optional Email notification upon job completion'
 			};
 
 			let workflowJson={
