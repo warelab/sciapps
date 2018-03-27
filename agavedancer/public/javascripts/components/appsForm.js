@@ -16,13 +16,14 @@ import Dialog from 'react-bootstrap-dialog';
 
 const AppsForm=React.createClass({
 	getInitialState: function() {
-		return { onSubmit: false, onValidate: false, required: {} };
+		return { onSubmit: false, onValidate: false, required: {}, update: true };
 	},
 
 	formName: 'agaveWebAppForm',
 
 	componentWillReceiveProps: function(nextProps) {
 		this.setState({
+			update: true,
 			onSubmit: false,
 			onValidate: false
 		});
@@ -35,7 +36,7 @@ const AppsForm=React.createClass({
 
 	handleSubmit: function() {
 		dsActions.clearDataStoreItem();
-		this.setState({onSubmit: true, onValidate: true});
+		this.setState({onSubmit: true, onValidate: true, update: false});
 		let setting=_config.setting;
 		let required=[];
 		let appDetail=this.props.appDetail;
@@ -127,7 +128,7 @@ const AppsForm=React.createClass({
 		let appDetail=this.props.appDetail;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
 		let app_inputs=[], app_params=[], header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
-		let reload=this.props.reload;
+		let reload=this.state.update ? this.props.reload : undefined;
 
 		if (appDetail && undefined !== appDetail.name) {
 			let jobDetail=appDetail._jobDetail;
