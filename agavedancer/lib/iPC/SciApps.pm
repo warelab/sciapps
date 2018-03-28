@@ -356,7 +356,7 @@ sub retrieveAppsFile {
 
 sub retrieveAppsRemote {
 	my $user=session('cas_user') or return [];
-	my ($app_id)=@_;
+	my ($app_id, $save)=@_;
 	my $return;
 	my $api = getAgaveClient();
 	if ($api) {
@@ -367,7 +367,8 @@ sub retrieveAppsRemote {
 				$return=$apps->find_by_id($app_id);
 				last if (!$return->{inputs} || defined($return->{inputs}[0]{value}{visible})) && (!$return->{parameters} || defined($return->{parameters}[0]{value}{visible})); 
 			}
-			try {
+			
+			$save and try {
 				my $file=setting("appdir") . '/public/assets/' . $app_id . '.json';
 				unless (-f $file) {
 					open FILE, ">", $file or error("Error: can't open $file, $!");
