@@ -175,13 +175,13 @@ const WorkflowDiagram=React.createClass({
 							let url=ic.replace('agave://', '');
 							let input_name=url.replace(/\W/g, '_').toLowerCase();
 							diagramDefStmts.push(input_name + '(' + utilities.truncate(value) + '); class ' + input_name + ' fileNode');
-							let reg=new RegExp('agave://data.iplantcollaborative.org/(.+)', 'i');
+							let reg=new RegExp('agave://([^\/]+)/(.+)', 'i');
 							let found=ic.match(reg);
 							let href;
-							if (found && found[1]) {
-								href=setting.output_url["data.iplantcollaborative.org"];
+							if (found && found[1] && setting.output_url[found[1]]) {
+								href=setting.output_url[found[1]];
 								href=href.replace(/\/__home__/, setting.datastore.__home__.home);
-								href=href.replace(/__path__/, found[1]);
+								href=href.replace(/__path__/, found[2]);
 							} else {
 								href=ic;
 							}
