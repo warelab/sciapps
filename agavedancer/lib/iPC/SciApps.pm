@@ -356,7 +356,8 @@ sub retrieveAppsFile {
 
 sub retrieveAppsRemote {
 	my $user=session('cas_user') or return [];
-	my ($app_id, $save)=@_;
+	my $save=setting('appsLocalCache');
+	my ($app_id)=@_;
 	my $return;
 	my $api = getAgaveClient();
 	if ($api) {
