@@ -23,7 +23,7 @@ const AppsItem=React.createClass({
 	render: function() {
 		return (
 			<ListGroupItem onClick={this.showApp}>
-				{this.props.data.name}
+				{this.props.data.id}
 			</ListGroupItem>
 		);
 	}

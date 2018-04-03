@@ -22,7 +22,7 @@ use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/host_url output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path/;
+our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path/;
 our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError SystemError/;
 
 foreach my $exception (@EXCEPTIONS) {
@@ -343,6 +343,7 @@ sub retrieveAppsFile {
 
 sub retrieveAppsRemote {
 	my $username=session('username') or return [];
+	my $save=setting('appsLocalCache');
 	my ($app_id)=@_;
 	my $return;
 	my $api = getAgaveClient();
@@ -354,7 +355,7 @@ sub retrieveAppsRemote {
 				$return=$apps->find_by_id($app_id);
 				last if (!$return->{inputs} || defined($return->{inputs}[0]{value}{visible})) && (!$return->{parameters} || defined($return->{parameters}[0]{value}{visible})); 
 			}
-			try {
+			$save and try {
 				my $file=setting("appdir") . '/public/assets/' . $app_id . '.json';
 				unless (-f $file) {
 					open FILE, ">", $file or error("Error: can't open $file, $!");

@@ -9,7 +9,16 @@ import AppsActions from  '../actions/appsActions.js';
 import {Button} from 'react-bootstrap';
 
 const JobsMessage=React.createClass({
-	mixins: [Reflux.connect(JobsStore, 'jobsStore')],
+	//mixins: [Reflux.connect(JobsStore, 'jobsStore')],
+	mixins: [Reflux.listenTo(JobsStore, 'handleJobsStoreChange')],
+
+	getInitialState: function() {
+		return {jobsNum: 0};
+	},
+
+	handleJobsStoreChange: function(jobsStore) {
+		this.setState({jobsNum: jobsStore.jobs.length});
+	},
 
 	showWorkflows: function() {
 		AppsActions.showPage('workflows');
@@ -36,10 +45,10 @@ const JobsMessage=React.createClass({
 	},
 
 	render: function () {
-		let numJobs=this.state.jobsStore.jobs.length;
+		let jobsNum=this.state.jobsNum;
 		let message;
-		if (numJobs>0) {
-			message=<span>{"Total " + numJobs + " jobs, select 2 or more jobs to "}<Button bsStyle='link' onClick={this.showWorkflowBuilder}>build a workflow</Button></span>;
+		if (jobsNum) {
+			message=<span>{"Total " + jobsNum + " jobs, select 2 or more jobs to "}<Button bsStyle='link' onClick={this.showWorkflowBuilder}>build a workflow</Button></span>;
 		} else {
 			message=<span>{"History is empty. You can start with a "}<Button bsStyle='link' onClick={this.showWorkflows}>public workflow</Button></span>;
 		}
