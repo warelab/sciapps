@@ -45,33 +45,44 @@ const AppsStore=Reflux.createStore({
 		};
 	},
 
-	listApps: function(searchString) {
+	listApps: function(searchString, mode) {
 		this.state.searchString=searchString;
-		let promise=this._listApps();
+		let promise=this._listApps(mode);
 		promise.then(function() {
 			this.complete();
 		}.bind(this));
 	},
 
-	_listApps: function() {
+	_listApps: function(mode) {
+		let apps=this.state.appsCache;
 		let setting=_config.setting;
+		let param='';
+		if (mode === 'local') {
+			param='?mode=local';
+		} else if (mode === 'remote') {
+			param='?mode=remote';
+		}
 		let appPromise;
-		appPromise=Q(axios.get('/apps', {
-			headers: {'X-Requested-With': 'XMLHttpRequest'},
-		}))
-		.then(function(res) {
-			if (res.data.error) {
-				console.log(res.data.error);
-				return;
-			} else {
-				let data=res.data.data || res.data;
-				this.state.appsCache=data;
-				return data;
-			}
-		}.bind(this));
+		if (! mode && apps && apps.length) {
+			appPromise=Q(apps);
+		} else {
+			appPromise=Q(axios.get('/apps' + param, {
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+			}))
+			.then(function(res) {
+				if (res.data.error) {
+					console.log(res.data.error);
+					return;
+				} else {
+					let data=res.data.data || res.data;
+					this.state.appsCache=_.union(this.state.appsCache, data);
+					return data;
+				}
+			}.bind(this));
+		}
 		return appPromise.then(function(appsList) {
 			if (appsList) {
-				this.state.apps=appsList;
+				this.state.apps=this.state.appsCache;
 				this.filterApps();
 				return appsList;
 			}
@@ -141,6 +152,7 @@ const AppsStore=Reflux.createStore({
 			appPromise=Q(axios.get('/apps/' + appId, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'}
 			}))
+			//appPromise=Q(axios.get('/assets/' + appId + '.json'))
 			.then(function(res) {
 				if (res.data.error) {
 					console.log(res.data.error);

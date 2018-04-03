@@ -66,5 +66,6 @@ datastore_types: ['CyVerse', 'exampleData']
 uncompress_suffix: '.open.tar.gz'
 irodsEnvFile: '/usr/share/httpd/irodsEnv'
 appsLocalCache: 0
+appsListMode: ['local']
 defaultAppsList: 'public/assets/agaveAppsList.json'
 queue_length: 3
