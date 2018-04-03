@@ -99,17 +99,7 @@ const AppsStore=Reflux.createStore({
 		}
 	},
 
-	setWorkflowApps: function(appIds, wid) {
-		let promise=this.setApps(appIds);
-		promise.then(function() {
-			if (wid !== undefined) {
-				this.state.wid[wid]=true;
-				this.complete();
-			}
-		}.bind(this));
-	},
-
-	setApps: function(appIds) {
+	setApps: function(appIds, wid) {
 		let funcs=appIds.map(function(appId) {
 			return function() {
 				return this._setApp(appId).then(function(app) {
@@ -119,7 +109,12 @@ const AppsStore=Reflux.createStore({
 		}.bind(this));
 
 		let promise=funcs.reduce(Q.when, Q(1)).then(function() {
-			this.complete();
+			if (appIds.length) { 
+				if (wid !== undefined) {
+					this.state.wid[wid]=true;
+				}
+				this.complete();
+			}
 		}.bind(this));
 		return promise;
 	},

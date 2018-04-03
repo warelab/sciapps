@@ -11,7 +11,7 @@ const AppsList=React.createClass({
 		let apps, appsItemNodes;
 		apps=this.props.apps;
 		if (apps && apps.length) {
-			appsItemNodes = _.sortBy(apps, 'name').map(function (appsItem) {
+			appsItemNodes = _.uniq(_.sortBy(apps, 'id'), true, 'id').map(function (appsItem) {
 				return (
 					<AppsItem key={appsItem.id} data={appsItem} />
 				);

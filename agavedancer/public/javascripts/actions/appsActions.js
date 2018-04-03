@@ -11,7 +11,7 @@ const AppsActions=Reflux.createActions([
 	'setApp',
 	'setReload',
 	'resetState',
-	'setWorkflowApps',
+	'setApps',
 	'resetWorkflowApps',
 	'showPage'
 ]);

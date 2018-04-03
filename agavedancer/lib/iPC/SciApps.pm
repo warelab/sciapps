@@ -283,7 +283,7 @@ sub browse_ils {
 			is_root	=> $_ ? 0 : 1,
 			path 	=> $_,
 			list 	=> $dir_list->{$_},
-		}, keys %$dir_list];
+		}, sort keys %$dir_list];
 }
 
 sub browse_files {
@@ -366,6 +366,7 @@ sub retrieveAppsFile {
 
 sub retrieveAppsRemote {
 	my $user=session('cas_user') or return [];
+	my $save=setting('appsLocalCache');
 	my ($app_id)=@_;
 	my $return;
 	my $api = getAgaveClient();
@@ -377,7 +378,7 @@ sub retrieveAppsRemote {
 				$return=$apps->find_by_id($app_id);
 				last if (!$return->{inputs} || defined($return->{inputs}[0]{value}{visible})) && (!$return->{parameters} || defined($return->{parameters}[0]{value}{visible})); 
 			}
-			try {
+			$save and try {
 				my $file=setting("appdir") . '/public/assets/' . $app_id . '.json';
 				unless (-f $file) {
 					open FILE, ">", $file or error("Error: can't open $file, $!");
@@ -917,8 +918,6 @@ sub prepareJob {
 	#$job_form{archiveSystem}=$archive_system;
 	#$job_form{archivePath}=$archive_path;
 	$job_form{notifications}=$notifications;
-
-
 
 	my $job_json=to_json(\%job_form);
 	my $wfid=$form->{'_workflow_id'};
