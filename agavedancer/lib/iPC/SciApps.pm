@@ -22,7 +22,7 @@ use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path/;
+our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode/;
 our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError SystemError/;
 
 foreach my $exception (@EXCEPTIONS) {
@@ -316,10 +316,12 @@ ajax '/apps/:id' => sub {
 };
 
 ajax '/apps' => sub {
-	my $apps=retrieveAppsFile();
-	my $app_list=retrieveAppsRemote();
+	my $mode=param('mode');
+	my $local=! $mode || $mode eq 'local' ? retrieveAppsFile() : [];
+	my $remote=! $mode || $mode eq 'remote' ? retrieveAppsRemote() : [];
 
-	foreach (@$app_list) {
+	my $apps=$local;
+	foreach (@$remote) {
 		my $tag=$_->{isPublic} ? 'Public' : 'Private';
 		$_->{tags}||=[];
 		push @{$_->{tags}}, $tag;

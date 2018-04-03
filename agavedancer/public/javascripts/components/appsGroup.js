@@ -12,9 +12,9 @@ const AppsGroup=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore')],
 
 	componentDidMount: function() {
-		if (this.props.user.logged_in) {
-			AppsActions.debouncedListApps();
-		}
+		let setting=_config.setting;
+		let mode=setting.appsListMode || [''];
+		mode.forEach((value) => AppsActions.listApps('', value));
 	},
 
 	render: function() {
