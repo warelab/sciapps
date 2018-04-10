@@ -123,7 +123,7 @@ const AppsInput=React.createClass({
 		let prefix=data.value.required ? '*' : '';
 		let suffix=setting['upload_suffix'] || '.upload';
 		let markup;
-		if (! data.value.visible) {
+		if (data.value.visible === false) {
 			let props={
 				key: data.id,
 				name: data.id,
