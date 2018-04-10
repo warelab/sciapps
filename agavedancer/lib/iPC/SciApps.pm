@@ -523,6 +523,8 @@ sub retrieveJob {
 				#submitQueuedJob({job_id => $job_id, %data});
 				submitNextJob({job_id => $job_id, %data});
 				shareOutput({job_id => $job_id, %data});
+			} elsif ($job->{status} eq 'FAILED') {
+				terminateNextJob({job_id => $job_id, %data});
 			}
 		}
 	}
@@ -1137,8 +1139,28 @@ sub _submitNextJob {
 	}
 }
 
+sub terminateNextJob {
+	my ($prev)=@_;
+	my @next=database->quick_select('nextstep', {prev => $prev->{job_id}, status => 0});
+	if (scalar @next) {
+		try {
+			my $sth = database->prepare("update job set status = 'FAILED' where job_id = ?");
+			foreach my $next (@next) {
+				$sth->execute($next->{job_id});
+			}
+		};
+		foreach my $next (@next) {
+			terminateNextJob($next);
+		}
+	}
+}
+
 sub submitNextJob {
 	my ($prev)=@_;
+
+	my $apif = getAgaveClient();
+	my $apps = $apif->apps;
+	my $job_ep = $apif->job;
 
 	my $jobObj=from_json($prev->{agave_json});
 	#my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->{executionSystem}, $jobObj->{outputPath});
