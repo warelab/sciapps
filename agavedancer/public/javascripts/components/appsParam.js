@@ -31,7 +31,7 @@ const AppsParam=React.createClass({
 			value: param.value.value,
 			default: param.value.default
 		};
-		if (! param.value.visible) {
+		if (param.value.visible === false) {
 			props.type='hidden';
 		} else {
 			let prefix=param.value.required ? '*' : '';

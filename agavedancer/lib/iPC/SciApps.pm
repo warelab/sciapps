@@ -538,6 +538,8 @@ sub retrieveJob {
 				#submitQueuedJob({job_id => $job_id, %data});
 				submitNextJob({job_id => $job_id, %data});
 				shareOutput({job_id => $job_id, %data});
+			} elsif ($job->{status} eq 'FAILED') {
+				terminateNextJob({job_id => $job_id, %data});
 			}
 		}
 	}
@@ -1167,6 +1169,22 @@ sub _submitNextJob {
 		database->quick_update('job', {job_id => $next_job->{job_id}}, {job_json => to_json($job_form)});
 		my ($app) = $apps->find_by_id($next_job->{app_id});
 		my ($res, $err)=submitJob($next_job->{username}, $apif, $app, $next_job->{job_id}, $job_form);
+	}
+}
+
+sub terminateNextJob {
+	my ($prev)=@_;
+	my @next=database->quick_select('nextstep', {prev => $prev->{job_id}, status => 0});
+	if (scalar @next) {
+		try {
+			my $sth = database->prepare("update job set status = 'FAILED' where job_id = ?");
+			foreach my $next (@next) {
+				$sth->execute($next->{job_id});
+			}
+		};
+		foreach my $next (@next) {
+			terminateNextJob($next);
+		}
 	}
 }
 
