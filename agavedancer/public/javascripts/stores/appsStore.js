@@ -15,7 +15,7 @@ const AppsStore=Reflux.createStore({
 
 	init: function() {
 		this._resetState();
-		this.debouncedListApps=_.debounce((searhString) => { this.listApps(searhString) }, 200);
+		this.debouncedListApps=_.debounce((searhString, mode) => { this.listApps(searhString, mode) }, 200);
 	},
 
 	getInitialState: function() {
