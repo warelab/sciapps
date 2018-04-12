@@ -76,7 +76,8 @@ const UserStore=Reflux.createStore({
 					this.resetUser();
 				}
 			}
-			AppsActions.debouncedListApps('', 'remote');
+			let mode=setting.appsListMode || [''];
+			mode.forEach((value) => AppsActions.listApps('', value));
 			this.complete();
 		}.bind(this))
 		.catch(function(error) {
