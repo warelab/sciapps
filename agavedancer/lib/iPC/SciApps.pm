@@ -1175,6 +1175,7 @@ sub terminateNextJob {
 			foreach my $next (@next) {
 				terminateNextJob($next);
 			}
+		}
 	}
 }
 
