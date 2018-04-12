@@ -11,7 +11,7 @@ logger: "file"
 warnings: 1
 
 # hide errors 
-show_errors: 1
+show_errors: 0
 
 # cache route resolution for maximum performance
 route_cache: 1
@@ -24,12 +24,10 @@ route_cache: 1
 
 # production config
 agave_config: ".agave"
-host_url: "https://www.sciapps.org"
 archive_system: 'sciapps.org'
 archive_home: '/agave_data'
 archive_path: 'results'
 email: 'noreply@sciapps.org'
-upload_suffix: ".upload"
 wf_step_prefix: 'wf_step_'
 maxRunTime: "96:00:00"
 defaultUser: 'maizecode'
