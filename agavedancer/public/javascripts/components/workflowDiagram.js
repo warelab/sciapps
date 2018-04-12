@@ -84,7 +84,7 @@ const WorkflowDiagram=React.createClass({
 								url=[jobDetail.archiveSystem, jobDetail.archivePath].join('/');
 							} else if (jobDetail.outputPath) {
 								//url=[setting.archive_system, jobDetail.outputPath.replace('/', '/sci_data/results/'), output.name].join('/');
-								url=[setting.archive_system, jobDetail.outputPath.replace('/', '/sci_data/results/')].join('/');
+								url=[setting.archive_system, jobDetail.outputPath.replace('maizecode/', 'results/')].join('/');
 							}
 						}
 					} else {
