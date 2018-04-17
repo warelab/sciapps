@@ -45,12 +45,14 @@ const UserStore=Reflux.createStore({
 	},
 
 	resetUser: function() {
+		let setting=_config.setting;
 		this._resetState();
 		AppsActions.resetState('welcome');
 		JobsActions.resetState();
 		WorkflowActions.resetState();
 		DsActions.resetState();
-		AppsActions.debouncedListApps();
+		let mode=setting.appsListMode || [''];
+		mode.forEach((value) => AppsActions.listApps('', value));
 	},
 
 	setUser: function(reset) {
