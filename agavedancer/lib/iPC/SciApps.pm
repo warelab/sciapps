@@ -368,7 +368,7 @@ sub retrieveAppsRemote {
 			my $retry=2;
 			foreach (0 .. $retry) {
 				$return=$apps->find_by_id($app_id);
-				last if (!$return->{inputs} || defined($return->{inputs}[0]{value}{visible})) && (!$return->{parameters} || defined($return->{parameters}[0]{value}{visible})); 
+				last if (!$return->{inputs} || ! $return->{inputs}[0] || defined($return->{inputs}[0]{value}{visible})) && (!$return->{parameters} || ! $return->{parameters}[0] || defined($return->{parameters}[0]{value}{visible}));
 			}
 			
 			$save and try {
