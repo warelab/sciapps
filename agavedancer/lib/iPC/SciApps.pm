@@ -174,9 +174,14 @@ ajax '/login' => sub {
 	my $user={username => param("username"), password => param("password")};
 	$user=agave_login($user);
 	my %data=map { $_ => $user->{$_} } qw/username/;
+	my $datastore_path=setting('datastore')->{__home__}{path};
+	$datastore_path=~s/__user__\///;
+	my $apif=getAgaveClient();
+	my $io = $apif->io;
 	try {
 		database->quick_insert('user', \%data);
 		database->quick_insert('login', {username => $user->{username}});
+		$io->mkdir('/' . $user->{username}, $datastore_path);
 	};
 	to_json($user);
 };
