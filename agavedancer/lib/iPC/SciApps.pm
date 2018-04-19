@@ -929,6 +929,12 @@ sub prepareJob {
 		error("Error: can not mkdir $archive_home/$job_form{archivePath}, @_");
 	};
 
+	$cmd="export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ils -A $archive_home/$archive_path | grep ACL | grep $username";
+	unless (scalar (`$cmd`)) {
+		$cmd="export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ichmod -r own $username $archive_home/$archive_path";
+		system($cmd);
+	}
+
 	my $job_json=to_json(\%job_form);
 	my $wfid=$form->{'_workflow_id'};
 	my $data={username => $username, job_id => $job_id, app_id => $app_id, job_json => $job_json, status => 'PENDING'};
