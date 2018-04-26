@@ -79,7 +79,7 @@ const WorkflowDiagram=React.createClass({
 						output_name=jobDetail.job_id;
 						//if (output && jobDetail.status === 'FINISHED') {
 						if (jobDetail.status === 'FINISHED') {
-							if (jobDetail.archive) {
+							if (jobDetail.archivePath) {
 								//url=[jobDetail.archiveSystem, jobDetail.archivePath, output.name].join('/');
 								url=[jobDetail.archiveSystem, jobDetail.archivePath].join('/');
 							} else if (jobDetail.outputPath) {
