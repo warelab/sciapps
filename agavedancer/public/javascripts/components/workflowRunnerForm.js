@@ -150,7 +150,8 @@ const WorkflowRunnerForm=React.createClass({
 					}
 					inputs.forEach(function (ic) {
 						if (_.isPlainObject(ic)) {
-							v.value.default.push((setting.wf_step_prefix + ic.step + ':' + ic.output_name).toLowerCase());
+							//v.value.default.push((setting.wf_step_prefix + ic.step + ':' + ic.output_name).toLowerCase());
+							v.value.default.push(setting.wf_step_prefix + ic.step + ':' + ic.output_name);
 						} else if (ic) {
 							v.value.default.push(ic);
 						}
