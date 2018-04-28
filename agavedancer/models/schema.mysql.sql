@@ -66,7 +66,7 @@ create table job (
 	id integer primary key auto_increment,
 	job_id varchar(40) unique not null,
 	agave_id varchar(40) unique,
-	app_id varchar(40) not null,
+	app_id varchar(100) not null,
 	job_json text,
 	agave_json text,
 	status varchar(40),
