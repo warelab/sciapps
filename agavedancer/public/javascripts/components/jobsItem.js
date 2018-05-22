@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import _ from 'lodash';
 import JobsActions from '../actions/jobsActions.js';
 import {ListGroup, ListGroupItem, Button, ButtonToolbar, Tooltip, OverlayTrigger, Panel, Glyphicon} from 'react-bootstrap';
 
@@ -33,6 +34,13 @@ const JobsItem=React.createClass({
 		}
 	},
 
+	visualizeJobOutputs: function() {
+		if (this.props.job.job_id) {
+			JobsActions.stageJobOutputs(this.props.job.job_id);
+		}
+		this.showJobOutputs();
+	},
+
 	handleCheck: function() {
 		let checked=!this.state.checked;
 		if (checked) {
@@ -46,6 +54,7 @@ const JobsItem=React.createClass({
 		let app=this.props.app;
 		let job=this.props.job
 		let outputs=this.props.outputs;
+		let staged=this.props.staged;
 		let setting=_config.setting;
 		let appId=job.appId;
 		let jobId=job.job_id;
@@ -62,6 +71,7 @@ const JobsItem=React.createClass({
 		let enableCheck=true;
 		//let outputsItemNodes='Loading ...';
 		let checkedGlyph=this.state.checked ? 'check' : 'unchecked';
+		let tooltipvis = (<Tooltip id="tooltipvis">Visualize Outputs</Tooltip>);
 		let tooltipout = (<Tooltip id="tooltipout">Display Outputs</Tooltip>);
 		let tooltipsta = (<Tooltip id="tooltipsta">Job Status</Tooltip>);
 		let tooltipres = (<Tooltip id="tooltipres">Relaunch Job</Tooltip>);
@@ -85,9 +95,18 @@ const JobsItem=React.createClass({
 				}
 				href=href.replace(/__owner__/, job.owner);
 				href=href.replace(/\/__home__/, setting.datastore.__home__.home);
+				let linkBtn, visualBtn;
+				linkBtn=<a href={href} target='_blank'>{oname}</a>
+				if (staged && _.includes(staged.list, oname)) {
+					let visualhref=setting.output_url[staged.system];
+					visualhref=visualhref.replace(/__path__/, staged.path + '/' + oname);
+					visualBtn=<Button key='visual' bsSize='small' bsStyle='info' href={visualhref} target='_blank'><Glyphicon glyph='play-circle' /></Button>
+				}
 
 				return (
-					<ListGroupItem key={i}><a href={href} target='_blank'>{oname}</a></ListGroupItem>
+					<ListGroupItem key={i}>
+						{linkBtn} {visualBtn}
+					</ListGroupItem>
 				);
 			});
 		}
@@ -97,6 +116,9 @@ const JobsItem=React.createClass({
 				<ButtonToolbar>
 					<OverlayTrigger placement="bottom" overlay={tooltipout}>
 						<Button key='outputs' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.showJobOutputs} >{displayName}</Button>
+					</OverlayTrigger>
+					<OverlayTrigger placement="bottom" overlay={tooltipvis}>
+			    	<Button key='visual' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed || job.status !== 'FINISHED'} onClick={isSubmitting || isFailed ? null : this.visualizeJobOutputs} ><Glyphicon glyph='film' /></Button>
 					</OverlayTrigger>
 					<OverlayTrigger placement="bottom" overlay={tooltipres}>
 			    	<Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.resubmitJob} ><Glyphicon glyph='repeat' /></Button>

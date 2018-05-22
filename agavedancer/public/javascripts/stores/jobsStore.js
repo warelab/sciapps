@@ -35,6 +35,7 @@ const JobsStore=Reflux.createStore({
 			workflowBuilderJobIndex: [],
 			jobDetail: {},
 			jobOutputs: {},
+			jobOutputsStaged: {},
 			jobDetailCache: {},
 			wid: {},
 			fileDetailCache: {},
@@ -412,6 +413,28 @@ const JobsStore=Reflux.createStore({
 			console.log(error);
 		})
 		.done();
+	},
+
+	stageJobOutputs: function(jobId) {
+		let stagePromise=Q(axios.get('/job/' + jobId + '/stageJobOutputs', {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+			if (res.data.error) {
+				console.log(res.data.error);
+				return;
+			} else {
+				let data=res.data.data;
+				this.state.jobOutputsStaged[jobId]=data.target;
+				this.complete();
+				return res.data;
+			}
+		}.bind(this))
+		.catch(function(error) {
+			console.log(error);
+		})
+		.done();
+		return stagePromise;
 	},
 
 	setFile: function(fileId, path) {

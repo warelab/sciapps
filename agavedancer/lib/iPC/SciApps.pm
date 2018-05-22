@@ -20,6 +20,7 @@ use Agave::Client::Client ();
 use File::Copy ();
 use Archive::Tar ();
 use FindBin;
+use File::Basename;
 
 our $VERSION = '0.2';
 our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode/;
@@ -800,6 +801,15 @@ ajax '/job/:id/delete' => sub {
 	to_json({status => 'success', data => {job_id => $job_id}}); 
 };
 
+ajax '/job/:id/stageJobOutputs' => sub {
+	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
+	my $job_id = param("id");
+	my $username=$user->{username};
+	my $job=database->quick_select('job', {job_id => $job_id});
+	my $result=stageJobOutputs($job);
+	to_json({status => 'success', data => {job_id => $job_id, target => $result}});
+};
+
 sub prepareJob {
 	my ($username, $app, $form, $step, $step_form, $prev_job)=@_;
 	my $app_id=$app->{id};
@@ -1036,6 +1046,9 @@ sub resubmitJob {
 	my ($res, $err)=submitJob($job->{username}, $apif, $app, $job->{job_id}, $job_form);
 }
 
+any ['get', 'post'] => '/notificationFile/:id' => sub {
+};
+
 any ['get', 'post'] => '/notification/:id' => sub {
 	my $params=params;
 	my $jobObj=retrieveJob($params->{id});
@@ -1061,6 +1074,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 		#submitNextJob($job);
 		#shareOutput($job, $user);
 		#archiveJob($job);
+		#stageJobOutputs($job);
 	} elsif ($params->{status} eq 'FAILED') {
 		#resubmitJob($params->{id});
 	} elsif ($params->{status} eq 'STAGED') {
@@ -1068,7 +1082,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 	}
 	return;
 };
- 
+
 sub shareOutputByAgave {
 	my ($job)=@_;
 
@@ -1099,6 +1113,45 @@ sub shareJob {
 	my $apif = getAgaveClient();
 	my $job_ep = $apif->job;
 	my $res=$job_ep->share_job($job->{agave_id}, 'public', 'READ');
+}
+
+sub stageJobOutputs {
+	my ($job)=@_;
+	my @file_types=@{setting('visual_file_types') || []};
+	my $username=$job->{username};
+	my $visual=setting("datastore")->{__visual__};
+	my ($visual_system, $visual_path)=($visual->{system}, $visual->{path});
+
+	my $apif = getAgaveClient();
+	my $io = $apif->io;
+	my $jobObj=from_json($job->{agave_json});
+	my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->{archiveSystem}, $jobObj->{archivePath});
+	my $target=sprintf("/system/%s/%s", $visual_system, $visual_path);
+	my $archivePath=setting("archive_path");
+	$archivePath=~s/__user__/$username/;
+	my $path=$jobObj->{archivePath};
+	$path=~s#$archivePath/##;
+	my $typePath='__home__/' . $jobObj->{archivePath};
+	my $outputs=browse($typePath, $username, 1);
+	
+	my $res=$io->mkdir($target, $path);
+	my $visualPath=$target . '/' . $path;
+	my $visualTypePath=$visualPath;
+	$visualTypePath=~s#/system#__system__#;
+	my $visual_files=browse($visualTypePath);
+	my %visual_files_hash=map { $_->{name} => 1 } @{$visual_files->[0]{list}};
+	my @list;
+	foreach my $item (@{$outputs->[0]{list}}) {
+		my ($name,$path,$suffix) = fileparse($item->{name}, @file_types);
+		if ($suffix) {
+			push @list, $item->{name};
+			if (! exists $visual_files_hash{$item->{name}}) {
+				my $itemSource=$source . '/' . $item->{name};
+				$res=$io->import_file($visualPath, {urlToIngest => $itemSource});
+			}
+		}
+	}
+	return {system => $visual_system, path => $visual_path . '/' . $path, list => \@list};
 }
 
 sub archiveJob {

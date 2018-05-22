@@ -49,6 +49,10 @@ datastore:
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
     path: '__user__/sci_data/results'
+  __visual__:
+    system: 'halcott.cshl.edu'
+    home: '/agave_data'
+    path: 'results'
   __system__:
     system: ''
     home: ''
@@ -60,3 +64,4 @@ appsLocalCache: 0
 appsListMode: ['local', 'remote']
 defaultAppsList: 'public/assets/agaveAppsList.json'
 queue_length: 3
+visual_file_types: ['.html', '.plot']
