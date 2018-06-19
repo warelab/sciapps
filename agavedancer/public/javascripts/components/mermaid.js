@@ -32,6 +32,9 @@ const Mermaid=React.createClass({
 			element.innerHTML=null;
 			mermaidAPI.render(name, diagramDef, function(svg, bindFunctions) {
 				element.innerHTML=svg;
+				let value=element.firstChild.attributes.viewBox.value;
+				let replace=value.replace('0 0', '0 -30');
+				element.firstChild.attributes.viewBox.value=replace;
 				bindFunctions(element);
 			}.bind(this));
 		}
