@@ -15,7 +15,8 @@ var workflowItems = [
 	{ workflow_id: 2, name: "Assembly", description: "Small genome assembly, quality assessment, and annotation with JBrowse view" },
 	{ workflow_id: 3, name: "Association", description: "A GWAS workflow for performing mixed model analysis with three different algorithms" },
 	{ workflow_id: 4, name: "RNA-Seq", description: "ENCODE RNA-Seq workflow for differential expression analysis" },
-	{ workflow_id: 5, name: "Variant Calling", description: "Variant calling workflow with Platypus" }
+	{ workflow_id: 5, name: "Variant Calling", description: "Variant calling workflow with Platypus" },
+	{ workflow_id: 6, name: "Methylation", description: "Methylation analysis with Bismark and Bisukit" }
 ];
 
 const publicWorkflows=React.createClass({
