@@ -17,7 +17,7 @@ const JobOutpusDetail=React.createClass({
 			let job=this.props.job;
 			let outputs=this.props.outputs;
 			let name=outputs[idx].name;
-			let url=[setting.anon_prefix, setting.archive_home, job.archivePath, name].join('/');
+			let url=[setting.anon_prefix, setting.archive_home.replace('/', ''), job.archivePath, name].join('/');
 			let link=<div>Please copy this link: <a href={url} target='_blank'>{url}</a></div>;
 			this.refs.dialog.showAlert(link);
 		}
@@ -37,7 +37,7 @@ const JobOutpusDetail=React.createClass({
 				visualhref=setting.output_url[staged.system];
 				visualhref=visualhref.replace(/__path__/, staged.path + '/' + name);
 			} else {
-				visualhref=[setting.anon_prefix, setting.archive_home, job.archivePath, name].join('/');
+				visualhref=[setting.anon_prefix, setting.archive_home.replace('/', ''), job.archivePath, name].join('/');
 			}
 			window.open(visualhref, '_blank');
 		}
