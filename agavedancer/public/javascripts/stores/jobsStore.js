@@ -261,7 +261,7 @@ const JobsStore=Reflux.createStore({
 						let j=_.findIndex(this.state.joblist, 'job_id', data.job_id);
 						this._setJobData(data, i, j);
 						if ('FINISHED' === data.status) {
-							this._setJobOutputs(data.job_id, true);
+							this.setJobOutputs(data.job_id, true);
 						}
 					}
 					return data;
@@ -403,8 +403,8 @@ const JobsStore=Reflux.createStore({
 		return jobOutputsPromise;
 	},
 
-	setJobOutputs: function(jobId) {
-		let jobOutputsPromise=this._setJobOutputs(jobId);
+	setJobOutputs: function(jobId, jobIsCached) {
+		let jobOutputsPromise=this._setJobOutputs(jobId, jobIsCached);
 		jobOutputsPromise.then(function() {
 			this.complete();
 		}.bind(this))
