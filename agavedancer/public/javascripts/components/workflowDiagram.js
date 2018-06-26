@@ -293,7 +293,7 @@ const WorkflowDiagram=React.createClass({
 			} else {
 				body=(
 					<Modal.Body>
-						<img src='/spinning.svg' /> Loading...
+						<div><img src='/spinning.svg' /> Loading...</div>
 					</Modal.Body>
 				);
 				header=(
