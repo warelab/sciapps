@@ -23,7 +23,7 @@ use FindBin;
 use File::Basename;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode/;
+our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode anon_prefix/;
 our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError SystemError/;
 
 foreach my $exception (@EXCEPTIONS) {
@@ -1117,7 +1117,7 @@ sub shareJob {
 
 sub stageJobOutputs {
 	my ($job)=@_;
-	my @file_types=@{setting('visual_file_types') || []};
+	my @file_types=@{setting('stage_file_types') || []};
 	my $username=$job->{username};
 	my $visual=setting("datastore")->{__visual__};
 	my ($visual_system, $visual_path)=($visual->{system}, $visual->{path});

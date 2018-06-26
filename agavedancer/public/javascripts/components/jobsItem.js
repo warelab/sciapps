@@ -3,11 +3,12 @@
 import React from 'react';
 import _ from 'lodash';
 import JobsActions from '../actions/jobsActions.js';
+import JobOutputsDetail from './jobOutputsDetail.js';
 import {ListGroup, ListGroupItem, Button, ButtonToolbar, Tooltip, OverlayTrigger, Panel, Glyphicon} from 'react-bootstrap';
 
 const JobsItem=React.createClass({
 	getInitialState: function() {
-		return {isOpen: false, checked: false};
+		return {isOpen: false, checked: false, showJobOutputsDetail: false};
 	},
 
 	componentWillReceiveProps: function(nextProps) {
@@ -34,11 +35,17 @@ const JobsItem=React.createClass({
 		}
 	},
 
-	visualizeJobOutputs: function() {
-		if (this.props.job.job_id) {
+	showJobOutputsDetail: function() {
+		if (! this.state.showJobOutputsDetail) {
 			JobsActions.stageJobOutputs(this.props.job.job_id);
+			this.setState({ showJobOutputsDetail: true });
 		}
-		this.showJobOutputs();
+	},
+
+	hideJobOutputsDetail: function() {
+		if (this.state.showJobOutputsDetail) {
+			this.setState({ showJobOutputsDetail: false });
+		}
 	},
 
 	handleCheck: function() {
@@ -78,8 +85,12 @@ const JobsItem=React.createClass({
 		let addedornot=this.state.checked ? 'Click to Remove' : 'Add to Workflow';
 		let tooltipadd = (<Tooltip id="tooltipadd">{addedornot}</Tooltip>);
 		let outputsItemNodes='Loading ...';
+		let jobOutputsDetail;
 		//if (app && (job.archivePath || job.outputPath)) {
 		if (outputs && (job.archivePath || job.outputPath)) {
+			jobOutputsDetail=(
+				<JobOutputsDetail job={job} outputs={outputs} show={this.state.showJobOutputsDetail} hide={this.hideJobOutputsDetail} displayName={displayName} staged={staged}/>
+			);
 			outputsItemNodes=outputs.map(function(o, i) {
 				let oname=o.name;
 				let href;
@@ -105,7 +116,7 @@ const JobsItem=React.createClass({
 
 				return (
 					<ListGroupItem key={i}>
-						{linkBtn} {visualBtn}
+						{linkBtn}
 					</ListGroupItem>
 				);
 			});
@@ -118,7 +129,7 @@ const JobsItem=React.createClass({
 						<Button key='outputs' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.showJobOutputs} >{displayName}</Button>
 					</OverlayTrigger>
 					<OverlayTrigger placement="bottom" overlay={tooltipvis}>
-			    	<Button key='visual' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed || job.status !== 'FINISHED'} onClick={isSubmitting || isFailed ? null : this.visualizeJobOutputs} ><Glyphicon glyph='film' /></Button>
+			    	<Button key='visual' bsSize='medium' bsStyle='link' disabled={! jobOutputsDetail} onClick={! jobOutputsDetail ? null : this.showJobOutputsDetail} ><Glyphicon glyph='film' /></Button>
 					</OverlayTrigger>
 					<OverlayTrigger placement="bottom" overlay={tooltipres}>
 			    	<Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.resubmitJob} ><Glyphicon glyph='repeat' /></Button>
@@ -135,6 +146,7 @@ const JobsItem=React.createClass({
 						{outputsItemNodes}
 					</ListGroup>
 				</Panel>
+				{jobOutputsDetail}
 			</ListGroupItem>
 		);
 		return markup;
