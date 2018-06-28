@@ -509,7 +509,8 @@ sub retrieveJob {
 		}
 		$user||=_get_user($row->{username});
 	}
-	unless ($check || $job || ! $user) {
+	#unless ($check || $job || ! $user) {
+	unless ($check || $job) {
 		my $apif = getAgaveClient();
 		my $job_ep = $apif->job;
 		my $retry=2;
