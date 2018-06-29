@@ -939,10 +939,12 @@ sub prepareJob {
 				} elsif (ref($v) eq 'ARRAY') {
 					$inputs=$v;
 				}
-				foreach (@$inputs) {
-					if (defined && ref($_) eq 'HASH') {
-						my $prev=$prev_job->[$_->{step}]{job_id};
-						my $row=database->quick_insert('nextstep', {prev => $prev, next => $job_id, input_name => $job_form{inputs}{$k}});
+				foreach my $i (0 .. $#$inputs) {
+					my $input=$inputs->[$i];
+					if (defined $input && ref($input) eq 'HASH') {
+						my $prev=$prev_job->[$input->{step}]{job_id};
+						my $input_name=$#$inputs ? $job_form{inputs}{$k}[$i] : $job_form{inputs}{$k};
+						my $row=database->quick_insert('nextstep', {prev => $prev, next => $job_id, input_name => $input_name});
 					}
 				}
 			}
@@ -1219,9 +1221,16 @@ sub submitNextJob {
 			$input{$_->{input_name}}=$_->{input_source} . '/' . $filename;
 		}
 		while (my ($k, $v) = each %{$job_form->{inputs}}) {
-			if (defined $v && exists $input{$v}) {
-				$job_form->{inputs}{$k}=$input{$v};
-				$count++;
+			my $fi=$v;
+			ref($fi) or $fi=[$fi];
+			foreach (@$fi) {
+				if (defined && exists $input{$_}) {
+					$_=$input{$_};
+					$count++;
+				}
+			}
+			if (1 == scalar(@$fi)) {
+				$job_form->{inputs}{$k}=$fi->[0];
 			}
 		}
 		if ($count) {

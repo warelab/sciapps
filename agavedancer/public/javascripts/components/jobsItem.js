@@ -98,13 +98,13 @@ const JobsItem=React.createClass({
 						<Button key='outputs' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.showJobOutputs} >{displayName}</Button>
 					</OverlayTrigger>
 					<OverlayTrigger placement="bottom" overlay={tooltipres}>
-			    	<Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.resubmitJob} ><Glyphicon glyph='repeat' /></Button>
+			    	<Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed || ! job.id} onClick={isSubmitting || isFailed || !job.id ? null : this.resubmitJob} ><Glyphicon glyph='repeat' /></Button>
 					</OverlayTrigger>
 					<OverlayTrigger placement="bottom" overlay={tooltipsta}>
 						<Button key='status' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.showJob} ><Glyphicon glyph='info-sign' /></Button>
 					</OverlayTrigger>
           <OverlayTrigger placement="bottom" overlay={tooltipadd}>
-						<Button key='check' bsSize='medium' bsStyle='link' disabled={!enableCheck || isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
+						<Button key='check' bsSize='medium' bsStyle='link' disabled={!enableCheck || isSubmitting || isFailed || !job.id} onClick={isSubmitting || isFailed || !job.id ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
 					</OverlayTrigger>
 			  </ButtonToolbar>
 				<Panel collapsible expanded={this.state.isOpen}>
