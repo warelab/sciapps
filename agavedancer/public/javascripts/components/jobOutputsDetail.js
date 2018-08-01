@@ -21,7 +21,7 @@ const JobOutpusDetail=React.createClass({
 			let url=[setting.anon_prefix, setting.archive_home.replace('/', ''), job.archivePath, name].join('/');
 			let input=<Input id='copy' name='copy' value={url} type='textarea' readOnly />
 			let copyBtn={
-				label: 'Copy',
+				label: 'Copy to clipboard',
 				className: 'btn-primary',
 				func: () => {
 					let dom=document.getElementById('copy');
