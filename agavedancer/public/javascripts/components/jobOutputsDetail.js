@@ -1,12 +1,13 @@
 'use strict';
 
 import React from 'react';
+import ReactDom from 'react-dom'; 
 import Reflux from 'reflux';
 import _ from 'lodash';
 import JobsActions from '../actions/jobsActions.js';
 import Dialog from 'react-bootstrap-dialog';
 import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
-import {Modal, ButtonToolbar, ButtonGroup, Button, Panel, Tooltip, Glyphicon} from 'react-bootstrap';
+import {Modal, ButtonToolbar, ButtonGroup, Button, Panel, Tooltip, Glyphicon, Input} from 'react-bootstrap';
 
 const JobOutpusDetail=React.createClass({
 	handleShare: function(e) {
@@ -18,8 +19,25 @@ const JobOutpusDetail=React.createClass({
 			let outputs=this.props.outputs;
 			let name=outputs[idx].name;
 			let url=[setting.anon_prefix, setting.archive_home.replace('/', ''), job.archivePath, name].join('/');
-			let link=<div>Please copy this link: <a href={url} target='_blank'>{url}</a></div>;
-			this.refs.dialog.showAlert(link);
+			let input=<Input id='copy' name='copy' value={url} type='textarea' readOnly />
+			let copyBtn={
+				label: 'Copy',
+				className: 'btn-primary',
+				func: () => {
+					let dom=document.getElementById('copy');
+					dom.select();
+					document.execCommand('Copy');
+				}
+			};
+			this.refs.dialog.show({
+				title: 'Output url',
+				body: input,
+				actions: [
+					copyBtn,
+					Dialog.OKAction()
+				],
+				bsSize: 'medium'
+			});
 		}
 	},
 
@@ -85,9 +103,9 @@ const JobOutpusDetail=React.createClass({
 		}
 
 		return (
-			<Modal show={this.props.show} onHide={this.props.hide}>
+			<Modal show={this.props.show} onHide={this.props.hide} ref='modal' >
 				<Modal.Header closeButton>
-					<Modal.Title>Get URL link or visualize</Modal.Title>
+					<Modal.Title>Visualize output or get its url</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<Panel header={displayName}>
