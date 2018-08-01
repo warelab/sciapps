@@ -129,7 +129,7 @@ const JobsItem=React.createClass({
 						<Button key='outputs' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.showJobOutputs} >{displayName}</Button>
 					</OverlayTrigger>
 					<OverlayTrigger placement="bottom" overlay={tooltipvis}>
-			    	<Button key='visual' bsSize='medium' bsStyle='link' disabled={! jobOutputsDetail} onClick={! jobOutputsDetail ? null : this.showJobOutputsDetail} ><Glyphicon glyph='film' /></Button>
+			    	<Button key='visual' bsSize='medium' bsStyle='link' disabled={! jobOutputsDetail} onClick={! jobOutputsDetail ? null : this.showJobOutputsDetail} ><Glyphicon glyph='eye-open' /></Button>
 					</OverlayTrigger>
 					<OverlayTrigger placement="bottom" overlay={tooltipres}>
 			    	<Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed || ! job.id} onClick={isSubmitting || isFailed || !job.id? null : this.resubmitJob} ><Glyphicon glyph='repeat' /></Button>
