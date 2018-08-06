@@ -48,11 +48,7 @@ datastore:
   __example__:
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
-    path: 'maizecode/example'
-  __recent_jobs__: 
-    system: 'data.iplantcollaborative.org'
-    home: '/iplant/home'
-    path: '__user__/sci_data/results'
+    path: 'sciapps/example'
   __visual__:
     system: 'halcott.cshl.edu'
     home: '/agave_data'
@@ -61,7 +57,7 @@ datastore:
     system: ''
     home: ''
     path: ''
-datastore_types: ['recent_jobs', 'shared', 'example', 'home']
+datastore_types: ['shared', 'example', 'home']
 uncompress_suffix: '.open.tar.gz'
 irodsEnvFile: '/usr/share/httpd/irodsEnv'
 appsLocalCache: 0
