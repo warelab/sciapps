@@ -50,10 +50,11 @@ const JobOutpusDetail=React.createClass({
 			let staged=this.props.staged;
 			let outputs=this.props.outputs;
 			let name=outputs[idx].name;
+			let visual=setting.datastore.__visual__;
 			let visualhref;
-			if (staged && _.includes(staged.list, name)) {
-				visualhref=setting.output_url[staged.system];
-				visualhref=visualhref.replace(/__path__/, staged.path + '/' + name);
+			if (staged && staged[name]) {
+				visualhref=setting.output_url[visual.system];
+				visualhref=visualhref.replace(/__path__/, visual.path + '/' + name);
 			} else {
 				visualhref=[setting.anon_prefix, setting.archive_home.replace('/', ''), job.archivePath, name].join('/');
 			}
@@ -64,14 +65,14 @@ const JobOutpusDetail=React.createClass({
 	createCustomButtonGroup: function(props) {
 		let staged=this.props.staged;
 		let tooltipload=<Tooltip id="tooltipload">Load</Tooltip>;
-		let spinning=! staged ? <img src='/spinning_small.svg' /> : undefined;
+		let spin=stagei && ? <img src='/spinning_small.svg' /> : undefined;
+		let spinning=staged && _.includes(staged, 0) ? <img src='/spinning_small.svg' /> : undefined;
 		return (
 			<div>
 			<ButtonGroup>
 				<Button key='share' bsStyle='info' onClick={this.handleShare}><Glyphicon glyph='link'/> Link</Button>
-				<Button key='view' bsStyle='warning' disabled={!staged} onClick={!staged ? null : this.handleVisualize}><Glyphicon glyph='play-circle'/> Visualize</Button>
+				<Button key='view' bsStyle='warning' onClick={this.handleVisualize}><Glyphicon glyph='play-circle'/> Visualize</Button>
 			</ButtonGroup>
-			{spinning}
 			</div>
 		);
 	},

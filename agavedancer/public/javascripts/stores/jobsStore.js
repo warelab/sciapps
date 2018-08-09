@@ -416,25 +416,50 @@ const JobsStore=Reflux.createStore({
 	},
 
 	stageJobOutputs: function(jobId) {
-		let stagePromise=Q(axios.get('/job/' + jobId + '/stageJobOutputs', {
-			headers: {'X-Requested-With': 'XMLHttpRequest'},
-		}))
-		.then(function(res) {
-			if (res.data.error) {
-				console.log(res.data.error);
-				return;
+		let setting=_config.setting;
+		let outputs=this.state.jobOutputs[jobId];
+		let stage_list=outputs ? outputs.filter(function(op) {
+			let suffix=op.name.replace(/^.*\./, '.');
+			let flag=_.some(setting.stage_file_types, function(type) {
+				return type.toLowerCase() === suffix.toLowerCase();
+			});
+			return flag;
+		}) : [];
+		if (stage_list.length) {
+			let stage={};
+			stage_list.forEach(function(item) {
+				stage[item.name]=0;
+			}.bind(this));
+			this.state.jobOutputsStaged[jobId]=stage;
+			this.complete();
+
+			let stagePromise=Q(axios.get('/job/' + jobId + '/stageJobOutputs/?list=' + JSON.stringify(stage_list), {
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+			}))
+			.then(function(res) {
+				if (res.data.error) {
+					console.log(res.data.error);
+					return;
+				} else {
+					let data=res.data.data;
+					this.state.jobOutputsStaged[jobId]={};
+					data.target.list.forEach(function(item) {
+						this.state.jobOutputsStaged[jobId][item]=1;
+					}.bind(this));
+					return this.state.jobOutputsStaged[jobId];
+				}
+				}.bind(this))
+				.catch(function(error) {
+					console.log(error);
+				});
 			} else {
-				let data=res.data.data;
-				this.state.jobOutputsStaged[jobId]=data.target;
-				this.complete();
-				return res.data;
+				stagePromise=Q(this.state.jobOutputsStaged[jobId]);
 			}
-		}.bind(this))
-		.catch(function(error) {
-			console.log(error);
-		})
-		.done();
-		return stagePromise;
+		}
+		return stagePromise
+		.then(function(staged) {
+			this.complete();
+		}.bind(this));
 	},
 
 	setFile: function(fileId, path) {
