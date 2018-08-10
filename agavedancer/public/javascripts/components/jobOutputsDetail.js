@@ -30,7 +30,7 @@ const JobOutpusDetail=React.createClass({
 				}
 			};
 			this.refs.dialog.show({
-				title: 'Link for Genome/Web Browser',
+				title: 'Link for genome (or web) browser',
 				body: input,
 				actions: [
 					copyBtn,
@@ -105,7 +105,7 @@ const JobOutpusDetail=React.createClass({
 		return (
 			<Modal show={this.props.show} onHide={this.props.hide} ref='modal' >
 				<Modal.Header closeButton>
-					<Modal.Title>Visualize output or get its url</Modal.Title>
+					<Modal.Title>Visualize or get URLs for genome (or web) browser</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<Panel header={displayName}>
