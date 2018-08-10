@@ -30,7 +30,7 @@ const JobOutpusDetail=React.createClass({
 				}
 			};
 			this.refs.dialog.show({
-				title: 'Link for genome (or web) browser',
+				title: 'URL for genome (or web) browser',
 				body: input,
 				actions: [
 					copyBtn,
@@ -68,7 +68,7 @@ const JobOutpusDetail=React.createClass({
 		return (
 			<div>
 			<ButtonGroup>
-				<Button key='share' bsStyle='info' onClick={this.handleShare}><Glyphicon glyph='link'/> Link</Button>
+				<Button key='share' bsStyle='info' onClick={this.handleShare}><Glyphicon glyph='link'/> URL</Button>
 				<Button key='view' bsStyle='warning' disabled={!staged} onClick={!staged ? null : this.handleVisualize}><Glyphicon glyph='play-circle'/> Visualize</Button>
 			</ButtonGroup>
 			{spinning}
