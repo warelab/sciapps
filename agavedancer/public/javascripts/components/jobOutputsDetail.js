@@ -30,7 +30,7 @@ const JobOutpusDetail=React.createClass({
 				}
 			};
 			this.refs.dialog.show({
-				title: 'Link for Genome Browser',
+				title: 'Link for Genome/Web Browser',
 				body: input,
 				actions: [
 					copyBtn,
