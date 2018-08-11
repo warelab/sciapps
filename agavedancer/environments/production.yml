@@ -59,5 +59,4 @@ appsLocalCache: 0
 appsListMode: ['local', 'remote']
 defaultAppsList: 'public/assets/agaveAppsList.json'
 queue_length: 3
-stage_file_types: ['.plot']
-anon_prefix: 'https://de.cyverse.org/anon-files'
+visual_file_types: ['.html', '.plot']
