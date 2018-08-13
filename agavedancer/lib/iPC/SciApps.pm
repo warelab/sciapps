@@ -245,6 +245,11 @@ sub browse {
 		$result=browse_ils($path, $datastore_system, $datastore_homepath);
 	}
 
+	$result=[sort {$a->{path} cmp $b->{path}} @$result];
+	foreach my $item (@$result) {
+		$item->{list}=[sort {$a->{type} cmp $b->{type} || $a->{name} cmp $b->{name}} @{$item->{list}}]
+	}
+
 	return $result;
 };
 
