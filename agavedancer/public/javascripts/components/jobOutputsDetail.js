@@ -71,7 +71,6 @@ const JobOutpusDetail=React.createClass({
 				<Button key='share' bsStyle='info' onClick={this.handleShare}><Glyphicon glyph='link'/> URL</Button>
 				<Button key='view' bsStyle='warning' disabled={!staged} onClick={!staged ? null : this.handleVisualize}><Glyphicon glyph='play-circle'/> View</Button>
 			</ButtonGroup>
-			{spinning}
 			</div>
 		);
 	},

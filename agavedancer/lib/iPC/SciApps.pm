@@ -23,7 +23,7 @@ use FindBin;
 use File::Basename;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode anon_prefix/;
+our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode anon_prefix stage_file_types/;
 our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError SystemError/;
 
 foreach my $exception (@EXCEPTIONS) {
@@ -243,6 +243,11 @@ sub browse {
 		#}
 		#$result=browse_files($path, $datastore_system, $datastore_path);
 		$result=browse_ils($path, $datastore_system, $datastore_homepath);
+	}
+
+	$result=[sort {$a->{path} cmp $b->{path}} @$result];
+	foreach my $item (@$result) {
+		$item->{list}=[sort {$a->{type} cmp $b->{type} || $a->{name} cmp $b->{name}} @{$item->{list}}]
 	}
 
 	return $result;
@@ -804,10 +809,11 @@ ajax '/job/:id/delete' => sub {
 
 ajax '/job/:id/stageJobOutputs' => sub {
 	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
-	my $job_id = param("id");
+	my $job_id=param("id");
+	my $flag=param("stage");
 	my $username=$user->{username};
 	my $job=database->quick_select('job', {job_id => $job_id});
-	my $result=stageJobOutputs($job);
+	my $result=stageJobOutputs($job, $flag);
 	to_json({status => 'success', data => {job_id => $job_id, target => $result}});
 };
 
@@ -1119,7 +1125,7 @@ sub shareJob {
 }
 
 sub stageJobOutputs {
-	my ($job)=@_;
+	my ($job, $flag)=@_;
 	my @file_types=@{setting('stage_file_types') || []};
 	my $username=$job->{username};
 	my $visual=setting("datastore")->{__visual__};
@@ -1135,22 +1141,26 @@ sub stageJobOutputs {
 	my $path=$jobObj->{archivePath};
 	$path=~s#$archivePath/##;
 	my $typePath='__home__/' . $jobObj->{archivePath};
-	my $outputs=browse($typePath, $username, 1);
+	my $outputs=$flag ? browse($typePath, $username, 1) : undef;
 	
-	my $res=$io->mkdir($target, $path);
 	my $visualPath=$target . '/' . $path;
-	my $visualTypePath=$visualPath;
-	$visualTypePath=~s#/system#__system__#;
-	my $visual_files=browse($visualTypePath);
-	my %visual_files_hash=map { $_->{name} => 1 } @{$visual_files->[0]{list}};
+	my $visual_files=[];
+	my %visual_files_hash=();
 	my @list;
-	foreach my $item (@{$outputs->[0]{list}}) {
-		my ($name,$path,$suffix) = fileparse($item->{name}, @file_types);
-		if ($suffix) {
-			push @list, $item->{name};
-			if (! exists $visual_files_hash{$item->{name}}) {
-				my $itemSource=$source . '/' . $item->{name};
-				$res=$io->import_file($visualPath, {urlToIngest => $itemSource});
+	if ($flag) {
+		$io->mkdir($target, $path);
+		my $visualTypePath=$visualPath;
+		$visualTypePath=~s#/system#__system__#;
+		$visual_files=browse($visualTypePath);
+		%visual_files_hash=map { $_->{name} => 1 } @{$visual_files->[0]{list}};
+		foreach my $item (@{$outputs->[0]{list}}) {
+			my ($name,$path,$suffix) = fileparse($item->{name}, @file_types);
+			if ($suffix) {
+				push @list, $item->{name};
+				if (! exists $visual_files_hash{$item->{name}}) {
+					my $itemSource=$source . '/' . $item->{name};
+					$io->import_file($visualPath, {urlToIngest => $itemSource});
+				}
 			}
 		}
 	}
