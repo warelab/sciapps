@@ -69,7 +69,7 @@ const JobOutpusDetail=React.createClass({
 			<div>
 			<ButtonGroup>
 				<Button key='share' bsStyle='info' onClick={this.handleShare}><Glyphicon glyph='link'/> URL</Button>
-				<Button key='view' bsStyle='warning' disabled={!staged} onClick={!staged ? null : this.handleVisualize}><Glyphicon glyph='play-circle'/> Visualize</Button>
+				<Button key='view' bsStyle='warning' disabled={!staged} onClick={!staged ? null : this.handleVisualize}><Glyphicon glyph='play-circle'/> View</Button>
 			</ButtonGroup>
 			{spinning}
 			</div>
@@ -105,7 +105,7 @@ const JobOutpusDetail=React.createClass({
 		return (
 			<Modal show={this.props.show} onHide={this.props.hide} ref='modal' >
 				<Modal.Header closeButton>
-					<Modal.Title>Visualize or get URLs for genome (or web) browser</Modal.Title>
+					<Modal.Title>View directly or get URL for genome (or web) browser</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<Panel header={displayName}>
