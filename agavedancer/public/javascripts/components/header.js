@@ -138,7 +138,7 @@ const Header=React.createClass({
 			<MenuItem key='showWorkflows' eventKey='showWorkflows' onSelect={this.showWorkflows}><Glyphicon glyph='th-list' /> Public workflows</MenuItem>
 		];
 		if (user.logged_in) {
-			userGreeting=<NavItem eventKey='greeting'><Glyphicon glyph='user' /> Hi, {user.username}!</NavItem>;
+			userGreeting=<NavItem eventKey='greeting'><Glyphicon glyph='user' /> Hi, {user.firstName}!</NavItem>;
 			userMenu=<NavItem eventKey='logout' pullRight onSelect={this.handleLogout}>Logout <Glyphicon glyph='log-out' /></NavItem>;
 			workflowMenuItem.push(
 				<MenuItem key='workflowDivder' eventKey='workflowDivder' divider />,
