@@ -135,7 +135,7 @@ const WorkflowBuilderForm=React.createClass({
 		});
 		let jobListInput={
 			name: 'jobList',
-			label: '*Selected Jobs (at least 2)',
+			label: '*Selected Jobs',
 			type: 'textarea',
 			required: true,
 			readOnly: true,

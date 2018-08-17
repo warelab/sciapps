@@ -7,7 +7,7 @@ import WorkflowBuilderForm from './workflowBuilderForm.js';
 
 const WorkflowBuilder=React.createClass({
 	render: function() {
-		let header='Workflow building form: chains jobs from the right (History) panel';
+		let header='Workflow building form: chain jobs together';
 		return (
 			<Panel header={header}>
 				<WorkflowBuilderForm />
