@@ -127,7 +127,7 @@ const AppsForm=React.createClass({
 		let user=this.props.user;
 		let appDetail=this.props.appDetail;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
-		let app_inputs=[], app_params=[], header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
+		let app_inputs=[], app_params=[], header=appDetail.name + ' (version ' + appDetail.version + '): ' + appDetail.shortDescription;
 		let reload=this.state.update ? this.props.reload : undefined;
 
 		if (appDetail && undefined !== appDetail.name) {
