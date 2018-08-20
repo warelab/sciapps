@@ -108,11 +108,6 @@ const JobsItem=React.createClass({
 				href=href.replace(/\/__home__/, setting.datastore.__home__.home);
 				let linkBtn, visualBtn;
 				linkBtn=<a href={href} target='_blank'>{oname}</a>
-				if (staged && _.includes(staged.list, oname)) {
-					let visualhref=setting.output_url[staged.system];
-					visualhref=visualhref.replace(/__path__/, staged.path + '/' + oname);
-					visualBtn=<Button key='visual' bsSize='small' bsStyle='info' href={visualhref} target='_blank'><Glyphicon glyph='play-circle' /></Button>
-				}
 
 				return (
 					<ListGroupItem key={i}>

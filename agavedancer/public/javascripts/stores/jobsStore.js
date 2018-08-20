@@ -416,12 +416,8 @@ const JobsStore=Reflux.createStore({
 	},
 
 	stageJobOutputs: function(jobId) {
-		let staged=this.state.jobOutputsStaged[jobId];
 		let setting=_config.setting;
-		let stagePromise;
-		if (staged) {
-			stagePromise=Q(staged);
-		} else {
+		if (! this.state.jobOutputsStaged[jobId]) {
 			let file_types=setting.stage_file_types;
 			let outputs=this.state.jobOutputs[jobId];
 			let stage_list=outputs.filter(function(op) {
@@ -429,7 +425,7 @@ const JobsStore=Reflux.createStore({
 				return _.includes(file_types, suffix);
 			});
 
-			stagePromise=Q(axios.get('/job/' + jobId + '/stageJobOutputs?stage=' + stage_list.length, {
+			let stagePromise=Q(axios.get('/job/' + jobId + '/stageJobOutputs?stage=' + stage_list.length, {
 				headers: {'X-Requested-With': 'XMLHttpRequest'},
 			}))
 			.then(function(res) {
@@ -438,18 +434,17 @@ const JobsStore=Reflux.createStore({
 					return;
 				} else {
 					let data=res.data.data;
-					this.state.jobOutputsStaged[jobId]=data.target;
+					//this.state.jobOutputsStaged[jobId]=data.target;
 					return data.target;
 				}
 			}.bind(this))
 			.catch(function(error) {
 				console.log(error);
 			});
+			this.state.jobOutputsStaged[jobId]=stagePromise;
 		}
-		return stagePromise
-		.then(function(target) {
-			this.complete();
-		}.bind(this));
+		this.complete();
+		return this.state.jobOutputsStaged[jobId];
 	},
 
 	setFile: function(fileId, path) {

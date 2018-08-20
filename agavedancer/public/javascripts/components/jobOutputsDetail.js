@@ -50,14 +50,18 @@ const JobOutpusDetail=React.createClass({
 			let staged=this.props.staged;
 			let outputs=this.props.outputs;
 			let name=outputs[idx].name;
-			let visualhref;
-			if (staged && _.includes(staged.list, name)) {
-				visualhref=setting.output_url[staged.system];
-				visualhref=visualhref.replace(/__path__/, staged.path + '/' + name);
-			} else {
-				visualhref=[setting.anon_prefix, setting.archive_home.replace('/', ''), job.archivePath, name].join('/');
+			if (staged) {
+				let visualhref;
+				staged.then(function(target) {
+					if ( _.includes(target.list, name)) {
+						visualhref=setting.output_url[target.system];
+						visualhref=visualhref.replace(/__path__/, target.path + '/' + name);
+					} else {
+						visualhref=[setting.anon_prefix, setting.archive_home.replace('/', ''), job.archivePath, name].join('/');
+					}
+					window.open(visualhref, '_blank');
+				});
 			}
-			window.open(visualhref, '_blank');
 		}
 	},
 
