@@ -500,7 +500,7 @@ sub retrieveJob {
 	my $user=_get_user($username);
 	my $row = database->quick_select('job', {job_id => $job_id}) || database->quick_select('job', {agave_id => $job_id});
 	if ($row) {
-		if ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED') {
+		if ($row->{status} && ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED')) {
 			my $jobObj=from_json($row->{agave_json});
 			if ($jobObj->{status} && $jobObj->{status} eq $row->{status}) {
 				#$job=Agave::Client::Object::Job->new($jobObj);
@@ -1129,26 +1129,36 @@ sub stageJobOutputs {
 	my @file_types=@{setting('stage_file_types') || []};
 	my $username=$job->{username};
 	my $visual=setting("datastore")->{__visual__};
-	my ($visual_system, $visual_path)=($visual->{system}, $visual->{path});
+	my ($visual_system, $visual_home, $visual_path)=($visual->{system}, $visual->{home}, $visual->{path});
 
 	my $apif = getAgaveClient();
 	my $io = $apif->io;
 	my $jobObj=from_json($job->{agave_json});
 	my $source=sprintf("https://agave.iplantc.org/files/v2/media/system/%s/%s", $jobObj->{archiveSystem}, $jobObj->{archivePath});
 	my $target=sprintf("/system/%s/%s", $visual_system, $visual_path);
+	$target=~s/\/[^\/]*$//;
 	my $archivePath=setting("archive_path");
 	$archivePath=~s/__user__/$username/;
-	my $path=$jobObj->{archivePath};
-	$path=~s#$archivePath/##;
+	#my $targetPath=$jobObj->{archivePath};
+	#$targetPath=~s#$archivePath/##;
+	my $targetPath=(split /\//, $jobObj->{archivePath})[-1];
 	my $typePath='__home__/' . $jobObj->{archivePath};
 	my $outputs=$flag ? browse($typePath, $username, 1) : undef;
 	
-	my $visualPath=$target . '/' . $path;
+	my $visualPath=$target . '/' . $targetPath;
 	my $visual_files=[];
 	my %visual_files_hash=();
 	my @list;
 	if ($flag) {
-		$io->mkdir($target, $path);
+		my $uncompressedPath=$visual_home . '/' . $visual_path;
+		my $compressedPath=$uncompressedPath;
+		$compressedPath=~s/\/[^\/]*$//;
+		$uncompressedPath.='/' . $targetPath;
+		$compressedPath.='/' . $targetPath;
+		try {
+			$io->mkdir($target, $targetPath);
+			mkdir $uncompressedPath;
+		};
 		my $visualTypePath=$visualPath;
 		$visualTypePath=~s#/system#__system__#;
 		$visual_files=browse($visualTypePath);
@@ -1156,15 +1166,32 @@ sub stageJobOutputs {
 		foreach my $item (@{$outputs->[0]{list}}) {
 			my ($name,$path,$suffix) = fileparse($item->{name}, @file_types);
 			if ($suffix) {
-				push @list, $item->{name};
-				if (! exists $visual_files_hash{$item->{name}}) {
+				my $uncompressed=$item->{name};
+				if ($suffix eq '.tgz') {
+					$uncompressed=~s/$suffix$//;
+				}
+				if (! exists $visual_files_hash{$item->{name}} && ! exists $visual_files_hash{$uncompressed}) {
 					my $itemSource=$source . '/' . $item->{name};
 					$io->import_file($visualPath, {urlToIngest => $itemSource});
+					if ($suffix eq '.tgz') {
+						my $compressed=$compressedPath . '/' . $item->{name};
+						my $try=90;
+						while (! -e $compressed) {
+							sleep(1);
+							last unless $try--;
+						}
+						my $command="tar -xzf $compressed -C $uncompressedPath";
+						try {
+							system($command);
+						};
+						sleep(2);
+					}
 				}
+				push @list, $item->{name};
 			}
 		}
 	}
-	return {system => $visual_system, path => $visual_path . '/' . $path, list => \@list};
+	return {system => $visual_system, path => $visual_path . '/' . $targetPath, list => \@list};
 }
 
 sub archiveJob {

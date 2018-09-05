@@ -52,7 +52,7 @@ datastore:
   __visual__:
     system: 'halcott.cshl.edu'
     home: '/agave_data'
-    path: 'results'
+    path: 'results/vi2'
   __system__:
     system: ''
     home: ''
@@ -64,5 +64,5 @@ appsLocalCache: 0
 appsListMode: ['local', 'remote']
 defaultAppsList: 'public/assets/agaveAppsList.json'
 queue_length: 3
-stage_file_types: ['.plot']
+stage_file_types: ['.plot', '.tgz']
 anon_prefix: 'https://de.cyverse.org/anon-files'

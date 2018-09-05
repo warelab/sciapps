@@ -10,6 +10,10 @@ import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import {Modal, ButtonToolbar, ButtonGroup, Button, Panel, Tooltip, Glyphicon, Input} from 'react-bootstrap';
 
 const JobOutpusDetail=React.createClass({
+	getInitialState: function() {
+		return {isStage: false};
+	},
+
 	handleShare: function(e) {
 		let table=this.refs.table;
 		let setting=_config.setting;
@@ -51,30 +55,36 @@ const JobOutpusDetail=React.createClass({
 			let outputs=this.props.outputs;
 			let name=outputs[idx].name;
 			if (staged) {
+				this.setState({isStage: true});
 				let visualhref;
 				staged.then(function(target) {
+					this.setState({isStage: false});
 					if ( _.includes(target.list, name)) {
+						if (name.endsWith('.tgz')) {
+							name=name.replace(/\.tgz$/, '');
+						}
 						visualhref=setting.output_url[target.system];
 						visualhref=visualhref.replace(/__path__/, target.path + '/' + name);
 					} else {
 						visualhref=[setting.anon_prefix, setting.archive_home.replace('/', ''), job.archivePath, name].join('/');
 					}
 					window.open(visualhref, '_blank');
-				});
+				}.bind(this));
 			}
 		}
 	},
 
 	createCustomButtonGroup: function(props) {
-		let staged=this.props.staged;
+		let isStage=this.state.isStage;
 		let tooltipload=<Tooltip id="tooltipload">Load</Tooltip>;
-		let spinning=! staged ? <img src='/spinning_small.svg' /> : undefined;
+		let spinning=isStage ? <img src='/spinning_small.svg' /> : undefined;
 		return (
 			<div>
 			<ButtonGroup>
 				<Button key='share' bsStyle='info' onClick={this.handleShare}><Glyphicon glyph='link'/> URL</Button>
-				<Button key='view' bsStyle='warning' disabled={!staged} onClick={!staged ? null : this.handleVisualize}><Glyphicon glyph='play-circle'/> Visualize</Button>
+				<Button key='view' bsStyle='warning' disabled={isStage} onClick={isStage ? null : this.handleVisualize}><Glyphicon glyph='play-circle'/> Visualize</Button>
 			</ButtonGroup>
+			&nbsp;&nbsp;{spinning}
 			</div>
 		);
 	},

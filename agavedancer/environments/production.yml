@@ -44,20 +44,24 @@ datastore:
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
     path: '__user__/sci_data/results'
+  __example__:
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: 'sciapps/example'
   __visual__:
     system: 'halcott.cshl.edu'
     home: '/agave_data'
-    path: 'results'
+    path: 'results/vi'
   __system__:
     system: ''
     home: ''
     path: ''
-datastore_types: ['recent_jobs', 'shared', 'home']
+datastore_types: ['shared', 'example', 'home']
 uncompress_suffix: '.open.tar.gz'
 irodsEnvFile: '/usr/share/httpd/irodsEnv'
 appsLocalCache: 0
 appsListMode: ['local', 'remote']
 defaultAppsList: 'public/assets/agaveAppsList.json'
 queue_length: 3
-stage_file_types: ['.plot']
+stage_file_types: ['.plot', '.tgz']
 anon_prefix: 'https://de.cyverse.org/anon-files'
