@@ -173,15 +173,6 @@ const WorkflowRunnerForm=React.createClass({
 				});
 				return <AppsFieldset key={i} appDetail={appDetail} index={i} onValidate={onValidate} />;
 			});
-			let emailInput={
-				type: 'email',
-				required: false,
-				key: '_email',
-				id: '_email',
-				name: '_email',
-				label: 'Email',
-				help: 'Optional Email notification upon job completion'
-			};
 
 			let workflowJson={
 				type: 'hidden',
@@ -198,7 +189,6 @@ const WorkflowRunnerForm=React.createClass({
 				<div>
 					<form ref={this.formName} >
 						{appsFieldsets}
-						<BaseInput data={emailInput} />
 						<BaseInput data={workflowJson} />
 						{submitBtn}
 						<span> or </span>

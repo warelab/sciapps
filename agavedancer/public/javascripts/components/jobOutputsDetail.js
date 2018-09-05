@@ -118,7 +118,7 @@ const JobOutpusDetail=React.createClass({
 		return (
 			<Modal show={this.props.show} onHide={this.props.hide} ref='modal' >
 				<Modal.Header closeButton>
-					<Modal.Title>Visualize or get URLs for genome (or web) browser</Modal.Title>
+					<Modal.Title>View directly or get URL for genome (or web) browser</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<Panel header={displayName}>

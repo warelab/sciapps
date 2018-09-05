@@ -3,7 +3,7 @@
 import React from 'react';
 import Reflux from 'reflux';
 import _ from 'lodash';
-import {Panel, Table, Button, ButtonToolbar, ButtonGroup, Tooltip, OverlayTrigger, Glyphicon} from 'react-bootstrap';
+import {Panel, Table, Button, ButtonToolbar, ButtonGroup, Tooltip, OverlayTrigger, Glyphicon, Input} from 'react-bootstrap';
 import WorkflowStore from '../stores/workflowStore.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import AppsActions from '../actions/appsActions.js';
@@ -81,8 +81,25 @@ const UserWorkflows=React.createClass({
 		let wfid=table.store.getSelectedRowKeys()[0];
 		if (wfid) {
 			let url=window.location.protocol + "//" + window.location.host + '/?wf_id=' + wfid;
-			let link=<div>Please share this link: <a href={url} target='_blank'>{url}</a></div>;
-			this.refs.dialog.showAlert(link);
+			let input=<Input id='copy' name='copy' value={url} type='textarea' readOnly />
+			let copyBtn={
+				label: 'Copy to clipboard',
+				className: 'btn-primary',
+				func: () => {
+					let dom=document.getElementById('copy');
+					dom.select();
+					document.execCommand('Copy');
+				}
+			};
+			this.refs.dialog.show({
+				title: 'Workflow URL for sharing',
+				body: input,
+				actions: [
+					copyBtn,
+					Dialog.OKAction()
+				],
+				bsSize: 'medium'
+			});
 		}
 	},
 
@@ -102,7 +119,7 @@ const UserWorkflows=React.createClass({
 		return (
 			<ButtonGroup>
 				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/> Load</Button>
-				<Button key='view' bsStyle='warning' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Diagram</Button>
+				<Button key='view' bsStyle='warning' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
         <Button key='share' bsStyle='info' onClick={this.handleShare}><Glyphicon glyph='link'/> Share</Button>
 				<Button key='delete' bsStyle='danger' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
 			</ButtonGroup>

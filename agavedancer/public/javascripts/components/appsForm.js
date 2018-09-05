@@ -127,7 +127,7 @@ const AppsForm=React.createClass({
 		let user=this.props.user;
 		let appDetail=this.props.appDetail;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
-		let app_inputs=[], app_params=[], header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
+		let app_inputs=[], app_params=[], header=appDetail.name + ' (version ' + appDetail.version + '): ' + appDetail.shortDescription;
 		let reload=this.state.update ? this.props.reload : undefined;
 
 		if (appDetail && undefined !== appDetail.name) {
@@ -156,15 +156,6 @@ const AppsForm=React.createClass({
 				}.bind(this));
 			}
 		}
-		let emailInput={
-			type: 'email',
-			required: false,
-			key: '_email',
-			id: '_email',
-			name: '_email',
-			label: 'Email',
-			help: 'Optional Email notification upon job completion'
-		};
 		let submitBtn=<Button bsStyle='primary' onClick={this.handleSubmit}>Submit Job</Button>; 
 		//if (user.logged_in) {
 		//	if (this.state.onSubmit) {
@@ -194,7 +185,6 @@ const AppsForm=React.createClass({
 				<form ref={this.formName}>
 					{app_inputs}
 					{app_params}
-					<BaseInput data={emailInput} />
 					{submitBtn}
 				</form>
 				<Dialog ref='dialog' />
