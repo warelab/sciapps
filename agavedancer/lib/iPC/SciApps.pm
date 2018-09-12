@@ -1180,6 +1180,7 @@ sub stageJobOutputs {
 							sleep(1);
 							last unless $try--;
 						}
+						sleep(5);
 						my $command="tar -xzf $compressed -C $uncompressedPath";
 						try {
 							system($command);
