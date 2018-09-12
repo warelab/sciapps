@@ -60,8 +60,8 @@ datastore_types: ['shared', 'example', 'home']
 uncompress_suffix: '.open.tar.gz'
 irodsEnvFile: '/usr/share/httpd/irodsEnv'
 appsLocalCache: 0
-appsListMode: ['local', 'remote']
+appsListMode: ['local']
 defaultAppsList: 'public/assets/agaveAppsList.json'
 queue_length: 3
-stage_file_types: ['.plot', '.tgz']
+stage_file_types: ['.tgz']
 anon_prefix: 'https://de.cyverse.org/anon-files'
