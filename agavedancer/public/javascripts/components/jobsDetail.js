@@ -42,7 +42,7 @@ const JobsDetail=React.createClass({
 				}
 				href=href.replace(/__owner__/, job.owner);
 				href=href.replace(/\/__home__/, setting.datastore.__home__.home);
-				output_link=(<a href={href} target='_blank'>Job Outputs</a>);
+				output_link=(<a href={href} target='_blank'>Link to the output folder</a>);
 			}
 			let job_info=(
 				<Table striped condensed hover>
