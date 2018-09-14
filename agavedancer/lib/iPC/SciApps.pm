@@ -1149,7 +1149,11 @@ sub stageJobOutputs {
 	if ($flag) {
 		my $stage_path=$visual_home . '/' . $visual_path . '/' . $target_path;
 		try {
-			mkdir $stage_path;
+			-e $stage_path or mkdir $stage_path;
+		} catch {
+			my ($e)=@_;
+			error("Error: $e");
+			raise 'SystemError' => "mkdir failed";
 		};
 
 		$stage_files=browse_ls('', $visual_system, $stage_path, 1);
@@ -1161,12 +1165,15 @@ sub stageJobOutputs {
 				my $stage_target=$stage_path . '/' . $item->{name};
 				if (! exists $stage_files_hash{$item->{name}}) {
 					icommand('iget', '-f', $stage_source, $stage_target);
+					-e $stage_target or error("Error: iget failed, $stage_target");
 				}
-				if ($suffix eq '.tgz') {
-					! -e $stage_target and raise 'SystemError' => "no tgz file: $stage_target";
+				if (-e $stage_target && substr($stage_target, -4) eq '.tgz' && ! -e substr($stage_target, 0, -4)) {
 					my $command="tar -xzf $stage_target -C $stage_path";
 					try {
 						system($command);
+					} catch {
+						my ($e)=@_;
+						error("Error: $e");
 					};
 				}
 				push @list, $item->{name};

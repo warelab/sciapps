@@ -421,8 +421,9 @@ const JobsStore=Reflux.createStore({
 			let file_types=setting.stage_file_types;
 			let outputs=this.state.jobOutputs[jobId];
 			let stage_list=outputs.filter(function(op) {
-				let suffix=op.name.replace(/^.*\./, '.').toLowerCase();
-				return _.includes(file_types, suffix);
+				return _.some(file_types, function(ft) {
+					return _.endsWith(op.name.toLowerCase(), ft.toLowerCase());
+				});
 			});
 
 			let stagePromise=Q(axios.get('/job/' + jobId + '/stageJobOutputs?stage=' + stage_list.length, {
