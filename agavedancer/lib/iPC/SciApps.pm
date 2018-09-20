@@ -814,10 +814,10 @@ ajax '/job/:id/delete' => sub {
 };
 
 ajax '/job/:id/stageJobOutputs' => sub {
-	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
+	#my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
 	my $job_id=param("id");
 	my $flag=param("stage");
-	my $username=$user->{username};
+	#my $username=$user->{username};
 	my $job=database->quick_select('job', {job_id => $job_id});
 	my $result=stageJobOutputs($job, $flag);
 	to_json({status => 'success', data => {job_id => $job_id, target => $result}});
@@ -1133,7 +1133,7 @@ sub shareJob {
 sub stageJobOutputs {
 	my ($job, $flag)=@_;
 	my @file_types=@{setting('stage_file_types') || []};
-	my $username=$job->{username};
+	#my $username=$job->{username};
 	my $datastore=setting("datastore")->{__home__};
 	my ($datastore_system, $datastore_home, $datastore_path)=($datastore->{system}, $datastore->{home}, $datastore->{path});
 	my $visual=setting("datastore")->{__visual__};
