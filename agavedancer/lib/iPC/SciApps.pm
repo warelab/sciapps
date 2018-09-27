@@ -1163,12 +1163,12 @@ sub stageJobOutputs {
 			if ($suffix) {
 				my $stage_source=join('/', $datastore_home, $jobObj->{archivePath}, $item->{name});
 				my $stage_target=$stage_path . '/' . $item->{name};
-				if (! exists $stage_files_hash{$item->{name}}) {
+				if (! -e substr($stage_target, 0, -4) && ! -e $stage_target) {
 					icommand('iget', '-f', $stage_source, $stage_target);
 					-e $stage_target or error("Error: iget failed, $stage_target");
 				}
 				if (-e $stage_target && substr($stage_target, -4) eq '.tgz' && ! -e substr($stage_target, 0, -4)) {
-					my $command="tar -xzf $stage_target -C $stage_path";
+					my $command="tar -xzf $stage_target -C $stage_path && rm $stage_target";
 					try {
 						system($command);
 					} catch {
