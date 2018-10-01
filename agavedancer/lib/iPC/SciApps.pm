@@ -23,7 +23,7 @@ use FindBin;
 use File::Basename;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode anon_prefix stage_file_types/;
+our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode anon_prefix stage_file_types site_warning_content/;
 our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError SystemError/;
 
 foreach my $exception (@EXCEPTIONS) {
@@ -168,6 +168,13 @@ hook 'before' => sub {
 sub _index {
 	my %config=map { $_ => param($_) } qw/app_id page_id wf_id/;
 	$config{setting}={map {$_ => setting($_)} @EXPORT_SETTINGS};
+	if (+setting('site_warning')) {
+		open(WARNING, setting("appdir") . "/" . setting("site_warning_file"));
+		my $contents = do { local $/;  <WARNING> };
+		close WARNING;
+		$contents=~s/\s+/ /gms;
+		$config{setting}{site_warning_content}=$contents;
+	}
 
 	template 'index', {
 		config => to_json(\%config),
@@ -370,7 +377,7 @@ sub retrieveAppsFile {
 
 sub retrieveAppsRemote {
 	my $user=session('cas_user') or return [];
-	my $save=setting('appsLocalCache');
+	my $save=+setting('appsLocalCache');
 	my ($app_id)=@_;
 	my $return;
 	my $api = getAgaveClient();
@@ -804,12 +811,18 @@ ajax '/job/:id/delete' => sub {
 	#my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $username=$user->{username};
 	my $job_id = param("id");
-	try {
-		database->quick_update('job', {job_id => $job_id}, {username => setting("defaultUser")});
-	} catch {
-		my ($e)=@_;
-		raise InvalidRequest => 'can not delete job';
-	};
+	if ($username eq setting("defaultUser")) {
+		try {
+			database->quick_delete('job', {job_id => $job_id, username => setting("defaultUser")});
+		};
+	} else {
+		try {
+			database->quick_update('job', {job_id => $job_id}, {username => setting("defaultUser")});
+		} catch {
+			my ($e)=@_;
+			raise InvalidRequest => 'can not delete job';
+		};
+	}
 	to_json({status => 'success', data => {job_id => $job_id}}); 
 };
 

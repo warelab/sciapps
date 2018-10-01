@@ -22,6 +22,7 @@ import WorkflowDiagram from './workflowDiagram.js';
 import Header from './header.js';
 import UserLoginBox from './userLoginBox.js';
 import Help from './help.js';
+import Warning from './warning.js';
 
 const App=React.createClass({
 	mixins: [Reflux.connect(UserStore, 'userStore')],
@@ -56,8 +57,8 @@ const App=React.createClass({
 
 		return (
 			<Layout type="column">
+				<Warning />
 				<Header user={user} />
-				<UserLoginBox />
 				<Flex>
 					<Layout type="row">
 						<Fixed className="leftbar">
