@@ -49,10 +49,13 @@ sub agave_login {
 
 sub _agave_login {
 	my $args=shift;
-	open(AGAVE, setting("appdir") . "/" . setting("agave_config"));
-	my $contents = do { local $/;  <AGAVE> };
-	close AGAVE;
-	my $agave=from_json($contents);
+	my $agave;
+	try {
+		open(AGAVE, setting("appdir") . "/" . setting("agave_config"));
+		my $contents = do { local $/;  <AGAVE> };
+		close AGAVE;
+		$agave=from_json($contents);
+	};
 	$args||=$agave;
 
 	my $ah=iPC::AgaveAuthHelper->new({
@@ -169,9 +172,12 @@ sub _index {
 	my %config=map { $_ => param($_) } qw/app_id page_id wf_id/;
 	$config{setting}={map {$_ => setting($_)} @EXPORT_SETTINGS};
 	if (+setting('site_warning')) {
-		open(WARNING, setting("appdir") . "/" . setting("site_warning_file"));
-		my $contents = do { local $/;  <WARNING> };
-		close WARNING;
+		my $contents;
+		try {
+			open(WARNING, setting("appdir") . "/" . setting("site_warning_file"));
+			$contents = do { local $/;  <WARNING> };
+			close WARNING;
+		};
 		$contents=~s/\s+/ /gms;
 		$config{setting}{site_warning_content}=$contents;
 	}
