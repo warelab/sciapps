@@ -57,4 +57,5 @@ plugins:
 
 output_url:
   sciapps.org: 'https://data.sciapps.org/__path__'
+  halcott.cshl.edu: 'https://data.sciapps.org/__path__'
   data.iplantcollaborative.org: 'http://datacommons.cyverse.org/browse/__home__/__path__'
