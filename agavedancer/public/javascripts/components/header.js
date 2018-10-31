@@ -135,6 +135,7 @@ const Header=React.createClass({
 		let userGreeting, userMenu, workflowMenu;
 		let workflowMenuItem=[
 			<MenuItem key='showWorkflowBuilder' eventKey='showWorkflowBuilder' onSelect={this.showWorkflowBuilder}><Glyphicon glyph='wrench' /> Build a workflow</MenuItem>,
+      <MenuItem key='showWorkflowLoader' eventKey='showWorkflowLoader' onSelect={this.showWorkflowLoader}><Glyphicon glyph='cloud-upload' /> Load a workflow</MenuItem>,
 			<MenuItem key='showWorkflows' eventKey='showWorkflows' onSelect={this.showWorkflows}><Glyphicon glyph='th-list' /> Public workflows</MenuItem>
 		];
 		if (user.logged_in) {
