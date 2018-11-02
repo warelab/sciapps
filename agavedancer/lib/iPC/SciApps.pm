@@ -22,7 +22,7 @@ use Archive::Tar ();
 use FindBin;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode/;
+our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode anon_prefix site_warning_content/;
 our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError SystemError/;
 
 foreach my $exception (@EXCEPTIONS) {
@@ -160,6 +160,16 @@ hook 'before' => sub {
 sub _index {
 	my %config=map { $_ => param($_) } qw/app_id page_id wf_id/;
 	$config{setting}={map {$_ => setting($_)} @EXPORT_SETTINGS};
+  if (+setting('site_warning')) {
+    my $contents;
+    try {
+      open(WARNING, setting("appdir") . "/" . setting("site_warning_file"));
+      $contents = do { local $/;  <WARNING> };
+      close WARNING;
+    };
+    $contents=~s/\s+/ /gms;
+    $config{setting}{site_warning_content}=$contents;
+  }
 
 	template 'index', {
 		config => to_json(\%config),
@@ -236,6 +246,11 @@ sub browse {
 		$result=browse_ils($path, $datastore_system, $datastore_homepath);
 	}
 
+  $result=[sort {$a->{path} cmp $b->{path}} @$result];
+  foreach my $item (@$result) {
+    $item->{list}=[sort {$a->{type} cmp $b->{type} || $a->{name} cmp $b->{name}} @{$item->{list}}]
+  }
+
 	return $result;
 };
 
@@ -287,10 +302,11 @@ sub browse_files {
 }
 
 sub browse_ls {
-	my ($path, $system, $homepath)=@_;
+  my ($path, $system, $homepath, $noRecursive)=@_;
 	my $fullPath=$homepath . '/' . $path;
+  my $option='-tl' . ($noRecursive ? '' : 'R');
 
-	my @ls=`ls -tlR $fullPath`;
+  my @ls=`ls $option $fullPath`;
 	my $dir_list=iPC::Utils::parse_ls(\@ls, $homepath);
 
 	[map +{
@@ -350,7 +366,7 @@ sub retrieveAppsFile {
 
 sub retrieveAppsRemote {
 	my $username=session('username') or return [];
-	my $save=setting('appsLocalCache');
+	my $save=+setting('appsLocalCache');
 	my ($app_id)=@_;
 	my $return;
 	my $api = getAgaveClient();
@@ -484,7 +500,7 @@ sub retrieveJob {
 	my $user=_get_user($username);
 	my $row = database->quick_select('job', {job_id => $job_id}) || database->quick_select('job', {agave_id => $job_id});
 	if ($row) {
-		if ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED') {
+    if ($row->{status} && ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED')) {
 			my $jobObj=from_json($row->{agave_json});
 			if ($jobObj->{status} && $jobObj->{status} eq $row->{status}) {
 				#$job=Agave::Client::Object::Job->new($jobObj);
@@ -763,12 +779,18 @@ ajax '/job' => sub {
 ajax '/job/:id/delete' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $job_id = param("id");
-	try {
-		database->quick_update('job', {job_id => $job_id}, {username => setting("defaultUser")});
-	} catch {
-		my ($e)=@_;
-		raise InvalidRequest => 'can not delete job';
-	};
+  if ($username eq setting("defaultUser")) {
+    try {
+      database->quick_delete('job', {job_id => $job_id, username => setting("defaultUser")});
+    };
+  } else {
+	  try {
+		  database->quick_update('job', {job_id => $job_id}, {username => setting("defaultUser")});
+	  } catch {
+		  my ($e)=@_;
+		  raise InvalidRequest => 'can not delete job';
+	  };
+  }
 	to_json({status => 'success', data => {job_id => $job_id}}); 
 };
 

@@ -27,6 +27,7 @@ build/Release
 node_modules
 
 .agave
+site_warning.txt
 cyversedancer
 bundle.js
 *.swp
