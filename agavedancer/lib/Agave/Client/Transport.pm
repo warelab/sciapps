@@ -25,7 +25,7 @@ use vars qw($VERSION $AGENT);
 {
     # these should be moved to a config file (or not?)
 
-    my $TIMEOUT = 30;
+    my $TIMEOUT = 300;
 
     my $TRANSPORT = 'https';
 
@@ -39,6 +39,7 @@ use vars qw($VERSION $AGENT);
             metadata => 'meta/v2',
             metadataschema => 'meta/v2',
             postit => 'postits/v2',
+            profile => 'profiles/v2',
         );
 
     sub _get_end_point {

@@ -960,9 +960,9 @@ sub prepareJob {
 	];
 
 	$job_form{archive}=1;
-	#$job_form{archiveSystem}=$archive_system;
+	$job_form{archiveSystem}=$archive_system;
 	$job_form{archivePath}=join('/', $archive_path, $app_id . '_' . $job_id);
-	$job_form{notifications}=$notifications;
+  $job_form{notifications}=$notifications;
 
 	my $cmd="export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;imkdir -p $archive_home/$job_form{archivePath}";
 	try {

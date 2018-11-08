@@ -192,14 +192,8 @@ return a list of hashes
 sub job_history {
 	my ($self, $job_id) = @_;
 
-	my $history = [];
-
 	return unless $job_id;
 	my $data = $self->do_get('/' . $job_id . '/history');
-
-	if ('ARRAY' eq ref $data) {
-		$history = $data;
-	}
 
 	wantarray ? @$data : $data;
 }

@@ -434,6 +434,38 @@ $DB::single = 2;
 	return ref($resp) ? $resp : {'status' => 'success'};
 }
 
+=head2 file_history
+
+returns a list of hashes
+    [{
+      "status": "STAGING_QUEUED",
+      "created": "2017-07-13T10:10:31.000-05:00",
+      "createdBy": "ghiban",
+      "description": "File/folder queued for staging"
+    },
+    {
+      "status": "STAGING_COMPLETED",
+      "created": "2017-07-13T10:10:38.000-05:00",
+      "createdBy": "ghiban",
+      "description": "Staging completed successfully"
+    }]
+
+=cut
+
+sub file_history {
+	my ($self, $path) = @_;
+
+	# Check for a request path
+	unless (defined($path)) {
+		print STDERR "Please specify a path\n";
+		return;
+	}
+	$path = "/$path" unless $path =~ m/^\//;
+
+	my $data = $self->do_get('/history' . $path);
+	wantarray ? @$data : $data;
+}
+
 =head1 AUTHOR
 
 Cornel Ghiban, C<< <cghiban at gmail.com> >>
