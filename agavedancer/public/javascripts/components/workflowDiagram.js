@@ -40,7 +40,7 @@ const WorkflowDiagram=React.createClass({
 	},
 
 	changeDirection: function() {
-		let labels = ["Top Down", "Left Right"];
+		let labels = ["Top-Down", "Left-Right"];
 		this.setState({direction: this.state.direction ? 0 : 1, label: labels[this.state.direction ? 0 : 1]});
 	},
 
@@ -271,7 +271,7 @@ const WorkflowDiagram=React.createClass({
 					//let jobDetail=step.jobId ? jobsStore.jobDetailCache[step.jobId] || _.find(jobsStore.jobDetailCache, 'id', step.jobId) : undefined;
 				//});
 				let workflowDiagramDef=this.buildWorkflowDiagram(workflowStore, appsStore, jobsStore, workflowDirection);
-				let saveBtnTxt=this.state.onSave ? 'Saving' : 'Save Workflow';
+				let saveBtnTxt=this.state.onSave ? 'Saving' : 'Save';
 				let saveBtn=user.logged_in ? <Button onClick={this.handleSave} bsStyle={'primary'}>{saveBtnTxt}</Button> : undefined;
 				body=(
 					<Modal.Body>
@@ -286,8 +286,8 @@ const WorkflowDiagram=React.createClass({
 				footer=(
 					<Modal.Footer>
 						{saveBtn}
-						<Button onClick={this.changeDirection}>{this.state.label}</Button>
-						<Button onClick={this.hideWorkflowDiagram}>Close</Button>
+						<Button onClick={this.changeDirection} bsStyle={'primary'}>{this.state.label}</Button>
+						<Button onClick={this.hideWorkflowDiagram} bsStyle={'primary'}>Close</Button>
 					</Modal.Footer>
 				);
 			} else {
