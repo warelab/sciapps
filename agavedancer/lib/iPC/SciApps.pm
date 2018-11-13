@@ -180,7 +180,7 @@ get '/' => sub {
 	_index();
 };
 
-ajax '/login' => sub {
+any ['get', 'post'] => '/login' => sub {
 	my $user={username => param("username"), password => param("password")};
 	$user=agave_login($user);
 	my %data=map { $_ => $user->{$_} } qw/username/;
@@ -196,18 +196,18 @@ ajax '/login' => sub {
 	to_json($user);
 };
 
-ajax '/logout' => sub {
+get '/logout' => sub {
 	_logout();
 	to_json({status => "successful"});
 };
 
-ajax '/user' => sub {
+get '/user' => sub {
 	my $user={username => session('username')};
 	$user->{logged_in}=$user->{username} && check_agave_login() ? 1 : 0;
 	to_json({status => 'success', data => $user});
 };
 
-ajax qr{/browse/?(.*)} => sub {
+get qr{/browse/?(.*)} => sub {
 	my ($typePath) = splat;
 	my $nopath=param('nopath');
 	my $result=browse($typePath, undef, $nopath);
@@ -316,14 +316,14 @@ sub browse_ls {
 		}, sort keys %$dir_list];
 }
 
-ajax '/apps/:id' => sub {
+get '/apps/:id' => sub {
 	my $app_id = param("id");
 	my $app=$app_id && retrieveApps($app_id);
 	$app or raise InvalidRequest => 'no apps found';
 	to_json({status => 'success', data => $app});
 };
 
-ajax '/apps' => sub {
+get '/apps' => sub {
 	my $mode=param('mode');
 	my $local=! $mode || $mode eq 'local' ? retrieveAppsFile() : [];
 	my $remote=! $mode || $mode eq 'remote' ? retrieveAppsRemote() : [];
@@ -393,14 +393,14 @@ sub retrieveAppsRemote {
 	$return;
 }
 
-ajax '/schema/:id' => sub {
+get '/schema/:id' => sub {
 	my $schema_id = param("id");
 
 	my $schema=retrieveSchema($schema_id);
 	return to_json($schema);
 };
 
-ajax '/schema' => sub {
+get '/schema' => sub {
 	my $schema=retrieveSchema();
 
 	return to_json($schema);
@@ -415,19 +415,19 @@ sub retrieveSchema {
 	$meta->list($schema_id);
 }
 
-ajax '/metadata/new' => sub {
+any ['get', 'post'] => '/metadata/new' => sub {
 	my $json = param("json");
 	return to_json({status => "successful"});
 };
 
-ajax '/metadata/:id' => sub {
+get '/metadata/:id' => sub {
 	my $metadata_id = param("id");
 
 	my $metadata=retrieveMetadata($metadata_id);
 	return to_json($metadata);
 };
 
-ajax '/metadata' => sub {
+get '/metadata' => sub {
 	my $q=param("q");
 	my $metadata;
 	if ($q) {
@@ -474,14 +474,14 @@ sub checkWorkflowJobStatus {
 	return \@result;
 }
 
-ajax qr{/file/(.*)} => sub {
+get qr{/file/(.*)} => sub {
 	my ($fullpath)=splat;
 	my ($system, $path)=split /\//, $fullpath, 2;
 	my $input=database->quick_select('file_view', {system => $system, path => $path}) || {system => $system, path => $path};
 	return to_json($input);
 };
 
-ajax '/job/:id' => sub {
+get '/job/:id' => sub {
 	#my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $username=session('username');
 	my $job_id = param("id");
@@ -559,13 +559,13 @@ sub retrieveJob {
 	$job;
 }
 
-ajax '/workflow/:id/jobStatus' => sub {
+get '/workflow/:id/jobStatus' => sub {
 	my $wfid=param('id');
 	my $jobs=checkWorkflowJobStatus($wfid);
 	return to_json({status => 'success', data => $jobs});
 };
 
-ajax '/workflow/remote' => sub {
+any ['get', 'post'] => '/workflow/remote' => sub {
 	my $data;
 	my $url=param('_url');
 	my $ua=LWP::UserAgent->new();
@@ -580,7 +580,7 @@ ajax '/workflow/remote' => sub {
 };
 
 
-ajax '/workflow/new/:id' => sub {
+get '/workflow/new/:id' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $wfid=param('id');
 	my $wfjson=param('_workflow_json');
@@ -606,7 +606,7 @@ ajax '/workflow/new/:id' => sub {
 	to_json({status => 'success', data => {workflow_id => $wfid, %data, steps => $wf->{steps}}});
 };
 
-ajax '/workflow/:id/delete' => sub {
+get '/workflow/:id/delete' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $wfid=param('id');
 	try {
@@ -617,7 +617,7 @@ ajax '/workflow/:id/delete' => sub {
 	to_json({status => 'success'});
 };
 
-ajax '/workflow/:id/update' => sub {
+any ['get', 'post'] => '/workflow/:id/update' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $wfid=param('id');
 	my $wfname=param('_workflow_name');
@@ -632,7 +632,7 @@ ajax '/workflow/:id/update' => sub {
 	to_json({status => 'success'});
 };
 
-ajax '/workflow/:id' => sub {
+get '/workflow/:id' => sub {
 	my $wfid=param('id');
 	my $wf=retrieveWorkflow($wfid);
 	$wf or raise InvalidRequest => 'no workflow found';
@@ -668,14 +668,14 @@ sub retrieveWorkflowDB {
 	$wf;
 }
 
-ajax '/workflow' => sub {
+get '/workflow' => sub {
 	my @result;
 	my $username=session('username') or raise InvalidCredentials => 'no username';
 	@result=map {delete $_->{username}; my $obj=from_json(delete $_->{json}); $_->{steps}=$obj->{steps}; $_;} database->quick_select('user_workflow_view', {username => $username});
 	return to_json({status => 'success', data => \@result});
 };
 
-ajax '/workflowJob/new' => sub {
+any ['get', 'post'] => '/workflowJob/new' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $archive_system=setting("archive_system");
 	my $archive_home=setting("archive_home");
@@ -716,7 +716,7 @@ ajax '/workflowJob/new' => sub {
 	scalar(@jobs) == scalar(@{$wf->{steps}}) ? to_json({status => 'success', data => {workflow_id => $wfid, jobs => \@jobs, workflow => $wf}}) : raise InvalidRequest => 'workflow submission failed';
 };
 
-ajax '/workflowJob/run/:id' => sub {
+get '/workflowJob/run/:id' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $apif = getAgaveClient();
 	my $apps = $apif->apps;
@@ -738,7 +738,7 @@ ajax '/workflowJob/run/:id' => sub {
 	$wf ? to_json({status => 'success', data => {workflow_id => $wfid, jobs => \@jobs}}) : raise InvalidRequest => 'workflow not found';
 };
 
-ajax '/job/new/:id' => sub {
+any ['get', 'post'] => '/job/new/:id' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my @err = ();
 	my $app_id = param("id");
@@ -753,7 +753,7 @@ ajax '/job/new/:id' => sub {
 	$job_id && $job && $job->{id} ? to_json({status => 'success', data => $job}) : raise InvalidRequest => 'job submission failed';
 };
 
-ajax '/job' => sub {
+get '/job' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my @result=database->quick_select('job', {username => $username}, {columns =>[qw/job_id app_id status agave_json/], order_by => {desc => 'id'}});
 	foreach (@result) {
@@ -776,7 +776,7 @@ ajax '/job' => sub {
 	return to_json({status => 'success', data => \@result});
 };
 
-ajax '/job/:id/delete' => sub {
+get '/job/:id/delete' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $job_id = param("id");
   if ($username eq setting("defaultUser")) {
