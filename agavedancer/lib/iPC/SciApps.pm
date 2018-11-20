@@ -20,9 +20,10 @@ use Agave::Client::Client ();
 use File::Copy ();
 use Archive::Tar ();
 use FindBin;
+use File::Basename;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode anon_prefix site_warning_content/;
+our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode anon_prefix stage_file_types site_warning_content/;
 our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError SystemError/;
 
 foreach my $exception (@EXCEPTIONS) {
@@ -65,8 +66,8 @@ sub _agave_login {
 }
 
 sub _get_user {
-	my $username=shift;
-	defined $username ? database->quick_select('agave_user', {username => $username}) : undef;
+	my ($username, $token)=@_;
+	defined $username ? database->quick_select('agave_user', {username => $username, token => $token || {is => undef, not => 1} }) : undef;
 }
 
 sub _store_auth_session {
@@ -117,9 +118,9 @@ sub agave_refresh {
 
 sub check_agave_login {
 	my $args=shift;
-	unless (token_valid($args)) {
-		agave_refresh($args);
-	}
+  #unless (token_valid($args)) {
+  #	agave_refresh($args);
+  #}
 	token_valid($args);
 }
 
@@ -145,6 +146,13 @@ hook on_route_exception => sub {
 };
 
 hook 'before' => sub {
+  my $user=request->header('user');
+  my $token=request->header('Authorization');
+  if ($user && $token) {
+    $token=~s/^Bearer\s+//;
+    if (my $user=_get_user($user, $token)) {
+    }
+  }
 	my $path=request->path;
 	#unless($path eq '/' || $path=~m#^/(login|logout|notification|apps)/?# || check_agave_login()) {
 	if ($path=~m#^/(job|workflowJob)/new/?# && ! check_agave_login()) {
@@ -160,16 +168,16 @@ hook 'before' => sub {
 sub _index {
 	my %config=map { $_ => param($_) } qw/app_id page_id wf_id/;
 	$config{setting}={map {$_ => setting($_)} @EXPORT_SETTINGS};
-  if (+setting('site_warning')) {
-    my $contents;
-    try {
-      open(WARNING, setting("appdir") . "/" . setting("site_warning_file"));
-      $contents = do { local $/;  <WARNING> };
-      close WARNING;
-    };
-    $contents=~s/\s+/ /gms;
-    $config{setting}{site_warning_content}=$contents;
-  }
+	if (+setting('site_warning')) {
+		my $contents;
+		try {
+			open(WARNING, setting("appdir") . "/" . setting("site_warning_file"));
+			$contents = do { local $/;  <WARNING> };
+			close WARNING;
+		};
+		$contents=~s/\s+/ /gms;
+		$config{setting}{site_warning_content}=$contents;
+	}
 
 	template 'index', {
 		config => to_json(\%config),
@@ -246,10 +254,10 @@ sub browse {
 		$result=browse_ils($path, $datastore_system, $datastore_homepath);
 	}
 
-  $result=[sort {$a->{path} cmp $b->{path}} @$result];
-  foreach my $item (@$result) {
-    $item->{list}=[sort {$a->{type} cmp $b->{type} || $a->{name} cmp $b->{name}} @{$item->{list}}]
-  }
+	$result=[sort {$a->{path} cmp $b->{path}} @$result];
+	foreach my $item (@$result) {
+		$item->{list}=[sort {$a->{type} cmp $b->{type} || $a->{name} cmp $b->{name}} @{$item->{list}}]
+	}
 
 	return $result;
 };
@@ -270,9 +278,8 @@ sub browse_output_files {
 
 sub browse_ils {
 	my ($path, $system, $homepath)=@_;
-	my $irodsEnvFile=setting('irodsEnvFile');
-	my $fullPath=$homepath . '/' . $path;
-	my @ils=`export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;ils -l '$fullPath'`;
+	my $fullPath=qq('$homepath/$path');
+	my @ils=icommand('ils', '-l', $fullPath);
 	chomp (@ils);
 	my $dir_list=iPC::Utils::parse_ils(\@ils, $homepath);
 
@@ -302,11 +309,11 @@ sub browse_files {
 }
 
 sub browse_ls {
-  my ($path, $system, $homepath, $noRecursive)=@_;
+	my ($path, $system, $homepath, $noRecursive)=@_;
 	my $fullPath=$homepath . '/' . $path;
-  my $option='-tl' . ($noRecursive ? '' : 'R');
+	my $option='-tl' . ($noRecursive ? '' : 'R');
 
-  my @ls=`ls $option $fullPath`;
+	my @ls=`ls $option $fullPath`;
 	my $dir_list=iPC::Utils::parse_ls(\@ls, $homepath);
 
 	[map +{
@@ -314,6 +321,12 @@ sub browse_ls {
 			path => $_,
 			list => $dir_list->{$_},
 		}, sort keys %$dir_list];
+}
+
+sub icommand {
+	my ($cmd, $opt, @arg)=@_;
+	my $irodsEnvFile=setting('irodsEnvFile');
+	my @return=`export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;$cmd $opt @arg`;
 }
 
 get '/apps/:id' => sub {
@@ -376,8 +389,9 @@ sub retrieveAppsRemote {
 			my $retry=2;
 			foreach (0 .. $retry) {
 				$return=$apps->find_by_id($app_id);
-				last if (!$return->{inputs} || ! $return->{inputs}[0] || defined($return->{inputs}[0]{value}{visible})) && (!$return->{parameters} || ! $return->{parameters}[0] || defined($return->{parameters}[0]{value}{visible})); 
+				last if (!$return->{inputs} || ! $return->{inputs}[0] || defined($return->{inputs}[0]{value}{visible})) && (!$return->{parameters} || ! $return->{parameters}[0] || defined($return->{parameters}[0]{value}{visible}));
 			}
+			
 			$save and try {
 				my $file=setting("appdir") . '/public/assets/' . $app_id . '.json';
 				unless (-f $file) {
@@ -500,7 +514,7 @@ sub retrieveJob {
 	my $user=_get_user($username);
 	my $row = database->quick_select('job', {job_id => $job_id}) || database->quick_select('job', {agave_id => $job_id});
 	if ($row) {
-    if ($row->{status} && ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED')) {
+		if ($row->{status} && ($row->{status} eq 'FINISHED' || $row->{status} eq 'FAILED')) {
 			my $jobObj=from_json($row->{agave_json});
 			if ($jobObj->{status} && $jobObj->{status} eq $row->{status}) {
 				#$job=Agave::Client::Object::Job->new($jobObj);
@@ -514,6 +528,7 @@ sub retrieveJob {
 		}
 		$user||=_get_user($row->{username});
 	}
+
 	unless ($check || $job || ! $user) {
 		my $apif = getAgaveClient($user);
 		my $job_ep = $apif->job;
@@ -542,8 +557,8 @@ sub retrieveJob {
 			};
 			if ($job->{status} eq 'FINISHED') {
 				#submitQueuedJob({job_id => $job_id, %data});
-				shareOutput({job_id => $job_id, %data});
 				submitNextJob({job_id => $job_id, %data});
+				shareOutput({job_id => $job_id, %data});
 			} elsif ($job->{status} eq 'FAILED') {
 				terminateNextJob({job_id => $job_id, %data});
 			}
@@ -779,19 +794,28 @@ get '/job' => sub {
 get '/job/:id/delete' => sub {
 	my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $job_id = param("id");
-  if ($username eq setting("defaultUser")) {
-    try {
-      database->quick_delete('job', {job_id => $job_id, username => setting("defaultUser")});
-    };
-  } else {
-	  try {
-		  database->quick_update('job', {job_id => $job_id}, {username => setting("defaultUser")});
-	  } catch {
-		  my ($e)=@_;
-		  raise InvalidRequest => 'can not delete job';
-	  };
-  }
+	if ($username eq setting("defaultUser")) {
+		try {
+			database->quick_delete('job', {job_id => $job_id, username => setting("defaultUser")});
+		};
+	} else {
+		try {
+			database->quick_update('job', {job_id => $job_id}, {username => setting("defaultUser")});
+		} catch {
+			my ($e)=@_;
+			raise InvalidRequest => 'can not delete job';
+		};
+	}
 	to_json({status => 'success', data => {job_id => $job_id}}); 
+};
+
+get '/job/:id/stageJobOutputs' => sub {
+	my $job_id=param("id");
+	my $flag=param("stage");
+	#my $username=$user->{username};
+	my $job=database->quick_select('job', {job_id => $job_id});
+	my $result=stageJobOutputs($job, $flag);
+	to_json({status => 'success', data => {job_id => $job_id, target => $result}});
 };
 
 sub prepareJob {
@@ -912,9 +936,9 @@ sub prepareJob {
 	];
 
 	$job_form{archive}=1;
-	#$job_form{archiveSystem}=$archive_system;
+	$job_form{archiveSystem}=$archive_system;
 	$job_form{archivePath}=join('/', $archive_path, $app_id . '_' . $job_id);
-	$job_form{notifications}=$notifications;
+  $job_form{notifications}=$notifications;
 
 	my $cmd="export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;imkdir -p $archive_home/$job_form{archivePath}";
 	try {
@@ -1057,6 +1081,7 @@ any ['get', 'post'] => '/notification/:id' => sub {
 		#submitNextJob($job);
 		#shareOutput($job, $user);
 		#archiveJob($job);
+		#stageJobOutputs($job);
 	} elsif ($params->{status} eq 'FAILED') {
 		#resubmitJob($params->{id});
 	} elsif ($params->{status} eq 'STAGED') {
@@ -1090,11 +1115,64 @@ sub shareOutput {
 }
 
 sub shareJob {
-	my ($job, $user)=@_;
+	my ($job)=@_;
 
-	my $apif = getAgaveClient($user);
+	my $apif = getAgaveClient();
 	my $job_ep = $apif->job;
 	my $res=$job_ep->share_job($job->{agave_id}, 'public', 'READ');
+}
+
+sub stageJobOutputs {
+	my ($job, $flag)=@_;
+	my @file_types=@{setting('stage_file_types') || []};
+	#my $username=$job->{username};
+	my $datastore=setting("datastore")->{__home__};
+	my ($datastore_system, $datastore_home, $datastore_path)=($datastore->{system}, $datastore->{home}, $datastore->{path});
+	my $visual=setting("datastore")->{__visual__};
+	my ($visual_system, $visual_home, $visual_path)=($visual->{system}, $visual->{home}, $visual->{path});
+
+	my $jobObj=from_json($job->{agave_json});
+	my $target_path=(split /\//, $jobObj->{archivePath})[-1];
+	my $outputs=$flag ? browse_ils($jobObj->{archivePath}, $datastore_system, $datastore_home) : undef;
+	
+	my $stage_files=[];
+	my %stage_files_hash=();
+	my @list;
+	if ($flag) {
+		my $stage_path=$visual_home . '/' . $visual_path . '/' . $target_path;
+		try {
+			-e $stage_path or mkdir $stage_path;
+		} catch {
+			my ($e)=@_;
+			error("Error: $e");
+			raise 'SystemError' => "mkdir failed";
+		};
+
+		$stage_files=browse_ls('', $visual_system, $stage_path, 1);
+		%stage_files_hash=map { $_->{name} => 1 } @{$stage_files->[0]{list}};
+		foreach my $item (@{$outputs->[0]{list}}) {
+			my ($name,$path,$suffix) = fileparse($item->{name}, @file_types);
+			if ($suffix) {
+				my $stage_source=join('/', $datastore_home, $jobObj->{archivePath}, $item->{name});
+				my $stage_target=$stage_path . '/' . $item->{name};
+				if (! -e substr($stage_target, 0, -4) && ! -e $stage_target) {
+					icommand('iget', '-f', $stage_source, $stage_target);
+					-e $stage_target or error("Error: iget failed, $stage_target");
+				}
+				if (-e $stage_target && substr($stage_target, -4) eq '.tgz' && ! -e substr($stage_target, 0, -4)) {
+					my $command="tar -xzf $stage_target -C $stage_path && rm $stage_target";
+					try {
+						system($command);
+					} catch {
+						my ($e)=@_;
+						error("Error: $e");
+					};
+				}
+				push @list, $item->{name};
+			}
+		}
+	}
+	return {system => $visual_system, path => $visual_path . '/' . $target_path, list => \@list};
 }
 
 sub archiveJob {
@@ -1114,7 +1192,7 @@ sub archiveJob {
 sub submitQueuedJob {
 	my ($prev_job)=@_;
 	_updatePrevJob($prev_job);
-	my @next_job=database->quick_select('job', {agave_id => undef, id => {gt => $prev_job->{id}}}, {order_by => 'id'});
+	my @next_job=database->quick_select('job', {agave_id => undef}, {order_by => 'id'});
 	foreach my $next_job (@next_job) {
 		my $queue_length=setting('queue_length');
 		my $job_count=database->quick_count('job', "agave_id is not null and status not in ('FINISHED', 'KILLED', 'FAILED', 'STOPPED', 'ARCHIVING_FAILED')");

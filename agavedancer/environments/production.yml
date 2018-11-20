@@ -44,6 +44,10 @@ datastore:
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
     path: '__user__/sci_data/results'
+  __visual__: 
+    system: 'halcott.cshl.edu'
+    home: '/agave_data'
+    path: 'results/vi'
   __system__:
     system: ''
     home: ''

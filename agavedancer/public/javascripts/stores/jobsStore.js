@@ -35,6 +35,7 @@ const JobsStore=Reflux.createStore({
 			workflowBuilderJobIndex: [],
 			jobDetail: {},
 			jobOutputs: {},
+			jobOutputsStaged: {},
 			jobDetailCache: {},
 			wid: {},
 			fileDetailCache: {},
@@ -412,6 +413,39 @@ const JobsStore=Reflux.createStore({
 			console.log(error);
 		})
 		.done();
+	},
+
+	stageJobOutputs: function(jobId) {
+		let setting=_config.setting;
+		if (! this.state.jobOutputsStaged[jobId]) {
+			let file_types=setting.stage_file_types;
+			let outputs=this.state.jobOutputs[jobId];
+			let stage_list=outputs.filter(function(op) {
+				return _.some(file_types, function(ft) {
+					return _.endsWith(op.name.toLowerCase(), ft.toLowerCase());
+				});
+			});
+
+			let stagePromise=Q(axios.get('/job/' + jobId + '/stageJobOutputs?stage=' + stage_list.length, {
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+			}))
+			.then(function(res) {
+				if (res.data.error) {
+					console.log(res.data.error);
+					return;
+				} else {
+					let data=res.data.data;
+					//this.state.jobOutputsStaged[jobId]=data.target;
+					return data.target;
+				}
+			}.bind(this))
+			.catch(function(error) {
+				console.log(error);
+			});
+			this.state.jobOutputsStaged[jobId]=stagePromise;
+		}
+		this.complete();
+		return this.state.jobOutputsStaged[jobId];
 	},
 
 	setFile: function(fileId, path) {
