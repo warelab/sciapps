@@ -48,7 +48,7 @@ const App=React.createClass({
 		} else {
 			AppsActions.showPage(page_id);
 		}
-		setInterval(() => {UserActions.setUser(true);}, this.props.userInterval);
+		setInterval(() => {UserActions.setUser();}, this.props.userInterval);
 		setInterval(() => {JobsActions.setJobs(undefined, true);}, this.props.jobsInterval);
 	},
 

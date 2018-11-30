@@ -199,10 +199,10 @@ const WorkflowDiagram=React.createClass({
 				Dialog.Action(
 					'Submit',
 					() => {
-						if (this.nameInput.state.value) {
+						if (undefined !== this.nameInput.state.value) {
 							wf.name=this.nameInput.state.value;
 						}
-						if (this.descInput.state.value) {
+						if (undefined !== this.descInput.state.value) {
 							wf.description=this.descInput.state.value;
 						}
 						WorkflowActions.saveWorkflow(wf);
@@ -272,7 +272,7 @@ const WorkflowDiagram=React.createClass({
 				//});
 				let workflowDiagramDef=this.buildWorkflowDiagram(workflowStore, appsStore, jobsStore, workflowDirection);
 				let saveBtnTxt=this.state.onSave ? 'Saving' : 'Save Workflow';
-				let saveBtn=user.logged_in ? <Button onClick={this.handleSave} bsStyle={'primary'}>{saveBtnTxt}</Button> : undefined;
+				let saveBtn=user.token ? <Button onClick={this.handleSave} bsStyle={'primary'}>{saveBtnTxt}</Button> : undefined;
 				body=(
 					<Modal.Body>
 						<Mermaid diagramDef={workflowDiagramDef}/>

@@ -130,6 +130,11 @@ const Header=React.createClass({
  		});
 	},
 
+  handleToken: function() {
+    let user=this.props.user;
+    this.refs.dialog.showAlert('Your API token is: ' + user.token);
+  },
+
 	render: function() {
 		let user=this.props.user;
 		let userGreeting, userMenu, workflowMenu;
@@ -138,19 +143,23 @@ const Header=React.createClass({
 			//<MenuItem key='showWorkflowLoader' eventKey='showWorkflowLoader' onSelect={this.showWorkflowLoader}><Glyphicon glyph='cloud-upload' /> Load a workflow</MenuItem>,
 			//<MenuItem key='showWorkflows' eventKey='showWorkflows' onSelect={this.showWorkflows}><Glyphicon glyph='th-list' /> Public workflows</MenuItem>
 		];
-		if (user.logged_in) {
-			userGreeting=<NavItem eventKey='greeting'><Glyphicon glyph='user' /> Hi, {user.firstName}!</NavItem>;
-			userMenu=<NavItem eventKey='logout' pullRight onSelect={this.handleLogout}>Logout <Glyphicon glyph='log-out' /></NavItem>;
+		if (user.token) {
+      userMenu=(
+        <NavDropdown eventKey='user' title={<span><Glyphicon glyph="user" /> Hi, {user.firstName}!</span>} id="nav-dropdown-user">
+          <MenuItem key='token' eventKey='token' onSelect={this.handleToken}><Glyphicon glyph='record' /> Get API token</MenuItem>
+          <MenuItem key='logout' eventKey='logout' onSelect={this.handleLogout}><Glyphicon glyph='log-out' /> Logout</MenuItem>
+        </NavDropdown>
+      )
 			workflowMenuItem.push(
 				<MenuItem key='workflowDivder' eventKey='workflowDivder' divider />,
 				<MenuItem key='userWorkflows' eventKey='userWorkflows' onSelect={this.showUserWorkflows}><Glyphicon glyph='list-alt' /> My workflows</MenuItem>,
 				<MenuItem key='userJobs' eventKey='userJobs' onSelect={this.showUserJobs}><Glyphicon glyph='list-alt' /> My jobs</MenuItem>
 			);
 		} else {
-			userMenu=(<NavItem eventKey='login' pullRight onSelect={this.handleLogin}>Login <Glyphicon glyph='log-in' /></NavItem>);
+			userMenu=(<NavItem eventKey='login' pullRight onSelect={this.handleLogin}><Glyphicon glyph='log-in' /> Login</NavItem>);
 		}
 		workflowMenu=(
-			<NavDropdown eventKey='workflows' title={<span><Glyphicon glyph="link" /> Workflow</span>} id="nav-dropdown">
+			<NavDropdown eventKey='workflows' title={<span><Glyphicon glyph="link" /> Workflow</span>} id="nav-dropdown-workflow">
 				{workflowMenuItem}
 			</NavDropdown>
 		);
@@ -161,7 +170,6 @@ const Header=React.createClass({
 					<NavItem eventKey='welcome' onSelect={this.showWelcome}><Glyphicon glyph='home' /> Home</NavItem>
 					{workflowMenu}
 					<NavItem eventKey='help' onSelect={this.showHelp}><Glyphicon glyph='question-sign' /> Help</NavItem>
-					{userGreeting}
 					{userMenu}
 				</Nav>
 			</Navbar>

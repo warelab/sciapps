@@ -54,14 +54,6 @@ const WorkflowRunnerForm=React.createClass({
 			let wid=utilities.uuid();
 			formData.set('_workflow_id', wid);
 			let wf=JSON.parse(formData.get('_workflow_json'));
-			wf.steps.forEach(function(step) {
-				step.jobId=undefined;
-			});
-			_.assign(wf, {
-				workflow_id: wid,
-				name: 'workflow-' + wid + '-' + wf.name,
-				derived_from: wf.id || wf.workflow_id
-			});
 			formData.set('_workflow_json', JSON.stringify(wf));
 			//confirmed=confirm('You are going to submit ' + wf.steps.length + ' jobs to cluster, are you sure?');
 			this.refs.dialog.show({
@@ -189,8 +181,14 @@ const WorkflowRunnerForm=React.createClass({
 				name: '_workflow_json',
 				value: JSON.stringify(workflowDetail)
 			};
+			let derivedFrom={
+				type: 'hidden',
+				id: '_derived_from',
+				name: '_derived_from',
+				value: workflowDetail.workflow_id
+			};
 			let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
-			let submitBtn=user.logged_in ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit Workflow</Button> : 
+			let submitBtn=user.token ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit Workflow</Button> : 
 				<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
 					<Button bsStyle='primary' onClick={null}>Submit Jobs</Button>
 				</OverlayTrigger>;
@@ -200,6 +198,7 @@ const WorkflowRunnerForm=React.createClass({
 						{appsFieldsets}
 						<BaseInput data={emailInput} />
 						<BaseInput data={workflowJson} />
+						<BaseInput data={derivedFrom} />
 						{submitBtn}
 						<span> or </span>
 						<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Show Diagram</Button>

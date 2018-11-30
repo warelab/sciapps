@@ -39,9 +39,6 @@ const AppsDetail=React.createClass({
 		let appDetail=appsStore.appDetail;
 		let reload=appsStore.reload;
 		let markup;
-		//if (! this.props.user.logged_in) {
-		//	markup=<Welcome />
-		//} else if (appDetail && appDetail.id) {
 		if (appDetail && appDetail.id) {
 			markup=(
 				<div>

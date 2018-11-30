@@ -39,7 +39,7 @@ const UserStore=Reflux.createStore({
 			firstName: '',
 			lastName: '',
 			email: '',
-			logged_in: false,
+			token: '',
 			error: ''
 		};
 	},
@@ -55,28 +55,33 @@ const UserStore=Reflux.createStore({
 		mode.forEach((value) => AppsActions.listApps('', value));
 	},
 
-	setUser: function(reset) {
+	setUser: function(user) {
 		let setting=_config.setting;
-		let logged_in=this.state.logged_in;
-		//Q(axios.get(setting.host_url + '/user', {
-		Q(axios.get('/user', {
-			headers: {'X-Requested-With': 'XMLHttpRequest'},
-		}))
-		.then(function(res) {
-			if (res.data.error) {
-				this.resetUser();
-				//if (res.data.error.startsWith('InvalidCredentials')) {
-				//	this.logout();
-				//}
-				console.log(res.data.error);
-			} else if (res.data.data.logged_in) {
-				this._updateUser(res.data.data);
+		let token=this.state.token;
+    let userPromise;
+    if (user) {
+      userPromise=Q(user);
+    } else {
+		  userPromise=Q(axios.get('/user', {
+			  headers: {'X-Requested-With': 'XMLHttpRequest'},
+		  }))
+		  .then(function(res) {
+			  if (res.data.error) {
+				  this.resetUser();
+				  console.log(res.data.error);
+          return;
+			  } else if (res.data.data.token) {
+          return res.data.data;
+        }
+      }.bind(this));
+    }
+    userPromise.then(function (user) {
+      if (user) {
+				this._updateUser(user);
 				WorkflowActions.listWorkflow();
 				JobsActions.listJob();
 			} else {
-				if (reset) {
-					this.resetUser();
-				}
+				this.resetUser();
 			}
 			let mode=setting.appsListMode || [''];
 			mode.forEach((value) => AppsActions.listApps('', value));
@@ -111,9 +116,11 @@ const UserStore=Reflux.createStore({
 				this.state.showLoginBox=show;
 				this.state.error=res.data.error;
 				this.complete();
-			} else if (res.data.logged_in) {
-				this.setUser(res.data);
+        return;
+			} else if (res.data.data.token) {
+				this.setUser(res.data.data);
 				this.hideLoginBox();
+        return res.data.data;
 			}
 		}.bind(this))
 		.catch(function(error) {
@@ -135,7 +142,7 @@ const UserStore=Reflux.createStore({
 	},
 
 	logout: function() {
-		this.resetUser(true);
+		this.resetUser();
 		this._logout();
 		this.complete();
 	},

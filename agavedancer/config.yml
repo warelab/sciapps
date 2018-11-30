@@ -46,6 +46,7 @@ plugins:
     main_api_module: iPC::SciApps
     show_ui: 1
     ui_url: /doc
+    ui_dir: public/swagger-ui/dist
   Ajax:
     content_type: 'application/json'
   Database:
