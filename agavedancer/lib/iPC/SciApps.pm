@@ -726,7 +726,7 @@ swagger_path
 get '/workflow' => sub {
 	my @result;
 	my $username=var("username") or raise InvalidCredentials => 'no username';
-	@result=map {delete $_->{username}; my $obj=from_json(delete $_->{json}); $_->{steps}=$obj->{steps}; $_;} database->quick_select('user_workflow_view', {username => $username});
+	@result=map {delete $_->{username}; my $obj=from_json(delete $_->{json}); $_->{steps}=$obj->{steps}; $_;} reverse database->quick_select('user_workflow_view', {username => $username});
   content_type 'application/json';
 	return to_json({status => 'success', data => \@result});
 };
