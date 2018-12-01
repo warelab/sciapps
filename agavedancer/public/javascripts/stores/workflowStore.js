@@ -153,8 +153,8 @@ const WorkflowStore=Reflux.createStore({
 
 	updateWorkflow: function(wf) {
 		let formData=new FormData();
-		formData.append('_workflow_name',  wf.name);
-		formData.append('_workflow_desc',  wf.description);
+		formData.append('workflow_name',  wf.name);
+		formData.append('workflow_desc',  wf.description);
 		Q(axios.post('/workflow/' + wf.workflow_id + '/update', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
@@ -178,11 +178,12 @@ const WorkflowStore=Reflux.createStore({
 	saveWorkflow: function(wf) {
 		let setting=_config.setting;
 		let formData=new FormData();
-		formData.append('_workflow_name',  wf.name);
-		formData.append('_workflow_desc',  wf.description);
-		formData.append('_workflow_json',  JSON.stringify(wf));
+    formData.append('id', wf.workflow_id);
+		formData.append('workflow_name',  wf.name);
+		formData.append('workflow_desc',  wf.description);
+		formData.append('workflow_json',  JSON.stringify(wf));
 
-		Q(axios.post('/workflow/new/' + wf.workflow_id, formData, {
+		Q(axios.post('/workflow/new', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
 		}))

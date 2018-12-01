@@ -146,6 +146,7 @@ hook on_route_exception => sub {
 	my $e = shift;
 	if ($e->can('does') && ($e->does('InvalidCredentials') || $e->does('InvalidRequest'))) {
 		error("Error: " . $e->message() . "\n");
+    content_type 'application/json';
 		halt(to_json({status => 'error', error => $e->message()}));
 	} elsif ($e->can('rethrow')) {
 		$e->rethrow;
@@ -186,8 +187,7 @@ hook 'before' => sub {
 	my $path=request->path;
 	if ($path=~m#^/(job|workflowJob)/new/?# && ! check_agave_login()) {
 		if (request->is_ajax) {
-			content_type(setting('plugins')->{Ajax}{content_type});
-			halt(to_json({status => 'error', error => 'no username'}));
+      raise InvalidCredentials => 'no username';
 		} else {
 			request->path('/');
 		}
@@ -217,7 +217,13 @@ get '/' => sub {
 	_index();
 };
 
-any ['get', 'post'] => '/login' => sub {
+swagger_path {
+  parameters => [
+    username => { required => 1 },
+    password => { required => 1, format => 'password' },
+  ],
+},
+post '/login' => sub {
   my ($username, $password)=(param("username"), param("password"));
 	my $args={username => $username, password => $password};
   my %data;
@@ -249,6 +255,7 @@ any ['get', 'post'] => '/login' => sub {
 
 get '/logout' => sub {
 	_logout();
+  content_type 'application/json';
 	to_json({status => "successful"});
 };
 
@@ -256,6 +263,7 @@ get '/user' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
   my $user=database->quick_select('user', {username => $username});
   $user->{token}=check_agave_login();
+  content_type 'application/json';
 	to_json({status => 'success', data => $user});
 };
 
@@ -263,6 +271,7 @@ get qr{/browse/?(.*)} => sub {
 	my ($typePath) = splat;
 	my $nopath=param('nopath');
 	my $result=browse($typePath, undef, $nopath);
+  content_type 'application/json';
 	to_json({status => 'success', data => $result});
 };
 
@@ -373,13 +382,20 @@ sub icommand {
 	my @return=`export IRODS_ENVIRONMENT_FILE=$irodsEnvFile;$cmd $opt @arg`;
 }
 
+swagger_path {
+  parameters => [
+    id => { required => 1, in => 'path', description => 'app id' },
+  ],
+},
 get '/apps/:id' => sub {
 	my $app_id = param("id");
 	my $app=$app_id && retrieveApps($app_id);
 	$app or raise InvalidRequest => 'no apps found';
+  content_type 'application/json';
 	to_json({status => 'success', data => $app});
 };
 
+swagger_path
 get '/apps' => sub {
 	my $mode=param('mode');
 	my $local=! $mode || $mode eq 'local' ? retrieveAppsFile() : [];
@@ -393,6 +409,7 @@ get '/apps' => sub {
 		push @$apps, $_ unless $_->{isPublic};
 	}
 	scalar(@$apps) or raise InvalidRequest => 'no apps found';
+  content_type 'application/json';
 	to_json({status => 'success', data => $apps});
 };
 
@@ -473,9 +490,15 @@ get qr{/file/(.*)} => sub {
 	my ($fullpath)=splat;
 	my ($system, $path)=split /\//, $fullpath, 2;
 	my $input=database->quick_select('file_view', {system => $system, path => $path}) || {system => $system, path => $path};
+  content_type 'application/json';
 	return to_json($input);
 };
 
+swagger_path {
+  parameters => [
+    id => { required => 1, in => 'path', description => 'job id' },
+  ],
+},
 get '/job/:id' => sub {
 	#my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $username=var("username");
@@ -483,6 +506,7 @@ get '/job/:id' => sub {
 	my $check=param("check");
 
 	my $job=retrieveJob($job_id, $username, $check);
+  content_type 'application/json';
 	$job ? to_json({status => 'success', data => $job}) : raise InvalidRequest => 'no jobs found';
 };
 
@@ -560,6 +584,7 @@ sub retrieveJob {
 get '/workflow/:id/jobStatus' => sub {
 	my $wfid=param('id');
 	my $jobs=checkWorkflowJobStatus($wfid);
+  content_type 'application/json';
 	return to_json({status => 'success', data => $jobs});
 };
 
@@ -574,16 +599,26 @@ any ['get', 'post'] => '/workflow/remote' => sub {
 	} else {
 		raise InvalidRequest => 'can not fetch json from remote url'; 
 	}
+  content_type 'application/json';
 	return to_json({status => 'success', data => $data});
 };
 
 
-post '/workflow/new/:id' => sub {
+swagger_path {
+  parameters => [
+    workflow_name => { required => 1, description => 'workflow name' },
+    workflow_json => { required => 1, description => 'workflow json' },
+    id => { description => 'workflow id' },
+    workflow_desc => { description => 'workflow description' },
+  ],
+},
+post '/workflow/new' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
-	my $wfid=param('id');
-	my $wfjson=param('_workflow_json');
-	my $wfname=param('_workflow_name');
-	my $wfdesc=param('_workflow_desc');
+  my $form=params();
+	my $wfid=$form->{id}||=iPC::Utils::uuid();
+	my $wfjson=$form->{workflow_json};
+	my $wfname=$form->{workflow_name};
+	my $wfdesc=$form->{workflow_desc};
 	my $wf=from_json($wfjson);
 	my @jobs=database->quick_select('job', {workflow_id => $wfid});
 	my %jobs=map {$_->{job_id} => $_} @jobs;
@@ -601,9 +636,15 @@ post '/workflow/new/:id' => sub {
 		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
 		database->quick_update('workflow', {workflow_id => $wfid}, \%data);
 	};
+  content_type 'application/json';
 	to_json({status => 'success', data => {workflow_id => $wfid, %data, steps => $wf->{steps}}});
 };
 
+swagger_path {
+  parameters => [
+    id => { in => 'path', required => 1, description => 'workflow id' },
+  ],
+},
 get '/workflow/:id/delete' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
 	my $wfid=param('id');
@@ -612,14 +653,22 @@ get '/workflow/:id/delete' => sub {
 	} catch {
 		raise InvalidRequest => 'can not delete workflow';
 	};
+  content_type 'application/json';
 	to_json({status => 'success'});
 };
 
+swagger_path {
+  parameters => [
+    id => { in => 'path', required => 1, description => 'workflow id' },
+    workflow_name => { required => 1, description => 'workflow name' },
+    workflow_desc => { required => 1, description => 'workflow description' },
+  ],
+},
 post '/workflow/:id/update' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
 	my $wfid=param('id');
-	my $wfname=param('_workflow_name');
-	my $wfdesc=param('_workflow_desc');
+	my $wfname=param('workflow_name');
+	my $wfdesc=param('workflow_desc');
 	my $data={name => $wfname, description => $wfdesc, modified_at => \"now()"};
 	try {
 		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or raise 'InvalidRequest' => 'Invalid Workflow';
@@ -627,13 +676,20 @@ post '/workflow/:id/update' => sub {
 	} catch {
 		raise 'InvalidRequest' => 'workflow not updated'; 
 	};
+  content_type 'application/json';
 	to_json({status => 'success'});
 };
 
+swagger_path {
+  parameters => [
+    id => { in => 'path', required => 1, description => 'workflow id' },
+  ],
+},
 get '/workflow/:id' => sub {
 	my $wfid=param('id');
 	my $wf=retrieveWorkflow($wfid);
 	$wf or raise InvalidRequest => 'no workflow found';
+  content_type 'application/json';
 	to_json({status => 'success', data => $wf});
 };
 
@@ -666,14 +722,21 @@ sub retrieveWorkflowDB {
 	$wf;
 }
 
+swagger_path 
 get '/workflow' => sub {
 	my @result;
 	my $username=var("username") or raise InvalidCredentials => 'no username';
 	@result=map {delete $_->{username}; my $obj=from_json(delete $_->{json}); $_->{steps}=$obj->{steps}; $_;} database->quick_select('user_workflow_view', {username => $username});
+  content_type 'application/json';
 	return to_json({status => 'success', data => \@result});
 };
 
-any ['get', 'post'] => '/workflowJob/new' => sub {
+swagger_path {
+  parameters => [
+    paramsFromUser => 'params encoded in json',
+  ],
+},
+post '/workflowJob/new' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
 	my $archive_system=setting("archive_system");
 	my $archive_home=setting("archive_home");
@@ -684,7 +747,7 @@ any ['get', 'post'] => '/workflowJob/new' => sub {
 
 	my (@jobs, @step_form);
 	my $form = params();
-	my $wfid=$form->{_workflow_id}||=iPC::Utils::uuid();;
+	my $wfid=$form->{_workflow_id}||=iPC::Utils::uuid();
   my $wf;
   try {
     my $wfjson=$form->{_workflow_json} || database->quick_select('workflow', {workflow_id => $form->{_derived_from}})->{json};
@@ -715,9 +778,15 @@ any ['get', 'post'] => '/workflowJob/new' => sub {
 		$wf->{description}=$old_wf->{description};
 		database->quick_update('workflow', {workflow_id => $wfid}, {json => to_json($wf)});
 	};
+  content_type 'application/json';
 	scalar(@jobs) == scalar(@{$wf->{steps}}) ? to_json({status => 'success', data => {workflow_id => $wfid, jobs => \@jobs, workflow => $wf}}) : raise InvalidRequest => 'workflow submission failed';
 };
 
+swagger_path {
+  parameters => [
+    id => { in => 'path', required => 1, description => 'workflow id' },
+  ],
+},
 get '/workflowJob/run/:id' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
 	my $apif = var("agave_client");
@@ -737,10 +806,17 @@ get '/workflowJob/run/:id' => sub {
 			push @jobs, $job;
 		}
 	};
+  content_type 'application/json';
 	$wf ? to_json({status => 'success', data => {workflow_id => $wfid, jobs => \@jobs}}) : raise InvalidRequest => 'workflow not found';
 };
 
-any ['get', 'post'] => '/job/new/:id' => sub {
+swagger_path {
+  parameters => [
+    id => {in => 'path', required => 1, description => 'app id'},
+    paramsFromUser => 'params encoded in json',
+  ],
+},
+post '/job/new/:id' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
 	my @err = ();
 	my $app_id = param("id");
@@ -752,9 +828,11 @@ any ['get', 'post'] => '/job/new/:id' => sub {
   my $form = params();
 	my ($job_id, $job_form)=prepareJob($username, $app, $form);
 	my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
+  content_type 'application/json';
 	$job_id && $job && $job->{id} ? to_json({status => 'success', data => $job}) : raise InvalidRequest => 'job submission failed';
 };
 
+swagger_path
 get '/job' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
 	my @result=database->quick_select('job', {username => $username}, {columns =>[qw/job_id app_id status agave_json/], order_by => {desc => 'id'}});
@@ -775,9 +853,15 @@ get '/job' => sub {
 			$_->{endTime}=$endTime;
 		}
 	}
+  content_type 'application/json';
 	return to_json({status => 'success', data => \@result});
 };
 
+swagger_path {
+  parameters => [
+    id => {in => 'path', required => 1, description => 'job id'},
+  ],
+},
 get '/job/:id/delete' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
 	my $job_id = param("id");
@@ -793,6 +877,7 @@ get '/job/:id/delete' => sub {
 			raise InvalidRequest => 'can not delete job';
 		};
 	}
+  content_type 'application/json';
 	to_json({status => 'success', data => {job_id => $job_id}}); 
 };
 
@@ -802,6 +887,7 @@ get '/job/:id/stageJobOutputs' => sub {
 	#my $username=$user->{username};
 	my $job=database->quick_select('job', {job_id => $job_id});
 	my $result=stageJobOutputs($job, $flag);
+  content_type 'application/json';
 	to_json({status => 'success', data => {job_id => $job_id, target => $result}});
 };
 
@@ -1316,6 +1402,6 @@ sub submitNextJob {
 	}
 }
 
-swagger_auto_discover skip => [ '/swagger.json', qr#^/doc#, '/', '/login', '/logout', '/user', '/workflow/remote', qr#^/notification#];
+#swagger_auto_discover skip => [ '/swagger.json', qr#^/doc#, '/', '/login', '/logout', '/user', qr#^/job/new#, '/workflow/remote', qr#^/notification#];
 
 true;
