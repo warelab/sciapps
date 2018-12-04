@@ -600,14 +600,14 @@ ajax '/workflow/remote' => sub {
 };
 
 
-ajax '/workflow/new/:id' => sub {
+ajax '/workflow/new' => sub {
 	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
 	#my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $username=$user->{username};
 	my $wfid=param('id');
-	my $wfjson=param('_workflow_json');
-	my $wfname=param('_workflow_name');
-	my $wfdesc=param('_workflow_desc');
+	my $wfjson=param('workflow_json');
+	my $wfname=param('workflow_name');
+	my $wfdesc=param('workflow_desc');
 	my $wf=from_json($wfjson);
 	my @jobs=database->quick_select('job', {workflow_id => $wfid});
 	my %jobs=map {$_->{job_id} => $_} @jobs;
@@ -646,8 +646,8 @@ ajax '/workflow/:id/update' => sub {
 	#my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $username=$user->{username};
 	my $wfid=param('id');
-	my $wfname=param('_workflow_name');
-	my $wfdesc=param('_workflow_desc');
+	my $wfname=param('workflow_name');
+	my $wfdesc=param('workflow_desc');
 	my $data={name => $wfname, description => $wfdesc, modified_at => \"now()"};
 	try {
 		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or raise 'InvalidRequest' => 'Invalid Workflow';
@@ -716,17 +716,21 @@ ajax '/workflowJob/new' => sub {
 
 	my (@jobs, @step_form);
 	my $form = params();
-	my $wfid=$form->{_workflow_id};
-	my $wfjson=$form->{_workflow_json};
-	my $wf=from_json($wfjson);
-	my $wfname=$wf->{name};
-	my $wfdesc=$wf->{workflowJob};
-	my $derived_from=$wf->{derived_from};
+  my $wfid=$form->{_workflow_id}||=iPC::Utils::uuid();
+  my $wf;
+  try {
+    my $wfjson=$form->{_workflow_json} || database->quick_select('workflow', {workflow_id => $form->{_derived_from}})->{json};
+    $wf=from_json($wfjson);
+  };
+  delete $wf->{id};
+  $wf->{name}='workflow-' . $wfid . '-' . $wf->{name};
+  $wf->{derived_from}=$wf->{workflow_id};
+  $wf->{workflow_id}=$wfid;
 	foreach my $step (@{$wf->{steps}}) {
+    delete $step->{jobId};
 		my $app_id=$step->{appId};
 		my ($app) = $apps->find_by_id($app_id);
 		my ($job_id, $job_form)=prepareJob($username, $app, $form, $step, \@step_form, \@jobs);
-		#my ($job, $err)=submitJob($username, $apif, $app, $job_id, $job_form);
 		my $job={appId => $app_id, job_id => $job_id, archiveSystem => $archive_system, archivePath => $job_form->{archivePath}, status => 'PENDING'};
 		if ($job_id) {
 			push @jobs, $job;
@@ -735,7 +739,7 @@ ajax '/workflowJob/new' => sub {
 		}
 	}
 	try {
-		database->quick_insert('workflow', {workflow_id => $wfid, json => to_json($wf), name => $wfname, description => $wfdesc, derived_from => $derived_from});
+		database->quick_insert('workflow', {workflow_id => $wfid, json => to_json($wf), map {$_ => $wf->{$_}} qw(name description derived_from)});
 		database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
 	} catch {
 		my $old_wf=database->quick_select('workflow', {workflow_id => $wfid});

@@ -107,7 +107,7 @@ use Data::Dumper;
 		if (my $user=iPC::User->search({username => $self->{_username}}) and $api and my $auth=$api->auth) {
 			$user->token($auth->{access_token});
 			$user->refresh_token($auth->{refresh_token});
-			$user->token_expires_at(time() + $auth->{token_expires_at});
+			$user->token_expires_at($auth->{token_expires_at});
 			$user->update;
 		}
 	}
