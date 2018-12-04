@@ -222,6 +222,9 @@ swagger_path {
     username => { required => 1 },
     password => { required => 1, format => 'password' },
   ],
+  responses => {
+    default => { description => 'login' }
+  },
 },
 post '/login' => sub {
   my ($username, $password)=(param("username"), param("password"));
@@ -386,6 +389,9 @@ swagger_path {
   parameters => [
     id => { required => 1, in => 'path', description => 'app id' },
   ],
+  responses => {
+    default => { description => 'get apps by id' }
+  },
 },
 get '/apps/:id' => sub {
 	my $app_id = param("id");
@@ -395,7 +401,11 @@ get '/apps/:id' => sub {
 	to_json({status => 'success', data => $app});
 };
 
-swagger_path
+swagger_path {
+  responses => {
+    default => { description => 'get apps' }
+  },
+},
 get '/apps' => sub {
 	my $mode=param('mode');
 	my $local=! $mode || $mode eq 'local' ? retrieveAppsFile() : [];
@@ -498,6 +508,9 @@ swagger_path {
   parameters => [
     id => { required => 1, in => 'path', description => 'job id' },
   ],
+  responses => {
+    default => { description => 'get job by id' }
+  },
 },
 get '/job/:id' => sub {
 	#my $username=session('username') or raise InvalidCredentials => 'no username';
@@ -611,6 +624,9 @@ swagger_path {
     id => { description => 'workflow id' },
     workflow_desc => { description => 'workflow description' },
   ],
+  responses => {
+    default => { description => 'save new workflow' }
+  },
 },
 post '/workflow/new' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
@@ -644,6 +660,9 @@ swagger_path {
   parameters => [
     id => { in => 'path', required => 1, description => 'workflow id' },
   ],
+  responses => {
+    default => { description => 'delete workflow by id' }
+  },
 },
 get '/workflow/:id/delete' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
@@ -663,6 +682,9 @@ swagger_path {
     workflow_name => { required => 1, description => 'workflow name' },
     workflow_desc => { required => 1, description => 'workflow description' },
   ],
+  responses => {
+    default => { description => 'update workflow by id' }
+  },
 },
 post '/workflow/:id/update' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
@@ -684,6 +706,9 @@ swagger_path {
   parameters => [
     id => { in => 'path', required => 1, description => 'workflow id' },
   ],
+  responses => {
+    default => { description => 'get workflow by id' }
+  },
 },
 get '/workflow/:id' => sub {
 	my $wfid=param('id');
@@ -722,7 +747,11 @@ sub retrieveWorkflowDB {
 	$wf;
 }
 
-swagger_path 
+swagger_path {
+  responses => {
+    default => { description => 'get workflows' }
+  },
+},
 get '/workflow' => sub {
 	my @result;
 	my $username=var("username") or raise InvalidCredentials => 'no username';
@@ -735,6 +764,9 @@ swagger_path {
   parameters => [
     paramsFromUser => 'params encoded in json',
   ],
+  responses => {
+    default => { description => 'prepare new workflow run' }
+  },
 },
 post '/workflowJob/new' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
@@ -786,6 +818,9 @@ swagger_path {
   parameters => [
     id => { in => 'path', required => 1, description => 'workflow id' },
   ],
+  responses => {
+    default => { description => 'run workflow by id' }
+  },
 },
 get '/workflowJob/run/:id' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
@@ -815,6 +850,9 @@ swagger_path {
     id => {in => 'path', required => 1, description => 'app id'},
     paramsFromUser => 'params encoded in json',
   ],
+  responses => {
+    default => { description => 'run new job' }
+  },
 },
 post '/job/new/:id' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
@@ -832,7 +870,11 @@ post '/job/new/:id' => sub {
 	$job_id && $job && $job->{id} ? to_json({status => 'success', data => $job}) : raise InvalidRequest => 'job submission failed';
 };
 
-swagger_path
+swagger_path {
+  responses => {
+    default => { description => 'get jobs' }
+  },
+},
 get '/job' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
 	my @result=database->quick_select('job', {username => $username}, {columns =>[qw/job_id app_id status agave_json/], order_by => {desc => 'id'}});
@@ -861,6 +903,9 @@ swagger_path {
   parameters => [
     id => {in => 'path', required => 1, description => 'job id'},
   ],
+  responses => {
+    default => { description => 'delete job by id' }
+  },
 },
 get '/job/:id/delete' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
