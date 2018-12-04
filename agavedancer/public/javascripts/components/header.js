@@ -135,6 +135,13 @@ const Header=React.createClass({
     this.refs.dialog.showAlert('Your API token is: ' + user.token);
   },
 
+  handleSwagger: function() {
+    let user=this.props.user;
+		let setting=_config.setting;
+    let swagger_link='/doc';
+    window.open(swagger_link, '_blank');
+  },
+
 	render: function() {
 		let user=this.props.user;
 		let userGreeting, userMenu, workflowMenu;
@@ -146,6 +153,7 @@ const Header=React.createClass({
 		if (user.token) {
       userMenu=(
         <NavDropdown eventKey='user' title={<span><Glyphicon glyph="user" /> Hi, {user.firstName}!</span>} id="nav-dropdown-user">
+          <MenuItem key='swagger' eventKey='swagger' onSelect={this.handleSwagger}><Glyphicon glyph='link' /> Open swagger-ui</MenuItem>
           <MenuItem key='token' eventKey='token' onSelect={this.handleToken}><Glyphicon glyph='record' /> Get API token</MenuItem>
           <MenuItem key='logout' eventKey='logout' onSelect={this.handleLogout}><Glyphicon glyph='log-out' /> Logout</MenuItem>
         </NavDropdown>
