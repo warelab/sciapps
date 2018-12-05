@@ -799,7 +799,6 @@ sub prepareWorkflowJob {
   $wf->{derived_from}=$wf->{workflow_id};
   $wf->{workflow_id}=$wfid;
 	foreach my $step (@{$wf->{steps}}) {
-    delete $step->{jobId};
 		my $app_id=$step->{appId};
 		my ($app) = $apps->find_by_id($app_id);
 		my ($job_id, $job_form)=prepareJob($username, $app, $form, $step, \@step_form, \@jobs);
@@ -969,6 +968,10 @@ sub prepareJob {
 	foreach my $key (@{$app->inputs}, @{$app->parameters}) {
 		my $name=$step_prefix ? $step_prefix . $key->{id} : $key->{id};
 		$job_form{$name}=$form->{$name};
+    if ($step_prefix) {
+      defined $job_form{$name} or $job_form{$name}=$step->{inputs}{$key->{id}};
+      defined $job_form{$name} or $job_form{$name}=$step->{parameters}{$key->{id}};
+    }
 	}
 
 	$job_form{maxRunTime}||=$app->{defaultMaxRunTime} && iPC::Utils::cmp_maxRunTime($app->{defaultMaxRunTime}, setting("maxRunTime")) < 0 ? $app->{defaultMaxRunTime} : setting("maxRunTime");
@@ -1001,9 +1004,15 @@ sub prepareJob {
 				my $si=[];
 				ref($fi) or $fi=[$fi];
 				foreach my $i (0 .. $#$fi) {
-					if ($fi->[$i]=~m/^$wf_step_prefix([^:]+):(.*)$/) {
-						$fi->[$i]=$prev_job->[$1]{job_id} . ':' . $2;
-						push @$si, {step => $1, output_name => $2};
+          my ($prev_step_id, $prev_output_name);
+          if (ref($fi->[$i]) eq 'HASH') {
+            ($prev_step_id, $prev_output_name)=@{$fi->[$i]}{'step', 'output_name'};
+          } elsif ($fi->[$i]=~m/^$wf_step_prefix([^:]+):(.*)$/) {
+            ($prev_step_id, $prev_output_name)=($1, $2);
+          }
+          if (defined $prev_step_id && defined $prev_output_name) {
+						$fi->[$i]=$prev_job->[$prev_step_id]{job_id} . ':' . $prev_output_name;
+						push @$si, {step => $prev_step_id, output_name => $prev_output_name};
 					} else {
 						push @$si, $fi->[$i];
 					}
