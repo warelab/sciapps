@@ -763,6 +763,7 @@ get '/workflow' => sub {
 swagger_path {
   parameters => [
     paramsFromUser => 'params encoded in json',
+    runWorkflowJob  => 'flag to run workflow',
   ],
   responses => {
     default => { description => 'prepare new workflow run' }
@@ -770,6 +771,15 @@ swagger_path {
 },
 post '/workflowJob/new' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
+	my $form = params();
+  content_type 'application/json';
+  my $result=prepareWorkflowJob($form, $username);
+  $form->{runWorkflowJob} && $result && runWorkflowJob($result->{data}{workflow_id}, $username);
+  $result ? to_json($result) : raise InvalidRequest => 'workflow submission failed';
+};
+
+sub prepareWorkflowJob {
+  my ($form, $username)=@_;
 	my $archive_system=setting("archive_system");
 	my $archive_home=setting("archive_home");
 	my $archive_path=setting("archive_path");
@@ -778,7 +788,6 @@ post '/workflowJob/new' => sub {
 	my $apps = $apif->apps;
 
 	my (@jobs, @step_form);
-	my $form = params();
 	my $wfid=$form->{_workflow_id}||=iPC::Utils::uuid();
   my $wf;
   try {
@@ -810,9 +819,8 @@ post '/workflowJob/new' => sub {
 		$wf->{description}=$old_wf->{description};
 		database->quick_update('workflow', {workflow_id => $wfid}, {json => to_json($wf)});
 	};
-  content_type 'application/json';
-	scalar(@jobs) == scalar(@{$wf->{steps}}) ? to_json({status => 'success', data => {workflow_id => $wfid, jobs => \@jobs, workflow => $wf}}) : raise InvalidRequest => 'workflow submission failed';
-};
+	scalar(@jobs) == scalar(@{$wf->{steps}}) ? +{status => 'success', data => {workflow_id => $wfid, jobs => \@jobs, workflow => $wf}} : undef;
+}
 
 swagger_path {
   parameters => [
@@ -824,11 +832,17 @@ swagger_path {
 },
 get '/workflowJob/run/:id' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
+	my $wfid=param("id");
+  content_type 'application/json';
+  my $result=runWorkflowJob($wfid, $username);
+  $result ? to_json($result) : raise InvalidRequest => 'workflow not found';
+};
+
+sub runWorkflowJob {
+  my ($wfid, $username)=@_;
+	my @jobs;
 	my $apif = var("agave_client");
 	my $apps = $apif->apps;
-	my @jobs;
-
-	my $wfid=param("id");
 	my $wf=database->quick_select('workflow', {workflow_id => $wfid});
 	if ($wf) {
 		my $wfObj=from_json($wf->{json});
@@ -841,9 +855,9 @@ get '/workflowJob/run/:id' => sub {
 			push @jobs, $job;
 		}
 	};
-  content_type 'application/json';
-	$wf ? to_json({status => 'success', data => {workflow_id => $wfid, jobs => \@jobs}}) : raise InvalidRequest => 'workflow not found';
-};
+
+	$wf ? +{status => 'success', data => {workflow_id => $wfid, jobs => \@jobs}} : undef;
+}
 
 swagger_path {
   parameters => [
