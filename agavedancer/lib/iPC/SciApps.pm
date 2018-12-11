@@ -764,6 +764,8 @@ swagger_path {
   parameters => [
     paramsFromUser => 'params encoded in json',
     runWorkflowJob  => 'flag to run workflow',
+    workflow_name => { description => 'workflow name' },
+    workflow_desc => { description => 'workflow description' },
   ],
   responses => {
     default => { description => 'prepare new workflow run' }
@@ -795,7 +797,8 @@ sub prepareWorkflowJob {
     $wf=from_json($wfjson);
   };
   delete $wf->{id};
-  $wf->{name}='workflow-' . $wfid . '-' . $wf->{name};
+  $wf->{name}=$form->{workflow_name} || 'workflow-' . $wfid . '-' . $wf->{name};
+  $form->{workflow_desc} and $wf->{description}=$form->{workflow_desc};
   $wf->{derived_from}=$wf->{workflow_id};
   $wf->{workflow_id}=$wfid;
 	foreach my $step (@{$wf->{steps}}) {
