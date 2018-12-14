@@ -30,7 +30,7 @@ const WorkflowDiagram=React.createClass({
 	getInitialState: function() {
 		return {
 			direction: 0,
-			label: 'Top Down'
+			label: 'Top-Down'
 		}
 	},
 

@@ -699,7 +699,7 @@ ajax '/workflow' => sub {
 	my $user=session('cas_user') or raise InvalidCredentials => 'no cas user';
 	#my $username=session('username') or raise InvalidCredentials => 'no username';
 	my $username=$user->{username};
-	@result=map {delete $_->{username}; my $obj=from_json(delete $_->{json}); $_->{steps}=$obj->{steps}; $_;} database->quick_select('user_workflow_view', {username => $username});
+	@result=map {delete $_->{username}; my $obj=from_json(delete $_->{json}); $_->{steps}=$obj->{steps}; $_;} reverse database->quick_select('user_workflow_view', {username => $username});
 	return to_json({status => 'success', data => \@result});
 };
 

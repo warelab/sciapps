@@ -29,7 +29,7 @@ archive_home: '/iplant/home'
 archive_path: '__user__/sci_data/results'
 email: 'noreply@sciapps.org'
 wf_step_prefix: 'wf_step_'
-maxRunTime: "96:00:00"
+maxRunTime: "47:50:00"
 defaultUser: 'maizecode'
 datastore:
   __home__: 
