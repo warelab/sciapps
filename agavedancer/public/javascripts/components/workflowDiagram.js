@@ -30,7 +30,7 @@ const WorkflowDiagram=React.createClass({
 	getInitialState: function() {
 		return {
 			direction: 0,
-			label: 'Top-Down'
+			label: 'Top Down'
 		}
 	},
 
@@ -40,7 +40,7 @@ const WorkflowDiagram=React.createClass({
 	},
 
 	changeDirection: function() {
-		let labels = ["Top-Down", "Left-Right"];
+		let labels = ["Top Down", "Left Right"];
 		this.setState({direction: this.state.direction ? 0 : 1, label: labels[this.state.direction ? 0 : 1]});
 	},
 
@@ -199,10 +199,10 @@ const WorkflowDiagram=React.createClass({
 				Dialog.Action(
 					'Submit',
 					() => {
-						if (this.nameInput.state.value) {
+						if (undefined !== this.nameInput.state.value) {
 							wf.name=this.nameInput.state.value;
 						}
-						if (this.descInput.state.value) {
+						if (undefined !== this.descInput.state.value) {
 							wf.description=this.descInput.state.value;
 						}
 						WorkflowActions.saveWorkflow(wf);
@@ -271,8 +271,8 @@ const WorkflowDiagram=React.createClass({
 					//let jobDetail=step.jobId ? jobsStore.jobDetailCache[step.jobId] || _.find(jobsStore.jobDetailCache, 'id', step.jobId) : undefined;
 				//});
 				let workflowDiagramDef=this.buildWorkflowDiagram(workflowStore, appsStore, jobsStore, workflowDirection);
-				let saveBtnTxt=this.state.onSave ? 'Saving' : 'Save';
-				let saveBtn=user.logged_in ? <Button onClick={this.handleSave} bsStyle={'primary'}>{saveBtnTxt}</Button> : undefined;
+				let saveBtnTxt=this.state.onSave ? 'Saving' : 'Save Workflow';
+				let saveBtn=user.token ? <Button onClick={this.handleSave} bsStyle={'primary'}>{saveBtnTxt}</Button> : undefined;
 				body=(
 					<Modal.Body>
 						<Mermaid diagramDef={workflowDiagramDef}/>
@@ -286,8 +286,8 @@ const WorkflowDiagram=React.createClass({
 				footer=(
 					<Modal.Footer>
 						{saveBtn}
-						<Button onClick={this.changeDirection} bsStyle={'primary'}>{this.state.label}</Button>
-						<Button onClick={this.hideWorkflowDiagram} bsStyle={'primary'}>Close</Button>
+						<Button onClick={this.changeDirection}>{this.state.label}</Button>
+						<Button onClick={this.hideWorkflowDiagram}>Close</Button>
 					</Modal.Footer>
 				);
 			} else {

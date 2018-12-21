@@ -19,7 +19,6 @@ const JobsList=React.createClass({
 		let markup=<div />;
 		let jobs, jobOutputs, jobsItemNodes;
 		jobs=jobsStore.jobs;
-		//if (this.props.user.logged_in && jobs && jobs.length) {
 		if (jobs && jobs.length) {
 			jobsItemNodes = jobs.map(function (jobsItem, index) {
 				if (jobsItem) {
