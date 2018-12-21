@@ -68,14 +68,14 @@ sub clientname {
 
 sub token {
 	my ($self, $token)=@_;
-	if ($token) {
+	if (defined $token) {
 		$self->{token}=$token;
 	}
 	$self->{token};
 }
 sub refresh_token {
 	my ($self, $refresh_token)=@_;
-	if ($refresh_token) {
+	if (defined $refresh_token) {
 		$self->{refresh_token}=$refresh_token;
 	}
 	$self->{refresh_token};
@@ -83,7 +83,7 @@ sub refresh_token {
 
 sub token_expires_at {
 	my ($self, $token_expires_at)=@_;
-	if ($token_expires_at) {
+	if (defined $token_expires_at) {
 		$self->{token_expires_at}=$token_expires_at;
 	}
 	$self->{token_expires_at};
