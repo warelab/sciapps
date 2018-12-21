@@ -125,9 +125,9 @@ const UserWorkflows=React.createClass({
 				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/> Load</Button>
         <Button key='refresh' bsStyle='info' onClick={this.handleRefresh}><Glyphicon glyph='refresh'/> Refresh</Button>
 				<Button key='view' bsStyle='warning' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
-        <Button key='share' bsStyle='info' onClick={this.handleShare}><Glyphicon glyph='link'/> Share</Button>
+        			<Button key='share' bsStyle='info' onClick={this.handleShare}><Glyphicon glyph='link'/> Share</Button>
+                                <Button key='download' bsStyle='primary' onClick={this.handleDownload}><Glyphicon glyph='cloud-download'/> Download</Button>
 				<Button key='delete' bsStyle='danger' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
-				<Button key='download' bsStyle='primary' onClick={this.handleDownload}><Glyphicon glyph='cloud-download'/> JSON</Button>
 			</ButtonGroup>
 		);
 	},
