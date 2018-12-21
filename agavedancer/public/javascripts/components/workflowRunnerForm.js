@@ -165,6 +165,15 @@ const WorkflowRunnerForm=React.createClass({
 				});
 				return <AppsFieldset key={i} appDetail={appDetail} index={i} onValidate={onValidate} />;
 			});
+			let emailInput={
+				type: 'email',
+				required: false,
+				key: '_email',
+				id: '_email',
+				name: '_email',
+				label: 'Email',
+				help: 'Optional Email notification upon job completion'
+			};
 
 			let workflowJson={
 				type: 'hidden',
@@ -172,8 +181,14 @@ const WorkflowRunnerForm=React.createClass({
 				name: '_workflow_json',
 				value: JSON.stringify(workflowDetail)
 			};
+			let derivedFrom={
+				type: 'hidden',
+				id: '_derived_from',
+				name: '_derived_from',
+				value: workflowDetail.workflow_id
+			};
 			let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
-			let submitBtn=user.logged_in ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit Workflow</Button> : 
+			let submitBtn=user.token ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit Workflow</Button> : 
 				<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
 					<Button bsStyle='primary' onClick={null}>Submit Jobs</Button>
 				</OverlayTrigger>;
@@ -181,7 +196,9 @@ const WorkflowRunnerForm=React.createClass({
 				<div>
 					<form ref={this.formName} >
 						{appsFieldsets}
+						<BaseInput data={emailInput} />
 						<BaseInput data={workflowJson} />
+						<BaseInput data={derivedFrom} />
 						{submitBtn}
 						<span> or </span>
 						<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Show Diagram</Button>

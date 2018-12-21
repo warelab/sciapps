@@ -26,6 +26,10 @@ const UserWorkflows=React.createClass({
 		}
 	},
 
+	handleRefresh: function(e) {
+		WorkflowActions.listWorkflow();
+	},
+
 	showWorkflowDiagram: function(e) {
 		let table=this.refs.table;
 		let wfid=table.store.getSelectedRowKeys()[0];
@@ -119,6 +123,7 @@ const UserWorkflows=React.createClass({
 		return (
 			<ButtonGroup>
 				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/> Load</Button>
+        <Button key='refresh' bsStyle='info' onClick={this.handleRefresh}><Glyphicon glyph='refresh'/> Refresh</Button>
 				<Button key='view' bsStyle='warning' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
         <Button key='share' bsStyle='info' onClick={this.handleShare}><Glyphicon glyph='link'/> Share</Button>
 				<Button key='delete' bsStyle='danger' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>

@@ -66,7 +66,7 @@ const AppsForm=React.createClass({
 		let form=this.refs[this.formName];
 		let validated=utilities.validateForm(form, required, setting.upload_suffix);
 		let confirmed;
-		if (user.logged_in) {
+		if (user.token) {
 			if (validated) {
 				let formData=new FormData(this.refs[this.formName]);
 				this.refs.dialog.show({
@@ -156,35 +156,22 @@ const AppsForm=React.createClass({
 				}.bind(this));
 			}
 		}
+		let emailInput={
+			type: 'email',
+			required: false,
+			key: '_email',
+			id: '_email',
+			name: '_email',
+			label: 'Email',
+			help: 'Optional Email notification upon job completion'
+		};
 		let submitBtn=<Button bsStyle='primary' onClick={this.handleSubmit}>Submit Job</Button>; 
-		//if (user.logged_in) {
-		//	if (this.state.onSubmit) {
-		//		submitBtn=(
-		//			<Alert bsStyle='warning' onDismiss={this.handleSubmitDismiss}>
-		//				<p>You are going to submit 1 job to a cluster, are you sure?</p>
-		//				<Button bsStyle='primary' onClick={this.handleSubmit}>Yes</Button>
-		//				<span> or </span>
-		//				<Button onClick={this.handleSubmitDismiss}>No</Button>
-		//			</Alert>
-		//		);
-		//	} else {
-		//		submitBtn=(
-		//			<Button bsStyle='primary' onClick={this.handleSubmitPrepare}>Submit Job</Button>
-		//		);
-		//	}
-		//} else {
-		//	let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
-		//	submitBtn=(
-		//		<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
-		//			<Button bsStyle='primary' onClick={null}>Submit Job</Button>
-		//		</OverlayTrigger>
-		//	);
-		//}
 		return (
 			<Panel header={header}>
 				<form ref={this.formName}>
 					{app_inputs}
 					{app_params}
+					<BaseInput data={emailInput} />
 					{submitBtn}
 				</form>
 				<Dialog ref='dialog' />
