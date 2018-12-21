@@ -64,6 +64,7 @@ sub _agave_login {
 			password => $args->{password},
 		}
 	);
+  print STDERR "AA1||" . to_dumper($ah);
 	my $api;
   my $token;
 	if ($ah and $api=$ah->api and $api->token) {
@@ -144,7 +145,7 @@ sub agave_refresh {
 sub check_agave_login {
 	my $user=shift;
   unless (token_valid($user)) {
-    agave_login($user);
+    agave_login();
   }
 	token_valid($user);
 }
