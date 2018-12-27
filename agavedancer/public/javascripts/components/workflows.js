@@ -22,7 +22,7 @@ var workflowItems = [
 
 const publicWorkflows=React.createClass({
 
-	handleLoad: function(e) {
+	handleReLaunch: function(e) {
 		let table=this.refs.table;
 		let wfid=table.store.selected[0];
 		if (wfid) {
@@ -31,20 +31,29 @@ const publicWorkflows=React.createClass({
 		}
 	},
 
-	showWorkflowDiagram: function(e) {
+	handleLoad: function(e) {
 		let table=this.refs.table;
 		let wfid=table.store.selected[0];
 		if (wfid) {
-			WorkflowActions.showWorkflowDiagram(wfid);
+			WorkflowActions.showWorkflow(wfid);
 		}
 	},
+
+        showWorkflowDiagram: function(e) {
+                let table=this.refs.table;
+                let wfid=table.store.selected[0];
+                if (wfid) {
+                        WorkflowActions.showWorkflowDiagram(wfid);
+                }
+        },
 
 	createCustomButtonGroup: function(props) {
 		let tooltipload=<Tooltip id="tooltipload">Load</Tooltip>;
 		return (
 			<ButtonGroup>
-				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/> Load</Button>
-				<Button key='view' bsStyle='warning' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
+				<Button key='relaunch' bsStyle='success' onClick={this.handleReLaunch}><Glyphicon glyph='repeat'/> ReLaunch</Button>
+                                <Button key='view' bsStyle='info' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
+				<Button key='load' bsStyle='warning' onClick={this.handleLoad}><Glyphicon glyph='hand-right'/> Load</Button>
 			</ButtonGroup>
 		);
 	},
