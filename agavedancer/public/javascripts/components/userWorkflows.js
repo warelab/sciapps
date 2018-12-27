@@ -41,6 +41,17 @@ const UserWorkflows=React.createClass({
 		}
 	},
 
+        showWorkflowDiagram: function(e) {
+                let table=this.refs.table;
+                let wfid=table.store.getSelectedRowKeys()[0];
+                if (wfid) {
+                        let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
+                        if (wf) {
+                                WorkflowActions.showWorkflowDiagram(wfid, wf);
+                        }
+                }
+        },
+
 	handleDeleteRow: function(e) {
 		let table=this.refs.table;
 		let wfid=table.store.getSelectedRowKeys()[0];
@@ -122,9 +133,9 @@ const UserWorkflows=React.createClass({
 		let tooltipdelete=<Tooltip id="tooltipdelete">Delete</Tooltip>;
 		return (
 			<ButtonGroup>
-				<Button key='load' bsStyle='success' onClick={this.handleReLaunch}><Glyphicon glyph='repeat'/> Relaunch</Button>
-        <Button key='refresh' bsStyle='info' onClick={this.handleRefresh}><Glyphicon glyph='refresh'/> Refresh</Button>
-				<Button key='view' bsStyle='warning' onClick={this.handleLoad}><Glyphicon glyph='hand-right'/> Load</Button>
+				<Button key='relaunch' bsStyle='success' onClick={this.handleReLaunch}><Glyphicon glyph='repeat'/> Relaunch</Button>
+        			<Button key='view' bsStyle='info' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
+				<Button key='load' bsStyle='warning' onClick={this.handleLoad}><Glyphicon glyph='hand-right'/> Load</Button>
         			<Button key='share' bsStyle='primary' onClick={this.handleShare}><Glyphicon glyph='share'/> Share</Button>
 				<Button key='delete' bsStyle='danger' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
 			</ButtonGroup>
