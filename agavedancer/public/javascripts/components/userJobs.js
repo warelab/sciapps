@@ -55,7 +55,7 @@ const UserJobs=React.createClass({
 	createCustomButtonGroup: function(props) {
 		return (
 			<ButtonGroup>
-				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/> Load</Button>
+				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='hand-right'/> Load</Button>
 				<Button key='refresh' bsStyle='warning' onClick={this.handleRefresh}><Glyphicon glyph='refresh'/> Refresh</Button>
 				<Button key='delete' bsStyle='danger' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
 			</ButtonGroup>
