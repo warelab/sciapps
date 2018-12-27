@@ -14,7 +14,7 @@ import utilities from '../libs/utilities.js';
 const UserWorkflows=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore')],
 
-	handleLoad: function(e) {
+	handleReLaunch: function(e) {
 		let table=this.refs.table;
 		let wfid=table.store.getSelectedRowKeys()[0];
 		if (wfid) {
@@ -30,13 +30,13 @@ const UserWorkflows=React.createClass({
 		WorkflowActions.listWorkflow();
 	},
 
-	showWorkflowDiagram: function(e) {
+	handleLoad: function(e) {
 		let table=this.refs.table;
 		let wfid=table.store.getSelectedRowKeys()[0];
 		if (wfid) {
 			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
 			if (wf) {
-				WorkflowActions.showWorkflowDiagram(wfid, wf);
+				WorkflowActions.showWorkflow(wfid, wf);
 			}
 		}
 	},
@@ -122,11 +122,10 @@ const UserWorkflows=React.createClass({
 		let tooltipdelete=<Tooltip id="tooltipdelete">Delete</Tooltip>;
 		return (
 			<ButtonGroup>
-				<Button key='load' bsStyle='success' onClick={this.handleLoad}><Glyphicon glyph='repeat'/> Load</Button>
+				<Button key='load' bsStyle='success' onClick={this.handleReLaunch}><Glyphicon glyph='repeat'/> Relaunch</Button>
         <Button key='refresh' bsStyle='info' onClick={this.handleRefresh}><Glyphicon glyph='refresh'/> Refresh</Button>
-				<Button key='view' bsStyle='warning' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
-        			<Button key='share' bsStyle='info' onClick={this.handleShare}><Glyphicon glyph='link'/> Share</Button>
-                                <Button key='download' bsStyle='primary' onClick={this.handleDownload}><Glyphicon glyph='cloud-download'/> Download</Button>
+				<Button key='view' bsStyle='warning' onClick={this.handleLoad}><Glyphicon glyph='hand-right'/> Load</Button>
+        			<Button key='share' bsStyle='primary' onClick={this.handleShare}><Glyphicon glyph='share'/> Share</Button>
 				<Button key='delete' bsStyle='danger' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
 			</ButtonGroup>
 		);
