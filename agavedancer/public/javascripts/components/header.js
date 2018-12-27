@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Reflux from 'reflux';
-import {Navbar, Nav, NavItem, NavDropdown, MenuItem, Glyphicon} from 'react-bootstrap';
+import {Navbar, Nav, NavItem, NavDropdown, MenuItem, Glyphicon, Input} from 'react-bootstrap';
 import UserLoginBox from './userLoginBox.js';
 import AppsActions from '../actions/appsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
@@ -132,7 +132,26 @@ const Header=React.createClass({
 
   handleToken: function() {
     let user=this.props.user;
-    this.refs.dialog.showAlert('Your API token is: ' + user.token);
+    //this.refs.dialog.showAlert('Your API token is: ' + user.token);
+    let input=<Input id='copy' name='copy' value={user.token} type='textarea' readOnly />
+    let copyBtn={
+	label: 'Copy to clipboard',
+	className: 'btn-primary',
+	func: () => {
+		let dom=document.getElementById('copy');
+		dom.select();
+		document.execCommand('Copy');
+		}
+    };
+    this.refs.dialog.show({
+	title: 'Your SciApps API token',
+	body: input,
+	actions: [
+		copyBtn,
+		Dialog.OKAction()
+	],
+	bsSize: 'medium'
+    });
   },
 
   handleSwagger: function() {
