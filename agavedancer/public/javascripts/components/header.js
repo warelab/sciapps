@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Reflux from 'reflux';
+import _ from 'lodash';
 import {Navbar, Nav, NavItem, NavDropdown, MenuItem, Glyphicon, Input} from 'react-bootstrap';
 import UserLoginBox from './userLoginBox.js';
 import AppsActions from '../actions/appsActions.js';
@@ -84,7 +85,14 @@ const Header=React.createClass({
 		}
 	},
 
+	showDataWorkflows: function(e) {
+    let dataItem=e.currentTarget.title;
+    WorkflowActions.listWorkflow(dataItem);
+		AppsActions.showPage('dataWorkflows');
+	},
+
 	showUserWorkflows: function() {
+    WorkflowActions.listWorkflow();
 		AppsActions.showPage('userWorkflows');
 		let title="My Workflows";
 		let url="/?page_id=userWorkflows";
@@ -163,11 +171,19 @@ const Header=React.createClass({
 
 	render: function() {
 		let user=this.props.user;
-		let userGreeting, userMenu, workflowMenu;
+		let setting=_config.setting;
+		let userGreeting, userMenu, workflowMenu, dataMenu;
 		let workflowMenuItem=[
 			<MenuItem key='showWorkflowBuilder' eventKey='showWorkflowBuilder' onSelect={this.showWorkflowBuilder}><Glyphicon glyph='wrench' /> Build a workflow</MenuItem>,
 			<MenuItem key='showWorkflows' eventKey='showWorkflows' onSelect={this.showWorkflows}><Glyphicon glyph='th-list' /> Public workflows</MenuItem>
 		];
+    let dataMenuItem=[];
+    if (setting.datamenu_item) {
+      dataMenuItem=_.keys(setting.datamenu_item).map(function(item) {
+        let text=item.replace(/_+/gi, ' ');
+        return <MenuItem key={item} eventKey={item} onSelect={this.showDataWorkflows} title={item}><Glyphicon glyph='list-alt' /> {text}</MenuItem>
+      }.bind(this));
+    }
 		if (user.token) {
       userMenu=(
         <NavDropdown eventKey='user' title={<span><Glyphicon glyph="user" /> Hi, {user.firstName}!</span>} id="nav-dropdown-user">
@@ -184,6 +200,11 @@ const Header=React.createClass({
 		} else {
 			userMenu=(<NavItem eventKey='login' pullRight onSelect={this.handleLogin}><Glyphicon glyph='log-in' /> Login</NavItem>);
 		}
+    dataMenu=(
+			<NavDropdown eventKey='data' title={<span><Glyphicon glyph="hdd" /> Data</span>} id="nav-dropdown-data">
+				{dataMenuItem}
+			</NavDropdown>
+    );
 		workflowMenu=(
 			<NavDropdown eventKey='workflows' title={<span><Glyphicon glyph="link" /> Workflow</span>} id="nav-dropdown-workflow">
 				{workflowMenuItem}
@@ -194,6 +215,7 @@ const Header=React.createClass({
 			<Navbar className="navbar">
 				<Nav>
 					<NavItem eventKey='welcome' onSelect={this.showWelcome}><Glyphicon glyph='home' /> Home</NavItem>
+					{dataMenu}
 					{workflowMenu}
 					<NavItem eventKey='help' onSelect={this.showHelp}><Glyphicon glyph='question-sign' /> Help</NavItem>
 					{userMenu}

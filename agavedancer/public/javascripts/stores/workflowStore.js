@@ -39,6 +39,8 @@ const WorkflowStore=Reflux.createStore({
 			remoteWorkflowDetailPromise: undefined,
 			workflowDetailCache: {},
 			workflows: [],
+      dataItem: undefined,
+      dataWorkflows: {},
 			build: {},
 			workflowDiagramDef: undefined
 		};
@@ -88,9 +90,12 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
-	listWorkflow: function() {
+	listWorkflow: function(dataItem) {
+    this.state.dataItem=dataItem;
+    this.complete();
 		let setting=_config.setting;
-		Q(axios.get('/workflow', {
+    let option=dataItem ? "?dataItem=" + dataItem : '';
+		Q(axios.get('/workflow' + option, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 		}))
 		.then(function(res) {
@@ -98,7 +103,11 @@ const WorkflowStore=Reflux.createStore({
 				console.log(res.data.error);
 				return;
 			} else {
-				this.state.workflows=res.data.data;
+        if (dataItem) {
+          this.state.dataWorkflows[dataItem]=res.data.data;
+        } else {
+				  this.state.workflows=res.data.data;
+        }
 				this.complete();
 				return res.data;
 			}

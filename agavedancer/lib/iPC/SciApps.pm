@@ -24,7 +24,7 @@ use FindBin;
 use File::Basename;
 
 our $VERSION = '0.2';
-our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode anon_prefix stage_file_types site_warning_content/;
+our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode anon_prefix stage_file_types site_warning_content datamenu_item/;
 our @EXCEPTIONS=qw/InvalidRequest InvalidCredentials DatabaseError SystemError/;
 
 foreach my $exception (@EXCEPTIONS) {
@@ -759,9 +759,14 @@ swagger_path {
   },
 },
 get '/workflow' => sub {
+  my $data_item=param("dataItem");
 	my @result;
-	my $username=var("username") or raise InvalidCredentials => 'no username';
-	@result=map {delete $_->{username}; my $obj=from_json(delete $_->{json}); $_->{steps}=$obj->{steps}; $_;} reverse database->quick_select('user_workflow_view', {username => $username});
+	my $username=$data_item ? setting('defaultUser') : var("username") or raise InvalidCredentials => 'no username';
+  my $where={username => $username};
+  if ($data_item) {
+    $where->{name}={like => setting('datamenu_item')->{$data_item} . "%"};
+  }
+	@result=map {delete $_->{username}; my $obj=from_json(delete $_->{json}); $_->{steps}=$obj->{steps}; $_;} reverse database->quick_select('user_workflow_view', $where);
   content_type 'application/json';
 	return to_json({status => 'success', data => \@result});
 };
@@ -899,7 +904,7 @@ swagger_path {
 },
 get '/job' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
-	my @result=database->quick_select('job', {username => $username}, {columns =>[qw/job_id app_id status agave_json/], order_by => {desc => 'id'}});
+	my @result=database->quick_select('job', {username => $username}, {columns =>[qw/job_id agave_id app_id status agave_json/], order_by => {desc => 'id'}});
 	foreach (@result) {
 		if (my $json=delete $_->{agave_json}) {
 			my $job=from_json($json);

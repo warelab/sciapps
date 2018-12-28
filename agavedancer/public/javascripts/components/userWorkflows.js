@@ -14,7 +14,7 @@ import utilities from '../libs/utilities.js';
 const UserWorkflows=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore')],
 
-	handleReLaunch: function(e) {
+	handleRelaunch: function(e) {
 		let table=this.refs.table;
 		let wfid=table.store.getSelectedRowKeys()[0];
 		if (wfid) {
@@ -40,17 +40,17 @@ const UserWorkflows=React.createClass({
 			}
 		}
 	},
-
-        showWorkflowDiagram: function(e) {
-                let table=this.refs.table;
-                let wfid=table.store.getSelectedRowKeys()[0];
-                if (wfid) {
-                        let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
-                        if (wf) {
-                                WorkflowActions.showWorkflowDiagram(wfid, wf);
-                        }
-                }
-        },
+  
+  showWorkflowDiagram: function(e) {
+    let table=this.refs.table;
+    let wfid=table.store.getSelectedRowKeys()[0];
+    if (wfid) {
+      let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
+      if (wf) {
+        WorkflowActions.showWorkflowDiagram(wfid, wf);
+      }
+    }
+  },
 
 	handleDeleteRow: function(e) {
 		let table=this.refs.table;
@@ -128,25 +128,43 @@ const UserWorkflows=React.createClass({
 	},
 
 	createCustomButtonGroup: function(props) {
+		let workflowStore=this.state.workflowStore;
+    let dataItem=workflowStore.dataItem;
 		let tooltipload=<Tooltip id="tooltipload">Load</Tooltip>;
 		let tooltipdownload=<Tooltip id="tooltipdownload">Download</Tooltip>;
 		let tooltipdelete=<Tooltip id="tooltipdelete">Delete</Tooltip>;
-		return (
+    let buttonGroup=dataItem ? (
 			<ButtonGroup>
-				<Button key='relaunch' bsStyle='success' onClick={this.handleReLaunch}><Glyphicon glyph='repeat'/> Relaunch</Button>
-        			<Button key='view' bsStyle='info' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
+				<Button key='relaunch' bsStyle='success' onClick={this.handleRelaunch}><Glyphicon glyph='repeat'/> Relaunch</Button>
+        <Button key='view' bsStyle='info' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
 				<Button key='load' bsStyle='warning' onClick={this.handleLoad}><Glyphicon glyph='hand-right'/> Load</Button>
-        			<Button key='share' bsStyle='primary' onClick={this.handleShare}><Glyphicon glyph='share'/> Share</Button>
+			</ButtonGroup>
+    ) : (
+			<ButtonGroup>
+				<Button key='relaunch' bsStyle='success' onClick={this.handleRelaunch}><Glyphicon glyph='repeat'/> Relaunch</Button>
+        <Button key='view' bsStyle='info' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
+				<Button key='load' bsStyle='warning' onClick={this.handleLoad}><Glyphicon glyph='hand-right'/> Load</Button>
+        <Button key='share' bsStyle='primary' onClick={this.handleShare}><Glyphicon glyph='share'/> Share</Button>
 				<Button key='delete' bsStyle='danger' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
 			</ButtonGroup>
-		);
+    );
+		return buttonGroup;
 	},
 
 	render: function() {
 		let workflowStore=this.state.workflowStore;
 		let workflowItems;
-		if (workflowStore.workflows.length) {
-			workflowItems=workflowStore.workflows.map(function(workflow, i) {
+    let dataItem=workflowStore.dataItem;
+    let workflows=[];
+    if (dataItem) {
+      if (workflowStore.dataWorkflows[dataItem]) {
+        workflows=workflowStore.dataWorkflows[dataItem];
+      }
+    } else if (workflowStore.workflows.length) {
+      workflows=workflowStore.workflows;
+    }
+    if (workflows.length) {
+			workflowItems=workflows.map(function(workflow, i) {
 				let item=_.pick(workflow, ['workflow_id', 'name', 'description']);
 				return item;
 			}.bind(this));
@@ -163,8 +181,9 @@ const UserWorkflows=React.createClass({
 		let options={
 			btnGroup: this.createCustomButtonGroup
 		};
+    let header=dataItem ? dataItem.replace(/_+/gi, ' ') : "My Workflows";
 		return (
-			<Panel header="My Workflows">
+			<Panel header={header}>
 				<BootstrapTable ref='table' data={workflowItems} search={true} striped={true} hover={true} cellEdit={cellEditProp} pagination={true} selectRow={selectRowProp} options={options}>
 					<TableHeaderColumn isKey={true} dataField="workflow_id" hidden={true}>ID</TableHeaderColumn>
 					<TableHeaderColumn dataField="name" dataAlign="left" width='250' dataSort={true}>Name</TableHeaderColumn>

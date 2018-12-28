@@ -54,6 +54,9 @@ const AppsDetail=React.createClass({
 				case 'userWorkflows':
 					markup=<UserWorkflows user={user} />
 					break;
+				case 'dataWorkflows':
+					markup=<UserWorkflows user={user} />
+					break;
 				case 'workflows':
 					markup=<Workflows />
 					break;
