@@ -73,4 +73,4 @@ user_params_input: 'paramsFromUser'
 retry_interval: 1
 retry_num: 2
 datamenu_item:
-  Maize_Code: 'MC_'
+  MaizeCODE: 'MC_'
