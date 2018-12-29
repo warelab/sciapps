@@ -15,10 +15,13 @@ const UserWorkflows=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore')],
 
 	handleRelaunch: function(e) {
+		let workflowStore=this.state.workflowStore;
+    let dataItem=workflowStore.dataItem;
 		let table=this.refs.table;
 		let wfid=table.store.getSelectedRowKeys()[0];
+    let workflows=dataItem ? workflowStore.dataWorkflows[dataItem] : workflowStore.workflows;
 		if (wfid) {
-			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
+			let wf=_.find(workflows, {workflow_id: wfid});
 			if (wf) {
 				AppsActions.showPage('workflowRunner');
 				WorkflowActions.showWorkflow(wfid, wf);
@@ -27,14 +30,19 @@ const UserWorkflows=React.createClass({
 	},
 
 	handleRefresh: function(e) {
-		WorkflowActions.listWorkflow();
+		let workflowStore=this.state.workflowStore;
+    let dataItem=workflowStore.dataItem;
+		WorkflowActions.listWorkflow(dataItem);
 	},
 
 	handleLoad: function(e) {
+		let workflowStore=this.state.workflowStore;
+    let dataItem=workflowStore.dataItem;
 		let table=this.refs.table;
 		let wfid=table.store.getSelectedRowKeys()[0];
+    let workflows=dataItem ? workflowStore.dataWorkflows[dataItem] : workflowStore.workflows;
 		if (wfid) {
-			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
+			let wf=_.find(workflows, {workflow_id: wfid});
 			if (wf) {
 				WorkflowActions.showWorkflow(wfid, wf);
 			}
@@ -42,10 +50,13 @@ const UserWorkflows=React.createClass({
 	},
   
   showWorkflowDiagram: function(e) {
+		let workflowStore=this.state.workflowStore;
+    let dataItem=workflowStore.dataItem;
     let table=this.refs.table;
     let wfid=table.store.getSelectedRowKeys()[0];
+    let workflows=dataItem ? workflowStore.dataWorkflows[dataItem] : workflowStore.workflows;
     if (wfid) {
-      let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
+      let wf=_.find(workflows, {workflow_id: wfid});
       if (wf) {
         WorkflowActions.showWorkflowDiagram(wfid, wf);
       }
