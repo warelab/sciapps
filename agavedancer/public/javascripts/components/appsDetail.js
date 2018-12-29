@@ -55,6 +55,9 @@ const AppsDetail=React.createClass({
 					markup=<UserWorkflows user={user} />
 					break;
 				case 'dataWorkflows':
+          if (_config.data_item) {
+            WorkflowActions.listWorkflow(_config.data_item);
+          }
 					markup=<UserWorkflows user={user} />
 					break;
 				case 'workflows':

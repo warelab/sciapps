@@ -89,6 +89,14 @@ const Header=React.createClass({
     let dataItem=e.currentTarget.title;
     WorkflowActions.listWorkflow(dataItem);
 		AppsActions.showPage('dataWorkflows');
+		let title=dataItem.replace(/_+/gi, ' ');
+		let url="/?page_id=dataWorkflows&data_item=" + dataItem;
+		if (typeof (history.pushState) !== "undefined") {
+			let obj = { Title: title, Url: url };
+			history.pushState(obj, obj.Title, obj.Url);
+		} else {
+			alert("Browser does not support HTML5.");
+		}
 	},
 
 	showUserWorkflows: function() {

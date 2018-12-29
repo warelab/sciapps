@@ -64,7 +64,6 @@ sub _agave_login {
 			password => $args->{password},
 		}
 	);
-  print STDERR "AA1||" . to_dumper($ah);
 	my $api;
   my $token;
 	if ($ah and $api=$ah->api and $api->token) {
@@ -212,7 +211,7 @@ hook 'before' => sub {
 };
 
 sub _index {
-	my %config=map { $_ => param($_) } qw/app_id page_id wf_id/;
+	my %config=map { $_ => param($_) } qw/app_id page_id wf_id data_item/;
 	$config{setting}={map {$_ => setting($_)} @EXPORT_SETTINGS};
 	if (+setting('site_warning')) {
 		my $contents;
