@@ -35,7 +35,7 @@ const App=React.createClass({
 	},
 
 	componentWillMount: function() {
-		UserActions.setUser();
+		UserActions.setUser(undefined, true);
 	},
 
 	componentDidMount: function () {

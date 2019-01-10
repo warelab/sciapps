@@ -44,10 +44,10 @@ const UserStore=Reflux.createStore({
 		};
 	},
 
-	resetUser: function() {
+	resetUser: function(pageId) {
 		let setting=_config.setting;
 		this._resetState();
-		AppsActions.resetState('welcome');
+		AppsActions.resetState(pageId || 'welcome');
 		JobsActions.resetState();
 		WorkflowActions.resetState();
 		DsActions.resetState();
@@ -55,7 +55,7 @@ const UserStore=Reflux.createStore({
 		mode.forEach((value) => AppsActions.listApps('', value));
 	},
 
-	setUser: function(user) {
+	setUser: function(user, noReset) {
 		let setting=_config.setting;
 		let token=this.state.token;
     let userPromise;
@@ -67,7 +67,6 @@ const UserStore=Reflux.createStore({
 		  }))
 		  .then(function(res) {
 			  if (res.data.error) {
-				  this.resetUser();
 				  console.log(res.data.error);
           return;
 			  } else if (res.data.data.token) {
@@ -81,7 +80,7 @@ const UserStore=Reflux.createStore({
 				WorkflowActions.listWorkflow();
 				JobsActions.listJob();
 			} else {
-				this.resetUser();
+				noReset || this.resetUser();
 			}
 			let mode=setting.appsListMode || [''];
 			mode.forEach((value) => AppsActions.listApps('', value));
