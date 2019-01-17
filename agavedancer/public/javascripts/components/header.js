@@ -177,10 +177,15 @@ const Header=React.createClass({
     window.open(swagger_link, '_blank');
   },
 
+  handleJBrowse: function() {
+    let setting=_config.setting;
+    window.open(setting.toolsmenu_item.JBrowse, '_blank');
+  },
+
 	render: function() {
 		let user=this.props.user;
 		let setting=_config.setting;
-		let userGreeting, userMenu, workflowMenu, dataMenu;
+		let userGreeting, userMenu, workflowMenu, dataMenu, toolsMenu;
 		let workflowMenuItem=[
 			<MenuItem key='showWorkflowBuilder' eventKey='showWorkflowBuilder' onSelect={this.showWorkflowBuilder}><Glyphicon glyph='wrench' /> Build a workflow</MenuItem>,
 			<MenuItem key='showWorkflows' eventKey='showWorkflows' onSelect={this.showWorkflows}><Glyphicon glyph='th-list' /> Public workflows</MenuItem>
@@ -192,6 +197,9 @@ const Header=React.createClass({
         return <MenuItem key={item} eventKey={item} onSelect={this.showDataWorkflows} title={item}><Glyphicon glyph='list-alt' /> {text}</MenuItem>
       }.bind(this));
     }
+    let toolsMenuItem=[
+      <MenuItem key='Jbrowse' eventKey='Jbrowse' onSelect={this.handleJBrowse}><Glyphicon glyph='globe' /> JBrowse</MenuItem>
+    ];
 		if (user.token) {
       userMenu=(
         <NavDropdown eventKey='user' title={<span><Glyphicon glyph="user" /> Hi, {user.firstName}!</span>} id="nav-dropdown-user">
@@ -218,6 +226,11 @@ const Header=React.createClass({
 				{workflowMenuItem}
 			</NavDropdown>
 		);
+    toolsMenu=(
+			<NavDropdown eventKey='tools' title={<span><Glyphicon glyph="wrench" /> Tools</span>} id="nav-dropdown-tools">
+				{toolsMenuItem}
+			</NavDropdown>
+    );
 		return (
 			<div>
 			<Navbar className="navbar">
@@ -225,6 +238,7 @@ const Header=React.createClass({
 					<NavItem eventKey='welcome' onSelect={this.showWelcome}><Glyphicon glyph='home' /> Home</NavItem>
 					{dataMenu}
 					{workflowMenu}
+          {toolsMenu}
 					<NavItem eventKey='help' onSelect={this.showHelp}><Glyphicon glyph='question-sign' /> Help</NavItem>
 					{userMenu}
 				</Nav>
