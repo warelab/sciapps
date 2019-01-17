@@ -64,7 +64,7 @@ appsListMode: ['local']
 defaultAppsList: 'public/assets/agaveAppsList.json'
 queue_length: 3
 stage_file_types: ['.plot.tgz', '.view.tgz']
-anon_prefix: 'https://de.cyverse.org/anon-files'
+anon_prefix: 'https://data.cyverse.org/dav-anon'
 site_warning: 0
 site_warning_file: 'site_warning.txt'
 upload_file_input: 'fileToUpload'
@@ -73,3 +73,5 @@ retry_interval: 1
 retry_num: 2
 datamenu_item:
   MaizeCODE: 'MC_'
+toolsmenu_item:
+  JBrowse: 'https://data.sciapps.org/view2/?data=data2/B73/B73_AGPv4_chrs_2016_11_01/apollo_data'
