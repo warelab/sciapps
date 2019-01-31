@@ -621,6 +621,94 @@ any ['get', 'post'] => '/workflow/remote' => sub {
 	return to_json({status => 'success', data => $data});
 };
 
+swagger_path {
+  parameters => [
+    job_id => { required => 1, description => 'job ids in json array' },
+    workflow_name => { description => 'workflow name' },
+    workflow_desc => { description => 'workflow description' },
+    save => { description => "save to my workflow if set" }
+  ],
+  responses => {
+    default => { description => 'build workflow from job_id' }
+  },
+},
+post '/workflow/build' => sub {
+	my $username=var("username") or raise InvalidCredentials => 'no username';
+  my $form=params();
+  my $job_id=from_json($form->{job_id});
+  my $wfid=iPC::Utils::uuid();
+  my $wfname=$form->{workflow_name}||='my_workflow';
+  my $wfdesc=$form->{workflow_desc}||='';
+  my $workflow=buildWorkflow($job_id, $wfid, $wfname, $wfdesc);
+  my $save=$form->{save};
+  if ($save) {
+	  try {
+		  database->quick_insert('workflow', {workflow_id => $wfid, name => $wfname, description => $wfdesc, json => to_json($workflow)});
+		  database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
+	  };
+  }
+  return to_json({status => 'success', data => $workflow});
+};
+
+sub buildWorkflow {
+  my ($job_id, $wfid, $wfname, $wfdesc)=@_;
+  my $workflow={
+    workflow_id => $wfid,
+    id  => $wfid,
+    name  => $wfname,
+    description => $wfdesc,
+    steps => []
+  };
+  unless (ref($job_id)) {
+    $job_id=[$job_id];
+  }
+  my @jobs=sort {
+  $a->{submitTime} cmp $b->{submitTime}
+  } grep $_, map {
+  my $job=database->quick_select('job', {job_id => $_});
+  $job ? from_json($job->{agave_json}) : undef;
+  } @$job_id;
+  my $outputs={};
+  foreach my $i (0 .. $#jobs) {
+    my $job=$jobs[$i];
+    my $step=_buildWfStep($job, $i, $outputs);
+    push @{$workflow->{steps}}, $step;
+    my $app=retrieveApps($job->{appId});
+    foreach my $output (@{$app->{outputs} || []}) {
+      my $filePath=$job->{archivePath} ? $job->{archivePath} : $job->{id} . '/outputs/media';
+      my $path=$filePath . '/' . $output->{id};
+      $outputs->{$path}={step => $i, output_name => $output->{id}};
+    }
+  }
+  $workflow;
+}
+
+sub _buildWfStep {
+  my ($job, $index, $outputs)=@_;
+  my $step={
+    id  => $index,
+    appId => $job->{appId},
+    jobId => $job->{id},
+    inputs  => {},
+    parameters  => $job->{parameters}
+  };
+  while (my ($ik, $iv) = each %{$job->{inputs}}) {
+    my $input_name=ref($iv) ? $iv : [$iv];
+     $step->{inputs}{$ik}=[];
+     foreach my $i (0 .. $#$input_name) {
+       my $name=$input_name->[$i];
+       my $output;
+       while (my ($ok, $ov) = each %$outputs) {
+         if ($name=~m/\Q$ok\E/) {
+           $output=$ov;
+           last;
+         }
+       }
+       $step->{inputs}{$ik}[$i]=$output ? $output : $name;
+     }
+  }
+  $step;
+}
 
 swagger_path {
   parameters => [
