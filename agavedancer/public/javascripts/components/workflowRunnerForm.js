@@ -196,7 +196,6 @@ const WorkflowRunnerForm=React.createClass({
 				<div>
 					<form ref={this.formName} >
 						{appsFieldsets}
-						<BaseInput data={emailInput} />
 						<BaseInput data={workflowJson} />
 						<BaseInput data={derivedFrom} />
 						{submitBtn}
