@@ -665,7 +665,7 @@ sub buildWorkflow {
   my @jobs=sort {
   $a->{submitTime} cmp $b->{submitTime}
   } grep $_, map {
-  my $job=database->quick_select('job', {job_id => $_});
+  my $job=database->quick_select('job', {job_id => $_}) || database->quick_select('job', {agave_id => $_});
   $job ? from_json($job->{agave_json}) : undef;
   } @$job_id;
   my $outputs={};
