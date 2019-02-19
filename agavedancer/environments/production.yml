@@ -74,4 +74,4 @@ retry_num: 2
 datamenu_item:
   MaizeCODE: 'MC_'
 toolsmenu_item:
-  JBrowse: 'https://data.sciapps.org/view2/?data=data2/B73/B73_AGPv4_chrs_2016_11_01/apollo_data'
+  JBrowse: 'https://data.sciapps.org/view2/?data=data2/B73/v4/apollo_data'
