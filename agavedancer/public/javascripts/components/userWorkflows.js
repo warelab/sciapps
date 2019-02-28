@@ -149,6 +149,7 @@ const UserWorkflows=React.createClass({
 				<Button key='relaunch' bsStyle='success' onClick={this.handleRelaunch}><Glyphicon glyph='repeat'/> Relaunch</Button>
         <Button key='view' bsStyle='info' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
 				<Button key='load' bsStyle='warning' onClick={this.handleLoad}><Glyphicon glyph='hand-right'/> Load</Button>
+        <Button key='share' bsStyle='primary' onClick={this.handleShare}><Glyphicon glyph='share'/> Share</Button>
 			</ButtonGroup>
     ) : (
 			<ButtonGroup>
