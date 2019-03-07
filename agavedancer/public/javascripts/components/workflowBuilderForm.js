@@ -73,7 +73,7 @@ const WorkflowBuilderForm=React.createClass({
 				//let path=job.archivePath + '/' + output.value.default;
 				//let archivePath=job.outputPath.replace(job.owner, setting.archive_path);
 				let path=filePath + '/' + output.id;
-				outputs[path]={step: index, output_name: output.id};
+				outputs[path]={step: index+1, output_name: output.id};
 			});
 		}.bind(this));
 		return workflow;
@@ -81,7 +81,7 @@ const WorkflowBuilderForm=React.createClass({
 
 	_buildWfStep: function(job, index, outputs) {
 		let step={
-			id: index,
+			id: index+1,
 			appId: job.appId,
 			jobId: job.id,
 			inputs: {},

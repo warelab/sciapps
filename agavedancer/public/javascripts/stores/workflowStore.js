@@ -187,7 +187,7 @@ const WorkflowStore=Reflux.createStore({
 	saveWorkflow: function(wf) {
 		let setting=_config.setting;
 		let formData=new FormData();
-    formData.append('id', wf.workflow_id);
+		formData.append('id', wf.workflow_id);
 		formData.append('workflow_name',  wf.name);
 		formData.append('workflow_desc',  wf.description);
 		formData.append('workflow_json',  JSON.stringify(wf));

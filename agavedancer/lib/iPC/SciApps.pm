@@ -677,7 +677,7 @@ sub buildWorkflow {
     foreach my $output (@{$app->{outputs} || []}) {
       my $filePath=$job->{archivePath} ? $job->{archivePath} : $job->{id} . '/outputs/media';
       my $path=$filePath . '/' . $output->{id};
-      $outputs->{$path}={step => $i, output_name => $output->{id}};
+      $outputs->{$path}={step => $i+1, output_name => $output->{id}};
     }
   }
   $workflow;
@@ -686,7 +686,7 @@ sub buildWorkflow {
 sub _buildWfStep {
   my ($job, $index, $outputs)=@_;
   my $step={
-    id  => $index,
+    id  => $index+1 ,
     appId => $job->{appId},
     jobId => $job->{id},
     inputs  => {},
@@ -1064,6 +1064,8 @@ sub prepareJob {
 	$archive_path=~s/__user__/$username/;
 
 	$app or raise InvalidRequest => 'no apps found';
+  print STDERR "AA0|$step->{id}|" . to_dumper($form);
+  $step and print STDERR "AA1|$step->{id}|" . to_dumper($step);
 
 	my %job_form;
 	foreach my $key (@{$app->inputs}, @{$app->parameters}) {
@@ -1097,13 +1099,16 @@ sub prepareJob {
 			}
 		}
 
+    print STDERR "AA2|$step->{id}|" . to_dumper(\%job_form);
+
 
 		foreach my $key (@{$app->inputs}) {
 			my $k=$key->{id};
-			if (exists $job_form{$k}) {
+			if (defined $job_form{$k}) {
 				my $fi=$job_form{$k};
 				my $si=[];
 				ref($fi) or $fi=[$fi];
+        print STDERR "AA3|$step->{id}|$k|" . to_dumper($fi);
 				foreach my $i (0 .. $#$fi) {
           my ($prev_step_id, $prev_output_name);
           if (ref($fi->[$i]) eq 'HASH') {
@@ -1112,7 +1117,9 @@ sub prepareJob {
             ($prev_step_id, $prev_output_name)=($1, $2);
           }
           if (defined $prev_step_id && defined $prev_output_name) {
-						$fi->[$i]=$prev_job->[$prev_step_id]{job_id} . ':' . $prev_output_name;
+            print STDERR "AA4|$step->{id}|$prev_step_id|$prev_output_name|\n";
+            print STDERR "AA5|$step->{id}|" . to_dumper($prev_job);
+						$fi->[$i]=$prev_job->[$prev_step_id-1]{job_id} . ':' . $prev_output_name;
 						push @$si, {step => $prev_step_id, output_name => $prev_output_name};
 					} else {
 						push @$si, $fi->[$i];
@@ -1132,7 +1139,7 @@ sub prepareJob {
 
 		foreach my $key (@{$app->parameters}) {
 			my $k=$key->{id};
-			if (exists $job_form{$k}) {
+			if (defined $job_form{$k}) {
 				$step->{parameters}{$k}=$job_form{$k};
 			} else {
 				exists $step->{parameters}{$k} and delete $step->{parameters}{$k};
@@ -1215,7 +1222,7 @@ sub prepareJob {
 				foreach my $i (0 .. $#$inputs) {
 					my $input=$inputs->[$i];
 					if (defined $input && ref($input) eq 'HASH') {
-						my $prev=$prev_job->[$input->{step}]{job_id};
+						my $prev=$prev_job->[$input->{step}-1]{job_id};
 						my $input_name=$#$inputs ? $job_form{inputs}{$k}[$i] : $job_form{inputs}{$k};
 						my $row=database->quick_insert('nextstep', {prev => $prev, next => $job_id, input_name => $input_name});
 					}
@@ -1227,6 +1234,7 @@ sub prepareJob {
 		 error("Error: $e");
 		 return;
 	};
+  print STDERR "AA6|$step->{id}|" . $job_id . '|' . to_dumper(\%job_form);
 	return ($job_id, \%job_form);
 }
 
