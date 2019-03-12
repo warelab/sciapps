@@ -120,7 +120,7 @@ const WorkflowDiagram=React.createClass({
 					inputs.forEach(function(ic) {
 						if (_.isPlainObject(ic)) {
 							let prevAppNodeId=(setting.wf_step_prefix + ic.step).replace(/\W/g, '_').toLowerCase();
-							let prevJobId=steps[ic.step].jobId;
+							let prevJobId=steps[ic.step-1].jobId;
 							let prevJobDetail=prevJobId ? jobsStore.jobDetailCache[prevJobId] || _.find(jobsStore.jobDetailCache, 'id', prevJobId) : undefined;
 							let input_name=prevJobDetail ? prevJobDetail.job_id : setting.wf_step_prefix + ic.step + ':';
 							input_name=['file', input_name, ic.output_name].join('_');
@@ -223,7 +223,7 @@ const WorkflowDiagram=React.createClass({
 			let prev=_.map(step.inputs, function(input) {
 				let inp=_.isArray(input) ? input : [input];
 				let inp_depth=inp.map(function(i) {
-					return _.isPlainObject(i) ? depth[i.step] : 0;
+					return _.isPlainObject(i) ? depth[i.step-1] : 0;
 				});
 				return _.max(inp_depth);
 			});

@@ -125,7 +125,7 @@ const WorkflowRunnerForm=React.createClass({
 		if (workflowStore.workflowDetail) {
 			let workflowDetail=workflowStore.workflowDetail;
 			let steps=workflowDetail.steps;
-			appsFieldsets=steps.map(function(step, i) {
+			appsFieldsets=steps.map(function(step) {
 				let showAppId=step.appId.replace(/\-[\.\d]+$/, '');
 				let appId=step.appId;
 				let appDetail=_.cloneDeep(appsStore.appDetailCache[appId]);
@@ -148,7 +148,7 @@ const WorkflowRunnerForm=React.createClass({
 							v.value.default.push(ic);
 						}
 					});
-					v.id=setting.wf_step_prefix + i + ':' + v.id;
+					v.id=setting.wf_step_prefix + step.id + ':' + v.id;
 					if (v.value.required) {
 						required[v.id]=1;
 					}
@@ -158,12 +158,12 @@ const WorkflowRunnerForm=React.createClass({
 					if (p !== undefined) {
 						v.value.default=p;
 					}
-					v.id=setting.wf_step_prefix + i + ':' + v.id;
+					v.id=setting.wf_step_prefix + step.id + ':' + v.id;
 					if (v.value.required) {
 						required[v.id]=1;
 					}
 				});
-				return <AppsFieldset key={i} appDetail={appDetail} index={i} onValidate={onValidate} />;
+				return <AppsFieldset key={step.id} appDetail={appDetail} index={step.id} onValidate={onValidate} />;
 			});
 			let emailInput={
 				type: 'email',

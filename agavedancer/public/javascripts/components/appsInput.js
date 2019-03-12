@@ -153,8 +153,8 @@ const AppsInput=React.createClass({
 				inputs[i]=<Input {...textProps} />;
 			}
 
-			let insertButton=this.state.count < data.semantics.maxCardinality ? <Button onClick={this.handleInsertInput}><Glyphicon glyph='plus' /> Insert</Button> : undefined;
-			let removeButton=this.state.count > 1 ? <Button onClick={this.handleRemoveInput}><Glyphicon glyph='minus' /> Remove</Button> : undefined;
+			let insertButton=this.state.count < data.semantics.maxCardinality ? <Button bsStyle='info' onClick={this.handleInsertInput}><Glyphicon glyph='plus' /> Insert</Button> : undefined;
+			let removeButton=this.state.count > 1 ? <Button bsStyle='info' onClick={this.handleRemoveInput}><Glyphicon glyph='minus' /> Remove</Button> : undefined;
 			markup=(
 				<div>
 					<Input {...props}>{inputs}</Input>
