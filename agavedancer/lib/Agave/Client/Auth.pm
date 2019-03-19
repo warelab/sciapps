@@ -274,7 +274,7 @@ You can also look for information at:
 
 =over 4
 
-http://agaveapi.co/
+https://agaveapi.co/tenants/
 
 =back
 
