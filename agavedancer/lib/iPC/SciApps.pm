@@ -4,7 +4,7 @@ use warnings;
 use strict;
 
 use Dancer ':syntax';
-use Dancer::Plugin::Ajax;
+#use Dancer::Plugin::Ajax;
 use Dancer::Plugin::Email;
 use Dancer::Plugin::Database;
 use Dancer::Plugin::Swagger;
@@ -772,8 +772,9 @@ get '/workflow/:id/delete' => sub {
 swagger_path {
   parameters => [
     id => { in => 'path', required => 1, description => 'workflow id' },
-    workflow_name => { required => 1, description => 'workflow name' },
-    workflow_desc => { required => 1, description => 'workflow description' },
+    workflow_name => { required => 0, description => 'workflow name' },
+    workflow_desc => { required => 0, description => 'workflow description' },
+    new_id => { required => 0, description => 'new workflow id' },
   ],
   responses => {
     default => { description => 'update workflow by id' }
@@ -784,15 +785,43 @@ post '/workflow/:id/update' => sub {
 	my $wfid=param('id');
 	my $wfname=param('workflow_name');
 	my $wfdesc=param('workflow_desc');
-	my $data={name => $wfname, description => $wfdesc, modified_at => \"now()"};
+  my $newid=param('new_id');
+	my $data={modified_at => \"now()"};
+  if (defined $wfname && length($wfname)) {
+    $data->{name}=$wfname;
+  }
+  if (defined $wfdesc && length($wfdesc)) {
+    $data->{description}=$wfdesc;
+  }
+  database->{AutoCommit} = 0;
 	try {
-		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or raise 'InvalidRequest' => 'Invalid Workflow';
+		database->quick_count('user_workflow', {username => $username, workflow_id => $wfid}) or raise 'InvalidRequest' => 'Invalid Workflow';
+    my $wf=database->quick_select('workflow', {workflow_id => $wfid});
+    my $wfObj=from_json($wf->{json});
+    if ($data->{name} || $data->{description}) {
+      $data->{name} and $wfObj->{name}=$data->{name};
+      $data->{description} and $wfObj->{description}=$data->{description};
+      $data->{json}=to_json($wfObj);
+    }
 		database->quick_update('workflow', {workflow_id => $wfid}, $data);
+    if ($newid) {
+      database->quick_count('user_workflow', {username => $username, workflow_id => $newid}) or raise 'InvalidRequest' => 'Invalid New Workflow';
+      my $newwf=database->quick_select('workflow', {workflow_id => $newid});
+      my $newWfObj=from_json($newwf->{json});
+
+      $newWfObj->{id}=$newWfObj->{workflow_id}=$wfid;
+      $newWfObj->{name}=$wf->{name};
+      $newWfObj->{description}=$wf->{description};
+	    $data={json => to_json($newWfObj), modified_at => \"now()"};
+      database->quick_update('workflow', {workflow_id => $wfid}, $data);
+    }
+    database->commit;
 	} catch {
-		raise 'InvalidRequest' => 'workflow not updated'; 
+    eval { database->rollback };
+		raise 'InvalidRequest' => $_; 
 	};
   content_type 'application/json';
-	to_json({status => 'success'});
+	to_json({status => 'success', data => retrieveWorkflow($wfid)});
 };
 
 swagger_path {
