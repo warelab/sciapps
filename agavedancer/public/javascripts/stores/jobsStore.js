@@ -181,7 +181,7 @@ const JobsStore=Reflux.createStore({
 		.done();
 	},
 
-	setJobs: function(jobIds, check) {
+	setJobs: function(jobIds, check, noJobList) {
 		if (! jobIds) {
 			jobIds=_.filter(this.state.jobs, function(job) {
 				return job.status && !_.includes(['FINISHED','FAILED'], job.status)
@@ -190,7 +190,7 @@ const JobsStore=Reflux.createStore({
 		}
 		let funcs=jobIds.map(function(jobId) {
 			return function() {
-				return this._setJob(jobId, check).then(function(job) {
+				return this._setJob(jobId, check, noJobList).then(function(job) {
 					return job;
 				}.bind(this));
 			}.bind(this);
@@ -213,8 +213,8 @@ const JobsStore=Reflux.createStore({
 		return ! old_data || old_data.id === undefined && data.id || old_data.status !== data.status;
 	},
 
-	setJob: function(jobId, check) {
-		let jobPromise=this._setJob(jobId, check)
+	setJob: function(jobId, check, noJobList) {
+		let jobPromise=this._setJob(jobId, check, noJobList)
 		.then(function(job) {
 			this.complete();
 		}.bind(this));
@@ -226,19 +226,21 @@ const JobsStore=Reflux.createStore({
 		this.state.jobDetailCache[job_id]=data;
 		let jobListData=_.pick(data, ['job_id', 'appId', 'status', 'submitTime', 'endTime']);
 		jobListData.app_id=jobListData.appId;
-		if (i >= 0) {
+    if (i === undefined) {
+    } else if (i >= 0) {
 			this.state.jobs[i]=jobListData
 		} else {
 			this.state.jobs.push(jobListData);
 		}
-		if (j >= 0) {
+    if (j === undefined) {
+    } else if (j >= 0) {
 			this.state.joblist[j]=jobListData;
 		} else {
 			this.state.joblist.unshift(jobListData);
 		}
 	},
 
-	_setJob: function(jobId, check) {
+	_setJob: function(jobId, check, noJobList) {
 		let jobDetail=this.state.jobDetailCache[jobId];
 		let setting=_config.setting;
 		let jobPromise;
@@ -258,22 +260,26 @@ const JobsStore=Reflux.createStore({
 					if (data.appId) {
 						AppsActions.setApp(data.appId);
 					}
-					if (this.isChanged(data)) {
-						let i=_.findIndex(this.state.jobs, 'job_id', data.job_id);
-						let j=_.findIndex(this.state.joblist, 'job_id', data.job_id);
-						this._setJobData(data, i, j);
-						if ('FINISHED' === data.status) {
-							this.setJobOutputs(data.job_id, true);
-						}
-					}
 					return data;
 				}
 			}.bind(this))
 			.catch(function(error) {
 				console.log(error);
 			});
-		}
-		return jobPromise;
+    }
+    return jobPromise.then(function(data) {
+      let i=_.findIndex(this.state.jobs, 'job_id', data.job_id);
+      let j=_.findIndex(this.state.joblist, 'job_id', data.job_id);
+      if (this.isChanged(data) || ! noJobList && (i < 0 || j < 0)) {
+        if (noJobList) {
+          i=undefined;
+        }
+        this._setJobData(data, i, j);
+        if ('FINISHED' === data.status) {
+          this.setJobOutputs(data.job_id, true);
+        }
+      }
+    }.bind(this));
 	},
 
 	_removeJob: function(jobId) {

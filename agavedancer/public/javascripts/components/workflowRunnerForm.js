@@ -111,7 +111,8 @@ const WorkflowRunnerForm=React.createClass({
 	},
 
 	showWorkflowDiagram: function() {
-		WorkflowActions.showWorkflowDiagram();
+    let wf=this.state.workflowStore.workflowDetail;
+		WorkflowActions.showWorkflowDiagram(wf.workflow_id, wf);
 	},
 
 	render: function() {

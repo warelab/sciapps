@@ -24,7 +24,7 @@ const UserWorkflows=React.createClass({
 			let wf=_.find(workflows, {workflow_id: wfid});
 			if (wf) {
 				AppsActions.showPage('workflowRunner');
-				WorkflowActions.showWorkflow(wfid, wf);
+				WorkflowActions.showWorkflow(wfid, wf, true);
 			}
 		}
 	},

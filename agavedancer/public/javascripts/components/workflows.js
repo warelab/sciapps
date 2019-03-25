@@ -28,7 +28,7 @@ const publicWorkflows=React.createClass({
 		let wfid=table.store.selected[0];
 		if (wfid) {
 			AppsActions.showPage('workflowRunner');
-			WorkflowActions.showWorkflow(wfid);
+			WorkflowActions.showWorkflow(wfid, undefined, true);
 		}
 	},
 
