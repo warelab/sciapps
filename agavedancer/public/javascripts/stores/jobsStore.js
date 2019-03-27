@@ -279,6 +279,7 @@ const JobsStore=Reflux.createStore({
           this.setJobOutputs(data.job_id, true);
         }
       }
+      return data;
     }.bind(this));
 	},
 
