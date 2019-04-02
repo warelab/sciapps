@@ -200,12 +200,17 @@ const Header=React.createClass({
     let toolsMenuItem=[
       <MenuItem key='Jbrowse' eventKey='Jbrowse' onSelect={this.handleJBrowse}><Glyphicon glyph='globe' /> JBrowse</MenuItem>
     ];
-		if (user.token) {
+		if (user.authenticated) {
+      let userMenuItem=[
+        <MenuItem key='swagger' eventKey='swagger' onSelect={this.handleSwagger}><Glyphicon glyph='link' /> Open swagger-ui</MenuItem>,
+        <MenuItem key='logout' eventKey='logout' onSelect={this.handleLogout}><Glyphicon glyph='log-out' /> Logout</MenuItem>
+      ];
+      if (user.authorized && user.token) {
+        userMenuItem.unshift(<MenuItem key='token' eventKey='token' onSelect={this.handleToken}><Glyphicon glyph='record' /> Get API token</MenuItem>);
+      }
       userMenu=(
         <NavDropdown eventKey='user' title={<span><Glyphicon glyph="user" /> Hi, {user.firstName}!</span>} id="nav-dropdown-user">
-          <MenuItem key='swagger' eventKey='swagger' onSelect={this.handleSwagger}><Glyphicon glyph='link' /> Open swagger-ui</MenuItem>
-          <MenuItem key='token' eventKey='token' onSelect={this.handleToken}><Glyphicon glyph='record' /> Get API token</MenuItem>
-          <MenuItem key='logout' eventKey='logout' onSelect={this.handleLogout}><Glyphicon glyph='log-out' /> Logout</MenuItem>
+          {userMenuItem}
         </NavDropdown>
       )
 			workflowMenuItem.push(

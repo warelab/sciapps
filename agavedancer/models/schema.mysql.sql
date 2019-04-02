@@ -90,6 +90,35 @@ create table nextstep (
 	index(next)
 );
 
+drop table if exists experiment;
+create table experiment (
+  id integer primary key auto_increment,
+  tissue varchar(255),
+  reverse_read_length varchar(255),
+  seq_format varchar(255),
+  growth_protocol varchar(255),
+  cultivar varchar(255),
+  source varchar(255),
+  source_details varchar(255),
+  library_selection varchar(255),
+  library_strategy varchar(255),
+  assay varchar(255),
+  fragment_size varchar(255),
+  design_description varchar(255),
+  library_layout varchar(255),
+  sra_project_id varchar(255),
+  sra_bio_sample_package varchar(255),
+  seq_platform varchar(255),
+  library_protocol varchar(255),
+  age varchar(255),
+  stranded varchar(255),
+  instrument_model varchar(255),
+  forward_read_length varchar(255),
+  organism varchar(255),
+  library_input varchar(255),
+  PhiX varchar(255)
+);
+
 drop table if exists organism;
 create table organism (
 	id integer primary key auto_increment,

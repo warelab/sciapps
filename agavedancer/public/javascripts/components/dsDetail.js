@@ -39,7 +39,7 @@ const DsDetail=React.createClass({
 		let targetPath=dsStore.dsItemPaths[dsStore.target];
 		let dsBtnValue=targetPath ? 'Select and Close' : 'Close';
 		let sourceButtons=setting.datastore_types.map(function(name) {
-			let disabled=!(name === 'exampleData' || user.token);
+			let disabled=!(name === 'exampleData' || user.authenticated);
 			let isActive=type === '__' + name + '__';
 			let showName=name.replace(/_+/g, ' ');
 			return <Button key={name} onClick={disabled ? null : this.handleChangeSource} disabled={disabled} bsStyle={isActive ? 'primary' : 'default'} value={name}>{showName}</Button>

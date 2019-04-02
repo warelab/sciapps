@@ -189,7 +189,7 @@ const WorkflowRunnerForm=React.createClass({
 				value: workflowDetail.workflow_id
 			};
 			let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
-			let submitBtn=user.token ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit Workflow</Button> : 
+			let submitBtn=user.authenticated ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit Workflow</Button> : 
 				<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
 					<Button bsStyle='primary' onClick={null}>Submit Jobs</Button>
 				</OverlayTrigger>;

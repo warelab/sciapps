@@ -267,7 +267,13 @@ get '/logout' => sub {
 get '/user' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
   my $user=database->quick_select('user', {username => $username});
-  $user->{token}=check_agave_login();
+  if ($user) {
+    $user->{authenticated}=1;
+    if (iPC::User->search({username => $username})) {
+      $user->{authorized}=1;
+      $user->{token}=check_agave_login();
+    }
+  }
   content_type 'application/json';
 	to_json({status => 'success', data => $user});
 };

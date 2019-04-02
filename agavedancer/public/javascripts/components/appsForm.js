@@ -66,7 +66,7 @@ const AppsForm=React.createClass({
 		let form=this.refs[this.formName];
 		let validated=utilities.validateForm(form, required, setting.upload_suffix);
 		let confirmed;
-		if (user.token) {
+		if (user.authenticated) {
 			if (validated) {
 				let formData=new FormData(this.refs[this.formName]);
 				this.refs.dialog.show({

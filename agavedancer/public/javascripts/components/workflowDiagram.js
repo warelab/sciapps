@@ -272,7 +272,7 @@ const WorkflowDiagram=React.createClass({
 				//});
 				let workflowDiagramDef=this.buildWorkflowDiagram(workflowStore, appsStore, jobsStore, workflowDirection);
 				let saveBtnTxt=this.state.onSave ? 'Saving' : 'Save Workflow';
-				let saveBtn=user.token ? <Button onClick={this.handleSave} bsStyle={'primary'}>{saveBtnTxt}</Button> : undefined;
+				let saveBtn=user.authenticated ? <Button onClick={this.handleSave} bsStyle={'primary'}>{saveBtnTxt}</Button> : undefined;
 				body=(
 					<Modal.Body>
 						<Mermaid diagramDef={workflowDiagramDef}/>

@@ -69,7 +69,7 @@ const UserStore=Reflux.createStore({
 			  if (res.data.error) {
 				  console.log(res.data.error);
           return;
-			  } else if (res.data.data.token) {
+			  } else if (res.data.data.authenticated) {
           return res.data.data;
         }
       }.bind(this));
@@ -116,7 +116,7 @@ const UserStore=Reflux.createStore({
 				this.state.error=res.data.error;
 				this.complete();
         return;
-			} else if (res.data.data.token) {
+			} else if (res.data.data.authenticated) {
 				this.setUser(res.data.data);
 				this.hideLoginBox();
         return res.data.data;
