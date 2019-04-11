@@ -443,14 +443,18 @@ sub retrieveAppsFile {
 	if ($app_id) {
 		try {
 			my $appsFile=setting("appdir") . '/public/assets/' . $app_id . '.json';
-			my $appsJson=`cat $appsFile`;
-			$return=from_json($appsJson);
+      if (-r $appsFile) {
+			  my $appsJson=`cat $appsFile`;
+			  $return=from_json($appsJson);
+      }
 		};
 	} else {
 		try {
 			my $default_list=setting("appdir") . '/' . setting('defaultAppsList');
-			my $appsListJson=`cat $default_list`;
-			$return=from_json($appsListJson);
+      if (-r $default_list) {
+			  my $appsListJson=`cat $default_list`;
+			  $return=from_json($appsListJson);
+      }
 		}
 	}
 	$return;
@@ -780,6 +784,7 @@ swagger_path {
     id => { in => 'path', required => 1, description => 'workflow id' },
     workflow_name => { required => 0, description => 'workflow name' },
     workflow_desc => { required => 0, description => 'workflow description' },
+    metadata => { required => 0, description => 'sample metadata' },
     new_id => { required => 0, description => 'new workflow id' },
   ],
   responses => {
@@ -792,12 +797,34 @@ post '/workflow/:id/update' => sub {
 	my $wfname=param('workflow_name');
 	my $wfdesc=param('workflow_desc');
   my $newid=param('new_id');
+  my $metadata=param('metadata');
 	my $data={modified_at => \"now()"};
   if (defined $wfname && length($wfname)) {
     $data->{name}=$wfname;
   }
   if (defined $wfdesc && length($wfdesc)) {
     $data->{description}=$wfdesc;
+  }
+  if ($metadata) {
+    my $sth = database->column_info(undef, undef, 'metadata', undef);
+    my $col=$sth->fetchall_arrayref({COLUMN_NAME => 1});
+    my $mdata={map {$_->{COLUMN_NAME} => undef} @$col};
+    try {
+      my $metadataObj=from_json($metadata);
+      foreach my $avu (@{$metadataObj->{avus}}) {
+        if (exists $mdata->{$avu->{attr}}) {
+          $mdata->{$avu->{attr}}=$avu->{value};
+        }
+      }
+      my $meta=database->quick_select('metadata', $mdata);
+      if ($meta) {
+        $data->{metadata_id}=$meta->{metadata_id};
+      } else {
+        $mdata->{metadata_id}=iPC::Utils::uuid();
+        database->quick_insert('metadata', $mdata);
+        $data->{metadata_id}=$mdata->{metadata_id};
+      }
+    };
   }
   database->{AutoCommit} = 0;
 	try {
@@ -856,9 +883,11 @@ sub retrieveWorkflowFile {
 	my $wf;
 	try {
 		my $wfFile=setting("appdir") . '/public/assets/' . $wfid . '.workflow.json';
-		my $wfJson=`cat $wfFile`;
-		$wf=from_json($wfJson);
-		$wf->{workflow_id}=$wf->{id};
+    if (-r $wfFile) {
+		  my $wfJson=`cat $wfFile`;
+		  $wf=from_json($wfJson);
+		  $wf->{workflow_id}=$wf->{id};
+    }
 	};
 	$wf;
 };

@@ -74,5 +74,6 @@ retry_interval: 1
 retry_num: 2
 datamenu_item:
   MaizeCODE: 'MC_'
+  SorghumBase: 'SB_'
 toolsmenu_item:
   JBrowse: 'https://data.sciapps.org/view2/?data=data2/B73/B73_AGPv4_chrs_2016_11_01/apollo_data'

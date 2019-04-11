@@ -33,6 +33,41 @@ create table login (
 	index(username)
 );
 
+drop table if exists metadata;
+create table metadata (
+  id integer primary key auto_increment,
+  metadata_id varchar(40) not null,
+  tissue varchar(255),
+  reverse_read_length integer,
+  seq_format varchar(255),
+  growth_protocol varchar(255),
+  cultivar varchar(255),
+  source varchar(255),
+  source_details varchar(255),
+  library_selection varchar(255),
+  library_strategy varchar(255),
+  assay varchar(255),
+  fragment_size integer,
+  design_description varchar(255),
+  library_layout varchar(255),
+  sra_project_id varchar(255),
+  sra_bio_sample_package varchar(255),
+  seq_platform varchar(255),
+  library_protocol varchar(255),
+  age varchar(255),
+  stranded varchar(255),
+  instrument_model varchar(255),
+  forward_read_length integer,
+  organism varchar(255),
+  library_input varchar(255),
+  PhiX varchar(255),
+  index(metadata_id),
+  index(assay),
+  index(tissue),
+  index(cultivar),
+  index(organism)
+);
+
 drop table if exists workflow;
 create table workflow (
 	id integer primary key auto_increment,
@@ -43,6 +78,7 @@ create table workflow (
 	derived_from varchar(40),
 	created_at timestamp default CURRENT_TIMESTAMP,
 	modified_at timestamp,
+  metadata_id varchar(40) references metadata(metadata_id),
 	index(workflow_id),
 	index(derived_from)
 );
@@ -88,35 +124,6 @@ create table nextstep (
 	status integer default 0,
 	index(prev),
 	index(next)
-);
-
-drop table if exists experiment;
-create table experiment (
-  id integer primary key auto_increment,
-  tissue varchar(255),
-  reverse_read_length varchar(255),
-  seq_format varchar(255),
-  growth_protocol varchar(255),
-  cultivar varchar(255),
-  source varchar(255),
-  source_details varchar(255),
-  library_selection varchar(255),
-  library_strategy varchar(255),
-  assay varchar(255),
-  fragment_size varchar(255),
-  design_description varchar(255),
-  library_layout varchar(255),
-  sra_project_id varchar(255),
-  sra_bio_sample_package varchar(255),
-  seq_platform varchar(255),
-  library_protocol varchar(255),
-  age varchar(255),
-  stranded varchar(255),
-  instrument_model varchar(255),
-  forward_read_length varchar(255),
-  organism varchar(255),
-  library_input varchar(255),
-  PhiX varchar(255)
 );
 
 drop table if exists organism;
