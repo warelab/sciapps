@@ -198,11 +198,11 @@ const Header=React.createClass({
       }.bind(this));
     }
     let toolsMenuItem=[
-      <MenuItem key='Jbrowse' eventKey='Jbrowse' onSelect={this.handleJBrowse}><Glyphicon glyph='globe' /> JBrowse</MenuItem>
+      <MenuItem key='Jbrowse' eventKey='Jbrowse' onSelect={this.handleJBrowse}><Glyphicon glyph='globe' /> JBrowse</MenuItem>,
+      <MenuItem key='swagger' eventKey='swagger' onSelect={this.handleSwagger}><Glyphicon glyph='wrench' /> RESTful API</MenuItem>
     ];
 		if (user.authenticated) {
       let userMenuItem=[
-        <MenuItem key='swagger' eventKey='swagger' onSelect={this.handleSwagger}><Glyphicon glyph='link' /> Open swagger-ui</MenuItem>,
         <MenuItem key='logout' eventKey='logout' onSelect={this.handleLogout}><Glyphicon glyph='log-out' /> Logout</MenuItem>
       ];
       if (user.authorized && user.token) {
@@ -232,7 +232,7 @@ const Header=React.createClass({
 			</NavDropdown>
 		);
     toolsMenu=(
-			<NavDropdown eventKey='tools' title={<span><Glyphicon glyph="wrench" /> Tools</span>} id="nav-dropdown-tools">
+			<NavDropdown eventKey='tools' title={<span><Glyphicon glyph="cog" /> Tools</span>} id="nav-dropdown-tools">
 				{toolsMenuItem}
 			</NavDropdown>
     );
