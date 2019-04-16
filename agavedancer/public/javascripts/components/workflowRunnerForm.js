@@ -115,6 +115,13 @@ const WorkflowRunnerForm=React.createClass({
 		WorkflowActions.showWorkflowDiagram(wf.workflow_id, wf);
 	},
 
+	showWorkflowMetadata: function() {
+    let wf=this.state.workflowStore.workflowDetail;
+    if (wf && wf.metadata_id) {
+		  WorkflowActions.showWorkflowMetadata(wf.workflow_id);
+    }
+	},
+
 	render: function() {
 		let user=this.props.user;
 		let workflowStore=this.state.workflowStore;
@@ -202,6 +209,8 @@ const WorkflowRunnerForm=React.createClass({
 						{submitBtn}
 						<span> or </span>
 						<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Show Diagram</Button>
+						<span> or </span>
+						<Button bsStyle='primary' onClick={this.showWorkflowMetadata}>Show Metadata</Button>
 					</form>
 					<Dialog ref='dialog' />
 				</div>

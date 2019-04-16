@@ -48,6 +48,20 @@ const UserWorkflows=React.createClass({
 			}
 		}
 	},
+
+	showWorkflowMetadata: function(e) {
+		let workflowStore=this.state.workflowStore;
+    let dataItem=workflowStore.dataItem;
+		let table=this.refs.table;
+		let wfid=table.store.getSelectedRowKeys()[0];
+    let workflows=dataItem ? workflowStore.dataWorkflows[dataItem] : workflowStore.workflows;
+		if (wfid) {
+			let wf=_.find(workflows, {workflow_id: wfid});
+			if (wf && wf.metadata_id) {
+				WorkflowActions.showWorkflowMetadata(wfid);
+			}
+		}
+	},
   
   showWorkflowDiagram: function(e) {
 		let workflowStore=this.state.workflowStore;
@@ -150,6 +164,7 @@ const UserWorkflows=React.createClass({
         <Button key='view' bsStyle='info' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
 				<Button key='load' bsStyle='warning' onClick={this.handleLoad}><Glyphicon glyph='hand-right'/> Load</Button>
         <Button key='share' bsStyle='primary' onClick={this.handleShare}><Glyphicon glyph='share'/> Share</Button>
+        <Button key='metadata' bsStyle='info' onClick={this.showWorkflowMetadata}><Glyphicon glyph='share'/> Metadata</Button>
 			</ButtonGroup>
     ) : (
 			<ButtonGroup>

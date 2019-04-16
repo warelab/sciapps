@@ -764,6 +764,28 @@ swagger_path {
     id => { in => 'path', required => 1, description => 'workflow id' },
   ],
   responses => {
+    default => { description => 'get workflow metadata by id' }
+  },
+},
+get '/workflow/:id/metadata' => sub {
+	my $username=var("username") or raise InvalidCredentials => 'no username';
+	my $wfid=param('id');
+  my $data;
+  my $wf=database->quick_select('workflow', {workflow_id => $wfid});
+  if ($wf && $wf->{metadata_id}) {
+    $data=database->quick_select('metadata', {metadata_id => $wf->{metadata_id}});
+  }
+  $data or raise InvalidRequest => 'no workflow metadata found';
+  delete $data->{id};
+  content_type 'application/json';
+	to_json({status => 'success', data => $data});
+};
+
+swagger_path {
+  parameters => [
+    id => { in => 'path', required => 1, description => 'workflow id' },
+  ],
+  responses => {
     default => { description => 'delete workflow by id' }
   },
 },

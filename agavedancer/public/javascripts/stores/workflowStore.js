@@ -35,10 +35,12 @@ const WorkflowStore=Reflux.createStore({
 		this.state={
 			showWorkflowDiagram: false,
 			showWorkflowLoadBox: false,
+      showWorkflowMetadata: false,
 			workflowDetail: undefined,
 			remoteWorkflowDetailPromise: undefined,
 			workflowDetailCache: {},
 			workflows: [],
+      metadata: {},
       dataItem: undefined,
       dataWorkflows: {},
 			build: {},
@@ -72,6 +74,17 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
+	showWorkflowMetadata: function(wfId) {
+		this.state.showWorkflowMetadata=true;
+		this.setWorkflow(wfId, undefined, undefined, undefined, true);
+		this.complete();
+	},
+
+	hideWorkflowMetadata: function() {
+		this.state.showWorkflowMetadata=false;
+		this.complete();
+	},
+
 	showWorkflow: function(wfId, wfDetail, noJobList) {
 		let promise=Q(1);
 		if (wfId) {
@@ -96,7 +109,7 @@ const WorkflowStore=Reflux.createStore({
 		let setting=_config.setting;
     let option=dataItem ? "?dataItem=" + dataItem : '';
 		Q(axios.get('/workflow' + option, {
-			headers: {'X-Requested-With': 'XMLHttpRequest'},
+			headers: {'X-Requested-With': 'XMLHttpRequest'}
 		}))
 		.then(function(res) {
 			if (res.data.error) {
@@ -136,7 +149,7 @@ const WorkflowStore=Reflux.createStore({
 		} else {
 			//workflowPromise=Q(axios.get('/assets/' + wfId + '.workflow.json'))
 			workflowPromise=Q(axios.get('/workflow/' + wfId,{
-				headers: {'X-Requested-With': 'XMLHttpRequest'},
+				headers: {'X-Requested-With': 'XMLHttpRequest'}
 			}))
 			.then(function(res) {
 				if (res.data.error) {
@@ -152,6 +165,9 @@ const WorkflowStore=Reflux.createStore({
 		return workflowPromise.then(function(wfDetail) {
 			if (wfDetail) {
 				this.setWorkflowSteps(wfDetail, noSync, noJobList);
+        if (wfDetail.metadata_id) {
+          this.setWorkflowMetadata(wfDetail.workflow_id);
+        }
 				return wfDetail;
 			}
 		}.bind(this))
@@ -287,6 +303,33 @@ const WorkflowStore=Reflux.createStore({
 			.done();
 		}
 	},
+
+  setWorkflowMetadata : function(wfId) {
+		let promise;
+    if (this.state.metadata[wfId]) {
+      promise=Q(this.state.metadata[wfId]);
+    } else {
+      promise=Q(axios.get('/workflow/' + wfId + '/metadata', {
+		    headers: {'X-Requested-With': 'XMLHttpRequest'}
+		  }))
+		  .then(function(res) {
+			  if (res.data.error) {
+				  console.log(res.data.error);
+				  return;
+			  } else if (res.data.status === 'success') {
+          this.state.metadata[wfId]=res.data.data;
+				  return res.data.data;
+			  }
+		  }.bind(this))
+		  .catch(function(error) {
+			  console.log(error);
+		  });
+    }
+    promise.then(function(metadata) {
+      this.complete();
+      return metadata;
+    }.bind(this));
+  },
 
 	setWorkflowSteps: function(wfDetail, noSync, noJobList) {
 		if (! noSync || this.state.workflowDetail && this.state.workflowDetail.workflow_id === wfDetail.workflow_id) {

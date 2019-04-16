@@ -94,7 +94,7 @@ create table user_workflow (
 
 drop view if exists user_workflow_view;
 create view user_workflow_view as 
-select workflow.workflow_id as workflow_id, workflow.name as name, workflow.description as description, workflow.json as json, user_workflow.username as username
+select workflow.workflow_id as workflow_id, workflow.name as name, workflow.description as description, workflow.json as json, user_workflow.username as username, workflow.metadata_id as metadata_id
 from workflow join user_workflow on (workflow.workflow_id = user_workflow.workflow_id);
 
 drop table if exists job;
