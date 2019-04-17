@@ -768,7 +768,7 @@ swagger_path {
   },
 },
 get '/workflow/:id/metadata' => sub {
-	my $username=var("username") or raise InvalidCredentials => 'no username';
+  #my $username=var("username") or raise InvalidCredentials => 'no username';
 	my $wfid=param('id');
   my $data;
   my $wf=database->quick_select('workflow', {workflow_id => $wfid});
