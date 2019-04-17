@@ -196,7 +196,7 @@ const WorkflowRunnerForm=React.createClass({
 				value: workflowDetail.workflow_id
 			};
 			let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
-			let submitBtn=user.authenticated ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit Workflow</Button> : 
+			let submitBtn=user.authenticated ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit</Button> : 
 				<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
 					<Button bsStyle='primary' onClick={null}>Submit Jobs</Button>
 				</OverlayTrigger>;
@@ -207,10 +207,10 @@ const WorkflowRunnerForm=React.createClass({
 						<BaseInput data={workflowJson} />
 						<BaseInput data={derivedFrom} />
 						{submitBtn}
-						<span> or </span>
-						<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Show Diagram</Button>
-						<span> or </span>
-						<Button bsStyle='primary' onClick={this.showWorkflowMetadata}>Show Metadata</Button>
+						<span> </span>
+						<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Diagram</Button>
+						<span> </span>
+						<Button bsStyle='primary' onClick={this.showWorkflowMetadata}>Metadata</Button>
 					</form>
 					<Dialog ref='dialog' />
 				</div>

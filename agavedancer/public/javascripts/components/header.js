@@ -199,7 +199,7 @@ const Header=React.createClass({
     }
     let toolsMenuItem=[
       <MenuItem key='Jbrowse' eventKey='Jbrowse' onSelect={this.handleJBrowse}><Glyphicon glyph='globe' /> JBrowse</MenuItem>,
-      <MenuItem key='swagger' eventKey='swagger' onSelect={this.handleSwagger}><Glyphicon glyph='wrench' /> RESTful API</MenuItem>
+      <MenuItem key='swagger' eventKey='swagger' onSelect={this.handleSwagger}><Glyphicon glyph='wrench' /> API</MenuItem>
     ];
 		if (user.authenticated) {
       let userMenuItem=[

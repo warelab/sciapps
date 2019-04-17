@@ -165,7 +165,7 @@ const AppsForm=React.createClass({
 			label: 'Email',
 			help: 'Optional Email notification upon job completion'
 		};
-		let submitBtn=<Button bsStyle='primary' onClick={this.handleSubmit}>Submit Job</Button>; 
+		let submitBtn=<Button bsStyle='primary' onClick={this.handleSubmit}>Submit job</Button>; 
 		return (
 			<Panel header={header}>
 				<form ref={this.formName}>
