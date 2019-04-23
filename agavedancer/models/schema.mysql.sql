@@ -48,7 +48,7 @@ create table metadata (
   library_strategy varchar(255),
   assay varchar(255),
   fragment_size integer,
-  design_description varchar(255),
+  design_description varchar(2047),
   library_layout varchar(255),
   sra_project_id varchar(255),
   sra_bio_sample_package varchar(255),
