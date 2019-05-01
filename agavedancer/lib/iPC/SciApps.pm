@@ -188,10 +188,13 @@ hook 'before' => sub {
   if ($upload || $inputs) {
     my $json_params={};
     try {
-      $json_params = {%$json_params, %{from_json($upload->content())}};
+      $upload and $json_params = {%$json_params, %{from_json($upload->content())}};
     };
     try {
-      $json_params = {%$json_params, %{from_json($inputs)}};
+      if ($inputs && ! ref($inputs)) {
+        $inputs=from_json($inputs);
+      }
+      $inputs and $json_params = {%$json_params, %$inputs};
     };
     if ($json_params && ref($json_params) eq 'HASH') {
       while (my ($k, $v)=each %$json_params) {
@@ -832,7 +835,7 @@ post '/workflow/:id/update' => sub {
     my $col=$sth->fetchall_arrayref({COLUMN_NAME => 1});
     my $mdata={map {$_->{COLUMN_NAME} => undef} @$col};
     try {
-      my $metadataObj=from_json($metadata);
+      my $metadataObj=ref $metadata ? $metadata : from_json($metadata);
       foreach my $avu (@{$metadataObj->{avus}}) {
         if (exists $mdata->{$avu->{attr}}) {
           $mdata->{$avu->{attr}}=$avu->{value};
