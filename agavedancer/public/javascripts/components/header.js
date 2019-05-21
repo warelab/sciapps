@@ -129,6 +129,10 @@ const Header=React.createClass({
 		//UserActions.showLoginBox();
 	},
 
+  handleDatastore: function() {
+    this.refs.dialog.showAlert('Cyverse datastore has not been setup yet. Please following guide in help!');
+  },
+
 	handleLogout: function() {
 		this.refs.dialog.show({
  			body: 'History panel will be cleared. You can reload jobs to History from "My jobs"',
@@ -202,6 +206,10 @@ const Header=React.createClass({
       <MenuItem key='swagger' eventKey='swagger' onSelect={this.handleSwagger}><Glyphicon glyph='wrench' /> API</MenuItem>
     ];
 		if (user.authenticated) {
+      if (! user.datastore_verified) {
+        this.handleDatastore();
+      }
+
       let userMenuItem=[
         <MenuItem key='logout' eventKey='logout' onSelect={this.handleLogout}><Glyphicon glyph='log-out' /> Logout</MenuItem>
       ];

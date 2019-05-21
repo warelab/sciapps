@@ -276,10 +276,20 @@ get '/user' => sub {
       $user->{authorized}=1;
       $user->{token}=check_agave_login();
     }
+    $user->{datastore_verified}=check_datastore();
   }
   content_type 'application/json';
 	to_json({status => 'success', data => $user});
 };
+
+sub check_datastore {
+  my $datastore_home=browse('__home__/');
+  my $result;
+  try {
+    $result=defined $datastore_home->[0] ? 1 : 0;
+  };
+  return $result;
+}
 
 get qr{/browse/?(.*)} => sub {
 	my ($typePath) = splat;
@@ -348,7 +358,7 @@ sub browse_ils {
 	my $fullPath=qq('$homepath/$path');
 	my @ils=icommand('ils', '-l', $fullPath);
 	chomp (@ils);
-	my $dir_list=iPC::Utils::parse_ils(\@ils, $homepath);
+	my $dir_list=scalar @ils ? iPC::Utils::parse_ils(\@ils, $homepath) : {};
 
 	[map +{
 			is_root	=> $_ ? 0 : 1,
