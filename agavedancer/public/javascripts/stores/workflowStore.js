@@ -62,9 +62,9 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
-	showWorkflowDiagram: function(wfId, wfDetail) {
+	showWorkflowDiagram: function(wfId, wfDetail, noJobList) {
 		this.state.showWorkflowDiagram=true;
-		this.showWorkflow(wfId, wfDetail);
+		this.showWorkflow(wfId, wfDetail, noJobList);
 		this.complete();
 	},
 

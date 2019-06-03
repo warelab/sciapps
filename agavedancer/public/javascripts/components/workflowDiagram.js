@@ -53,7 +53,8 @@ const WorkflowDiagram=React.createClass({
 				let jobNum='';
 				let jobOutputs=[];
 				if (jobDetail) {
-					jobNum=(_.findIndex(jobsStore.jobs, 'job_id', jobDetail.job_id)+1) + ': ';
+          jobNum=_.findIndex(jobsStore.jobs, 'job_id', jobDetail.job_id);
+          jobNum=jobNum < 0 ? '' : (jobNum+1) + ': ';
 					appClass=jobDetail.status;
 					//jobOutputs=jobsStore.jobOutputs[jobDetail.job_id];
 				}

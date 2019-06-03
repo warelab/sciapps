@@ -107,7 +107,7 @@ const JobsStore=Reflux.createStore({
 			this.state.jobs[submitNumber + i]={appId: step.appId};
 		}.bind(this));
 		this.state.workflow={};
-		WorkflowActions.setWorkflow(wf.workflow_id, wf);
+		WorkflowActions.setWorkflow(wf.workflow_id, wf, undefined, undefined, true);
 		this.complete();
 		Q(axios.post('/workflowJob/new', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
