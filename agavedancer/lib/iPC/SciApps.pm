@@ -22,6 +22,7 @@ use File::Copy ();
 use Archive::Tar ();
 use FindBin;
 use File::Basename;
+use DateTime;
 
 our $VERSION = '0.2';
 our @EXPORT_SETTINGS=qw/output_url wf_step_prefix datastore datastore_types archive_system archive_home archive_path appsListMode anon_prefix stage_file_types site_warning_content datamenu_item toolsmenu_item/;
@@ -159,14 +160,15 @@ sub getAgaveClient {
 
 hook on_route_exception => sub {
 	my $e = shift;
+  my $dt=DateTime->now->datetime;
 	if ($e->can('does') && ($e->does('InvalidCredentials') || $e->does('InvalidRequest'))) {
-		error("Error: " . $e->message() . "\n");
+		error("Error [$dt]: " . $e->message() . "\n");
     content_type 'application/json';
 		halt(to_json({status => 'error', error => $e->message()}));
 	} elsif ($e->can('rethrow')) {
 		$e->rethrow;
 	} else {
-		error("Error: " . $e . "\n");
+		error("Error [$dt]: " . $e . "\n");
 		raise 'SystemError' => $e;
 	}
 };
