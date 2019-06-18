@@ -130,7 +130,7 @@ const Header=React.createClass({
 	},
 
   handleDatastore: function() {
-    this.refs.dialog.showAlert('Cyverse datastore has not been setup yet. Please following guide in help!');
+    this.refs.dialog.showAlert('CyVerse datastore is not accessible. Follow the SciApps guide to enable SciApps service if not yet');
   },
 
 	handleLogout: function() {
