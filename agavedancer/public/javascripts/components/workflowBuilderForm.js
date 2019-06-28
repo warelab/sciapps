@@ -62,7 +62,7 @@ const WorkflowBuilderForm=React.createClass({
 		};
 		let jobs=jobsStore.workflowBuilderJobIndex.map(function(v, i) {
 			return v ? jobsStore.jobDetailCache[jobsStore.jobs[i].job_id] : undefined;
-		}).filter(function(v) {return v !== undefined}).sort(function(a,b){return a.submitTime.localeCompare(b.submitTime)});
+		}).filter(function(v) {return v !== undefined}).sort(function(a,b){return a.remoteSubmitted.localeCompare(b.remoteSubmitted)});
 		let outputs={};
 		jobs.forEach(function(job, index) {
 			let step=this._buildWfStep(job, index, outputs);
