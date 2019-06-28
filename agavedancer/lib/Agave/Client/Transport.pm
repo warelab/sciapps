@@ -25,7 +25,7 @@ use vars qw($VERSION $AGENT);
 {
     # these should be moved to a config file (or not?)
 
-    my $TIMEOUT = 300;
+    my $TIMEOUT = 45;
 
     my $TRANSPORT = 'https';
 
@@ -40,6 +40,7 @@ use vars qw($VERSION $AGENT);
             metadataschema => 'meta/v2',
             postit => 'postits/v2',
             profile => 'profiles/v2',
+            system => 'systems/v2',
         );
 
     sub _get_end_point {
@@ -326,7 +327,7 @@ use vars qw($VERSION $AGENT);
 
         $path =~ s'/$'';
 
-		$self->log( type => 'request', method => 'POST', path => $path, params => \%params);
+        $self->log( type => 'request', method => 'POST', path => $path, params => \%params);
         print STDERR '::do_post: ', Dumper( \%params), $/ if $self->debug;
         print STDERR "\n$TRANSPORT://" . $self->hostname . "/" . $END_POINT . $path, "\n" 
             if $self->debug;
@@ -339,8 +340,11 @@ use vars qw($VERSION $AGENT);
                     'Content' => $params{_body};
             #print STDERR Dumper( $req ), $/;
             $res = $ua->request($req);
-        }
-        else {
+        } elsif (exists $params{_content_type}) {
+            my $req = POST "$TRANSPORT://" . $self->hostname . "/" . $END_POINT . $path,
+                    'Content-type' => $params{_content_type};
+            $res = $ua->request($req);
+        } else {
             $res = $ua->post(
                     "$TRANSPORT://" . $self->hostname . "/" . $END_POINT . $path,
                     \%params

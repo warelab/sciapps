@@ -614,7 +614,11 @@ sub retrieveJob {
 			}
 		}
 	}
-	if (! $job && $row) {
+  if ($job) {
+    $job->{remoteSubmitted}||=$job->{submitTime} || '';
+    $job->{remoteStarted}||=$job->{startTime} || '';
+    $job->{remoteEnded}||=$job->{endTime} || '';
+  } elsif ($row) {
 		$job={
 			job_id => $row->{job_id},
 			status => $row->{status},
@@ -1096,18 +1100,8 @@ get '/job' => sub {
 	foreach (@result) {
 		if (my $json=delete $_->{agave_json}) {
 			my $job=from_json($json);
-			my $submitTime=$job->{submitTime};
-			my $endTime=$job->{endTime};
-			if ($submitTime) {
-				$submitTime =~ s/T/ /;
-				$submitTime=substr($submitTime, 0, 19);
-			}
-			if ($endTime) {
-				$endTime =~ s/T/ /;
-				$endTime=substr($endTime, 0, 19);
-			}
-			$_->{submitTime}=$submitTime;
-			$_->{endTime}=$endTime;
+      $_->{remoteSubmitted}=$job->{submitTime} || $job->{remoteSubmitted} || '';
+      $_->{remoteEnded}=$job->{endTime} || $job->{remoteEnded} || '';
 		}
 	}
   content_type 'application/json';
@@ -1277,7 +1271,7 @@ sub prepareJob {
 	},
 	];
 
-	$job_form{archive}=1;
+	$job_form{archive}='true';
 	$job_form{archiveSystem}=$archive_system;
 	$job_form{archivePath}=join('/', $archive_path, $app_id . '_' . $job_id);
   $job_form{notifications}=$notifications;
@@ -1351,6 +1345,9 @@ sub submitJob {
 			if ($st->{status} eq 'success') {
 				my $job = $st->{data};
 				$job->{job_id}=$job_id;
+        $job->{remoteSubmitted}||=$job->{submitTime} || '';
+        $job->{remoteStarted}||=$job->{startTime} || '';
+        $job->{remoteEnded}||=$job->{endTime} || '';
 				updateJob($job_id, $job);
 				updateWorkflowJob($job_id);
 				$job_ep->share_job($job->{id}, $username, 'READ');

@@ -6,10 +6,7 @@ import _ from 'lodash';
 import JobsActions from '../actions/jobsActions.js';
 import JobsStore from '../stores/jobsStore.js';
 import {Modal, Table, Button} from 'react-bootstrap';
-
-function toLocaleString(date) {
-	return (new Date(date).toLocaleString());
-}
+import utilities from '../libs/utilities.js';
 
 const JobsDetail=React.createClass({
 	mixins: [Reflux.connect(JobsStore, 'jobsStore')],
@@ -50,9 +47,9 @@ const JobsDetail=React.createClass({
 						<tr key='job_info_id'><th>ID:</th><td>{job.id}</td></tr>
 						<tr key='job_info_name'><th>Name:</th><td>{job.name}</td></tr>
 						<tr key='jobs_info_status'><th>Status:</th><td>{job.status}</td></tr>
-						<tr key='job_info_submitTime'><th>Submitted on:</th><td>{job.submitTime ? toLocaleString(job.submitTime) : ''}</td></tr>
-						<tr key='job_info_startTime'><th>Started on:</th><td>{job.startTime ? toLocaleString(job.startTime) : ''}</td></tr>
-						<tr key='job_info_endTime'><th>Finished on:</th><td>{job.endTime ? toLocaleString(job.endTime) : ''}</td></tr>
+						<tr key='job_info_submitTime'><th>Submitted on:</th><td>{job.remoteSubmitted || job.submitTime ? utilities.transformDateTime(job.remoteSubmitted || job.submitTime) : ''}</td></tr>
+						<tr key='job_info_startTime'><th>Started on:</th><td>{job.remoteStarted || job.startTime ? utilities.transformDateTime(job.remoteStarted || job.startTime) : ''}</td></tr>
+						<tr key='job_info_endTime'><th>Finished on:</th><td>{job.remoteEnded || job.endTime ? utilities.transformDateTime(job.remoteEnded || job.endTime) : ''}</td></tr>
 						<tr key='job_info_output'><th>Outputs:</th><td>{output_link}</td></tr>
 					</tbody>
 				</Table>

@@ -224,7 +224,7 @@ const JobsStore=Reflux.createStore({
 	_setJobData: function(data, i, j) {
 		let job_id=data.job_id;
 		this.state.jobDetailCache[job_id]=data;
-		let jobListData=_.pick(data, ['job_id', 'appId', 'status', 'submitTime', 'endTime']);
+		let jobListData=_.pick(data, ['job_id', 'appId', 'status', 'remoteSubmitted', 'remoteEnded']);
 		jobListData.app_id=jobListData.appId;
     if (i === undefined) {
     } else if (i >= 0) {

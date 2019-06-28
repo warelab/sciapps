@@ -8,7 +8,7 @@ use base qw/Agave::Client::Base/;
 use Agave::Client::Object::Job ();
 use Agave::Client::Object::OutputFile ();
 use Try::Tiny;
-use JSON ();
+use Cpanel::JSON::XS ();
 
 use Data::Dumper;
 
@@ -66,14 +66,14 @@ sub submit_job {
 	my %available_options = ();
 
 	# fix jobName
-	if (defined $params{jobName} && $params{jobName} ne "") {
-		$params{jobName} =~ s|/+||g;
-		$params{jobName} =~ s|^\d|N|;
+	if (defined $params{name} && $params{name} ne "") {
+		$params{name} =~ s|/+||g;
+		$params{name} =~ s|^\d|N|;
 	}
 
 	my %post_content = (
 			appId => $application->id,
-			jobName => delete $params{name} || delete $params{jobName} || 'Job for ' . $application->id,
+			name => delete $params{name} || 'Job for ' . $application->id,
 			maxRunTime => delete $params{maxRunTime} || delete $params{requestedTime} || '01:00:00',
 			#nodeCount => delete $params{nodeCount} || delete $params{processors} || 1,
 			#processorsPerNode => delete $params{processorsPerNode} || delete $params{processorsPerNode} || 1,
@@ -84,6 +84,17 @@ sub submit_job {
         $post_content{ $option } = delete $params{ $option } 
             if (defined $params{ $option });
     }
+
+	# fix archive bool
+	if ( ref($post_content{archive}) eq "" && $post_content{archive} =~ /^(?:false|true)$/) {
+		$post_content{archive} = $post_content{archive} eq 'false'
+				? \0
+				: \1;
+	}
+
+	if ($self->{archiveSystem}) {
+		$post_content{archiveSystem} = $self->{archiveSystem};
+	}
 
 	for my $opt_group (qw/inputs outputs parameters/) {
 		for my $opt ($application->$opt_group) {
@@ -101,11 +112,36 @@ sub submit_job {
 		}
 	}
 
+	# fix types, thank you TACC
+	for my $p (@{$application->parameters}) {
+		my $type = $p->{semantics} && $p->{semantics}->{ontology}
+			? join(",", map {$_=~s/xs://;$_;} @{$p->{semantics}->{ontology}})
+			: 'string';
+		if ($type =~ /boolean/) {
+			if (!defined $post_content{parameters}->{$p->{id}}) {
+				$post_content{parameters}->{$p->{id}} = \0;  # make it false
+			} elsif ($post_content{parameters}->{$p->{id}} eq "false" ) {
+				$post_content{parameters}->{$p->{id}} = \0;  # false
+			} elsif ($post_content{parameters}->{$p->{id}} eq "true" ) {
+				$post_content{parameters}->{$p->{id}} = \1;  # true
+			}
+		} elsif ($type =~ /integer|double/ && defined $post_content{parameters}->{$p->{id}}) {
+			$post_content{parameters}->{$p->{id}} *= 1; # make it a number
+		}
+	}
+
 	if (%required_options) {
 		return $self->_error("Missing required argument(s)", \%required_options);
 	}
 
-	my $json = JSON->new->utf8;
+	my $json = Cpanel::JSON::XS->new->utf8;
+	#print STDERR  "#-------------------------------------", $/;
+	#print STDERR  "#-------------------------------------", $/;
+	#print STDERR Dumper( \%post_content), $/;
+	#print STDERR  "#-------------------------------------", $/;
+	#print STDERR  'Cpanel::JSON::XS', "\n", $json->encode(\%post_content), $/;
+	#print STDERR  "#-------------------------------------", $/;
+	#print STDERR  "#-------------------------------------", $/;
 	my $resp = try {
 			$self->do_post('/',
 					_content_type => 'application/json; charset=utf-8',
@@ -309,9 +345,8 @@ sub stop_job {
 
     return unless ($job_id);
 
-    my $path = "/$job_id";
-
-    my $rc = $self->do_post($path, "action" => "stop");
+    my $path = "/$job_id/cancel";
+    $self->do_post($path, _content_type => 'application/json; charset=utf-8');
 }
 
 
@@ -336,15 +371,6 @@ sub stderr {
 =head1 AUTHOR
 
 Cornel Ghiban, C<< <ghiban at cshl.edu> >>
-
-=head1 BUGS
-
-Please report any bugs or feature requests to C<bug-iplant-foundationalapi at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=iPlant-FoundationalAPI>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
-
-
-
 
 =head1 SUPPORT
 

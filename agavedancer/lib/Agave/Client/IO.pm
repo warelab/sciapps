@@ -51,7 +51,13 @@ if you don't export anything, such as for a purely object-oriented module.
 
 # List iRODS directory/retrieves directory contents
 sub readdir {
-	my ($self, $path) = @_;
+	my ($self, $path, %params) = @_;
+
+	if (! %params) {
+		%params = (limit => 100, offset => 0);
+	}
+	$params{limit} //= 100;
+	$params{offset} //= 0;
 
 	# Check for a request path
 	unless (defined($path)) {
@@ -61,7 +67,7 @@ sub readdir {
 
 	$path = "/$path" unless $path =~ m/^\//;
 
-	my $list = $self->do_get('/listings' . $path);
+	my $list = $self->do_get('/listings' . $path . '?limit=' . $params{limit} . '&offset=' . $params{offset});
 	return @$list ? [map {Agave::Client::Object::File->new($_)} @$list] : [];
 }
 
@@ -73,8 +79,8 @@ sub readdir {
 
 # alias for readdir
 sub ls {
-	my ($self, $path) = @_;
-	$self->readdir($path);
+	my ($self, $path, %params) = @_;
+	$self->readdir($path, %params);
 }
 
 =head2 mkdir
