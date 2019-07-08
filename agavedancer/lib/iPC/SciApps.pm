@@ -1173,8 +1173,6 @@ sub prepareJob {
     }
 	}
 
-  print STDERR "AA1||" . to_dumper(\%job_form);
-
 	$job_form{maxRunTime}||=$app->{defaultMaxRunTime} && iPC::Utils::cmp_maxRunTime($app->{defaultMaxRunTime}, setting("maxRunTime")) < 0 ? $app->{defaultMaxRunTime} : setting("maxRunTime");
 
 	# hack for the url input
