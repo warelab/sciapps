@@ -1164,11 +1164,16 @@ sub prepareJob {
 	foreach my $key (@{$app->inputs}, @{$app->parameters}) {
 		my $name=$step_prefix ? $step_prefix . $key->{id} : $key->{id};
 		$job_form{$name}=$form->{$name};
+    if ($key->{value}{type} && $key->{value}{type}=~/bool/i) {
+      $job_form{$name}=! $job_form{$name} || $job_form{$name} eq 'false' ? 'false' : 'true';
+    }
     if ($step_prefix) {
       defined $job_form{$name} or $job_form{$name}=$step->{inputs}{$key->{id}};
       defined $job_form{$name} or $job_form{$name}=$step->{parameters}{$key->{id}};
     }
 	}
+
+  print STDERR "AA1||" . to_dumper(\%job_form);
 
 	$job_form{maxRunTime}||=$app->{defaultMaxRunTime} && iPC::Utils::cmp_maxRunTime($app->{defaultMaxRunTime}, setting("maxRunTime")) < 0 ? $app->{defaultMaxRunTime} : setting("maxRunTime");
 
