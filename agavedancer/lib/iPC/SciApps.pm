@@ -1164,8 +1164,14 @@ sub prepareJob {
 	foreach my $key (@{$app->inputs}, @{$app->parameters}) {
 		my $name=$step_prefix ? $step_prefix . $key->{id} : $key->{id};
 		$job_form{$name}=$form->{$name};
+    if (defined $key->{value}{default}) {
+      ! defined $job_form{$name} || $job_form{$name} eq '' and $job_form{$name}=$key->{value}{default};
+    }
     if ($key->{value}{type} && $key->{value}{type}=~/bool/i) {
-      $job_form{$name}=! $job_form{$name} || $job_form{$name} eq 'false' ? 'false' : 'true';
+      $job_form{$name}=$job_form{$name} == 0 || $job_form{$name} eq 'false' ? 'false' : 'true';
+    }
+    if ($key->{value}{type} && $key->{value}{type}=~/number/i) {
+      $job_form{$name}+=0;
     }
     if ($step_prefix) {
       defined $job_form{$name} or $job_form{$name}=$step->{inputs}{$key->{id}};
