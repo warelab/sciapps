@@ -1012,7 +1012,7 @@ sub prepareWorkflowJob {
 		if ($job_id) {
 			push @jobs, $job;
 			push @step_form, $job_form;
-			$step->{jobId}=$job_id;
+      $step->{jobId}=$job_id;
 		}
 	}
 	try {
@@ -1171,12 +1171,6 @@ sub prepareJob {
     if (defined $key->{value}{default}) {
       ! defined $job_form{$name} || $job_form{$name} eq '' and $job_form{$name}=$key->{value}{default};
     }
-    if ($key->{value}{type} && $key->{value}{type}=~/bool/i) {
-      $job_form{$name}=$job_form{$name} == 0 || $job_form{$name} eq 'false' ? 'false' : 'true';
-    }
-    if ($key->{value}{type} && $key->{value}{type}=~/number/i) {
-      $job_form{$name}+=0;
-    }
 	}
 
 	$job_form{maxRunTime}||=$app->{defaultMaxRunTime} && iPC::Utils::cmp_maxRunTime($app->{defaultMaxRunTime}, setting("maxRunTime")) < 0 ? $app->{defaultMaxRunTime} : setting("maxRunTime");
@@ -1299,6 +1293,7 @@ sub prepareJob {
 	}
 
 	my $job_json=to_json(\%job_form);
+
 	my $wfid=$form->{'_workflow_id'};
 	my $data={username => $username, job_id => $job_id, app_id => $app_id, job_json => $job_json, status => 'PENDING'};
 	if ($wfid) {
@@ -1342,6 +1337,18 @@ sub submitJob {
 	my $retry=setting('retry_num');
   my $retry_interval=setting('retry_interval');
 	my $err;
+
+	foreach my $key (@{$app->parameters}) {
+    my $name=$key->{id};
+    if (defined $job_form->{parameters}{$name}) {
+      if ($key->{value}{type} && $key->{value}{type}=~/bool/i) {
+        $job_form->{parameters}{$name}=$job_form->{parameters}{$name} == 0 || $job_form->{parameters}{$name} eq 'false' ? 'false' : 'true';
+      } elsif ($key->{value}{type} && $key->{value}{type}=~/number/i) {
+        $job_form->{parameters}{$name}+=0;
+      }
+    }
+  }
+
 	while ($retry-- >= 0) {
 		my $st = try {
 			$job_ep->submit_job($app, %$job_form);
