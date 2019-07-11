@@ -59,6 +59,7 @@ module.exports = {
 
   transformDateTime: function(datetime) {
     let result=datetime.substr(0, 19).replace('T', ' ');
-    return result;
+    let date = new Date(result.concat(' UTC'));
+    return date.toLocaleString();
   }
 };
