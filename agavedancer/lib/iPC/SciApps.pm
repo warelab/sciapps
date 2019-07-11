@@ -278,7 +278,7 @@ get '/user' => sub {
       $user->{authorized}=1;
       $user->{token}=check_agave_login();
     }
-    $user->{datastore_verified}=check_datastore();
+    #$user->{datastore_verified}=check_datastore();
   }
   content_type 'application/json';
 	to_json({status => 'success', data => $user});

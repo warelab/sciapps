@@ -207,7 +207,7 @@ const Header=React.createClass({
     ];
 		if (user.authenticated) {
       if (! user.datastore_verified) {
-        this.handleDatastore();
+        //this.handleDatastore();
       }
 
       let userMenuItem=[
