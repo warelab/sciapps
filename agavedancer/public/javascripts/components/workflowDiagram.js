@@ -206,7 +206,7 @@ const WorkflowDiagram=React.createClass({
 						if (undefined !== this.descInput.state.value) {
 							wf.description=this.descInput.state.value;
 						}
-						WorkflowActions.saveWorkflow(wf);
+						WorkflowActions.saveWorkflow(wf, true);
 						this.setState({onSave: true});
 						Q.delay(1000).then(function() {
 							this.setState({onSave: false});

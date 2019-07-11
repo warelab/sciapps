@@ -52,8 +52,9 @@ const WorkflowRunnerForm=React.createClass({
 		if (validated) {
 			let formData=new FormData(form);
 			let wid=utilities.uuid();
-			formData.set('_workflow_id', wid);
 			let wf=JSON.parse(formData.get('_workflow_json'));
+			formData.set('_workflow_id', wid);
+			formData.set('workflow_name', 'workflow-' + wid + '-' + wf.name);
 			formData.set('_workflow_json', JSON.stringify(wf));
 			//confirmed=confirm('You are going to submit ' + wf.steps.length + ' jobs to cluster, are you sure?');
 			this.refs.dialog.show({

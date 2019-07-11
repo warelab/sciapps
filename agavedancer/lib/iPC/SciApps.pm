@@ -742,9 +742,9 @@ sub _buildWfStep {
 swagger_path {
   parameters => [
     workflow_name => { required => 1, description => 'workflow name' },
-    workflow_json => { required => 1, description => 'workflow json' },
     id => { description => 'workflow id' },
     workflow_desc => { description => 'workflow description' },
+    workflow_json => { description => 'workflow json' },
   ],
   responses => {
     default => { description => 'save new workflow' }
@@ -757,25 +757,28 @@ post '/workflow/new' => sub {
 	my $wfjson=$form->{workflow_json};
 	my $wfname=$form->{workflow_name};
 	my $wfdesc=$form->{workflow_desc};
-	my $wf=from_json($wfjson);
-	my @jobs=database->quick_select('job', {workflow_id => $wfid});
-	my %jobs=map {$_->{job_id} => $_} @jobs;
-	foreach my $step (@{$wf->{steps}}) {
-		if ($step->{jobId} and my $job=$jobs{$step->{jobId}}) {
-			$job->{agave_id} and $step->{jobId}=$job->{agave_id};
+	my $wf;
+  if ($wfjson) {
+    $wf=from_json($wfjson);
+    my @jobs=database->quick_select('job', {workflow_id => $wfid});
+    my %jobs=map {$_->{job_id} => $_} @jobs;
+    foreach my $step (@{$wf->{steps}}) {
+      if ($step->{jobId} and my $job=$jobs{$step->{jobId}}) {
+        $job->{agave_id} and $step->{jobId}=$job->{agave_id};
+      }
 		}
 	}
 
 	my %data=(name => $wfname, description => $wfdesc);
 	try {
-		database->quick_insert('workflow', {workflow_id => $wfid, %data, json => to_json($wf)});
+		database->quick_insert('workflow', {workflow_id => $wfid, %data, json => $wf ? to_json($wf) : ''});
 		database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
 	} catch {
 		my $user_workflow=database->quick_select('user_workflow', {username => $username, workflow_id => $wfid}) or database->quick_insert('user_workflow', {workflow_id => $wfid, username => $username});
 		database->quick_update('workflow', {workflow_id => $wfid}, \%data);
 	};
   content_type 'application/json';
-	to_json({status => 'success', data => {workflow_id => $wfid, %data, steps => $wf->{steps}}});
+	to_json({status => 'success', data => {workflow_id => $wfid, %data, steps => $wf ? $wf->{steps} : []}});
 };
 
 swagger_path {

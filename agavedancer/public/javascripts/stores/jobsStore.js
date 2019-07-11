@@ -103,8 +103,11 @@ const JobsStore=Reflux.createStore({
 	submitWorkflowJobs: function(wf, formData) {
 		let submitNumber=this.state.jobs.length;
 		let setting=_config.setting;
+    wf.workflow_id=formData.get('_workflow_id');
+    wf.name=formData.get('workflow_name');
 		wf.steps.map(function(step, i) {
 			this.state.jobs[submitNumber + i]={appId: step.appId};
+      delete step.jobId;
 		}.bind(this));
 		this.state.workflow={};
 		WorkflowActions.setWorkflow(wf.workflow_id, wf, undefined, undefined, true);
