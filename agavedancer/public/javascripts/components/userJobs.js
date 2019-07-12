@@ -12,7 +12,19 @@ import utilities from '../libs/utilities.js';
 
 const UserJobs=React.createClass({
 	mixins: [Reflux.connect(JobsStore, 'jobsStore')],
-
+	
+ sortDates (a, b, order) {
+    let indices = [6, 7, 8, 9, 3, 4, 0, 1];
+    if (order === 'asc') {
+      let r = 0;
+      indices.find(i => r = a.remoteSubmitted.charCodeAt(i) - b.remoteSubmitted.charCodeAt(i));
+      return r;
+    } else if (order === 'desc') {
+      let r = 0;
+      indices.find(i => r = b.remoteSubmitted.toString().charCodeAt(i) - a.remoteSubmitted.toString().charCodeAt(i));
+      return r;
+    }
+  },
 	handleLoad: function(e) {
 		let table=this.refs.table;
 		let jobIds=table.store.getSelectedRowKeys();
@@ -89,8 +101,8 @@ const UserJobs=React.createClass({
 					<TableHeaderColumn isKey={true} dataField="job_id" hidden={true}>ID</TableHeaderColumn>
 					<TableHeaderColumn dataField="agave_id" hidden={true}>Agave ID</TableHeaderColumn>
 					<TableHeaderColumn dataField="app_id" dataAlign="left" dataSort={true}>App Name</TableHeaderColumn>
-					<TableHeaderColumn dataField="remoteSubmitted" dataAlign="center" width="155" dataSort={true}>Submit Time</TableHeaderColumn>
-					<TableHeaderColumn dataField="remoteEnded" dataAlign="center" width="155" dataSort={true}>End Time</TableHeaderColumn>
+					<TableHeaderColumn dataField="remoteSubmitted" dataAlign="center" width="155" dataSort={true} sortFunc={ this.sortDates }>Submit Time</TableHeaderColumn>
+					<TableHeaderColumn dataField="remoteEnded" dataAlign="center" width="155" dataSort={true} sortFunc={ this.sortDates }>End Time</TableHeaderColumn>
         	<TableHeaderColumn dataField="status" dataAlign="center" width="88" dataSort={true}>Status</TableHeaderColumn>
 				</BootstrapTable>
 				<Dialog ref='dialog' />
