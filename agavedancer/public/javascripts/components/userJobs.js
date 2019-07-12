@@ -89,8 +89,8 @@ const UserJobs=React.createClass({
 					<TableHeaderColumn isKey={true} dataField="job_id" hidden={true}>ID</TableHeaderColumn>
 					<TableHeaderColumn dataField="agave_id" hidden={true}>Agave ID</TableHeaderColumn>
 					<TableHeaderColumn dataField="app_id" dataAlign="left" dataSort={true}>App Name</TableHeaderColumn>
-					<TableHeaderColumn dataField="remoteSubmitted" dataAlign="center" width="180" dataSort={true}>Submit Time</TableHeaderColumn>
-					<TableHeaderColumn dataField="remoteEnded" dataAlign="center" width="180" dataSort={true}>End Time</TableHeaderColumn>
+					<TableHeaderColumn dataField="remoteSubmitted" dataAlign="center" width="155" dataSort={true}>Submit Time</TableHeaderColumn>
+					<TableHeaderColumn dataField="remoteEnded" dataAlign="center" width="155" dataSort={true}>End Time</TableHeaderColumn>
         	<TableHeaderColumn dataField="status" dataAlign="center" width="88" dataSort={true}>Status</TableHeaderColumn>
 				</BootstrapTable>
 				<Dialog ref='dialog' />
