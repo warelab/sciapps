@@ -68,12 +68,13 @@ const UserJobs=React.createClass({
     let headers=['remoteSubmitted', 'remoteEnded'];
 		if (jobsStore.joblist.length) {
 			jobsItems=jobsStore.joblist.map(function(job, i) {
+        let j=_.clone(job);
         headers.forEach(function(h) {
-          if (job[h]) {
-            job[h]=utilities.transformDateTime(job[h]);
+          if (j[h]) {
+            j[h]=utilities.transformDateTime(j[h]);
           }
         });
-				return job;
+				return j;
 			});
 		}
 		let selectRowProp={
