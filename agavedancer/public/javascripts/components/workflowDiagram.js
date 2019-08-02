@@ -193,6 +193,7 @@ const WorkflowDiagram=React.createClass({
 				<BaseInput data={descInputData} ref={(input) => {this.descInput=input;}}/>
 			</div>
 		);
+    let noJSON=workflowStore.noJSON;
 		this.refs.dialog.show({
 			body: body,
 			actions: [
@@ -206,7 +207,7 @@ const WorkflowDiagram=React.createClass({
 						if (undefined !== this.descInput.state.value) {
 							wf.description=this.descInput.state.value;
 						}
-						WorkflowActions.saveWorkflow(wf, true);
+						WorkflowActions.saveWorkflow(wf, noJSON);
 						this.setState({onSave: true});
 						Q.delay(1000).then(function() {
 							this.setState({onSave: false});

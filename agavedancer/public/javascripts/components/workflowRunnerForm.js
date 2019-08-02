@@ -71,7 +71,7 @@ const WorkflowRunnerForm=React.createClass({
 									body: 'Submitted! Check History panel for status',
 									actions: [
 										Dialog.OKAction(() => {
-											this.showWorkflowDiagram(true);
+											this.showWorkflowDiagram(true, true);
 										})
 									]
 								})
@@ -111,9 +111,9 @@ const WorkflowRunnerForm=React.createClass({
 		this.setState({onSubmit: false, onValidate: false});
 	},
 
-	showWorkflowDiagram: function(noJobList) {
+	showWorkflowDiagram: function(noJobList, noJSON) {
     let wf=this.state.workflowStore.workflowDetail;
-		WorkflowActions.showWorkflowDiagram(wf.workflow_id, wf, noJobList);
+		WorkflowActions.showWorkflowDiagram(wf.workflow_id, wf, noJobList, noJSON);
 	},
 
 	showWorkflowMetadata: function() {

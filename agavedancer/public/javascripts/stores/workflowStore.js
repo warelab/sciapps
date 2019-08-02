@@ -36,6 +36,7 @@ const WorkflowStore=Reflux.createStore({
 			showWorkflowDiagram: false,
 			showWorkflowLoadBox: false,
       showWorkflowMetadata: false,
+      noJSON: false,
 			workflowDetail: undefined,
 			remoteWorkflowDetailPromise: undefined,
 			workflowDetailCache: {},
@@ -62,8 +63,9 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
-	showWorkflowDiagram: function(wfId, wfDetail, noJobList) {
+	showWorkflowDiagram: function(wfId, wfDetail, noJobList, noJSON) {
 		this.state.showWorkflowDiagram=true;
+    this.state.noJSON=noJSON || false;
 		this.showWorkflow(wfId, wfDetail, noJobList);
 		this.complete();
 	},
@@ -89,7 +91,7 @@ const WorkflowStore=Reflux.createStore({
 		let promise=Q(1);
 		if (wfId) {
 			this.state.workflowDetail=undefined;
-			promise=this.setWorkflow(wfId, wfDetail, undefined, undefined, noJobList);
+	 		promise=this.setWorkflow(wfId, wfDetail, undefined, undefined, noJobList);
 		} 
 		promise.then(function(wf) {
 			if (this.state.workflowDetail !== undefined) {
