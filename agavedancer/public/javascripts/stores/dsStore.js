@@ -54,7 +54,11 @@ const DsStore=Reflux.createStore({
 		let path=showPath, type=this.state.type;
 		if (! path) {
 			if (path === undefined) {
-				path=this.state.dsDetail.path || '';
+				if (typeof this.state.dsDetail !== 'undefined') {
+					path=this.state.dsDetail.path || '';
+				} else {
+					path='';
+				}
 			}
 		} else {
 			if (path.endsWith('/')) {
