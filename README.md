@@ -87,5 +87,5 @@ SciApps.org can be configured with an Apache server using the following demo con
     </VirtualHost>
 
 ## Citation
-Wang, L., Lu, Z., Van Buren, P., & Ware, D. (2018). SciApps: a cloud-based platform for reproducible bioinformatics workflows. Bioinformatics, 34(22), 3917-3920. Link
+Wang, L., Lu, Z., Van Buren, P., & Ware, D. (2018). SciApps: a cloud-based platform for reproducible bioinformatics workflows. Bioinformatics, 34(22), 3917-3920. [Link](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6223375/)
 

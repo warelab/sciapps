@@ -95,9 +95,7 @@ const AppsInput=React.createClass({
 
 	handleDataStore: function(event) {
 		let user=this.props.user;
-		if (typeof user != 'undefined' && user.authenticated) { 
 		let match=event.target.id.match(/^btn_(.*_(\d+))$/);
-		let user=this.props.user;
 		if (user.authenticated) {
 			if (match !== null) {	
 				DsActions.setDataStoreItemTarget(match[1]);
@@ -106,9 +104,6 @@ const AppsInput=React.createClass({
 			}
 		} else {
 			this.refs.dialog.showAlert('Please login to browse data store!');
-		}
-		} else {
-			alert('Please login to browse Data Store');
 		}
 	},
 
