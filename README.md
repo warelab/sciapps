@@ -1,106 +1,90 @@
-# For SciApps main version
-For security reasons, installation of SciApps on your pc is not supported. To add an Agave app, follow steps below
+# SciApps: a cloud-based platform for reproducible bioinformatics workflows
+## Introduction
+SciApps is a bioinformatics workflow package developed to leverage local clusters or TACC/XSEDE resources for computing and CyVerse Data Store for storage. SciApps is built on top of the Agave API that can also virtualize commercial resources, e.g., Amazon EC2/S3 for computing and storage. Both GUI and RESTful API are available for interactive or batch processing of NGS data.
 
-  1. git clone https://github.com/warelab/sciapps.git
+## Installation of SciApps
+    git clone https://github.com/warelab/sciapps.git
+    cd sciapps/agavedancer
+    sudo npm install -g grunt-cli
+    npm install
+    grunt package
+    sudo /usr/sbin/apachectl graceful  
 
-  2. git pull
-  
-  3. cd sciapps/agavedancer/public/assets
-  
-  4. Create/move your app-id.json in this folder (or replace the old one)
-      - e.g. **apps-list -v BWA_index_mem-0.7.13 > BWA_index_mem-0.7.13.json**
-    
-  5. Insert following content (example for **BWA_index_mem-0.7.13**) to the second line of **agaveAppsList.json** for your new app
-  ```json
-    {
-      "tags": [
-        "Beta"
-      ],
-      "id": "BWA_index_mem-0.7.13",
-      "label": "BWA-index-mem",
-      "name": "BWA_index_mem",
-      "version": "0.7.13"
-    },
-  ```
-  6. git add .
-  
-  7. git commit -m **"Added app BWA_index_mem-0.7.13"**
-  
-  8. git checkout -b 'my_branch'
-  
-  9. git push origin my_branch
-  
-  10. Share the app with the **maizecode** user
-      - e.g. **apps-pems-update -v -u maizecode -p READ_EXECUTE BWA_index_mem-0.7.13**
+## Providing CyVerse credentials
+    cd sciapps/agavedancer
+    touch .agave
+      .agave content:
+          {"username":"XXX","password":"YYY"}
+    Update defaultUser to "XXX" in agavedancer/environments/production.yml (development.yml)
 
-  11. Notify support@sciapps.org
+## Setting up iRODS (for accessing CyVerse Data Store)
+    wget ftp://ftp.renci.org/pub/irods/releases/4.1.10/centos7/irods-icommands-4.1.10-centos7-x86_64.rpm
+    sudo yum install fuse fuse-libs
+    sudo rpm -i irods-icommands-4.1.10-centos7-x86_64.rpm 
+    cd /usr/share/httpd
+    sudo touch irodsEnv
+    sudo chmod 664 irodsEnv
+    sudo chown apache:apache irodsEnv
+      irodsEnv content:
+        {
+          "irods_host": "data.iplantcollaborative.org",
+          "irods_user_name": "XXX",
+          "irods_port": 1247,
+          "irods_zone_name": "iplant",
+          "irods_authentication_file": "/usr/share/httpd/irodsA"
+        }
+    sudo touch irodsA
+    sudo chmod 664 irodsA
+    sudo chown apache:apache irodsA
+    sudo -u apache /bin/bash
+    export IRODS_ENVIRONMENT_FILE=/usr/share/httpd/irodsEnv
+    iinit
 
-# For SciApps community version (under development)
+## Integrating new Apps/Tools
+Follow this instruction for developing new Agave apps. And put the app json file in the following assets folder (e.g., Bismark-0.14.4.json).
 
-To install, follow steps below (for local install, skip step 8)
+    cd agavedancer/public/assets
+    touch agaveAppsList.json
+    agaveAppsList.json content
+       {
+          "tags": ["Methylation"],
+          "id": "Bismark-0.14.4",
+          "label": "Bismark",
+          "name": "Bismark",
+          "version": "0.14.4"
+       },
+       {
+         ...
+       }
 
-  1. git clone https://github.com/warelab/sciapps.git
+## Configuring web server
+SciApps.org can be configured with an Apache server using the following demo configuration file. The sciapps.conf file should be placed under /etc/httpd/conf.d/ (Centos 7) or /usr/local/apache2/conf/ (Centos 6). Note that SSL certificate is needed to be able to authenticate to the cloud systems.
 
-  2. git pull
-  
-  3. cd sciapps/agavedancer
+    <VirtualHost 143.48.220.100:443>
+        SSLEngine on
+        SSLCertificateFile /etc/letsencrypt/live/www.sciapps.org/fullchain.pem
+        SSLCertificateKeyFile /etc/letsencrypt/live/www.sciapps.org/privkey.pem
+        SSLCertificateChainFile /etc/letsencrypt/live/www.sciapps.org/chain.pem
+        ServerName       www.sciapps.org
+        ServerAlias      sciapps.org
+        DocumentRoot     /home/YOURUSERNAME/sciapps/agavedancer/public
+        RewriteEngine on
+        RewriteRule ^/app_id/(.*)      https://www.sciapps.org/?app_id=$1 [L]
+        RewriteRule ^/page/(.*)     https://www.sciapps.org/?page_id=$1 [L]
+        RewriteRule ^/data/(.*)     https://www.sciapps.org/?page_id=dataWorkflows&data_item=$1 [L]
 
-  4. npm install
-  
-    a. Install node.js with b and c below if npm not found
-    
-    b. curl --silent --location https://rpm.nodesource.com/setup_7.x | sudo bash -
-    
-    c. sudo yum -y install nodejs
-    
+        SetEnv DANCER_ENVIRONMENT "production"
+        <Directory "/home/YOURUSERNAME/sciapps/agavedancer/public">
+            AllowOverride none
+            Require all granted
+            DirectoryIndex index.html index.php
+        </Directory>
+        <Location />
+            SetHandler perl-script
+            PerlResponseHandler Plack::Handler::Apache2
+            PerlSetVar psgi_app /home/YOURUSERNAME/sciapps/agavedancer/bin/app.pl
+        </Location>
+    </VirtualHost>
 
-  5. grunt (if not found, sudo npm install -g grunt-cli)
-
-  6. sqlite3 database <models/schema.sql
-
-  7. chmod 777 . database bin
-
-  8. Restart apache
-    
-      sudo /usr/sbin/apachectl configtest or sudo /usr/local/apache2/bin/apachectl configtest    
-     
-      sudo /usr/sbin/apachectl graceful or sudo /usr/local/apache2/bin/apachectl graceful
-      
-  9. Add .agave with correct CyVerse credentials in agavedancer folder
-  10. Add new app
-  
-      a. Develop app and test in Discovery Environment
-      
-      b. Copy json file into sciapps/agavedancer/public/assets/ (make sure to name it as $app_id-$version.json)
-      
-      c. Add the app and tags for the app into agaveAppsList.json file (tags is used to represent a category)
-  
-      d. Update permission: apps-pems-update -v -u maizecode -p READ_EXECUTE $APP_ID
-      
-      e. cd to sciapps/agavedancer/ and type `grunt` 
-  
-      f. cd to sciapps/agavedancer/public and type `live-server` to test the apps before pushing to github
-      
-  11. Publish to your own branch instead of master
-  
-      git stash (save local modifications)
-      
-      git pull (pull remote updates)
-      
-      git stash pop (combine)
-  
-      git add .
-      
-      git commit
-      
-      git push origin master
-      
-      or
-      
-      git add .
-      
-      git commit
-      
-      git pull
-      
-      git push origin master
+## Citation
+Wang, L., Lu, Z., Van Buren, P., & Ware, D. (2018). SciApps: a cloud-based platform for reproducible bioinformatics workflows. Bioinformatics, 34(22), 3917-3920. Link
