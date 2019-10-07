@@ -7,8 +7,8 @@ import AppsActions from '../actions/appsActions.js';
 import DsActions from '../actions/dsActions.js';
 import DsStore from '../stores/dsStore.js';
 import {Input, Button, ButtonGroup, Alert, Glyphicon} from 'react-bootstrap';
-import Dialog from 'react-bootstrap-dialog';
 import utilities from '../libs/utilities.js';
+import Dialog from 'react-bootstrap-dialog';
 
 const AppsInput=React.createClass({
 	mixins: [Reflux.listenTo(DsStore, 'handleDsStoreChange')],
@@ -94,6 +94,8 @@ const AppsInput=React.createClass({
 	},
 
 	handleDataStore: function(event) {
+		let user=this.props.user;
+		if (typeof user != 'undefined' && user.authenticated) { 
 		let match=event.target.id.match(/^btn_(.*_(\d+))$/);
 		let user=this.props.user;
 		if (user.authenticated) {
@@ -104,6 +106,9 @@ const AppsInput=React.createClass({
 			}
 		} else {
 			this.refs.dialog.showAlert('Please login to browse data store!');
+		}
+		} else {
+			alert('Please login to browse Data Store');
 		}
 	},
 
