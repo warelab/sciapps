@@ -11,11 +11,12 @@ SciApps is a bioinformatics workflow package developed to leverage local cluster
     sudo /usr/sbin/apachectl graceful  
 
 ## Providing CyVerse credentials
+Update defaultUser to "XXX" in agavedancer/environments/production.yml (development.yml)
+
     cd sciapps/agavedancer
     touch .agave
       .agave content:
           {"username":"XXX","password":"YYY"}
-    Update defaultUser to "XXX" in agavedancer/environments/production.yml (development.yml)
 
 ## Setting up iRODS (for accessing CyVerse Data Store)
     wget ftp://ftp.renci.org/pub/irods/releases/4.1.10/centos7/irods-icommands-4.1.10-centos7-x86_64.rpm
