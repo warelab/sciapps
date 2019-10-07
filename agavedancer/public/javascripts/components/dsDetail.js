@@ -82,7 +82,7 @@ const DsDetail=React.createClass({
 					<Panel header={path}><ListGroup>
 						{dsFileNodes}
 					</ListGroup></Panel>
-					<p>Note: SciApps can only access your private data in the '<b>sci_data</b>' folder. You can follow this <a href="https://cyverse-sciapps-guide.readthedocs-hosted.com/en/latest/step2.html">instruction</a> to create (if not yet done) the folder.</p>
+					<p>Note: SciApps can only access your private data in the '<b>sci_data</b>' folder. You can follow this <a href="https://cyverse-sciapps-guide.readthedocs-hosted.com/en/latest/step2.html" target="_blank">instruction</a> to create (if not yet done) the folder.</p>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button bsStyle='primary' onClick={this.hideDataStoreDetail}>{dsBtnValue}</Button>
