@@ -11,7 +11,7 @@ SciApps is a bioinformatics workflow package developed to leverage local cluster
     sudo /usr/sbin/apachectl graceful  
 
 ## Providing CyVerse credentials
-Update defaultUser to "XXX" in agavedancer/environments/production.yml (development.yml)
+Update defaultUser to "XXX" in agavedancer/environments/production.yml (or development.yml), and create the following file.
 
     cd sciapps/agavedancer
     touch .agave
