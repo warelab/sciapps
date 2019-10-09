@@ -94,16 +94,11 @@ const AppsInput=React.createClass({
 	},
 
 	handleDataStore: function(event) {
-		let user=this.props.user;
 		let match=event.target.id.match(/^btn_(.*_(\d+))$/);
-		if (user.authenticated) {
-			if (match !== null) {	
+		if (match !== null) {	
 				DsActions.setDataStoreItemTarget(match[1]);
 				DsActions.showDataStore();
 				this.setState({active: match[2]});
-			}
-		} else {
-			this.refs.dialog.showAlert('Please login to browse data store!');
 		}
 	},
 
