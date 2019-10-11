@@ -79,7 +79,7 @@ const AppsForm=React.createClass({
 								JobsActions.submitJob(this.props.appDetail.id, formData);
 								this.setState({onValidate: false});
 								Q.delay(1000).then(function() {
-									this.refs.dialog.showAlert('Submitted! Check History panel for status');
+									this.refs.dialog.showAlert('Submitted! Check the History panel for status');
 								}.bind(this));
 							},
 							'btn-warning'
