@@ -18,7 +18,8 @@ var workflowItems = [
         { workflow_id: 5, name: "RNA-Seq2", description: "Isoform level differential expression analysis with STAR, StringTie, and Ballgown" },
         { workflow_id: 6, name: "RNA-Seq3", description: "Isoform level differential expression analysis with HISAT2, StringTie, and Ballgown" },
 	{ workflow_id: 7, name: "Methylation", description: "Methylation analysis with Bismark and Bisukit" },
-	{ workflow_id: 8, name: "BSA", description: "Performing Bulk Segregation Analysis and annotation of filtered SNPs with snpEff" }
+	{ workflow_id: 8, name: "BSA", description: "Performing Bulk Segregation Analysis and annotation of filtered SNPs with snpEff" },
+	{ workflow_id: 9, name: "BSA demo", description: "Demonstrating BSA with a small data set" }
 ];
 
 const publicWorkflows=React.createClass({
