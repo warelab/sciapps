@@ -11,14 +11,14 @@ import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import utilities from '../libs/utilities.js';
 
 var workflowItems = [
-	{ workflow_id: 1, name: "Annotation", description: "Performing MAKER based annotation" },
+	{ workflow_id: 1, name: "Annotation", description: "MAKER based annotation" },
 	{ workflow_id: 2, name: "Assembly", description: "Small genome assembly, quality assessment, and annotation with JBrowse view" },
 	{ workflow_id: 3, name: "Association", description: "A GWAS workflow for performing mixed model analysis with three different algorithms" },
 	{ workflow_id: 4, name: "RNA-Seq", description: "Gene level differential expression analysis with STAR, RSEM, and Ebseq" },
         { workflow_id: 5, name: "RNA-Seq2", description: "Isoform level differential expression analysis with STAR, StringTie, and Ballgown" },
         { workflow_id: 6, name: "RNA-Seq3", description: "Isoform level differential expression analysis with HISAT2, StringTie, and Ballgown" },
 	{ workflow_id: 7, name: "Methyl-Seq", description: "Differential methylation analysis with Bismark and Bisukit" },
-	{ workflow_id: 8, name: "BSA-Seq", description: "Performing Bulked Segregant Analysis with next generation sequencing data" },
+	{ workflow_id: 8, name: "BSA-Seq", description: "Bulked Segregant Analysis with next generation sequencing data" },
 ];
 
 const publicWorkflows=React.createClass({
