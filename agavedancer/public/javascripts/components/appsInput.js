@@ -6,7 +6,9 @@ import _ from 'lodash';
 import AppsActions from '../actions/appsActions.js';
 import DsActions from '../actions/dsActions.js';
 import DsStore from '../stores/dsStore.js';
-import {Input, Button, ButtonGroup, Glyphicon} from 'react-bootstrap';
+import {Input, Button, ButtonGroup, Alert, Glyphicon} from 'react-bootstrap';
+import Dialog from 'react-bootstrap-dialog';
+import utilities from '../libs/utilities.js';
 
 const AppsInput=React.createClass({
 	mixins: [Reflux.listenTo(DsStore, 'handleDsStoreChange')],
@@ -93,7 +95,7 @@ const AppsInput=React.createClass({
 
 	handleDataStore: function(event) {
 		let match=event.target.id.match(/^btn_(.*_(\d+))$/);
-		if (match !== null) {
+		if (match !== null) {	
 			DsActions.setDataStoreItemTarget(match[1]);
 			DsActions.showDataStore();
 			this.setState({active: match[2]});
@@ -145,6 +147,7 @@ const AppsInput=React.createClass({
 				onChange: this.handleTextChange
 			};
 			let inputs=[];
+			let user=this.props.user;
 			for (let i=0; i < this.state.count; i++) {
 				textProps.id=data.id + '_' + i;
 				textProps.key=data.id + '_' + i;
