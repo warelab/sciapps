@@ -44,6 +44,7 @@ const WorkflowRunnerForm=React.createClass({
 	handleSubmit: function(event) {
 		dsActions.clearDataStoreItem();
 		this.setState({onSubmit: true, onValidate: true});
+		let wf=this.state.workflowStore.workflowDetail;
 		let setting=_config.setting;
 		let required=_.keys(this.state.required);
 		let form=this.refs[this.formName];
@@ -52,7 +53,7 @@ const WorkflowRunnerForm=React.createClass({
 		if (validated) {
 			let formData=new FormData(form);
 			let wid=utilities.uuid();
-			let wf=JSON.parse(formData.get('_workflow_json'));
+			//let wf=JSON.parse(formData.get('_workflow_json'));
 			formData.set('_workflow_id', wid);
 			formData.set('workflow_name', 'workflow-' + wid + '-' + wf.name);
 			formData.set('_workflow_json', JSON.stringify(wf));
@@ -184,18 +185,6 @@ const WorkflowRunnerForm=React.createClass({
 				help: 'Optional Email notification upon job completion'
 			};
 
-			let workflowJson={
-				type: 'hidden',
-				id: '_workflow_json',
-				name: '_workflow_json',
-				value: JSON.stringify(workflowDetail)
-			};
-			let derivedFrom={
-				type: 'hidden',
-				id: '_derived_from',
-				name: '_derived_from',
-				value: workflowDetail.workflow_id
-			};
 			let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
 			let submitBtn=user.authenticated ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit</Button> : 
 				<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
@@ -205,8 +194,6 @@ const WorkflowRunnerForm=React.createClass({
 				<div>
 					<form ref={this.formName} >
 						{appsFieldsets}
-						<BaseInput data={workflowJson} />
-						<BaseInput data={derivedFrom} />
 						{submitBtn}
 						<span> </span>
 						<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Diagram</Button>
