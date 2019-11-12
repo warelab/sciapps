@@ -14,7 +14,7 @@ const Welcome=React.createClass({
 					<center><iframe width="560" height="315" src="https://www.youtube.com/embed/aMsLOqo18fs?rel=0&showinfo=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></center>
 					<br />
 					<div>
-						The SciApps platform is supported by <a href="http://nsf.gov" target="_blank">National Science Foundation</a> (DBI-1265383, IOS-1445025), <a href="https://www.ars.usda.gov/">USDA</a> (1907-21000-030-00D), and in part by  <a href="https://cshl.edu">Cold Spring Harbor Laboratory</a>. 
+						The SciApps platform has been supported by <a href="http://nsf.gov" target="_blank">National Science Foundation</a> (DBI-1265383, IOS-1445025), <a href="https://www.ars.usda.gov/">USDA</a> (1907-21000-030-00D), and in part by  <a href="https://cshl.edu">Cold Spring Harbor Laboratory</a>. 
 					</div>
 					<br /><br />
 					<div id="myimages">
