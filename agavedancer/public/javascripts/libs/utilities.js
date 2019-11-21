@@ -58,7 +58,7 @@ module.exports = {
 	},
 
   transformDateTime: function(datetime) {
-    let result=datetime.substr(0, 19).replace('T', ' ');
+    let result=datetime.substr(0, 19);
     let date = new Date(result.concat('.000Z'));
     return date.toLocaleString('en-GB');
   }
