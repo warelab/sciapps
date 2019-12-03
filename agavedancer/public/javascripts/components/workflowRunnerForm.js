@@ -59,7 +59,7 @@ const WorkflowRunnerForm=React.createClass({
 			formData.set('_workflow_json', JSON.stringify(wf));
 			//confirmed=confirm('You are going to submit ' + wf.steps.length + ' jobs to cluster, are you sure?');
 			this.refs.dialog.show({
-				body: 'Confirm you want to submit these ' + wf.steps.length + ' jobs? A "sci_data" folder is needed for archiving results (e.g. /iplant/home/USER/sci_data)',
+				body: 'Confirm you want to submit these ' + wf.steps.length + ' jobs?\n-------------------------------------------------\nA "sci_data" folder is needed for archiving results (e.g. /iplant/home/USER/sci_data)',
 				actions: [
 					Dialog.CancelAction(),
 					Dialog.Action(
