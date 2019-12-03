@@ -70,7 +70,7 @@ const AppsForm=React.createClass({
 			if (validated) {
 				let formData=new FormData(this.refs[this.formName]);
 				this.refs.dialog.show({
-					body: 'Are you sure you want to submit this job?',
+					body: 'Are you sure you want to submit this job? A "sci_data" folder is needed for archiving results (e.g. /iplant/home/USER/sci_data).',
 					actions: [
 						Dialog.CancelAction(),
 						Dialog.Action(
