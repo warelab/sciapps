@@ -14,6 +14,11 @@ const UserJobs=React.createClass({
 	mixins: [Reflux.connect(JobsStore, 'jobsStore')],
 	
  	sortSubmitDates (a, b, order) {
+		if (a.remoteSubmitted === undefined)
+			return 1;
+		else if (b.remoteSubmitted === undefined)
+			return -1;
+			
     		let indices = [6, 7, 8, 9, 3, 4, 0, 1, 12, 13, 15, 16, 18, 19];
     		if (order === 'asc') {
       			let r = 0;
@@ -27,6 +32,11 @@ const UserJobs=React.createClass({
   	},
 
         sortEndDates (a, b, order) {
+                if (a.remoteSubmitted === undefined)
+                        return 1;
+                else if (b.remoteSubmitted === undefined)
+                        return -1;
+
                 let indices = [6, 7, 8, 9, 3, 4, 0, 1, 12, 13, 15, 16, 18, 19];
                 if (order === 'asc') {
                         let r = 0;
