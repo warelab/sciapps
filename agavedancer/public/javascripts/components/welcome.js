@@ -9,9 +9,9 @@ const Welcome=React.createClass({
 				<div className="section">
 					<b>SciApps</b> is a cloud-based platform for building, executing, & sharing scientific applications (Apps) and workflows, powered by CyVerse Data Store, Texas Advanced Computing Center, and a federated system at Cold Spring Harbor Laboratory. 
 					<br /><br />
-					<center><iframe width="560" height="315" src="https://www.youtube.com/embed/tUhl7obrsEI?rel=0&showinfo=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></center>
+					<center><iframe width="560" height="315" src="https://www.youtube.com/embed/tUhl7obrsEI?rel=0&showinfo=0" frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe></center>
                                         <br /><br />
-					<center><iframe width="560" height="315" src="https://www.youtube.com/embed/aMsLOqo18fs?rel=0&showinfo=0" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></center>
+					<center><iframe width="560" height="315" src="https://www.youtube.com/embed/aMsLOqo18fs?rel=0&showinfo=0" frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe></center>
 					<br />
 					<div>
 						The SciApps platform has been supported by <a href="http://nsf.gov" target="_blank">National Science Foundation</a> (DBI-1265383, IOS-1445025), <a href="https://www.ars.usda.gov/">USDA</a> (1907-21000-030-00D), and in part by  <a href="https://cshl.edu">Cold Spring Harbor Laboratory</a>. 

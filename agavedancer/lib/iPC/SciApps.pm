@@ -961,7 +961,9 @@ get '/workflow' => sub {
   if ($data_item) {
     $where->{name}={like => setting('datamenu_item')->{$data_item} . "%"};
   }
-	@result=map {delete $_->{username}; my $obj=from_json(delete $_->{json}); $_->{steps}=$obj->{steps}; $_;} reverse database->quick_select('user_workflow_view', $where);
+
+	@result=map {delete $_->{username}; my $obj=$_->{json} ? from_json(delete $_->{json}) : undef; $obj and $_->{steps}=$obj->{steps}; $_;} reverse database->quick_select('user_workflow_view', $where);
+
   content_type 'application/json';
 	return to_json({status => 'success', data => \@result});
 };
