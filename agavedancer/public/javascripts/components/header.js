@@ -126,10 +126,6 @@ const Header=React.createClass({
 
 	handleLogin: function() {
 		window.location = '/login';
-<<<<<<< HEAD
-=======
-		//UserActions.showLoginBox();
->>>>>>> origin/master
 	},
 
   handleDatastore: function() {
@@ -197,11 +193,6 @@ const Header=React.createClass({
 			<MenuItem key='showWorkflowBuilder' eventKey='showWorkflowBuilder' onSelect={this.showWorkflowBuilder}><Glyphicon glyph='wrench' /> Build a workflow</MenuItem>,
 			<MenuItem key='showWorkflows' eventKey='showWorkflows' onSelect={this.showWorkflows}><Glyphicon glyph='th-list' /> Public workflows</MenuItem>
 		];
-<<<<<<< HEAD
-		if (user.logged_in) {
-			userGreeting=<NavItem eventKey='greeting'><Glyphicon glyph='user' /> Hi, {user.firstName}!</NavItem>;
-			userMenu=<NavItem eventKey='logout' pullRight onSelect={this.handleLogout}>Logout <Glyphicon glyph='log-out' /></NavItem>;
-=======
     let dataMenuItem=[];
     if (setting.datamenu_item) {
       dataMenuItem=_.keys(setting.datamenu_item).map(function(item) {
@@ -229,7 +220,6 @@ const Header=React.createClass({
           {userMenuItem}
         </NavDropdown>
       )
->>>>>>> origin/master
 			workflowMenuItem.push(
 				<MenuItem key='workflowDivder' eventKey='workflowDivder' divider />,
 				<MenuItem key='userWorkflows' eventKey='userWorkflows' onSelect={this.showUserWorkflows}><Glyphicon glyph='list-alt' /> My workflows</MenuItem>,
@@ -260,11 +250,7 @@ const Header=React.createClass({
 					<NavItem eventKey='welcome' onSelect={this.showWelcome}><Glyphicon glyph='home' /> Home</NavItem>
 					{dataMenu}
 					{workflowMenu}
-<<<<<<< HEAD
-					<NavItem eventKey='data' href='http://data.sciapps.org' target='_blank'><Glyphicon glyph='th' /> Data</NavItem>
-=======
           {toolsMenu}
->>>>>>> origin/master
 					<NavItem eventKey='help' onSelect={this.showHelp}><Glyphicon glyph='question-sign' /> Help</NavItem>
 					{userMenu}
 				</Nav>
