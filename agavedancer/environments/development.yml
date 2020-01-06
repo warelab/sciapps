@@ -53,6 +53,10 @@ datastore:
     system: 'sciapps.org'
     home: '/agave_data'
     path: 'data/maize'
+  __shared__:
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: 'shared'
   __exampleData__:
     system: 'sciapps.org'
     home: '/agave_data'
@@ -65,7 +69,7 @@ datastore:
     system: 'sciapps.org'
     home: '/agave_data'
     path: 'results'
-datastore_types: ['CyVerse', 'exampleData']
+datastore_types: ['CyVerse', 'exampleData', 'shared']
 uncompress_suffix: '.open.tar.gz'
 irodsEnvFile: '/usr/share/httpd/irodsEnv'
 appsLocalCache: 0
