@@ -1,0 +1,4 @@
+Please note: SciApps will undergo maintenance starting on Tuesday, September 10th (8:00am to 5:00pm MST)
+Please note: CyVerse systems will undergo maintenance on Tuesday, March 12th (7:00am-5:00pm MST) preventing access to the CyVerse Data Store
+Please note: Agave API will undergo maintenance on Tuesday, March 12th (7:00am-5:00pm MST) preventing access to submitting new analysis jobs
+Please note: TACC Stampede2 will undergo maintenance on Tuesday, March 12th (7:00am-5:00pm MST) preventing access to submitting new analysis jobs

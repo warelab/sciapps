@@ -33,10 +33,8 @@ const Mermaid=React.createClass({
 			mermaidAPI.render(name, diagramDef, function(svg, bindFunctions) {
 				element.innerHTML=svg;
 				let values=element.firstChild.attributes.viewBox.value.split(' ');
-				values[0]=parseInt(values[0])-20;
-				values[1]=parseInt(values[1])-20;
-				values[2]=parseInt(values[2])+20;
-				values[3]=parseInt(values[3])+20;
+				values[1]=parseInt(values[1])-30;
+				values[3]=parseInt(values[3])+30;
 				element.firstChild.attributes.viewBox.value=values.join(' ');
 				bindFunctions(element);
 			}.bind(this));

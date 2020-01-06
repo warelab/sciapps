@@ -54,12 +54,26 @@ use Data::Dumper;
 			}
 		}
 
-		bless {
-				_api => $apio,
-				_username => $username,
-				_client => $client,
-				_debug => $args->{debug},
-			}, $class;
+	sub refresh {
+		my ($self, $refresh_token) = @_;
+		my $token;
+		if (my $auth=$self->api && $self->api->auth) {
+			$token=$auth->refresh($refresh_token);
+			$self->_store_agave_auth;
+		}
+		$token;
+	}
+
+	sub _store_agave_auth {
+		my ($self)=shift;
+		my $username=$self->username;
+		my $api=$self->api;
+		if (my $user=iPC::User->search({username => $self->{_username}}) and $api and my $auth=$api->auth) {
+			$user->token($auth->{access_token});
+			$user->refresh_token($auth->{refresh_token});
+			$user->token_expires_at($auth->{token_expires_at});
+			$user->update;
+		}
 	}
 
 	sub api {

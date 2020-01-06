@@ -44,6 +44,7 @@ const WorkflowRunnerForm=React.createClass({
 	handleSubmit: function(event) {
 		dsActions.clearDataStoreItem();
 		this.setState({onSubmit: true, onValidate: true});
+		let wf=this.state.workflowStore.workflowDetail;
 		let setting=_config.setting;
 		let required=_.keys(this.state.required);
 		let form=this.refs[this.formName];
@@ -52,20 +53,13 @@ const WorkflowRunnerForm=React.createClass({
 		if (validated) {
 			let formData=new FormData(form);
 			let wid=utilities.uuid();
+			//let wf=JSON.parse(formData.get('_workflow_json'));
 			formData.set('_workflow_id', wid);
-			let wf=JSON.parse(formData.get('_workflow_json'));
-			wf.steps.forEach(function(step) {
-				step.jobId=undefined;
-			});
-			_.assign(wf, {
-				workflow_id: wid,
-				name: 'workflow-' + wid + '-' + wf.name,
-				derived_from: wf.id || wf.workflow_id
-			});
+			formData.set('workflow_name', 'workflow-' + wid + '-' + wf.name);
 			formData.set('_workflow_json', JSON.stringify(wf));
 			//confirmed=confirm('You are going to submit ' + wf.steps.length + ' jobs to cluster, are you sure?');
 			this.refs.dialog.show({
-				body: 'Are you sure you want to submit these ' + wf.steps.length + ' jobs?',
+				body: 'Confirm you want to submit these ' + wf.steps.length + ' jobs?\n-------------------------------------------------\nA "sci_data" folder is needed for archiving results (e.g. /iplant/home/USER/sci_data)',
 				actions: [
 					Dialog.CancelAction(),
 					Dialog.Action(
@@ -78,7 +72,7 @@ const WorkflowRunnerForm=React.createClass({
 									body: 'Submitted! Check History panel for status',
 									actions: [
 										Dialog.OKAction(() => {
-											this.showWorkflowDiagram();
+											this.showWorkflowDiagram(true, true);
 										})
 									]
 								})
@@ -118,8 +112,16 @@ const WorkflowRunnerForm=React.createClass({
 		this.setState({onSubmit: false, onValidate: false});
 	},
 
-	showWorkflowDiagram: function() {
-		WorkflowActions.showWorkflowDiagram();
+	showWorkflowDiagram: function(noJobList, noJSON) {
+    let wf=this.state.workflowStore.workflowDetail;
+		WorkflowActions.showWorkflowDiagram(wf.workflow_id, wf, noJobList, noJSON);
+	},
+
+	showWorkflowMetadata: function() {
+    let wf=this.state.workflowStore.workflowDetail;
+    if (wf && wf.metadata_id) {
+		  WorkflowActions.showWorkflowMetadata(wf.workflow_id);
+    }
 	},
 
 	render: function() {
@@ -133,7 +135,7 @@ const WorkflowRunnerForm=React.createClass({
 		if (workflowStore.workflowDetail) {
 			let workflowDetail=workflowStore.workflowDetail;
 			let steps=workflowDetail.steps;
-			appsFieldsets=steps.map(function(step, i) {
+			appsFieldsets=steps.map(function(step) {
 				let showAppId=step.appId.replace(/\-[\.\d]+$/, '');
 				let appId=step.appId;
 				let appDetail=_.cloneDeep(appsStore.appDetailCache[appId]);
@@ -156,7 +158,7 @@ const WorkflowRunnerForm=React.createClass({
 							v.value.default.push(ic);
 						}
 					});
-					v.id=setting.wf_step_prefix + i + ':' + v.id;
+					v.id=setting.wf_step_prefix + step.id + ':' + v.id;
 					if (v.value.required) {
 						required[v.id]=1;
 					}
@@ -166,12 +168,12 @@ const WorkflowRunnerForm=React.createClass({
 					if (p !== undefined) {
 						v.value.default=p;
 					}
-					v.id=setting.wf_step_prefix + i + ':' + v.id;
+					v.id=setting.wf_step_prefix + step.id + ':' + v.id;
 					if (v.value.required) {
 						required[v.id]=1;
 					}
 				});
-				return <AppsFieldset key={i} appDetail={appDetail} index={i} onValidate={onValidate} />;
+				return <AppsFieldset key={step.id} appDetail={appDetail} index={step.id} onValidate={onValidate} />;
 			});
 			let emailInput={
 				type: 'email',
@@ -183,14 +185,8 @@ const WorkflowRunnerForm=React.createClass({
 				help: 'Optional Email notification upon job completion'
 			};
 
-			let workflowJson={
-				type: 'hidden',
-				id: '_workflow_json',
-				name: '_workflow_json',
-				value: JSON.stringify(workflowDetail)
-			};
 			let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
-			let submitBtn=user.logged_in ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit Workflow</Button> : 
+			let submitBtn=user.authenticated ? <Button bsStyle='primary' onClick={this.handleSubmit}>Submit</Button> : 
 				<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
 					<Button bsStyle='primary' onClick={null}>Submit Jobs</Button>
 				</OverlayTrigger>;
@@ -198,11 +194,11 @@ const WorkflowRunnerForm=React.createClass({
 				<div>
 					<form ref={this.formName} >
 						{appsFieldsets}
-						<BaseInput data={emailInput} />
-						<BaseInput data={workflowJson} />
 						{submitBtn}
-						<span> or </span>
-						<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Show Diagram</Button>
+						<span> </span>
+						<Button bsStyle='primary' onClick={this.showWorkflowDiagram}>Diagram</Button>
+						<span> </span>
+						<Button bsStyle='primary' onClick={this.showWorkflowMetadata}>Metadata</Button>
 					</form>
 					<Dialog ref='dialog' />
 				</div>

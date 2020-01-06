@@ -39,9 +39,6 @@ const AppsDetail=React.createClass({
 		let appDetail=appsStore.appDetail;
 		let reload=appsStore.reload;
 		let markup;
-		//if (! this.props.user.logged_in) {
-		//	markup=<Welcome />
-		//} else if (appDetail && appDetail.id) {
 		if (appDetail && appDetail.id) {
 			markup=(
 				<div>
@@ -55,6 +52,12 @@ const AppsDetail=React.createClass({
 					markup=<UserJobs user={user} />
 					break;
 				case 'userWorkflows':
+					markup=<UserWorkflows user={user} />
+					break;
+				case 'dataWorkflows':
+          if (_config.data_item) {
+            WorkflowActions.listWorkflow(_config.data_item);
+          }
 					markup=<UserWorkflows user={user} />
 					break;
 				case 'workflows':

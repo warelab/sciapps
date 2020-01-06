@@ -19,6 +19,8 @@ charset: "UTF-8"
 # simple: default and very basic template engine
 # template_toolkit: TT
 
+serializer: JSON
+
 session: 'YAML'
 session_expires: '72 hr'
 #session: 'Storable'
@@ -40,6 +42,11 @@ engines:
     allow_blessed: '1'
 
 plugins:
+  Swagger:
+    main_api_module: iPC::SciApps
+    show_ui: 1
+    ui_url: /doc
+    ui_dir: public/swagger-ui/dist
   Ajax:
     content_type: 'application/json'
   Database:
@@ -64,6 +71,4 @@ output_url:
   halcott.cshl.edu: 'https://data.sciapps.org'
   dev2.sciapps.org: 'https://dev2.sciapps.org'
   data.sciapps.org: 'https://data.sciapps.org'
-  sciapps.org: 'https://data.sciapps.org/__path__'
-  de.sciapps.org: 'https://data.sciapps.org'
   data.iplantcollaborative.org: 'http://datacommons.cyverse.org/browse/__home__/__path__'

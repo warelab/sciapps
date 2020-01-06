@@ -51,7 +51,13 @@ if you don't export anything, such as for a purely object-oriented module.
 
 # List iRODS directory/retrieves directory contents
 sub readdir {
-	my ($self, $path) = @_;
+	my ($self, $path, %params) = @_;
+
+	if (! %params) {
+		%params = (limit => 100, offset => 0);
+	}
+	$params{limit} //= 100;
+	$params{offset} //= 0;
 
 	# Check for a request path
 	unless (defined($path)) {
@@ -61,7 +67,7 @@ sub readdir {
 
 	$path = "/$path" unless $path =~ m/^\//;
 
-	my $list = $self->do_get('/listings' . $path);
+	my $list = $self->do_get('/listings' . $path . '?limit=' . $params{limit} . '&offset=' . $params{offset});
 	return @$list ? [map {Agave::Client::Object::File->new($_)} @$list] : [];
 }
 
@@ -73,8 +79,8 @@ sub readdir {
 
 # alias for readdir
 sub ls {
-	my ($self, $path) = @_;
-	$self->readdir($path);
+	my ($self, $path, %params) = @_;
+	$self->readdir($path, %params);
 }
 
 =head2 mkdir
@@ -432,6 +438,38 @@ $DB::single = 2;
 		};
 	# due to how do_post works:
 	return ref($resp) ? $resp : {'status' => 'success'};
+}
+
+=head2 file_history
+
+returns a list of hashes
+    [{
+      "status": "STAGING_QUEUED",
+      "created": "2017-07-13T10:10:31.000-05:00",
+      "createdBy": "ghiban",
+      "description": "File/folder queued for staging"
+    },
+    {
+      "status": "STAGING_COMPLETED",
+      "created": "2017-07-13T10:10:38.000-05:00",
+      "createdBy": "ghiban",
+      "description": "Staging completed successfully"
+    }]
+
+=cut
+
+sub file_history {
+	my ($self, $path) = @_;
+
+	# Check for a request path
+	unless (defined($path)) {
+		print STDERR "Please specify a path\n";
+		return;
+	}
+	$path = "/$path" unless $path =~ m/^\//;
+
+	my $data = $self->do_get('/history' . $path);
+	wantarray ? @$data : $data;
 }
 
 =head1 AUTHOR

@@ -14,7 +14,7 @@ const AppsFieldset=React.createClass({
 		let appDetail=_.cloneDeep(this.props.appDetail);
 		let index=this.props.index;
 		let onValidate=this.props.onValidate;
-		let app_inputs, app_params, header='Step ' + (index + 1) + ': ' + appDetail.name + ' (SciApps Version ' + appDetail.version + ')';
+		let app_inputs, app_params, header='Step ' + index + ': ' + appDetail.name + ' (version ' + appDetail.version + ')';
 		if (appDetail && undefined !== appDetail.name) {
 			if (appDetail.inputs && appDetail.inputs.length) {
 				let sortedInputs=_.sortBy(appDetail.inputs, utilities.getValueOrder);

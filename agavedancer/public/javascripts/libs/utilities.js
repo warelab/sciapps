@@ -55,5 +55,11 @@ module.exports = {
 	truncate: function(string, length = 12) {
 		let result=string.length > length ? string.substr(0,length-1).concat(" ...") : string;
 		return result;
-	}
+	},
+
+  transformDateTime: function(datetime) {
+    let result=datetime.substr(0, 19);
+    let date = new Date(result.concat('.000Z'));
+    return date.toLocaleString('en-GB');
+  }
 };

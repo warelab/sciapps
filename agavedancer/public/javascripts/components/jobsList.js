@@ -19,7 +19,6 @@ const JobsList=React.createClass({
 		let markup=<div />;
 		let jobs, jobOutputs, jobsItemNodes;
 		jobs=jobsStore.jobs;
-		//if (this.props.user.logged_in && jobs && jobs.length) {
 		if (jobs && jobs.length) {
 			jobsItemNodes = jobs.map(function (jobsItem, index) {
 				if (jobsItem) {
@@ -31,6 +30,7 @@ const JobsList=React.createClass({
 					//let enableCheck=false;
 					let enableCheck=true;
 					let outputs=jobsStore.jobOutputs[jobsItem.job_id];
+					let staged=jobsStore.jobOutputsStaged[jobsItem.job_id];
 					if (outputs && outputs.length) {
 						//enableCheck=true;
 						_.remove(outputs, function(v) {
@@ -39,7 +39,7 @@ const JobsList=React.createClass({
 					}
 					let checked=enableCheck && jobsStore.workflowBuilderJobIndex[index];
 					return (
-						<JobsItem key={index} job={jobsItem} index={index} checked={checked} enableCheck={enableCheck} app={app} outputs={outputs} />
+						<JobsItem key={index} job={jobsItem} index={index} checked={checked} enableCheck={enableCheck} app={app} outputs={outputs} staged={staged}/>
 					);
 				} else {
 					return undefined;

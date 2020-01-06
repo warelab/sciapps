@@ -62,7 +62,7 @@ const WorkflowBuilderForm=React.createClass({
 		};
 		let jobs=jobsStore.workflowBuilderJobIndex.map(function(v, i) {
 			return v ? jobsStore.jobDetailCache[jobsStore.jobs[i].job_id] : undefined;
-		}).filter(function(v) {return v !== undefined}).sort(function(a,b){return a.submitTime.localeCompare(b.submitTime)});
+		}).filter(function(v) {return v !== undefined}).sort(function(a,b){return a.remoteSubmitted.localeCompare(b.remoteSubmitted)});
 		let outputs={};
 		jobs.forEach(function(job, index) {
 			let step=this._buildWfStep(job, index, outputs);
@@ -73,7 +73,7 @@ const WorkflowBuilderForm=React.createClass({
 				//let path=job.archivePath + '/' + output.value.default;
 				//let archivePath=job.outputPath.replace(job.owner, setting.archive_path);
 				let path=filePath + '/' + output.id;
-				outputs[path]={step: index, output_name: output.id};
+				outputs[path]={step: index+1, output_name: output.id};
 			});
 		}.bind(this));
 		return workflow;
@@ -81,7 +81,7 @@ const WorkflowBuilderForm=React.createClass({
 
 	_buildWfStep: function(job, index, outputs) {
 		let step={
-			id: index,
+			id: index+1,
 			appId: job.appId,
 			jobId: job.id,
 			inputs: {},

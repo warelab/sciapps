@@ -53,7 +53,8 @@ const WorkflowDiagram=React.createClass({
 				let jobNum='';
 				let jobOutputs=[];
 				if (jobDetail) {
-					jobNum=(_.findIndex(jobsStore.jobs, 'job_id', jobDetail.job_id)+1) + ': ';
+          jobNum=_.findIndex(jobsStore.jobs, 'job_id', jobDetail.job_id);
+          jobNum=jobNum < 0 ? '' : (jobNum+1) + ': ';
 					appClass=jobDetail.status;
 					//jobOutputs=jobsStore.jobOutputs[jobDetail.job_id];
 				}
@@ -84,7 +85,7 @@ const WorkflowDiagram=React.createClass({
 								url=[jobDetail.archiveSystem, jobDetail.archivePath].join('/');
 							} else if (jobDetail.outputPath) {
 								//url=[setting.archive_system, jobDetail.outputPath.replace('/', '/sci_data/results/'), output.name].join('/');
-								url=[setting.archive_system, jobDetail.outputPath.replace('maizecode/', 'results/')].join('/');
+								url=[setting.archive_system, jobDetail.outputPath.replace('/', '/sci_data/results/')].join('/');
 							}
 						}
 					} else {
@@ -120,7 +121,7 @@ const WorkflowDiagram=React.createClass({
 					inputs.forEach(function(ic) {
 						if (_.isPlainObject(ic)) {
 							let prevAppNodeId=(setting.wf_step_prefix + ic.step).replace(/\W/g, '_').toLowerCase();
-							let prevJobId=steps[ic.step].jobId;
+							let prevJobId=steps[ic.step-1].jobId;
 							let prevJobDetail=prevJobId ? jobsStore.jobDetailCache[prevJobId] || _.find(jobsStore.jobDetailCache, 'id', prevJobId) : undefined;
 							let input_name=prevJobDetail ? prevJobDetail.job_id : setting.wf_step_prefix + ic.step + ':';
 							input_name=['file', input_name, ic.output_name].join('_');
@@ -192,6 +193,7 @@ const WorkflowDiagram=React.createClass({
 				<BaseInput data={descInputData} ref={(input) => {this.descInput=input;}}/>
 			</div>
 		);
+    let noJSON=workflowStore.noJSON;
 		this.refs.dialog.show({
 			body: body,
 			actions: [
@@ -199,13 +201,13 @@ const WorkflowDiagram=React.createClass({
 				Dialog.Action(
 					'Submit',
 					() => {
-						if (this.nameInput.state.value) {
+						if (undefined !== this.nameInput.state.value) {
 							wf.name=this.nameInput.state.value;
 						}
-						if (this.descInput.state.value) {
+						if (undefined !== this.descInput.state.value) {
 							wf.description=this.descInput.state.value;
 						}
-						WorkflowActions.saveWorkflow(wf);
+						WorkflowActions.saveWorkflow(wf, noJSON);
 						this.setState({onSave: true});
 						Q.delay(1000).then(function() {
 							this.setState({onSave: false});
@@ -223,7 +225,7 @@ const WorkflowDiagram=React.createClass({
 			let prev=_.map(step.inputs, function(input) {
 				let inp=_.isArray(input) ? input : [input];
 				let inp_depth=inp.map(function(i) {
-					return _.isPlainObject(i) ? depth[i.step] : 0;
+					return _.isPlainObject(i) ? depth[i.step-1] : 0;
 				});
 				return _.max(inp_depth);
 			});
@@ -272,7 +274,7 @@ const WorkflowDiagram=React.createClass({
 				//});
 				let workflowDiagramDef=this.buildWorkflowDiagram(workflowStore, appsStore, jobsStore, workflowDirection);
 				let saveBtnTxt=this.state.onSave ? 'Saving' : 'Save Workflow';
-				let saveBtn=user.logged_in ? <Button onClick={this.handleSave} bsStyle={'primary'}>{saveBtnTxt}</Button> : undefined;
+				let saveBtn=user.authenticated ? <Button onClick={this.handleSave} bsStyle={'primary'}>{saveBtnTxt}</Button> : undefined;
 				body=(
 					<Modal.Body>
 						<Mermaid diagramDef={workflowDiagramDef}/>

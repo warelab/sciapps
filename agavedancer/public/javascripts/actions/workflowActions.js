@@ -9,6 +9,8 @@ const WorkflowActions=Reflux.createActions([
 	'hideWorkflowLoadBox',
 	'showWorkflowDiagram',
 	'hideWorkflowDiagram',
+  'showWorkflowMetadata',
+  'hideWorkflowMetadata',
 	'showWorkflow',
 	'hideWorkflow',
 	'listWorkflow',
