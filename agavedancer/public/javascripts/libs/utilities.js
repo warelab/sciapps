@@ -39,16 +39,27 @@ module.exports = {
 	validateForm: function(form, required, upload_suffix) {
 		upload_suffix=upload_suffix || '';
 		let formdata={};
-		for (let key of _.keys(form)) {
-			if (form[key].name && form[key].value && form[key].name.toString().length && form[key].value.toString().length) formdata[form[key].name]=form[key].value;
-		}
 		let ret=required.every(function(n) {
-			if (formdata[n] && formdata[n].toString().length || formdata[n + upload_suffix] && formdata[n + upload_suffix].toString().length) return true
+			for (let key of _.keys(form)) {
+				if (form[key].name && form[key].value && form[key].name.toString().length && form[key].value.toString().length) formdata[form[key].name]=form[key].value;
+			}
+			if (undefined !== formdata[n] && formdata[n].toString().length || undefined !== formdata[n + upload_suffix] && formdata[n + upload_suffix].toString().length) return true
 		});
 		return ret;
 	},
 
 	getValueOrder: function(o) { 
 		return o.value.order 
-	}
+	},
+
+	truncate: function(string, length = 12) {
+		let result=string.length > length ? string.substr(0,length-1).concat(" ...") : string;
+		return result;
+	},
+
+  transformDateTime: function(datetime) {
+    let result=datetime.substr(0, 19);
+    let date = new Date(result.concat('.000Z'));
+    return date.toLocaleString('en-GB');
+  }
 };

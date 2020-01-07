@@ -39,34 +39,62 @@ const UserStore=Reflux.createStore({
 			firstName: '',
 			lastName: '',
 			email: '',
-			logged_in: false,
+			token: '',
 			error: ''
 		};
 	},
 
-	setUser: function() {
+	resetUser: function(pageId) {
 		let setting=_config.setting;
-		//Q(axios.get(setting.host_url + '/user', {
-		Q(axios.get('/user', {
-			headers: {'X-Requested-With': 'XMLHttpRequest'},
-		}))
-		.then(function(res) {
-			if (res.data.error) {
-				if (res.data.error.startsWith('InvalidCredentials')) {
-					this.logout();
-				}
-				console.log(res.data.error);
-			} else if (res.data.logged_in) {
-				this._updateUser(res.data);
+		this._resetState();
+		AppsActions.resetState(pageId || 'welcome');
+		JobsActions.resetState();
+		WorkflowActions.resetState();
+		DsActions.resetState();
+		let mode=setting.appsListMode || [''];
+		mode.forEach((value) => AppsActions.listApps('', value));
+	},
+
+	setUser: function(user, noReset) {
+		let setting=_config.setting;
+		let token=this.state.token;
+    let userPromise;
+    if (user) {
+      userPromise=Q(user);
+    } else {
+		  userPromise=Q(axios.get('/user', {
+			  headers: {'X-Requested-With': 'XMLHttpRequest'},
+		  }))
+		  .then(function(res) {
+			  if (res.data.error) {
+				  console.log(res.data.error);
+          return;
+			  } else if (res.data.data.authenticated) {
+          return res.data.data;
+        }
+      }.bind(this));
+    }
+    userPromise.then(function (user) {
+      if (user) {
+				this._updateUser(user);
 				WorkflowActions.listWorkflow();
-				AppsActions.debouncedListApps();
-				this.complete();
+				JobsActions.listJob();
+			} else {
+				noReset || this.resetUser();
 			}
+			let mode=setting.appsListMode || [''];
+			mode.forEach((value) => AppsActions.listApps('', value));
+			this.complete();
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
 		})
 		.done();
+	},
+
+	login: function(formData) {
+		this._login(formData);
+		this.complete();
 	},
 
 	_login: function(formData) {
@@ -76,7 +104,6 @@ const UserStore=Reflux.createStore({
 		if (formData === undefined) {
 			formData=new FormData();
 		}
-		//Q(axios.post(setting.host_url + '/login', formData, {
 		Q(axios.post('/login', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
@@ -88,9 +115,11 @@ const UserStore=Reflux.createStore({
 				this.state.showLoginBox=show;
 				this.state.error=res.data.error;
 				this.complete();
-			} else if (res.data.logged_in) {
-				this._updateUser(res.data);
+        return;
+			} else if (res.data.data.authenticated) {
+				this.setUser(res.data.data);
 				this.hideLoginBox();
+        return res.data.data;
 			}
 		}.bind(this))
 		.catch(function(error) {
@@ -102,23 +131,31 @@ const UserStore=Reflux.createStore({
 	_updateUser: function(data) {
 		let setting=_config.setting;
 		_.assign(this.state, data);
-		if (setting.datastore['__CyVerse__']) {
-			let path=setting.datastore['__CyVerse__'].path.replace('__user__', data.username);
-			setting.datastore['__CyVerse__'].path=path;
-		}
+		setting.archive_path.replace('__user__', data.username);
+		_.forEach(setting.datastore, function(v, k) {
+			if (v.path) {
+				let path=v.path.replace('__user__', data.username);
+				v.path=path;
+			}
+		});
 	},
 
 	logout: function() {
+		this.resetUser();
 		this._logout();
 		this.complete();
 	},
 
 	_logout: function() {
-		this._resetState();
-		AppsActions.resetState('welcome');
-		JobsActions.resetState();
-		WorkflowActions.resetState();
-		DsActions.resetState();
+		Q(axios.get('/logout', {
+			headers: {'X-Requested-With': 'XMLHttpRequest'},
+		}))
+		.then(function(res) {
+		}.bind(this))
+		.catch(function(error) {
+			console.log(error);
+		})
+		.done();
 	},
 
 	showLoginBox: function() {

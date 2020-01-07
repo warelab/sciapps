@@ -75,7 +75,7 @@ create table job (
 	id integer primary key autoincrement,
 	job_id varchar(40) unique not null,
 	agave_id varchar(40) unique,
-	app_id varchar(40) not null,
+	app_id varchar(100) not null,
 	job_json text,
 	agave_json text,
 	status varchar(40),
@@ -99,7 +99,7 @@ create table nextstep (
 	prev varchar(40) references job(job_id),
 	next varchar(40) references job(job_id),
 	input_name varchar(100) not null,
-	input_source varchar(100),
+	input_source varchar(255),
 	status integer default 0
 );
 

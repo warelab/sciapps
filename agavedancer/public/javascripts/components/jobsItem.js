@@ -1,12 +1,14 @@
 'use strict';
 
 import React from 'react';
+import _ from 'lodash';
 import JobsActions from '../actions/jobsActions.js';
+import JobOutputsDetail from './jobOutputsDetail.js';
 import {ListGroup, ListGroupItem, Button, ButtonToolbar, Tooltip, OverlayTrigger, Panel, Glyphicon} from 'react-bootstrap';
 
 const JobsItem=React.createClass({
 	getInitialState: function() {
-		return {isOpen: false, checked: false};
+		return {isOpen: false, checked: false, showJobOutputsDetail: false};
 	},
 
 	componentWillReceiveProps: function(nextProps) {
@@ -22,8 +24,7 @@ const JobsItem=React.createClass({
 
 	showJobOutputs: function() {
 		if (! this.state.isOpen && this.props.job.job_id) {
-			//JobsActions.showJobOutputs(this.props.job.job_id);
-			JobsActions.setJob(this.props.job.job_id);
+			JobsActions.setJobOutputs(this.props.job.job_id);
 		}
 		this.setState({ isOpen: !this.state.isOpen });
 	},
@@ -31,6 +32,19 @@ const JobsItem=React.createClass({
 	resubmitJob: function() {
 		if (this.props.job.job_id) {
 			JobsActions.resubmitJob(this.props.job.job_id);
+		}
+	},
+
+	showJobOutputsDetail: function() {
+		if (! this.state.showJobOutputsDetail) {
+			JobsActions.stageJobOutputs(this.props.job.job_id);
+			this.setState({ showJobOutputsDetail: true });
+		}
+	},
+
+	hideJobOutputsDetail: function() {
+		if (this.state.showJobOutputsDetail) {
+			this.setState({ showJobOutputsDetail: false });
 		}
 	},
 
@@ -46,6 +60,8 @@ const JobsItem=React.createClass({
 	render: function() {
 		let app=this.props.app;
 		let job=this.props.job
+		let outputs=this.props.outputs;
+		let staged=this.props.staged;
 		let setting=_config.setting;
 		let appId=job.appId;
 		let jobId=job.job_id;
@@ -58,23 +74,45 @@ const JobsItem=React.createClass({
 		displayName=displayName + appId;
 		let isSubmitting=undefined === jobId;
 		let isFailed=0 === jobId;
+		//let enableCheck=this.props.enableCheck;
+		let enableCheck=true;
 		//let outputsItemNodes='Loading ...';
 		let checkedGlyph=this.state.checked ? 'check' : 'unchecked';
+		let tooltipvis = (<Tooltip id="tooltipvis">Visualize Outputs</Tooltip>);
 		let tooltipout = (<Tooltip id="tooltipout">Display Outputs</Tooltip>);
 		let tooltipsta = (<Tooltip id="tooltipsta">Job Status</Tooltip>);
 		let tooltipres = (<Tooltip id="tooltipres">Relaunch Job</Tooltip>);
 		let addedornot=this.state.checked ? 'Click to Remove' : 'Add to Workflow';
 		let tooltipadd = (<Tooltip id="tooltipadd">{addedornot}</Tooltip>);
 		let outputsItemNodes='Loading ...';
-		if (app && job.outputPath) {
-			outputsItemNodes=app.outputs.map(function(o, i) {
-				let oname=o.value.default;
-				//let href=job.archivePath ? setting.output_url[job.archiveSystem] + '/' + job.archivePath + '/' + oname : setting.output_url[setting.archive_system] + '/' + job.outputPath.replace(job.owner, setting.archive_path) + '/' + oname;
-				let href=setting.output_url[setting.archive_system];
-				href=href.replace(/__system__/, setting.archive_system);
-				href=href.replace(/__path__/, (job.outputPath.replace(job.owner, setting.archive_path) + '/' + oname));
+		let jobOutputsDetail;
+		//if (app && (job.archivePath || job.outputPath)) {
+		if (outputs && (job.archivePath || job.outputPath)) {
+			jobOutputsDetail=(
+				<JobOutputsDetail job={job} outputs={outputs} show={this.state.showJobOutputsDetail} hide={this.hideJobOutputsDetail} displayName={displayName} staged={staged}/>
+			);
+			outputsItemNodes=outputs.map(function(o, i) {
+				let oname=o.name;
+				let href;
+				if (job.archivePath) {
+					href=setting.output_url[job.archiveSystem];
+					href=href.replace(/__system__/, job.archiveSystem);
+					href=href.replace(/__path__/, (job.archivePath + '/' + oname));
+				} else if (job.outputPath) {
+					href=setting.output_url[setting.archive_system];
+					href=href.replace(/__system__/, setting.archive_system);
+					let archivePath=job.outputPath.replace('/', '/sci_data/results/');
+					href=href.replace(/__path__/, (archivePath + '/' + oname));
+				}
+				href=href.replace(/__owner__/, job.owner);
+				href=href.replace(/\/__home__/, setting.datastore.__home__.home);
+				let linkBtn, visualBtn;
+				linkBtn=<a href={href} target='_blank'>{oname}</a>
+
 				return (
-					<ListGroupItem key={i}><a href={href} target='_blank'>{oname}</a></ListGroupItem>
+					<ListGroupItem key={i}>
+						{linkBtn}
+					</ListGroupItem>
 				);
 			});
 		}
@@ -85,14 +123,17 @@ const JobsItem=React.createClass({
 					<OverlayTrigger placement="bottom" overlay={tooltipout}>
 						<Button key='outputs' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.showJobOutputs} >{displayName}</Button>
 					</OverlayTrigger>
+					<OverlayTrigger placement="bottom" overlay={tooltipvis}>
+			    	<Button key='visual' bsSize='medium' bsStyle='link' disabled={! jobOutputsDetail} onClick={! jobOutputsDetail ? null : this.showJobOutputsDetail} ><Glyphicon glyph='eye-open' /></Button>
+					</OverlayTrigger>
 					<OverlayTrigger placement="bottom" overlay={tooltipres}>
-			    	<Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.resubmitJob} ><Glyphicon glyph='repeat' /></Button>
+			    	<Button key='resubmit' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed || ! job.id} onClick={isSubmitting || isFailed || !job.id? null : this.resubmitJob} ><Glyphicon glyph='repeat' /></Button>
 					</OverlayTrigger>
 					<OverlayTrigger placement="bottom" overlay={tooltipsta}>
 						<Button key='status' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.showJob} ><Glyphicon glyph='info-sign' /></Button>
 					</OverlayTrigger>
           <OverlayTrigger placement="bottom" overlay={tooltipadd}>
-						<Button key='check' bsSize='medium' bsStyle='link' disabled={isSubmitting || isFailed} onClick={isSubmitting || isFailed ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
+						<Button key='check' bsSize='medium' bsStyle='link' disabled={!enableCheck || isSubmitting || isFailed || ! job.id} onClick={isSubmitting || isFailed || ! job.id ? null : this.handleCheck} ><Glyphicon glyph={checkedGlyph} /></Button>
 					</OverlayTrigger>
 			  </ButtonToolbar>
 				<Panel collapsible expanded={this.state.isOpen}>
@@ -100,6 +141,7 @@ const JobsItem=React.createClass({
 						{outputsItemNodes}
 					</ListGroup>
 				</Panel>
+				{jobOutputsDetail}
 			</ListGroupItem>
 		);
 		return markup;

@@ -34,23 +34,27 @@ const DsDetail=React.createClass({
 		let type=dsStore.type;
 		let dsSetting=setting.datastore[type];
 		let dsDetail=dsStore.dsDetail;
+		let path='';
 		let showDataStore=dsStore.showDataStore;
 		let dsFileNodes='Loading ...';
 		let targetPath=dsStore.dsItemPaths[dsStore.target];
 		let dsBtnValue=targetPath ? 'Select and Close' : 'Close';
 		let sourceButtons=setting.datastore_types.map(function(name) {
-			let disabled=!(name === 'exampleData' || user.logged_in);
+			let disabled=!(name === 'example' || user.authenticated);
 			let isActive=type === '__' + name + '__';
 			let showName=name.replace(/_+/g, ' ');
 			return <Button key={name} onClick={disabled ? null : this.handleChangeSource} disabled={disabled} bsStyle={isActive ? 'primary' : 'default'} value={name}>{showName}</Button>
 		}.bind(this));
-		let goupButton=<Button key='goup' onClick={dsDetail.is_root ? null : this.handleGoup} >Go up</Button>;
+		let goupButton=<Button key='goup' onClick={typeof dsDetail === 'undefined' || dsDetail.is_root ? null : this.handleGoup} >Go up</Button>;
 		let refreshButton=<Button key='refresh' onClick={this.handleRefresh} >Refresh</Button>;
 		let actionButtons=[goupButton, refreshButton];
-		let path;
-		if (dsDetail.list) {
+		if (typeof dsDetail !== 'undefined' && dsDetail.list) {
 			dsFileNodes=_.cloneDeep(dsDetail.list).sort(function (a,b) {
-				return a.type.localeCompare(b.type) || a.name.localeCompare(b.name); 
+				if(type.includes('recent') && a.lastModified && b.lastModified) {
+					return a.type.localeCompare(b.type) || (Date.parse(b.lastModified) - Date.parse(a.lastModified)) || a.name.localeCompare(b.name);
+				} else {
+					return a.type.localeCompare(b.type) || a.name.localeCompare(b.name);
+				}
 			}).map(function(dsItem) {
 				let isChecked=targetPath && targetPath.type === type && targetPath.path === dsDetail.path && targetPath.name === dsItem.name;
 				return (
@@ -60,10 +64,11 @@ const DsDetail=React.createClass({
 			//path=[dsSetting.system, dsSetting.path, dsDetail.path].join('/');
 			path=[dsSetting.path, dsDetail.path].join('/');
 		}
+		
 		return (
 			<Modal show={showDataStore} onHide={this.hideDataStoreDetail}>
 				<Modal.Header closeButton>
-					<Modal.Title>Browse Datastore</Modal.Title>
+					<Modal.Title>Browse CyVerse Data Store</Modal.Title>
 				</Modal.Header>
 				<Modal.Body>
 					<ButtonToolbar>
@@ -77,6 +82,7 @@ const DsDetail=React.createClass({
 					<Panel header={path}><ListGroup>
 						{dsFileNodes}
 					</ListGroup></Panel>
+					<p>Note: SciApps can only access your private data in the '<b>sci_data</b>' folder. You can follow this <a href="https://cyverse-sciapps-guide.readthedocs-hosted.com/en/latest/step2.html" target="_blank">instruction</a> to create (if not yet done) the folder.</p>
 				</Modal.Body>
 				<Modal.Footer>
 					<Button bsStyle='primary' onClick={this.hideDataStoreDetail}>{dsBtnValue}</Button>

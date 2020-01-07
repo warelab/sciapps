@@ -9,6 +9,8 @@ const WorkflowActions=Reflux.createActions([
 	'hideWorkflowLoadBox',
 	'showWorkflowDiagram',
 	'hideWorkflowDiagram',
+  'showWorkflowMetadata',
+  'hideWorkflowMetadata',
 	'showWorkflow',
 	'hideWorkflow',
 	'listWorkflow',
@@ -22,7 +24,8 @@ const WorkflowActions=Reflux.createActions([
 	'loadRemoteWorkflow',
 	'setWorkflowSteps',
 	'buildWorkflow',
-	'submitWorkflow'
+	'submitWorkflow',
+	'buildWorkflowDiagramDef'
 ]);
 
 module.exports = WorkflowActions;

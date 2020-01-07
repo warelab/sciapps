@@ -15,7 +15,7 @@ const AppsStore=Reflux.createStore({
 
 	init: function() {
 		this._resetState();
-		this.debouncedListApps=_.debounce((searhString) => { this.listApps(searhString) }, 200);
+		this.debouncedListApps=_.debounce((searhString, mode) => { this.listApps(searhString, mode) }, 200);
 	},
 
 	getInitialState: function() {
@@ -45,41 +45,51 @@ const AppsStore=Reflux.createStore({
 		};
 	},
 
-	listApps: function(searchString) {
+	listApps: function(searchString, mode) {
 		this.state.searchString=searchString;
-		this._listApps();
+		let promise=this._listApps(mode);
+		promise.then(function() {
+			this.complete();
+		}.bind(this));
 	},
 
-	_listApps: function() {
+	_listApps: function(mode) {
 		let apps=this.state.appsCache;
 		let setting=_config.setting;
+		let param='';
+		if (mode === 'local') {
+			param='?mode=local';
+		} else if (mode === 'remote') {
+			param='?mode=remote';
+		}
 		let appPromise;
-		if (apps.length) {
+		if (! mode && apps && apps.length) {
 			appPromise=Q(apps);
 		} else {
-			//appPromise=Q(axios.get('/apps', {
-			//	headers: {'X-Requested-With': 'XMLHttpRequest'},
-			//}))
-			appPromise=Q(axios.get('/assets/agaveAppsList.json'))
+			appPromise=Q(axios.get('/apps' + param, {
+				headers: {'X-Requested-With': 'XMLHttpRequest'},
+			}))
 			.then(function(res) {
 				if (res.data.error) {
+					console.log(res.data.error);
 					return;
+				} else {
+					let data=res.data.data || res.data;
+					this.state.appsCache=_.union(this.state.appsCache, data);
+					return data;
 				}
-				this.state.appsCache=res.data;
-				return res.data;
 			}.bind(this));
 		}
-		appPromise.then(function(appsList) {
+		return appPromise.then(function(appsList) {
 			if (appsList) {
-				this.state.apps=appsList;
+				this.state.apps=this.state.appsCache;
 				this.filterApps();
-				this.complete();
+				return appsList;
 			}
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
-		})
-		.done();
+		});
 	},
 
 	filterApps: function() {
@@ -100,21 +110,24 @@ const AppsStore=Reflux.createStore({
 		}
 	},
 
-	setWorkflowApps: function(appIds, wid) {
+	setApps: function(appIds, wid) {
 		let funcs=appIds.map(function(appId) {
 			return function() {
-				return this.setApp(appId).then(function(app) {
+				return this._setApp(appId).then(function(app) {
 					return app;
 				}.bind(this));
 			}.bind(this);
 		}.bind(this));
 
-		funcs.reduce(Q.when, Q(1)).then(function() {
-			if (wid !== undefined) {
-				this.state.wid[wid]=true;
+		let promise=funcs.reduce(Q.when, Q(1)).then(function() {
+			if (appIds.length) { 
+				if (wid !== undefined) {
+					this.state.wid[wid]=true;
+				}
 				this.complete();
 			}
 		}.bind(this));
+		return promise;
 	},
 
 	resetWorkflowApps: function(wid) {
@@ -122,22 +135,33 @@ const AppsStore=Reflux.createStore({
 	},
 
 	setApp: function(appId) {
+		let appPromise=this._setApp(appId)
+		.then(function(app) {
+			this.complete();
+		}.bind(this));
+		return appPromise;
+	},
+
+	_setApp: function(appId) {
 		let appDetail=this.state.appDetailCache[appId];
 		let setting= _config.setting;
 		let appPromise;
 		if (appDetail) {
 			appPromise=Q(appDetail);
 		} else {
-			//appPromise=Q(axios.get('/apps/' + appId, {
-			//	headers: {'X-Requested-With': 'XMLHttpRequest'}
-			//}))
-			appPromise=Q(axios.get('/assets/' + appId + '.json'))
+			appPromise=Q(axios.get('/apps/' + appId, {
+				headers: {'X-Requested-With': 'XMLHttpRequest'}
+			}))
+			//appPromise=Q(axios.get('/assets/' + appId + '.json'))
 			.then(function(res) {
 				if (res.data.error) {
+					console.log(res.data.error);
 					return;
+				} else {
+					let data=res.data.data || res.data;
+					this.state.appDetailCache[appId]=data;
+					return data;
 				}
-				this.state.appDetailCache[appId]=res.data;
-				return res.data;
 			}.bind(this))
 			.catch(function(error) {
 				console.log(error);
@@ -159,13 +183,14 @@ const AppsStore=Reflux.createStore({
 	},
 
 	_showApp: function(appId, jobDetail) {
-		let appPromise=this.setApp(appId);
+		let appPromise=this._setApp(appId);
 		appPromise.then(function(appDetail) {
+			let app=_.cloneDeep(appDetail);
 			if (jobDetail) {
-				appDetail._jobDetail=jobDetail;
+				app._jobDetail=_.cloneDeep(jobDetail);
 			}
 			this.state.pageId='appsDeail';
-			this.state.appDetail=appDetail;
+			this.state.appDetail=app;
 			this.complete();
 		}.bind(this))
 		.catch(function(error) {
@@ -188,7 +213,7 @@ const AppsStore=Reflux.createStore({
 	setReload: function(value) {
 		if (value !== this.state.reload) {
 			this._setReload(value);
-			this.complete();
+			//this.complete();
 		}
 	},
 

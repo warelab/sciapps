@@ -7,6 +7,7 @@ import Reflux from 'reflux';
 import UserStore from '../stores/userStore.js';
 import UserActions from  '../actions/userActions.js';
 import AppsActions from '../actions/appsActions.js';
+import JobsActions from '../actions/jobsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import {Layout, Fixed, Flex} from 'react-layout-pane';
 import {Panel, Glyphicon} from 'react-bootstrap';
@@ -18,15 +19,24 @@ import JobsDetail from './jobsDetail.js';
 import JobsMessage from './jobsMessage.js';
 import DsDetail from './dsDetail.js';
 import WorkflowDiagram from './workflowDiagram.js';
+import WorkflowMetadataDetail from './workflowMetadataDetail.js'
 import Header from './header.js';
 import UserLoginBox from './userLoginBox.js';
 import Help from './help.js';
+import Warning from './warning.js';
 
 const App=React.createClass({
 	mixins: [Reflux.connect(UserStore, 'userStore')],
 
+	getDefaultProps: function() {
+		return {
+			userInterval: 1800000,
+			jobsInterval: 10000 
+		};
+	},
+
 	componentWillMount: function() {
-		UserActions.setUser();
+		UserActions.setUser(undefined, true);
 	},
 
 	componentDidMount: function () {
@@ -39,6 +49,8 @@ const App=React.createClass({
 		} else {
 			AppsActions.showPage(page_id);
 		}
+		setInterval(() => {UserActions.setUser();}, this.props.userInterval);
+		setInterval(() => {JobsActions.setJobs(undefined, true);}, this.props.jobsInterval);
 	},
 
 	render: function () {
@@ -46,8 +58,8 @@ const App=React.createClass({
 
 		return (
 			<Layout type="column">
+				<Warning />
 				<Header user={user} />
-				<UserLoginBox />
 				<Flex>
 					<Layout type="row">
 						<Fixed className="leftbar">
@@ -59,6 +71,7 @@ const App=React.createClass({
 							<AppsDetail user={user} />
 							<DsDetail user={user} />
 							<WorkflowDiagram user={user} />
+              <WorkflowMetadataDetail user={user} />
 						</Flex>
 						<Fixed className="rightbar">
 							<Fixed className="apps-panel-header"><Glyphicon glyph='time' /> History</Fixed>

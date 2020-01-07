@@ -11,7 +11,7 @@ logger: "file"
 warnings: 1
 
 # hide errors 
-show_errors: 1
+show_errors: 0
 
 # cache route resolution for maximum performance
 route_cache: 1
@@ -24,6 +24,7 @@ route_cache: 1
 
 # production config
 agave_config: ".agave"
+<<<<<<< HEAD
 host_url: "https://de.sciapps.org"
 archive_system: 'sciapps.org'
 archive_home: '/agave_data'
@@ -31,32 +32,61 @@ archive_path: 'results'
 input_system: 'halcott.cshl.edu'
 input_home: '/agave_data'
 input_path: 'inputs'
+=======
+archive_system: 'data.iplantcollaborative.org'
+archive_home: '/iplant/home'
+archive_path: '__user__/sci_data/results'
+>>>>>>> origin/master
 email: 'noreply@sciapps.org'
-upload_suffix: ".upload"
 wf_step_prefix: 'wf_step_'
-maxRunTime: "96:00:00"
+maxRunTime: "47:50:00"
+defaultUser: 'maizecode'
 datastore:
-  __CyVerse__:
+  __home__: 
     system: 'data.iplantcollaborative.org'
     home: '/iplant/home'
     path: '__user__/sci_data'
-  __sorghumDB__: 
-    system: 'sciapps.org'
+  __shared__:
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: 'shared'
+  __recent_jobs__: 
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: '__user__/sci_data/results'
+  __example__:
+    system: 'data.iplantcollaborative.org'
+    home: '/iplant/home'
+    path: 'sciapps/example'
+  __visual__:
+    system: 'halcott.cshl.edu'
     home: '/agave_data'
-    path: 'data/sorghum'
-  __MaizeCODE__:
-    system: 'sciapps.org'
-    home: '/agave_data'
-    path: 'data/maize'
-  __exampleData__:
-    system: 'sciapps.org'
-    home: '/agave_data'
-    path: 'example_data'
+    path: 'results/vi'
   __system__:
     system: ''
     home: ''
     path: ''
+<<<<<<< HEAD
 datastore_types: ['CyVerse', 'sorghumDB', 'MaizeCODE', 'exampleData']
+=======
+datastore_types: ['example', 'shared', 'home']
+>>>>>>> origin/master
 uncompress_suffix: '.open.tar.gz'
-use_file_server: 1
 irodsEnvFile: '/usr/share/httpd/irodsEnv'
+appsLocalCache: 0
+appsListMode: ['local']
+defaultAppsList: 'public/assets/agaveAppsList.json'
+queue_length: 3
+stage_file_types: ['.plot.tgz', '.view.tgz']
+anon_prefix: 'https://data.cyverse.org/dav-anon'
+site_warning: 1
+site_warning_file: 'site_warning.txt'
+upload_file_input: 'fileToUpload'
+user_params_input: 'paramsFromUser'
+retry_interval: 1
+retry_num: 2
+datamenu_item:
+  MaizeCODE: 'MC_'
+  SorghumBase: 'SB_'
+toolsmenu_item:
+  JBrowse: 'https://data.sciapps.org/view2/?data=data2/B73/v4/apollo_data'

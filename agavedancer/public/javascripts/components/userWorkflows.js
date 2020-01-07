@@ -3,129 +3,219 @@
 import React from 'react';
 import Reflux from 'reflux';
 import _ from 'lodash';
-import {Panel, Table, Button, ButtonToolbar, Tooltip, OverlayTrigger, Glyphicon} from 'react-bootstrap';
+import {Panel, Table, Button, ButtonToolbar, ButtonGroup, Tooltip, OverlayTrigger, Glyphicon, Input} from 'react-bootstrap';
 import WorkflowStore from '../stores/workflowStore.js';
 import WorkflowActions from '../actions/workflowActions.js';
 import AppsActions from '../actions/appsActions.js';
-import BaseInput from './baseInput.js';
 import Dialog from 'react-bootstrap-dialog';
+import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
 import utilities from '../libs/utilities.js';
 
 const UserWorkflows=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore')],
 
-	getInitialState: function() {
-		return { onEdit: {} };
-	},
-
-	handleLoad: function(e) {
-		let wfid=e.target.value || e.target.parentElement.value;
-		let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
-		let wfDetail=wf.json ? JSON.parse(wf.json) : undefined;
-		AppsActions.showPage('workflowRunner');
-		WorkflowActions.showWorkflow(wfid, wfDetail);
-	},
-
-	handleDel: function(e) {
-		let wfid=e.target.value || e.target.parentElement.value;
-		WorkflowActions.deleteWorkflow(wfid);
-	},
-
-	handleEdit: function(e) {
-		let wfid=e.target.value || e.target.parentElement.value;
-		this.state.onEdit[wfid]=true;
-		this.setState({});
-	},
-
-	handleDownload: function(e) {
-		let wfid=e.target.value || e.target.parentElement.value;
-		let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
-		utilities.download(wf.name + '.json', 'application/json;charset=utf-8', wf.json);
-	},
-
-	handleSave: function(e) {
-		let wfid=e.target.value || e.target.parentElement.value;
-		let formData={id: wfid, name: this.refs[wfid + '_nameInput'].state.value, description: this.refs[wfid + '_descInput'].state.value};
-		let workflows=this.state.workflowStore.workflows;
-		let existed=_.find(workflows, 'name', formData.name);
-		if (existed && existed.workflow_id !== wfid) {
-			//alert('Please choose a unique name.');
-			this.refs.dialog.showAlert('A workflow with that name already exists. Please enter a different name');
-		} else {
-			WorkflowActions.updateWorkflow(formData);
-			delete this.state.onEdit[wfid];
-			this.setState({});
+	handleRelaunch: function(e) {
+		let workflowStore=this.state.workflowStore;
+    let dataItem=workflowStore.dataItem;
+		let table=this.refs.table;
+		let wfid=table.store.getSelectedRowKeys()[0];
+    let workflows=dataItem ? workflowStore.dataWorkflows[dataItem] : workflowStore.workflows;
+		if (wfid) {
+			let wf=_.find(workflows, {workflow_id: wfid});
+			if (wf) {
+				AppsActions.showPage('workflowRunner');
+				WorkflowActions.showWorkflow(wfid, wf, true);
+			}
 		}
 	},
 
-	handleCancel: function(e) {
-		let wfid=e.target.value || e.target.parentElement.value;
-		delete this.state.onEdit[wfid];
-		this.setState({});
+	handleRefresh: function(e) {
+		let workflowStore=this.state.workflowStore;
+    let dataItem=workflowStore.dataItem;
+		WorkflowActions.listWorkflow(dataItem);
+	},
+
+	handleLoad: function(e) {
+		let workflowStore=this.state.workflowStore;
+    let dataItem=workflowStore.dataItem;
+		let table=this.refs.table;
+		let wfid=table.store.getSelectedRowKeys()[0];
+    let workflows=dataItem ? workflowStore.dataWorkflows[dataItem] : workflowStore.workflows;
+		if (wfid) {
+			let wf=_.find(workflows, {workflow_id: wfid});
+			if (wf) {
+				WorkflowActions.showWorkflow(wfid, wf);
+			}
+		}
+	},
+
+	showWorkflowMetadata: function(e) {
+		let workflowStore=this.state.workflowStore;
+    let dataItem=workflowStore.dataItem;
+		let table=this.refs.table;
+		let wfid=table.store.getSelectedRowKeys()[0];
+    let workflows=dataItem ? workflowStore.dataWorkflows[dataItem] : workflowStore.workflows;
+		if (wfid) {
+			let wf=_.find(workflows, {workflow_id: wfid});
+			if (wf && wf.metadata_id) {
+				WorkflowActions.showWorkflowMetadata(wfid);
+			}
+		}
+	},
+  
+  showWorkflowDiagram: function(e) {
+		let workflowStore=this.state.workflowStore;
+    let dataItem=workflowStore.dataItem;
+    let table=this.refs.table;
+    let wfid=table.store.getSelectedRowKeys()[0];
+    let workflows=dataItem ? workflowStore.dataWorkflows[dataItem] : workflowStore.workflows;
+    if (wfid) {
+      let wf=_.find(workflows, {workflow_id: wfid});
+      if (wf) {
+        WorkflowActions.showWorkflowDiagram(wfid, wf);
+      }
+    }
+  },
+
+	handleDeleteRow: function(e) {
+		let table=this.refs.table;
+		let wfid=table.store.getSelectedRowKeys()[0];
+		if (wfid) {
+			this.handleConfirmDeleteRow(function() {
+				table.store.setSelectedRowKey([]);
+				WorkflowActions.deleteWorkflow(wfid);
+			});
+		}
+	},
+
+	handleConfirmDeleteRow: function(next) {
+		this.refs.dialog.show({
+			body: 'Are you sure you want to delete this workflow?',
+			actions: [
+				Dialog.CancelAction(),
+				Dialog.Action(
+					'Delete',
+					() => {
+						next();
+					},
+					'btn-warning'
+				),
+			]
+		})
+	},
+
+	handleDownload: function(e) {
+		let table=this.refs.table;
+		let wfid=table.store.getSelectedRowKeys()[0];
+		if (wfid) {
+			let wf=_.find(this.state.workflowStore.workflows, {workflow_id: wfid});
+			if (wf) {
+				wf.id=wf.workflow_id;
+				utilities.download(wf.name + '.json', 'application/json;charset=utf-8', JSON.stringify(wf));
+			}
+		}
+	},
+
+	handleShare: function(e) {
+		let table=this.refs.table;
+		let wfid=table.store.getSelectedRowKeys()[0];
+		if (wfid) {
+			let url=window.location.protocol + "//" + window.location.host + '/?wf_id=' + wfid;
+			let input=<Input id='copy' name='copy' value={url} type='textarea' readOnly />
+			let copyBtn={
+				label: 'Copy to clipboard',
+				className: 'btn-primary',
+				func: () => {
+					let dom=document.getElementById('copy');
+					dom.select();
+					document.execCommand('Copy');
+				}
+			};
+			this.refs.dialog.show({
+				title: 'Workflow URL for sharing',
+				body: input,
+				actions: [
+					copyBtn,
+					Dialog.OKAction()
+				],
+				bsSize: 'medium'
+			});
+		}
+	},
+
+	handleCellSave: function(row, cellName, cellValue) {
+		let formData=_.pick(row, ['workflow_id', 'name', 'description']);
+		WorkflowActions.updateWorkflow(formData);
+	},
+
+	actionsFormatter: function(cell, row) {
+		return cell;
+	},
+
+	createCustomButtonGroup: function(props) {
+		let workflowStore=this.state.workflowStore;
+    let dataItem=workflowStore.dataItem;
+		let tooltipload=<Tooltip id="tooltipload">Load</Tooltip>;
+		let tooltipdownload=<Tooltip id="tooltipdownload">Download</Tooltip>;
+		let tooltipdelete=<Tooltip id="tooltipdelete">Delete</Tooltip>;
+    let buttonGroup=dataItem ? (
+			<ButtonGroup>
+				<Button key='relaunch' bsStyle='success' onClick={this.handleRelaunch}><Glyphicon glyph='repeat'/> Relaunch</Button>
+        <Button key='view' bsStyle='info' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
+				<Button key='load' bsStyle='warning' onClick={this.handleLoad}><Glyphicon glyph='hand-right'/> Load</Button>
+        <Button key='share' bsStyle='primary' onClick={this.handleShare}><Glyphicon glyph='share'/> Share</Button>
+        <Button key='metadata' bsStyle='info' onClick={this.showWorkflowMetadata}><Glyphicon glyph='tags'/>  Metadata</Button>
+			</ButtonGroup>
+    ) : (
+			<ButtonGroup>
+				<Button key='relaunch' bsStyle='success' onClick={this.handleRelaunch}><Glyphicon glyph='repeat'/> Relaunch</Button>
+        <Button key='view' bsStyle='info' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
+				<Button key='load' bsStyle='warning' onClick={this.handleLoad}><Glyphicon glyph='hand-right'/> Load</Button>
+        <Button key='share' bsStyle='primary' onClick={this.handleShare}><Glyphicon glyph='share'/> Share</Button>
+				<Button key='delete' bsStyle='danger' onClick={this.handleDeleteRow}><Glyphicon glyph='trash'/> Delete</Button>
+			</ButtonGroup>
+    );
+		return buttonGroup;
 	},
 
 	render: function() {
 		let workflowStore=this.state.workflowStore;
 		let workflowItems;
-		if (workflowStore.workflows.length) {
-			workflowItems=workflowStore.workflows.map(function(workflow, i) {
-				let onEdit=this.state.onEdit[workflow.workflow_id];
-
-				let tooltipload=<Tooltip id="tooltipload">Load</Tooltip>;
-        			let loadButton=<OverlayTrigger placement="bottom" overlay={tooltipload}><Button key='load' bsStyle='link' onClick={this.handleLoad} value={workflow.workflow_id}><Glyphicon glyph='repeat'/></Button></OverlayTrigger>;
-
-				let tooltipdelete=<Tooltip id="tooltipdelete">Delete</Tooltip>;
-        			let delButton=<OverlayTrigger placement="bottom" overlay={tooltipdelete}><Button key='del' bsStyle='link' onClick={this.handleDel} value={workflow.workflow_id}><Glyphicon glyph='remove-circle'/></Button></OverlayTrigger>;				
-
-				let tooltipedit=<Tooltip id="tooltipedit">Edit</Tooltip>;
-        			let editButton=<OverlayTrigger placement="bottom" overlay={tooltipedit}><Button key='edit' bsStyle='link' onClick={this.handleEdit} value={workflow.workflow_id}><Glyphicon glyph='edit'/></Button></OverlayTrigger>;				
-
-				let tooltipdownload=<Tooltip id="tooltipdownload">Download</Tooltip>;
-        			let downloadButton=<OverlayTrigger placement="bottom" overlay={tooltipdownload}><Button key='download' bsStyle='link' onClick={this.handleDownload} value={workflow.workflow_id}><Glyphicon glyph='download-alt'/></Button></OverlayTrigger>;				
-
-				let tooltipsave=<Tooltip id="tooltipsave">Save</Tooltip>;
-        			let saveButton=<OverlayTrigger placement="bottom" overlay={tooltipsave}><Button key='save' bsStyle='link' onClick={this.handleSave} value={workflow.workflow_id}><Glyphicon glyph='ok'/></Button></OverlayTrigger>;				
-
-				let tooltipcancel=<Tooltip id="tooltipcancel">Cancel</Tooltip>;
-        			let cancelButton=<OverlayTrigger placement="bottom" overlay={tooltipcancel}><Button key='cancel' bsStyle='link' onClick={this.handleCancel} value={workflow.workflow_id}><Glyphicon glyph='remove'/></Button></OverlayTrigger>;
-
-				let item;
-				let toolbar;
-				if (onEdit) {
-					let nameInput={
-						name: 'name',
-						required: true,
-						value: workflow.name,
-						type: 'text'
-					};
-					let descInput={
-						name: 'description',
-						required: false,
-						value: workflow.description,
-						type: 'text'
-					};
-					item=<tr key={workflow.workflow_id}><td><BaseInput data={nameInput} onValidate={true} ref={workflow.workflow_id + '_nameInput'}/></td><td className='text-center'><BaseInput data={descInput} ref={workflow.workflow_id + '_descInput'}/></td><td className='text-right'>{saveButton}{cancelButton}</td></tr>;
-				} else {
-					toolbar=(
-						<ButtonToolbar>
-							{loadButton}{editButton}{downloadButton}{delButton}	
-						</ButtonToolbar>
-					);
-					item=<tr key={workflow.workflow_id}><td>{workflow.name}</td><td>{workflow.description}</td><td className='text-right'>{loadButton}{editButton}{downloadButton}{delButton}</td></tr>;
-				}
+    let dataItem=workflowStore.dataItem;
+    let workflows=[];
+    if (dataItem) {
+      if (workflowStore.dataWorkflows[dataItem]) {
+        workflows=workflowStore.dataWorkflows[dataItem];
+      }
+    } else if (workflowStore.workflows.length) {
+      workflows=workflowStore.workflows;
+    }
+    if (workflows.length) {
+			workflowItems=workflows.map(function(workflow, i) {
+				let item=_.pick(workflow, ['workflow_id', 'name', 'description']);
 				return item;
 			}.bind(this));
 		}
+
+		let cellEditProp={
+			mode: 'dbclick',
+			blurToSave: true,
+			afterSaveCell: this.handleCellSave
+		};
+		let selectRowProp={
+			mode: 'radio'
+		};
+		let options={
+			btnGroup: this.createCustomButtonGroup
+		};
+    let header=dataItem ? dataItem.replace(/_+/gi, ' ') : "My Workflows";
 		return (
-			<Panel header="My Workflows">
-				<Table striped condensed hover>
-					<thead>
-						<tr><th className='col-xs-2 col-md-2'>Name</th><th className='col-xs-8 col-md-8'>Description</th><th className='col-xs-2 col-md-2 text-right'>Actions</th></tr>
-					</thead>
-					<tbody>
-						{workflowItems}
-					</tbody>
-				</Table>
+			<Panel header={header}>
+				<BootstrapTable ref='table' data={workflowItems} search={true} striped={true} hover={true} cellEdit={cellEditProp} pagination={true} selectRow={selectRowProp} options={options}>
+					<TableHeaderColumn isKey={true} dataField="workflow_id" hidden={true}>ID</TableHeaderColumn>
+					<TableHeaderColumn dataField="name" dataAlign="left" width='250' dataSort={true}>Name</TableHeaderColumn>
+					<TableHeaderColumn dataField="description" dataAlign="left">Description</TableHeaderColumn>
+				</BootstrapTable>
 				<Dialog ref='dialog' />
 			</Panel>
 		);

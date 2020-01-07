@@ -2,6 +2,25 @@
 @border2: #6eaa49;
 @appNodeColor: #FFF;
 
+div.mermaidTooltip {
+    position: absolute;
+    -webkit-max-logical-width: 400px;
+    padding-left: 4px;
+    padding-right: 4px;
+    font-family: 'trebuchet ms',verdana,arial;
+    font-size: 12px;
+    background: #fff;
+    border: 1px solid #6eaa49;
+    border-radius: 4px;
+    box-shadow: rgba(0,0,0,.18) 0 2px 4px 0;
+    pointer-events: none;
+    z-index: 2150;
+}
+
+.oneNode {
+  width: 400px
+}
+
 .twoNodes {
   width: 700px
 }
@@ -87,4 +106,9 @@
         stroke:none;
         font-family: 'trebuchet ms', verdana, arial;
         font-size: 18px;
+}
+
+.mermaidTooltip {
+	z-index: 1151 !important;
+	position: relative;
 }

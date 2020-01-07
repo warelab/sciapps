@@ -2,60 +2,83 @@
 
 import React from 'react';
 import Reflux from 'reflux';
-import {Button, Modal} from 'react-bootstrap';
+import _ from 'lodash';
+import {Panel, Table, Button, ButtonToolbar, ButtonGroup, Tooltip, OverlayTrigger, Glyphicon} from 'react-bootstrap';
 import AppsActions from '../actions/appsActions.js';
 import WorkflowActions from '../actions/workflowActions.js';
+import Dialog from 'react-bootstrap-dialog';
+import {BootstrapTable, TableHeaderColumn} from 'react-bootstrap-table';
+import utilities from '../libs/utilities.js';
 
-const Workflows=React.createClass({
+var workflowItems = [
+	{ workflow_id: 1, name: "Annotation", description: "MAKER based annotation" },
+	{ workflow_id: 2, name: "Assembly", description: "Small genome assembly, quality assessment, and annotation with JBrowse view" },
+	{ workflow_id: 3, name: "Association", description: "A GWAS workflow for performing mixed model analysis with three different algorithms" },
+	{ workflow_id: 4, name: "RNA-Seq", description: "Gene level differential expression analysis with STAR, RSEM, and Ebseq" },
+        { workflow_id: 5, name: "RNA-Seq2", description: "Isoform level differential expression analysis with STAR, StringTie, and Ballgown" },
+        { workflow_id: 6, name: "RNA-Seq3", description: "Isoform level differential expression analysis with HISAT2, StringTie, and Ballgown" },
+	{ workflow_id: 7, name: "Methyl-Seq", description: "Differential methylation analysis with Bismark and Bisukit" },
+	{ workflow_id: 8, name: "BSA-Seq", description: "Bulked Segregant Analysis with next generation sequencing data" },
+];
 
-	showWorkflowRunner: function(event) {
-		AppsActions.showPage('workflowRunner');
-		WorkflowActions.showWorkflow(event.target.textContent);
-		let title="Running Scientific Workflows";
-		let url="/?page_id=workflowRunner";
-		if (typeof (history.pushState) !== "undefined") {
-			let obj = { Title: title, Url: url };
-			history.pushState(obj, obj.Title, obj.Url);
-		} else {
-			alert("Browser does not support HTML5.");
+const publicWorkflows=React.createClass({
+
+	handleReLaunch: function(e) {
+		let table=this.refs.table;
+		let wfid=table.store.selected[0];
+		if (wfid) {
+			AppsActions.showPage('workflowRunner');
+			WorkflowActions.showWorkflow(wfid, undefined, true);
 		}
 	},
 
-	render: function() {
+	handleLoad: function(e) {
+		let table=this.refs.table;
+		let wfid=table.store.selected[0];
+		if (wfid) {
+			WorkflowActions.showWorkflow(wfid);
+		}
+	},
+
+        showWorkflowDiagram: function(e) {
+                let table=this.refs.table;
+                let wfid=table.store.selected[0];
+                if (wfid) {
+                        WorkflowActions.showWorkflowDiagram(wfid);
+                }
+        },
+
+	createCustomButtonGroup: function(props) {
+		let tooltipload=<Tooltip id="tooltipload">Load</Tooltip>;
 		return (
-			<div className="welcome">
-				<div className="section">
-				<h5>Public workflows</h5>
-				Click on any workflow below will load both the pipeline (main panel) and data (History panel). Workflow diagram can be shown from the bottom of the main panel.
-				<ul className="list">
-					<li><a href="#" onClick={this.showWorkflowRunner}>Association</a></li>
-					<li><a href="#" onClick={this.showWorkflowRunner}>Annotation</a></li>
-				</ul><br />
-				<h5>Why building/using SciApps workflow</h5>
-				SciApps workflows are built on top of Agave API to leverage distributed compute and storage systems on the cloud. The backend is designed to provide convenience, increase performance, and ensure reproducibility.
-				<ul className="list">
-					<li>For convenience</li>
-						<ul className="list">
-							<li>Submitting multiple analysis jobs simultaneously</li>
-							<li>Data relationships, metadata, and real time job status are available on the workflow diagram</li> 
-							<li>Larger workflow can grow from existing workflows by chaining additional apps</li>
-							<li>Smaller workflow can be created from existing workflows by selecting less steps</li>
-						</ul>
-					<li>For performance</li>
-						<ul className="list">
-							<li>Jobs are running in parallel (jobs in a workflow will be submitted to cluster once inputs are ready (or dependency is clear))</li>
-							<li>Intermediate results are kept close to cluster (avoid unnecessary cross sites data transfer)</li>
-						</ul>
-					<li>For reproducibility</li>
-						<ul className="list">
-							<li>Workflow = pipeline + data (which means every re-run will create a new workflow)</li>
-							<li>Analysis of a workflow can be shared and completely reproduced with passing (and loading) a lightweight JSON file</li>
-						</ul>
-				</ul>
-			</div>
-		</div>
+			<ButtonGroup>
+				<Button key='relaunch' bsStyle='success' onClick={this.handleReLaunch}><Glyphicon glyph='repeat'/> Relaunch</Button>
+                                <Button key='view' bsStyle='info' onClick={this.showWorkflowDiagram}><Glyphicon glyph='modal-window'/> Visualize</Button>
+				<Button key='load' bsStyle='warning' onClick={this.handleLoad}><Glyphicon glyph='hand-right'/> Load</Button>
+			</ButtonGroup>
+		);
+	},
+
+	render: function() {
+
+		let selectRowProp={
+			mode: 'radio'
+		};
+		let options={
+			btnGroup: this.createCustomButtonGroup
+		};
+
+		return (
+			<Panel header="Public Workflows">
+				<BootstrapTable ref='table' data={workflowItems} striped={true} hover={true} pagination={true} selectRow={selectRowProp} options={options}>
+					<TableHeaderColumn isKey={true} dataField="workflow_id" hidden={true}>ID</TableHeaderColumn>
+					<TableHeaderColumn dataField="name" dataAlign="left" width='250' dataSort={true}>Name</TableHeaderColumn>
+					<TableHeaderColumn dataField="description" dataAlign="left">Description</TableHeaderColumn>
+				</BootstrapTable>
+				<Dialog ref='dialog' />
+			</Panel>
 		);
 	}
 });
 
-module.exports = Workflows;
+module.exports = publicWorkflows;

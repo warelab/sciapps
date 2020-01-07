@@ -10,8 +10,6 @@
 			<dt>Submitted on: </dt><dd>[% date.format(job.submitTime) %]</dd>
 			<dt>Started on: </dt><dd>[% date.format(job.startTime) %]</dd>
 			<dt>Finished on: </dt><dd>[% date.format(job.endTime) %]</dd>
-			[%- archivePath=job.outputPath.replace(job.owner, settings.archive_path); archiveSystem=settings.archive_system; href=settings.output_url.$archiveSystem; href=href.replace('__system__', archiveSystem); href=href.replace('__path__',  archivePath); -%]
-			<dt>Results: </dt><dd>[% IF ('FINISHED' == job.status || 'FAILED' == job.status) %]<a href="[% href | url %]">[% href %]</a>[% END %]</dd>
 		</dl>
 	</p>
 [% ELSE %]

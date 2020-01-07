@@ -11,6 +11,7 @@ import AppsInfo from './appsInfo.js';
 import AppsForm from './appsForm.js';
 import Welcome from './welcome.js';
 import UserWorkflows from './userWorkflows.js';
+import UserJobs from './userJobs.js';
 import Workflows from './workflows.js';
 import WorkflowBuilder from './workflowBuilder.js';
 import WorkflowLoader from './workflowLoader.js';
@@ -38,9 +39,6 @@ const AppsDetail=React.createClass({
 		let appDetail=appsStore.appDetail;
 		let reload=appsStore.reload;
 		let markup;
-		//if (! this.props.user.logged_in) {
-		//	markup=<Welcome />
-		//} else if (appDetail && appDetail.id) {
 		if (appDetail && appDetail.id) {
 			markup=(
 				<div>
@@ -50,7 +48,16 @@ const AppsDetail=React.createClass({
 			);
 		} else {
 			switch (appsStore.pageId) {
+				case 'userJobs':
+					markup=<UserJobs user={user} />
+					break;
 				case 'userWorkflows':
+					markup=<UserWorkflows user={user} />
+					break;
+				case 'dataWorkflows':
+          if (_config.data_item) {
+            WorkflowActions.listWorkflow(_config.data_item);
+          }
 					markup=<UserWorkflows user={user} />
 					break;
 				case 'workflows':

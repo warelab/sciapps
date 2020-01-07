@@ -18,7 +18,6 @@ coverage
 
 # node-waf configuration
 .lock-wscript
-.well-known
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
@@ -28,6 +27,7 @@ build/Release
 node_modules
 
 .agave
+site_warning.txt
 cyversedancer
 bundle.js
 *.swp
@@ -36,3 +36,4 @@ tmp
 database
 config.yml
 environments
+agavedancer/public/assets/

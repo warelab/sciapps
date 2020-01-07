@@ -38,21 +38,24 @@ sub parse_ils {
 	my @content;
 	my %result=($1 => \@content);
 	$path=$datastore_root . ($1 ? '/' . $1 : '');
+	my %seen;
 	foreach my $line (@$ils) {
+		my ($name, $type);
 		if ($line=~m#^\s+C\-\s+$path/(.*)#) {
-			my $name=$1;
+			$name=$1;
 			$name=~s/\s+$//;
-			push @content, +{
-				name	=> $name,
-				type	=> 'dir',	
-			};
+			$type='dir';
 		} else {
 			my @f=split /\s+/, $line, 8;
-			push @content, +{
-				name => $f[7],
-				type => 'file',
-			};
+			$name=$f[7];
+			$type='file';
 		}
+		$seen{$name}++ or
+		push @content, +{
+			name	=> $name,
+			type	=> $type,	
+			path	=> $path . '/' . $name, 
+		};
 	}
 	\%result;
 }
@@ -75,12 +78,23 @@ sub parse_ls {
 					length  => $f[4],
 					name  => $f[8],
 					type  => substr($f[0], 0, 1) eq 'd' ? 'dir' : 'file',
+					path	=> $path . '/' . $f[8],
 				};
 			}
 		}
 	}
 	\%result;
-};
+}
+
+sub transform_url {
+	my ($data, $archive_system)=@_;
+	if ($data=~m#^https://\w+.sciapps.org/results/job-(\w+\-\w+\-\w+\-\w+)[^\/]*/(.*)#) {
+		$data='https://agave.iplantc.org/jobs/v2/' . $1 . '/outputs/media/' . $2;
+	} elsif ($data=~m#^http://datacommons.cyverse.org/browse/iplant/home/#) {
+		$data=~s#^http://datacommons.cyverse.org/browse/iplant/home/#agave://$archive_system/#;
+	}
+	$data;
+}
 
 
 1;

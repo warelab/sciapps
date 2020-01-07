@@ -7,6 +7,7 @@ import Q from 'q';
 import AppsActions from  '../actions/appsActions.js';
 import JobsActions from  '../actions/jobsActions.js';
 import WorkflowActions from  '../actions/workflowActions.js';
+import utilities from '../libs/utilities.js';
 
 axios.defaults.withCredentials = true;
 
@@ -34,10 +35,15 @@ const WorkflowStore=Reflux.createStore({
 		this.state={
 			showWorkflowDiagram: false,
 			showWorkflowLoadBox: false,
+      showWorkflowMetadata: false,
+      noJSON: false,
 			workflowDetail: undefined,
 			remoteWorkflowDetailPromise: undefined,
 			workflowDetailCache: {},
 			workflows: [],
+      metadata: {},
+      dataItem: undefined,
+      dataWorkflows: {},
 			build: {},
 			workflowDiagramDef: undefined
 		};
@@ -57,11 +63,11 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
-	showWorkflowDiagram: function() {
-		if (this.state.workflowDetail !== undefined) {
-			this.state.showWorkflowDiagram=true;
-			this.complete();
-		}
+	showWorkflowDiagram: function(wfId, wfDetail, noJobList, noJSON) {
+		this.state.showWorkflowDiagram=true;
+    this.state.noJSON=noJSON || false;
+		this.showWorkflow(wfId, wfDetail, noJobList);
+		this.complete();
 	},
 
 	hideWorkflowDiagram: function() {
@@ -70,9 +76,28 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
-	showWorkflow: function(wfId, wfDetail) {
-		this.setWorkflow(wfId, wfDetail);
+	showWorkflowMetadata: function(wfId) {
+		this.state.showWorkflowMetadata=true;
+		this.setWorkflow(wfId, undefined, undefined, undefined, true);
 		this.complete();
+	},
+
+	hideWorkflowMetadata: function() {
+		this.state.showWorkflowMetadata=false;
+		this.complete();
+	},
+
+	showWorkflow: function(wfId, wfDetail, noJobList) {
+		let promise=Q(1);
+		if (wfId) {
+			this.state.workflowDetail=undefined;
+	 		promise=this.setWorkflow(wfId, wfDetail, undefined, undefined, noJobList);
+		} 
+		promise.then(function(wf) {
+			if (this.state.workflowDetail !== undefined) {
+				this.complete();
+			}
+		}.bind(this));
 	},
 
 	hideWorkflow: function() {
@@ -80,19 +105,27 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
-	listWorkflow: function() {
+	listWorkflow: function(dataItem) {
+    this.state.dataItem=dataItem;
+    this.complete();
 		let setting=_config.setting;
-		Q(axios.get('/workflow', {
-			headers: {'X-Requested-With': 'XMLHttpRequest'},
+    let option=dataItem ? "?dataItem=" + dataItem : '';
+		Q(axios.get('/workflow' + option, {
+			headers: {'X-Requested-With': 'XMLHttpRequest'}
 		}))
 		.then(function(res) {
 			if (res.data.error) {
 				console.log(res.data.error);
 				return;
+			} else {
+        if (dataItem) {
+          this.state.dataWorkflows[dataItem]=res.data.data;
+        } else {
+				  this.state.workflows=res.data.data;
+        }
+				this.complete();
+				return res.data;
 			}
-			this.state.workflows=res.data;
-			this.complete();
-			return res.data;
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
@@ -100,42 +133,56 @@ const WorkflowStore=Reflux.createStore({
 		.done();
 	},
 
-	setWorkflow: function(wfId, wfDetail) {
+	setWorkflow: function(wfId, wfDetail, addToList, noSync, noJobList) {
 		let setting=_config.setting;
 		if (wfDetail) {
 			this.state.workflowDetailCache[wfId]=wfDetail;
+			let index=_.findIndex(this.state.workflows, {workflow_id: wfId});
+			if (index >= 0) {
+				this.state.workflows[index]=wfDetail;
+			} else if (addToList) {
+				this.state.workflows.push(wfDetail);
+			}
 		}
 		let workflowDetail=this.state.workflowDetailCache[wfId];
 		let workflowPromise;
 		if (workflowDetail) {
 			workflowPromise=Q(workflowDetail);
 		} else {
-			workflowPromise=Q(axios.get('/assets/' + wfId + '.workflow.json'))
+			//workflowPromise=Q(axios.get('/assets/' + wfId + '.workflow.json'))
+			workflowPromise=Q(axios.get('/workflow/' + wfId,{
+				headers: {'X-Requested-With': 'XMLHttpRequest'}
+			}))
 			.then(function(res) {
 				if (res.data.error) {
 					console.log(res.data.error);
 					return;
+				} else {
+					let data=res.data.data || res.data;
+					this.state.workflowDetailCache[wfId]=data;
+					return data;
 				}
-				this.state.workflowDetailCache[wfId]=res.data;
-				return res.data;
 			}.bind(this));
 		}
-		workflowPromise.then(function(wfDetail) {
+		return workflowPromise.then(function(wfDetail) {
 			if (wfDetail) {
-				this.setWorkflowSteps(wfDetail);
+				this.setWorkflowSteps(wfDetail, noSync, noJobList);
+        if (wfDetail.metadata_id) {
+          this.setWorkflowMetadata(wfDetail.workflow_id);
+        }
+				return wfDetail;
 			}
 		}.bind(this))
 		.catch(function(error) {
 			console.log(error);
 		});
-		return workflowPromise;
 	},
 
 	updateWorkflow: function(wf) {
 		let formData=new FormData();
-		formData.append('_workflow_name',  wf.name);
-		formData.append('_workflow_desc',  wf.description);
-		Q(axios.post('/workflow/' + wf.id + '/update', formData, {
+		formData.append('workflow_name',  wf.name);
+		formData.append('workflow_desc',  wf.description);
+		Q(axios.post('/workflow/' + wf.workflow_id + '/update', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
 			transformRequest: function(data) { return data; }
 		}))
@@ -144,7 +191,7 @@ const WorkflowStore=Reflux.createStore({
 				console.log(res.data.error);
 				return;
 			} else if (res.data.status === 'success') {
-				let currWf=_.find(this.state.workflows, 'workflow_id', wf.id);
+				let currWf=_.find(this.state.workflows, 'workflow_id', wf.workflow_id);
 				_.assign(currWf, wf);
 				this.complete();
 			}
@@ -155,13 +202,13 @@ const WorkflowStore=Reflux.createStore({
 		.done();
 	},
 
-	saveWorkflow: function(wf) {
+	saveWorkflow: function(wf, noJSON) {
 		let setting=_config.setting;
 		let formData=new FormData();
-		formData.append('_workflow_id', wf.id);
-		formData.append('_workflow_name',  wf.name);
-		formData.append('_workflow_desc',  wf.description);
-		formData.append('_workflow_json',  JSON.stringify(wf));
+		formData.append('id', wf.workflow_id);
+		formData.append('workflow_name',  wf.name);
+		formData.append('workflow_desc',  wf.description);
+		noJSON || formData.append('workflow_json',  JSON.stringify(wf));
 
 		Q(axios.post('/workflow/new', formData, {
 			headers: {'X-Requested-With': 'XMLHttpRequest'},
@@ -172,7 +219,9 @@ const WorkflowStore=Reflux.createStore({
 				console.log(res.data.error);
 				return;
 			} else if (res.data.status === 'success') {
-				this.state.workflows.push(res.data.data);
+				let data=res.data.data;
+        noJSON && (data.steps=wf.steps); 
+				WorkflowActions.setWorkflow(data.workflow_id, data, true);
 				this.complete();
 			}
 		}.bind(this))
@@ -194,6 +243,7 @@ const WorkflowStore=Reflux.createStore({
 			} else if (res.data.status === 'success') {
 				_.remove(this.state.workflows, {workflow_id: wfId});
 				this.complete();
+				return wfId;
 			}
 		}.bind(this))
 		.catch(function(error) {
@@ -210,7 +260,7 @@ const WorkflowStore=Reflux.createStore({
 	updateWorkflowJob: function(wfId, jobs) {
 		if (this.state.workflowDetail.id === wfId) {
 			this.state.workflowDetail.steps.forEach(function(v, i) {
-				if (v.jobId === undefined && jobs[i].id) {
+				if (jobs[i].id && jobs[i].id !== v.jobId) {
 					v.jobId=jobs[i].id;
 				}
 			});
@@ -257,17 +307,46 @@ const WorkflowStore=Reflux.createStore({
 		}
 	},
 
-	setWorkflowSteps: function(wfDetail) {
-		this.state.workflowDetail=wfDetail;
+  setWorkflowMetadata : function(wfId) {
+		let promise;
+    if (this.state.metadata[wfId]) {
+      promise=Q(this.state.metadata[wfId]);
+    } else {
+      promise=Q(axios.get('/workflow/' + wfId + '/metadata', {
+		    headers: {'X-Requested-With': 'XMLHttpRequest'}
+		  }))
+		  .then(function(res) {
+			  if (res.data.error) {
+				  console.log(res.data.error);
+				  return;
+			  } else if (res.data.status === 'success') {
+          this.state.metadata[wfId]=res.data.data;
+				  return res.data.data;
+			  }
+		  }.bind(this))
+		  .catch(function(error) {
+			  console.log(error);
+		  });
+    }
+    promise.then(function(metadata) {
+      this.complete();
+      return metadata;
+    }.bind(this));
+  },
+
+	setWorkflowSteps: function(wfDetail, noSync, noJobList) {
+		if (! noSync || this.state.workflowDetail && this.state.workflowDetail.workflow_id === wfDetail.workflow_id) {
+			this.state.workflowDetail=wfDetail;
+		}
 		let appIds=_.uniq(_.values(wfDetail.steps).map(function(o) {
 			return o.appId;
 		}));
 		let jobIds=_.uniq(_.values(wfDetail.steps).map(function(o) {
 			return o.jobId;
 		}).filter(function(o){return o}));
-		AppsActions.setWorkflowApps(appIds, wfDetail.id);
-		JobsActions.setJobs(jobIds);
-		this.complete();
+		AppsActions.setApps(appIds, wfDetail.workflow_id);
+		JobsActions.setJobs(jobIds, undefined, noJobList);
+		//this.complete();
 	},
 
 	buildWorkflow: function(wid, wfName, wfDesc) {

@@ -12,14 +12,15 @@ const AppsGroup=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore')],
 
 	componentDidMount: function() {
-		AppsActions.debouncedListApps();
+		//let setting=_config.setting;
+		//let mode=setting.appsListMode || [''];
+		//mode.forEach((value) => AppsActions.listApps('', value));
 	},
 
 	render: function() {
 		let appsStore=this.state.appsStore;
 		let apps=appsStore.apps;
-		//let appGroup={Private: [], Public: []};
-		let appGroup={};
+		let appGroup={Private: []};
 		for (let app of apps) {
 			for (let tag of app.tags) {
 				if (! appGroup[tag]) {
@@ -28,7 +29,14 @@ const AppsGroup=React.createClass({
 				appGroup[tag].push(app);
 			}
 		}
-		let appsPanel=_.keys(appGroup).sort().map(function (tag, index) {
+		let privateApps=appGroup['Private'];
+		delete appGroup['Private'];
+		let tags=_.keys(appGroup).sort();
+		if (privateApps.length) {
+			tags.unshift('Private');
+			appGroup['Private']=privateApps;
+		}
+		let appsPanel=tags.map(function (tag, index) {
 			return <AppsPanel key={index} index={index} header={tag} apps={appGroup[tag]} expanded={appsStore.filtered}/>
 		});
 		return (

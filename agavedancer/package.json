@@ -17,6 +17,7 @@
     "react": "^0.14.2",
     "react-bootstrap": "^0.27.3",
     "react-bootstrap-dialog": "^0.9.1",
+    "react-bootstrap-table": "^4.1.1",
     "react-dom": "^0.14.2",
     "react-layout-pane": "^0.1.14",
     "reflux": "^0.3.0",

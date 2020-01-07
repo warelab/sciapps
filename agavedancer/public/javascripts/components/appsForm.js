@@ -6,7 +6,6 @@ import _ from 'lodash';
 import Q from 'q';
 import {Panel, Button, Alert, Tooltip, OverlayTrigger} from 'react-bootstrap';
 import BaseInput from './baseInput.js';
-import AppsBoolParam from './appsBoolParam.js';
 import AppsParam from './appsParam.js';
 import AppsInput from './appsInput.js';
 import AppsActions from '../actions/appsActions.js';
@@ -17,25 +16,27 @@ import Dialog from 'react-bootstrap-dialog';
 
 const AppsForm=React.createClass({
 	getInitialState: function() {
-		return { onSubmit: false, onValidate: false, required: {} };
+		return { onSubmit: false, onValidate: false, required: {}, update: true };
 	},
 
 	formName: 'agaveWebAppForm',
 
 	componentWillReceiveProps: function(nextProps) {
 		this.setState({
+			update: true,
 			onSubmit: false,
 			onValidate: false
 		});
 	},
 
 	componentWillUnmount () {
+		this.formData=undefined;
 		Dialog.resetOptions();
 	},
 
 	handleSubmit: function() {
 		dsActions.clearDataStoreItem();
-		this.setState({onSubmit: true, onValidate: true});
+		this.setState({onSubmit: true, onValidate: true, update: false});
 		let setting=_config.setting;
 		let required=[];
 		let appDetail=this.props.appDetail;
@@ -46,6 +47,9 @@ const AppsForm=React.createClass({
 					if (input.value.required) {
 						required.push(input.id);
 					}
+					//if (input.value.default !== undefined) {
+					//	data[input.id]=_.isArray(input.value.default) ? input.value.default : [input.value.default]; 
+					//}
 				});
 			}
 			if (appDetail.parameters &&  appDetail.parameters.length) {
@@ -53,17 +57,20 @@ const AppsForm=React.createClass({
 					if (param.value.required) {
 						required.push(param.id);
 					}
+					//if (param.value.default !== undefined) {
+					//	data[param.id]=param.value.default;
+					//}
 				});
 			}
 		}
 		let form=this.refs[this.formName];
 		let validated=utilities.validateForm(form, required, setting.upload_suffix);
-		let confirmed, formData;
-		if (user.logged_in) {
+		let confirmed;
+		if (user.authenticated) {
 			if (validated) {
-				formData=new FormData(this.refs[this.formName]);
+				let formData=new FormData(this.refs[this.formName]);
 				this.refs.dialog.show({
-					body: 'Are you sure you want to submit this job?',
+					body: "Are you sure you want to submit this job?\n-------------------------------------------------\nA 'sci_data' folder is needed for archiving results (e.g. /iplant/home/USER/sci_data).",
 					actions: [
 						Dialog.CancelAction(),
 						Dialog.Action(
@@ -72,7 +79,7 @@ const AppsForm=React.createClass({
 								JobsActions.submitJob(this.props.appDetail.id, formData);
 								this.setState({onValidate: false});
 								Q.delay(1000).then(function() {
-									this.refs.dialog.showAlert('Submitted! Check History panel for status');
+									this.refs.dialog.showAlert('Submitted! Check the History panel for status');
 								}.bind(this));
 							},
 							'btn-warning'
@@ -120,23 +127,28 @@ const AppsForm=React.createClass({
 		let user=this.props.user;
 		let appDetail=this.props.appDetail;
 		let onSubmit=this.state.onSubmit, onValidate=this.state.onValidate;
-		let app_inputs=[], app_params=[], header=appDetail.name + ' (SciApps Version ' + appDetail.version + '): ' + appDetail.shortDescription;
-		let reload=this.props.reload;
+		let app_inputs=[], app_params=[], header=appDetail.name + ' (version ' + appDetail.version + '): ' + appDetail.shortDescription;
+		let reload=this.state.update ? this.props.reload : undefined;
 
 		if (appDetail && undefined !== appDetail.name) {
 			let jobDetail=appDetail._jobDetail;
 			if (appDetail.inputs && appDetail.inputs.length) {
 				let sortedInputs=_.sortBy(appDetail.inputs, utilities.getValueOrder);
-				app_inputs=sortedInputs.map(function(input) {
+				app_inputs=sortedInputs.map(function(app_input) {
+					let input=_.cloneDeep(app_input);
 					if (jobDetail && jobDetail.inputs[input.id] !== undefined) {
-						input.value.value=jobDetail.inputs[input.id][0];
+						//input.value.value=JSON.stringify(jobDetail.inputs[input.id]);
+						input.value.value=jobDetail.inputs[input.id];
+						//input.value.value=jobDetail.inputs[input.id][0];
 					}
-					return(<AppsInput key={appDetail.id + ':' + input.id} data={input} reload={reload} onValidate={onValidate} user={this.props.user} />);
+					let appsInput=<AppsInput key={appDetail.id + ':' + input.id} data={input} reload={reload} onValidate={onValidate} user={this.props.user} />;
+					return appsInput;
 				}.bind(this));
 			}
 			if (appDetail.parameters &&  appDetail.parameters.length) {
 				let sortedParams=_.sortBy(appDetail.parameters, utilities.getValueOrder);
-				app_params=sortedParams.map(function(param) {
+				app_params=sortedParams.map(function(app_param) {
+					let param=_.cloneDeep(app_param);
 					if (jobDetail && jobDetail.parameters[param.id] !== undefined) {
 						param.value.value=jobDetail.parameters[param.id];
 					}
@@ -145,45 +157,20 @@ const AppsForm=React.createClass({
 			}
 		}
 		let emailInput={
-			type: 'checkbox',
+			type: 'email',
 			required: false,
 			key: '_email',
 			id: '_email',
 			name: '_email',
-			default: 0,
-			label: 'Email Notification',
-			help: 'Optional Email notification upon job completeion'
+			label: 'Email',
+			help: 'Optional Email notification upon job completion'
 		};
-		let submitBtn=<Button bsStyle='primary' onClick={this.handleSubmit}>Submit Job</Button>; 
-		//if (user.logged_in) {
-		//	if (this.state.onSubmit) {
-		//		submitBtn=(
-		//			<Alert bsStyle='warning' onDismiss={this.handleSubmitDismiss}>
-		//				<p>You are going to submit 1 job to a cluster, are you sure?</p>
-		//				<Button bsStyle='primary' onClick={this.handleSubmit}>Yes</Button>
-		//				<span> or </span>
-		//				<Button onClick={this.handleSubmitDismiss}>No</Button>
-		//			</Alert>
-		//		);
-		//	} else {
-		//		submitBtn=(
-		//			<Button bsStyle='primary' onClick={this.handleSubmitPrepare}>Submit Job</Button>
-		//		);
-		//	}
-		//} else {
-		//	let tooltipsubmit = <Tooltip id="tooltisubmit">Please log in to submit job</Tooltip>;
-		//	submitBtn=(
-		//		<OverlayTrigger placement="bottom" overlay={tooltipsubmit}>
-		//			<Button bsStyle='primary' onClick={null}>Submit Job</Button>
-		//		</OverlayTrigger>
-		//	);
-		//}
+		let submitBtn=<Button bsStyle='primary' onClick={this.handleSubmit}>Submit job</Button>; 
 		return (
 			<Panel header={header}>
 				<form ref={this.formName}>
 					{app_inputs}
 					{app_params}
-					<AppsBoolParam data={emailInput} />
 					{submitBtn}
 				</form>
 				<Dialog ref='dialog' />

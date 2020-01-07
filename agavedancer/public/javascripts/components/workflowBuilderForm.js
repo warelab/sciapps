@@ -21,62 +21,40 @@ const WorkflowBuilderForm=React.createClass({
 			wfid: undefined,
 			onSubmit: false,
 			onValidate: false,
-			required: ['jobList', 'workflowName'],
-			formData: {}
+			//required: ['jobList', 'workflowName'],
+			required: ['jobList']
 		}
 	},
 
 	componentDidUpdate: function(prevProps, prevState) {
 		let workflowStore=this.state.workflowStore;
-		//let wf=this.state.wfid ? workflowStore.build[this.state.wfid] : undefined;
 		let wf=this.state.wfid ? workflowStore.workflowDetailCache[this.state.wfid] : undefined;
 		if (this.state.onSubmit && wf) {
-			//WorkflowActions.showWorkflow(wf.id);
 			WorkflowActions.showWorkflowDiagram();
 			this.setState({ onSubmit: false });
 		}
 	},
 
-	componentWillUnmount: function() {
-		this.setState({formData: {}});
-	},
-
 	formName: 'workflowBuilderForm',
 
 	handleSubmit: function() {
-		let form=this.refs[this.formName], formData={}, changed=false;;
+		let form=this.refs[this.formName], formData={};
+		formData['jobList']=form['jobList'];
 		let required=this.state.required;
-		['jobList', 'workflowName', 'workflowDesc'].forEach(function(n) {
-			if (form[n].value !== this.state.formData[n]) {
-				changed=true;
-			}
-			formData[n]=form[n].value;
-		}.bind(this));
 		let validated=utilities.validateForm(form, required);
-		if (changed) {
-			if (validated) {
-				let workflows=this.state.workflowStore.workflows;
-				if (_.find(workflows, 'name', formData['workflowName'])) {
-					//alert('Please choose a unique name.');
-					this.refs.dialog.showAlert('A workflow with that name already exists. Please enter a different name');
-				} else {
-					let wfid=utilities.uuid();
-					this.setState({onSubmit: true, wfid: wfid});
-					let workflow=this.buildWorkflow(wfid, formData['workflowName'], formData['workflowDesc'], this.state.jobsStore, this.state.appsStore);
-					WorkflowActions.setWorkflow(wfid, workflow);
-				}
-			} 
-			this.setState({ formData: formData });
-		} else {
-			if (validated) {
-				WorkflowActions.showWorkflowDiagram();
-			}
-		}
+		if (validated) {
+			let wfid=utilities.uuid();
+			this.setState({onSubmit: true, wfid: wfid});
+			let workflow=this.buildWorkflow(wfid, 'my_workflow', '', this.state.jobsStore, this.state.appsStore);
+			WorkflowActions.setWorkflow(wfid, workflow);
+		} 
+		this.setState({ formData: formData });
 	},
 
 	buildWorkflow: function(wfid, wfName, wfDesc, jobsStore, appsStore) {
 		let setting=_config.setting;
 		let workflow={
+				workflow_id: wfid,
 				id: wfid, 
 				name: wfName,
 				description: wfDesc || '',
@@ -84,7 +62,7 @@ const WorkflowBuilderForm=React.createClass({
 		};
 		let jobs=jobsStore.workflowBuilderJobIndex.map(function(v, i) {
 			return v ? jobsStore.jobDetailCache[jobsStore.jobs[i].job_id] : undefined;
-		}).filter(function(v) {return v !== undefined});
+		}).filter(function(v) {return v !== undefined}).sort(function(a,b){return a.remoteSubmitted.localeCompare(b.remoteSubmitted)});
 		let outputs={};
 		jobs.forEach(function(job, index) {
 			let step=this._buildWfStep(job, index, outputs);
@@ -94,8 +72,8 @@ const WorkflowBuilderForm=React.createClass({
 				let filePath=job.archivePath ? job.archivePath : job.id + '/outputs/media';
 				//let path=job.archivePath + '/' + output.value.default;
 				//let archivePath=job.outputPath.replace(job.owner, setting.archive_path);
-				let path=filePath + '/' + output.value.default;
-				outputs[path]={step: index, output_name: output.value.default};
+				let path=filePath + '/' + output.id;
+				outputs[path]={step: index+1, output_name: output.id};
 			});
 		}.bind(this));
 		return workflow;
@@ -103,17 +81,26 @@ const WorkflowBuilderForm=React.createClass({
 
 	_buildWfStep: function(job, index, outputs) {
 		let step={
-			id: index,
+			id: index+1,
 			appId: job.appId,
 			jobId: job.id,
 			inputs: {},
 			parameters: job.parameters
 		};
 		_.forIn(job.inputs, function(iv, ik) {
-			let output=_.find(outputs, function(ov, ok) {
-				return _.endsWith(iv, ok);
+			//let input_name=_.isArray(iv) ? iv[0] : iv;
+			let input_name=_.isArray(iv) ? iv : [iv];
+			step.inputs[ik]=[];
+			input_name.forEach(function(name, i) {
+				let output=_.find(outputs, function(ov, ok) {
+					return _.includes(name, ok);
+				});
+				step.inputs[ik][i]=output ? output : name;
 			});
-			step.inputs[ik]=output ? output : iv[0];
+			//let output=_.find(outputs, function(ov, ok) {
+			//	return _.includes(input_name, ok);
+			//});
+			//step.inputs[ik]=output ? output : iv[0];
 		})
 		return step;
 	},
@@ -155,30 +142,11 @@ const WorkflowBuilderForm=React.createClass({
 			rows: 6,
 			value: jobList
 		};
-		let nameInput={
-			name: 'workflowName',
-			label: '*Workflow Name',
-			required: true,
-			placeholder: 'Enter workflow name',
-			value: this.state.formData['workflowName'] !== undefined ? this.state.formData['workflowName'] : 'my_workflow',
-			type: 'text'
-		};
-		let descInput={
-			name: 'workflowDesc',
-			label: 'Workflow Description',
-			required: false,
-			placeholder: 'Enter workflow description',
-			value: this.state.formData['workflowDesc'] !== undefined ? this.state.formData['workflowDesc'] : '',
-			type: 'textarea',
-			rows: 3
-		};
 
 		let markup=(
 			<div>
 				<form ref={this.formName} >
 					<BaseInput data={jobListInput} reload='resubmit' onValidate={true} />
-					<BaseInput data={nameInput} onValidate={true} />
-					<BaseInput data={descInput} />
 					<ButtonToolbar>
 						<Button
 							bsStyle='primary'
@@ -196,7 +164,7 @@ const WorkflowBuilderForm=React.createClass({
 							bsStyle='primary'
 							disabled={onSubmit}
 							onClick={this.handleSelectAll}>
-						Select All
+							Select All
 						</Button>
 					</ButtonToolbar>
 				</form>
