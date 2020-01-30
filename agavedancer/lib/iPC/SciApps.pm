@@ -606,10 +606,12 @@ sub retrieveJob {
 				database->quick_update('job', {job_id => $job_id}, \%data);
 			};
 			if ($job->{status} eq 'FINISHED') {
+        $job_ep->share_job($job->{id}, $username, 'READ');
 				#submitQueuedJob({job_id => $job_id, %data});
 				submitNextJob({job_id => $job_id, %data});
 				shareOutput({job_id => $job_id, %data});
 			} elsif ($job->{status} eq 'FAILED') {
+        $job_ep->share_job($job->{id}, $username, 'READ');
 				terminateNextJob({job_id => $job_id, %data});
 			}
 		}
@@ -1371,7 +1373,7 @@ sub submitJob {
         $job->{remoteEnded}||=$job->{endTime} || '';
 				updateJob($job_id, $job);
 				updateWorkflowJob($job_id);
-				$job_ep->share_job($job->{id}, $username, 'READ');
+        #$job_ep->share_job($job->{id}, $username, 'READ');
 				return ($job);
 			} else {
 				$err='Error: ' . $st->{message};
