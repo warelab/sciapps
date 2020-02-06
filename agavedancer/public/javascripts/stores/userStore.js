@@ -55,6 +55,11 @@ const UserStore=Reflux.createStore({
 		mode.forEach((value) => AppsActions.listApps('', value));
 	},
 
+  /*
+  ### Description
+  call web api to retrieve user data asynchronously
+  if noReset is true, user data in local js store will not be reset if no user is retrieved
+  */
 	setUser: function(user, noReset) {
 		let setting=_config.setting;
 		let token=this.state.token;
@@ -92,6 +97,10 @@ const UserStore=Reflux.createStore({
 		.done();
 	},
 
+  /*
+  ### Description
+  call _login to login user
+  */
 	login: function(formData) {
 		this._login(formData);
 		this.complete();
@@ -128,6 +137,10 @@ const UserStore=Reflux.createStore({
 		.done();
 	},
 
+  /*
+  ### Description
+  prepare some parameter update with username
+  */
 	_updateUser: function(data) {
 		let setting=_config.setting;
 		_.assign(this.state, data);
@@ -140,6 +153,10 @@ const UserStore=Reflux.createStore({
 		});
 	},
 
+  /*
+  ### Description
+  logout user and cleanup
+  */
 	logout: function() {
 		this.resetUser();
 		this._logout();

@@ -41,6 +41,10 @@ const WorkflowRunnerForm=React.createClass({
 
 	formName: 'workflowRunnerForm',
 
+  /*
+  ### Description
+  handling workflow submission and showing workflow diagram 
+  */
 	handleSubmit: function(event) {
 		dsActions.clearDataStoreItem();
 		this.setState({onSubmit: true, onValidate: true});
@@ -112,11 +116,19 @@ const WorkflowRunnerForm=React.createClass({
 		this.setState({onSubmit: false, onValidate: false});
 	},
 
+  /*
+  ### Description
+  showing workflow diagram
+  */
 	showWorkflowDiagram: function(noJobList, noJSON) {
     let wf=this.state.workflowStore.workflowDetail;
 		WorkflowActions.showWorkflowDiagram(wf.workflow_id, wf, noJobList, noJSON);
 	},
 
+  /*
+  ### Description
+  showing workflow metadata
+  */
 	showWorkflowMetadata: function() {
     let wf=this.state.workflowStore.workflowDetail;
     if (wf && wf.metadata_id) {

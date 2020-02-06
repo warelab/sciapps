@@ -7,6 +7,10 @@ import {ListGroupItem} from 'react-bootstrap';
 
 const AppsItem=React.createClass({
 
+  /*
+  ### Description
+  loading apps form in main panel
+  */
 	showApp: function() {
 		AppsActions.showApp(this.props.data.id, 'default');
 		let title=this.props.data.id;

@@ -14,6 +14,10 @@ const AppsBoolParam=React.createClass({
 		};
 	},
 
+  /*
+  ### Description
+  fill the value according to reload property; if it is 'resubmit', using job value; if it is 'default', using default value
+  */
 	componentWillReceiveProps: function(nextProps) {
 		let reload=nextProps.reload;
 		if (reload === 'resubmit') {
@@ -27,6 +31,10 @@ const AppsBoolParam=React.createClass({
 		this.setState({value: this.props.data.default});
 	},
 
+  /*
+  ### Description
+  handling button click to set value
+  */
 	handleBtn: function(event) {
 		switch(event.target.textContent) {
 			case this.TRUE:

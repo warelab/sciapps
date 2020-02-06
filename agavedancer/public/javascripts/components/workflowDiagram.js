@@ -34,16 +34,28 @@ const WorkflowDiagram=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  hide workflow diagram modal
+  */
 	hideWorkflowDiagram: function() {
 		this.state.activeNode={};
 		WorkflowActions.hideWorkflowDiagram();
 	},
 
+  /*
+  ### Description
+  chnage diagram direction between top/down and left/right
+  */
 	changeDirection: function() {
 		let labels = ["Top Down", "Left Right"];
 		this.setState({direction: this.state.direction ? 0 : 1, label: labels[this.state.direction ? 0 : 1]});
 	},
 
+  /*
+  ### Description
+  build workflow diagram step
+  */
 	buildWorkflowDiagramStep: function(step, diagramDefStmts, steps, appsStore, jobsStore, setting) {
 				let appId=step.appId;
 				let appDetail=appsStore.appDetailCache[appId];
@@ -149,6 +161,10 @@ const WorkflowDiagram=React.createClass({
 				});
 	},
 
+  /*
+  ### Description
+  build workflow diagram
+  */
 	buildWorkflowDiagram: function(workflowStore, appsStore, jobsStore, workflowDirection) {
 		let setting=_config.setting;
 		let def;
@@ -165,12 +181,20 @@ const WorkflowDiagram=React.createClass({
 		return def;
 	},
 
+  /*
+  ### Description
+  prepare workflow json download 
+  */
 	handleDownload: function() {
 		let workflowStore=this.state.workflowStore;
 		let wf=workflowStore.workflowDetail;
 		utilities.download(wf.name + '.json', 'application/json;charset=utf-8', JSON.stringify(wf));
 	},
 
+  /*
+  ### Description
+  save workflow
+  */
 	handleSave: function() {
 		let workflowStore=this.state.workflowStore;
 		let wf=workflowStore.workflowDetail;
@@ -219,6 +243,10 @@ const WorkflowDiagram=React.createClass({
 		});
 	},
 
+  /*
+  ### Description
+  calculate how many nodes in diagram to determine how large modal is needed
+  */
 	calculateNodeClass: function(workflowDetail) {
 		let nodeClass='modal-lg';
 		let stepDepth=_.reduce(workflowDetail.steps, function(depth, step) {

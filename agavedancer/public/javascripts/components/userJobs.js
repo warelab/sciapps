@@ -13,6 +13,10 @@ import utilities from '../libs/utilities.js';
 const UserJobs=React.createClass({
 	mixins: [Reflux.connect(JobsStore, 'jobsStore')],
 	
+  /*
+  ### Description
+  sort jobs by submit date
+  */
  	sortSubmitDates (a, b, order) {
 		if (a.remoteSubmitted === undefined)
 			return 1;
@@ -31,6 +35,10 @@ const UserJobs=React.createClass({
     		}
   	},
 
+  /*
+  ### Description
+  sort jobs by end date
+  */
         sortEndDates (a, b, order) {
                 if (a.remoteSubmitted === undefined)
                         return 1;
@@ -49,6 +57,10 @@ const UserJobs=React.createClass({
                 }
         },
 
+  /*
+  ### Description
+  load job to history panel
+  */
 	handleLoad: function(e) {
 		let table=this.refs.table;
 		let jobIds=table.store.getSelectedRowKeys();
@@ -57,10 +69,18 @@ const UserJobs=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  refresh the user job table widgt
+  */
 	handleRefresh: function(e) {
 		JobsActions.listJob();
 	},
 
+  /*
+  ### Description
+  delate job from user job table
+  */
 	handleDeleteRow: function(e) {
 		let table=this.refs.table;
 		let jobIds=table.store.getSelectedRowKeys();

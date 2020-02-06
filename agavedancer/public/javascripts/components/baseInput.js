@@ -9,6 +9,10 @@ const BaseInput=React.createClass({
 		return {value: this.props.reload === 'resubmit' || this.props.data.value !== undefined ? this.props.data.value : this.props.data.default};
 	},
 
+  /*
+  ### Description
+  fill the value according to reload property; if it is 'resubmit', using job value; if it is 'default', using default value
+  */
 	componentWillReceiveProps: function(nextProps) {
 		let reload=nextProps.reload;
 		if (reload === 'resubmit') {
@@ -22,12 +26,20 @@ const BaseInput=React.createClass({
 		this.setState({value: this.props.data.default});
 	},
 
+  /*
+  ### Description
+  handle text input and set input value
+  */
 	handleChange: function(event) {
 		let currValue=this.state.value;
 		let nextValue=this.props.data.type === 'checkbox' ? ! currValue : event.target.value;
 		this.setState({value: nextValue});
 	},
 
+  /*
+  ### Description
+  validate requirement fulfilled or setup warning
+  */
 	validateState: function() {
 		if (this.props.data.required && ! this.state.value.toString().length) return 'warning';
 		else return undefined;

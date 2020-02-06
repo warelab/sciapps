@@ -17,10 +17,18 @@ const WorkflowLoadBox=React.createClass({
 		};
 	},
 
+  /*
+  ### Description
+  hide the workflow load input box
+  */
 	hideWorkflowLoadBox: function() {
 		WorkflowActions.hideWorkflowLoadBox();
 	},
 
+  /*
+  ### Description
+  handle text input in input box and set value
+  */
 	handleValueChange: function(event) {
 		this.setState({value: event.target.value});
 		utilities.readAsText(event.target, function(e) {

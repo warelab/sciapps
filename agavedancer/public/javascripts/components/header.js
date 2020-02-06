@@ -12,6 +12,10 @@ import Dialog from 'react-bootstrap-dialog';
 
 const Header=React.createClass({
 
+  /*
+  ### Description
+  show welcome content in main panel
+  */
 	showWelcome: function() {
 		AppsActions.showPage('welcome');
 		let title="Scientific Apps";
@@ -24,6 +28,10 @@ const Header=React.createClass({
 		}
 	},
 	
+  /*
+  ### Description
+  show help content in main panel
+  */
 	showHelp: function() {
 		AppsActions.showPage('help');
 		let title="Help";
@@ -36,6 +44,10 @@ const Header=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  show workflow builder widget in main panel
+  */
 	showWorkflowBuilder: function() {
 		AppsActions.showPage('workflowBuilder');
 		let title="Building Scientific Workflows";
@@ -48,6 +60,10 @@ const Header=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  show workflow loader widget in main panel
+  */
 	showWorkflowLoader: function() {
 		AppsActions.showPage('workflowLoader');
 		let title="Loading Scientific Workflows";
@@ -60,6 +76,10 @@ const Header=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  show workflow runner widget in main panel
+  */
 	showWorkflowRunner: function() {
 		AppsActions.showPage('workflowRunner');
 		WorkflowActions.showWorkflowLoadBox();
@@ -73,6 +93,10 @@ const Header=React.createClass({
 		//}
 	},
 
+  /*
+  ### Description
+  show workflow widget in main panel
+  */
 	showWorkflows: function() {
 		AppsActions.showPage('workflows');
 		let title="Public Workflows";
@@ -85,6 +109,10 @@ const Header=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  show data workflow table widget in main panel
+  */
 	showDataWorkflows: function(e) {
     let dataItem=e.currentTarget.title;
     WorkflowActions.listWorkflow(dataItem);
@@ -99,6 +127,10 @@ const Header=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  show user worflow table widget in main panel
+  */
 	showUserWorkflows: function() {
     WorkflowActions.listWorkflow();
 		AppsActions.showPage('userWorkflows');
@@ -112,6 +144,10 @@ const Header=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  show user jobs table widget in main panel
+  */
 	showUserJobs: function() {
 		AppsActions.showPage('userJobs');
 		let title="My Jobs";
@@ -150,6 +186,10 @@ const Header=React.createClass({
  		});
 	},
 
+  /*
+  ### Description
+  show user token 
+  */
   handleToken: function() {
     let user=this.props.user;
     //this.refs.dialog.showAlert('Your API token is: ' + user.token);
@@ -174,6 +214,10 @@ const Header=React.createClass({
     });
   },
 
+  /*
+  ### Description
+  show web api swagger in a new page 
+  */
   handleSwagger: function() {
     let user=this.props.user;
 		let setting=_config.setting;
@@ -181,6 +225,10 @@ const Header=React.createClass({
     window.open(swagger_link, '_blank');
   },
 
+  /*
+  ### Description
+  open jbrowser in a new page
+  */
   handleJBrowse: function() {
     let setting=_config.setting;
     window.open(setting.toolsmenu_item.JBrowse, '_blank');

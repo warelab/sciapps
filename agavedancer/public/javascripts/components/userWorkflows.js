@@ -14,6 +14,10 @@ import utilities from '../libs/utilities.js';
 const UserWorkflows=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore')],
 
+  /*
+  ### Description
+  reload workflow to main panel for resubmission w/o loading jobs to history panel
+  */
 	handleRelaunch: function(e) {
 		let workflowStore=this.state.workflowStore;
     let dataItem=workflowStore.dataItem;
@@ -29,12 +33,20 @@ const UserWorkflows=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  refresh user workflow table widget
+  */
 	handleRefresh: function(e) {
 		let workflowStore=this.state.workflowStore;
     let dataItem=workflowStore.dataItem;
 		WorkflowActions.listWorkflow(dataItem);
 	},
 
+  /*
+  ### Description
+  load workflow jobs to history panel only
+  */
 	handleLoad: function(e) {
 		let workflowStore=this.state.workflowStore;
     let dataItem=workflowStore.dataItem;
@@ -49,6 +61,10 @@ const UserWorkflows=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  showing workflow metadata in a modal
+  */
 	showWorkflowMetadata: function(e) {
 		let workflowStore=this.state.workflowStore;
     let dataItem=workflowStore.dataItem;
@@ -63,6 +79,10 @@ const UserWorkflows=React.createClass({
 		}
 	},
   
+  /*
+  ### Description
+  showing workflow diagram in a modal
+  */
   showWorkflowDiagram: function(e) {
 		let workflowStore=this.state.workflowStore;
     let dataItem=workflowStore.dataItem;
@@ -77,6 +97,10 @@ const UserWorkflows=React.createClass({
     }
   },
 
+  /*
+  ### Description
+  delete workflow from user workflow table widget
+  */
 	handleDeleteRow: function(e) {
 		let table=this.refs.table;
 		let wfid=table.store.getSelectedRowKeys()[0];
@@ -104,6 +128,10 @@ const UserWorkflows=React.createClass({
 		})
 	},
 
+  /*
+  ### Description
+  create download of workflow json file
+  */
 	handleDownload: function(e) {
 		let table=this.refs.table;
 		let wfid=table.store.getSelectedRowKeys()[0];
@@ -116,6 +144,10 @@ const UserWorkflows=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  create a url in modal for sharing workflow
+  */
 	handleShare: function(e) {
 		let table=this.refs.table;
 		let wfid=table.store.getSelectedRowKeys()[0];
@@ -143,6 +175,10 @@ const UserWorkflows=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  update workflow data
+  */
 	handleCellSave: function(row, cellName, cellValue) {
 		let formData=_.pick(row, ['workflow_id', 'name', 'description']);
 		WorkflowActions.updateWorkflow(formData);

@@ -3,6 +3,10 @@
 import _ from 'lodash';
 
 module.exports = {
+  /*
+  ### Description
+  generate uuid
+  */
 	uuid: function() {
 		return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 			let r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
@@ -10,6 +14,10 @@ module.exports = {
 		});
 	},
 	
+  /*
+  ### Description
+  prepare content as file download
+  */
 	download: function(filename, type, content) {
 		let pom = document.createElement('a');
 		pom.setAttribute('href', 'data:' + type + ',' + encodeURIComponent(content));
@@ -24,6 +32,10 @@ module.exports = {
 		}
 	},
 
+  /*
+  ### Description
+  read file text
+  */
 	readAsText: function(target, onload) {
 		if (typeof window.FileReader !== 'function') {
 			alert("The file API isn't supported on this browser.");
@@ -36,6 +48,10 @@ module.exports = {
 		}
 	},
 
+  /*
+  ### Description
+  validate form; check all required fields
+  */
 	validateForm: function(form, required, upload_suffix) {
 		upload_suffix=upload_suffix || '';
 		let formdata={};
@@ -48,15 +64,27 @@ module.exports = {
 		return ret;
 	},
 
+  /*
+  ### Description
+  get value's order
+  */
 	getValueOrder: function(o) { 
 		return o.value.order 
 	},
 
+  /*
+  ### Description
+  truncate string to fixed length, default 12
+  */
 	truncate: function(string, length = 12) {
 		let result=string.length > length ? string.substr(0,length-1).concat(" ...") : string;
 		return result;
 	},
 
+  /*
+  ### Description
+  transform datetime
+  */
   transformDateTime: function(datetime) {
     let result=datetime.substr(0, 19);
     let date = new Date(result.concat('.000Z'));

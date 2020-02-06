@@ -15,11 +15,19 @@ const AppsSearchBox=React.createClass({
 		};
 	},
 
+  /*
+  ### Description
+  handling text input and set search string value
+  */
 	handleValueChange: function(event) {
 		AppsActions.debouncedListApps(event.target.value);
 		this.setState({value: event.target.value});
 	},
 
+  /*
+  ### Description
+  handling clear search string
+  */
 	handleValueClear: function() {
 		this.setState({value: ''});
 		AppsActions.listApps();

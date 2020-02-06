@@ -14,6 +14,10 @@ const JobOutpusDetail=React.createClass({
 		return {isStage: false};
 	},
 
+  /*
+  ### Description
+  showing a url in modal for sharing output
+  */
 	handleShare: function(e) {
 		let table=this.refs.table;
 		let setting=_config.setting;
@@ -45,6 +49,10 @@ const JobOutpusDetail=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  visualize output in a new window
+  */
 	handleVisualize: function(e) {
 		let table=this.refs.table;
 		let setting=_config.setting;

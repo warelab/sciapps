@@ -20,6 +20,10 @@ const JobsMessage=React.createClass({
 		this.setState({jobsNum: jobsStore.jobs.length});
 	},
 
+  /*
+  ### Description
+  load public workflow table widget in main panel
+  */
 	showWorkflows: function() {
 		AppsActions.showPage('workflows');
 		let title="Public Workflows";
@@ -32,6 +36,10 @@ const JobsMessage=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  load workflow builder widget in main panel
+  */
 	showWorkflowBuilder: function() {
 		AppsActions.showPage('workflowBuilder');
 		let title="Building Scientific Workflows";

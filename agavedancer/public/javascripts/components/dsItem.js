@@ -9,6 +9,10 @@ const DsItem=React.createClass({
 		return { clickTimer: undefined };
 	},
 
+  /*
+  ### Description
+  handle double click item; if item is a directory, open the directory, or select the item and set value to target input if it is a file 
+  */
 	handleDblClick: function(event) {
 		let content=event.target.textContent;
 		switch(this.props.data.type) {
@@ -22,6 +26,10 @@ const DsItem=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  handle single click item; select the item and set value to target input 
+  */
 	handleClick: function(event) {
 		let content=event.target.textContent;
 		switch(this.props.data.type) {
@@ -34,6 +42,10 @@ const DsItem=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  handle selection an itenm by single click or double click
+  */
 	handleSelect: function(event) {
 		if (this.state.clickTimer) {
 			clearTimeout(this.state.clickTimer);

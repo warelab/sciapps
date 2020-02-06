@@ -16,12 +16,20 @@ const JobsItem=React.createClass({
 		this.setState({ checked: checked });
 	},
 
+  /*
+  ### Description
+  show job details in a modal
+  */
 	showJob: function() {
 		if (this.props.job.job_id) {
 			JobsActions.showJob(this.props.job.job_id);
 		}
 	},
 
+  /*
+  ### Description
+  expand the job item to show its outputs
+  */
 	showJobOutputs: function() {
 		if (! this.state.isOpen && this.props.job.job_id) {
 			JobsActions.setJobOutputs(this.props.job.job_id);
@@ -29,12 +37,20 @@ const JobsItem=React.createClass({
 		this.setState({ isOpen: !this.state.isOpen });
 	},
 
+  /*
+  ### Description
+  load apps form with job data for resubmission
+  */
 	resubmitJob: function() {
 		if (this.props.job.job_id) {
 			JobsActions.resubmitJob(this.props.job.job_id);
 		}
 	},
 
+  /*
+  ### Description
+  show the job outputs details in a modal
+  */
 	showJobOutputsDetail: function() {
 		if (! this.state.showJobOutputsDetail) {
 			JobsActions.stageJobOutputs(this.props.job.job_id);
@@ -42,12 +58,20 @@ const JobsItem=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  hide the job outputs details modal
+  */
 	hideJobOutputsDetail: function() {
 		if (this.state.showJobOutputsDetail) {
 			this.setState({ showJobOutputsDetail: false });
 		}
 	},
 
+  /*
+  ### Description
+  add/remove job from job list for workflow builder
+  */
 	handleCheck: function() {
 		let checked=!this.state.checked;
 		if (checked) {

@@ -15,10 +15,18 @@ const DsDetail=React.createClass({
 		DsActions.hideDataStore();
 	},
 
+  /*
+  ### Description
+  handle change datastore source
+  */
 	handleChangeSource: function(event) {
 		DsActions.changeSource('__' + event.target.value + '__');
 	},
 
+  /*
+  ### Description
+  handle go to parent directory
+  */
 	handleGoup: function() {
 		DsActions.showDataStore('..');
 	},

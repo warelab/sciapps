@@ -48,6 +48,11 @@ const JobsStore=Reflux.createStore({
 		this.complete();
 	},
 
+  /*
+  ### Description
+  call web api to retrieve job list asynchronously and return job list json
+  */
+
 	listJob: function() {
 		let setting=_config.setting;
 		Q(axios.get('/job', {
@@ -68,6 +73,11 @@ const JobsStore=Reflux.createStore({
 		})
 		.done();
 	},
+
+  /*
+  ### Description
+  call web api to delete job asynchronously, and delete corresponding job in local js store 
+  */
 
 	_deleteJob: function(jobId) {
 		let setting=_config.setting;
@@ -100,6 +110,10 @@ const JobsStore=Reflux.createStore({
 		}.bind(this));
 	},
 
+  /*
+  ### Description
+  Call web api to submit all workflow jobs asynchronously, and return workflow and its jobs json, also adjust the workflow and its jobs in local js store
+  */
 	submitWorkflowJobs: function(wf, formData) {
 		let submitNumber=this.state.jobs.length;
 		let setting=_config.setting;
@@ -156,6 +170,10 @@ const JobsStore=Reflux.createStore({
 		.done();
 	},
 
+  /*
+  ### Description
+  call web api to submit job asynchronously, and return job json, also adjust job in local js store
+  */
 	submitJob: function(appId, formData) {
 		let submitNumber=this.state.jobs.length;
 		let setting=_config.setting;
@@ -184,6 +202,10 @@ const JobsStore=Reflux.createStore({
 		.done();
 	},
 
+  /*
+  ### Description
+  call _setJobs to submit all jobs asynchronously, and return it as promise, also adjust job in local js store
+  */
 	setJobs: function(jobIds, check, noJobList) {
 		if (! jobIds) {
 			jobIds=_.filter(this.state.jobs, function(job) {
@@ -206,16 +228,28 @@ const JobsStore=Reflux.createStore({
 		}.bind(this));
 	},
 
+  /*
+  ### Description
+  reset the wokflow in local js store
+  */
 	resetWorkflowJobs: function(wid) {
 		delete this.state.wid[wid];
 	},
 
+  /*
+  ### Description
+  test whether job changed or not, when compared with job stored in cache
+  */
 	isChanged: function(data) {
 		let job_id=data.job_id;
 		let old_data=this.state.jobDetailCache[job_id];
 		return ! old_data || old_data.id === undefined && data.id || old_data.status !== data.status;
 	},
 
+  /*
+  ### Description
+  call _setJob to submit job asynchronously, and return it as promise, also adjust job in local js store
+  */
 	setJob: function(jobId, check, noJobList) {
 		let jobPromise=this._setJob(jobId, check, noJobList)
 		.then(function(job) {
@@ -224,6 +258,10 @@ const JobsStore=Reflux.createStore({
 		return jobPromise;
 	},
 
+  /*
+  ### Description
+  Adjust job in local js store
+  */
 	_setJobData: function(data, i, j) {
 		let job_id=data.job_id;
 		this.state.jobDetailCache[job_id]=data;
@@ -243,6 +281,13 @@ const JobsStore=Reflux.createStore({
 		}
 	},
 
+  /*
+  ### Description
+  call web api to submit job asynchronously, and return it as promise, also adjust job in local js store
+  It first check local cache to varify whether the web call is needed. 
+  If check is true, it asks the web service to check local database only
+  if noJoblist is true, the history panel job list will not be updated
+  */
 	_setJob: function(jobId, check, noJobList) {
 		let jobDetail=this.state.jobDetailCache[jobId];
 		let setting=_config.setting;
@@ -286,10 +331,18 @@ const JobsStore=Reflux.createStore({
     }.bind(this));
 	},
 
+  /*
+  ### Description
+  Remove job from history panel job list
+  */
 	_removeJob: function(jobId) {
 		_.remove(this.state.jobs, {job_id: jobId});
 	},
 
+  /*
+  ### Description
+  call web api to save job asynchronously
+  */
 	saveJobs: function() {
 		let jobIds=this.state.jobs.map(function(job) {
 			return job.job_id;
@@ -311,6 +364,10 @@ const JobsStore=Reflux.createStore({
 		.done();
 	},
 
+  /*
+  ### Description
+  setting job data and showing in job detail modal
+  */
 	showJob: function(jobId) {
 		if (! this.state.showJob) {
 			this.state.showJob=true;
@@ -329,6 +386,10 @@ const JobsStore=Reflux.createStore({
 		}
 	},
 
+  /*
+  ### Description
+  hiding job detail modal, unset the job id for showing
+  */
 	hideJob: function() {
 		if (this.state.showJob) {
 			this.state.showJobId=undefined;
@@ -337,6 +398,10 @@ const JobsStore=Reflux.createStore({
 		}
 	},
 
+  /*
+  ### Description
+  call _setWorkflowJobOutputs to retrieve outputs of all jobs in workflow asynchronously
+  */
 	setWorkflowJobOutputs: function(wid) {
 		let jobIds=this.state.workflowBuilderJobIndex.map(function(v, i) {
 			return v ? this.state.jobs[i].job_id : undefined;
@@ -359,6 +424,10 @@ const JobsStore=Reflux.createStore({
 		}.bind(this));
 	},
 
+  /*
+  ### Description
+  call web api to retrieve job outputs data asynchronously and return it as promise
+  */
 	_setJobOutputs: function(jobId, jobIsCached) {
 		let jobOutputs=this.state.jobOutputs[jobId];
 		let setting=_config.setting;
@@ -415,6 +484,10 @@ const JobsStore=Reflux.createStore({
 		return jobOutputsPromise;
 	},
 
+  /*
+  ### Description
+  call _setWorkflowJobOutputs to retrieve outputs of jobs asynchronously
+  */
 	setJobOutputs: function(jobId, jobIsCached) {
 		let jobOutputsPromise=this._setJobOutputs(jobId, jobIsCached);
 		jobOutputsPromise.then(function() {
@@ -486,6 +559,10 @@ const JobsStore=Reflux.createStore({
 		return filePromise;
 	},
 
+  /*
+  ### Description
+  call web api to check the status of all jobs in a workflow asynchronously
+  */
 	checkWorkflowJobStatus: function(wfId) {
 		let setting=_config.setting;
 		let jobStatusPromise=Q(axios.get('/workflow/' + wfId + '/jobStatus', {
@@ -529,6 +606,10 @@ const JobsStore=Reflux.createStore({
 		.done();
 	},
 
+  /*
+  ### Description
+  Add job to job index list used by workflow builder and call setJobs to retrieve jobs
+  */
 	addWorkflowBuilderJobIndex: function(index) {
 		let jobIds=[];
 		this.state.jobs.forEach(function(job, i) {
@@ -547,6 +628,10 @@ const JobsStore=Reflux.createStore({
 		}
 	},
 
+  /*
+  ### Description
+  Remove job from job index list
+  */
 	removeWorkflowBuilderJobIndex: function(index) {
 		if (index !== undefined) {
 			delete this.state.workflowBuilderJobIndex[index];

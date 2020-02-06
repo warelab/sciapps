@@ -18,6 +18,10 @@ const WorkflowLoader=React.createClass({
 		};
 	},
 
+  /*
+  ### Description
+  handle file upload and setup workflow json
+  */
 	handleFileValueChange: function(event) {
 		this.setState({fileValue: event.target.value});
 		utilities.readAsText(event.target, function(e) {
@@ -25,11 +29,19 @@ const WorkflowLoader=React.createClass({
 		}.bind(this));
 	},
 
+  /*
+  ### Description
+  handle text input in input box and setup workflow json
+  */
 	handleTextValueChange: function(event) {
 		this.setState({textValue: event.target.value});
 		WorkflowActions.setRemoteWorkflow(event.target.value, 'url');
 	},
 
+  /*
+  ### Description
+  load remote workflow and show it in main panel
+  */
 	handleSubmit: function() {
 		WorkflowActions.loadRemoteWorkflow();
 		AppsActions.showPage('workflowRunner');

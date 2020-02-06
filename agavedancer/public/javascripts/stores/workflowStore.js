@@ -63,6 +63,12 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
+  /*
+  ### Description
+  show workflow diagram
+  if noJobList is true, loading workflow will not add its jobs to history panel
+  if noJSON is true, it will show diagram of the workflow it derived from
+  */
 	showWorkflowDiagram: function(wfId, wfDetail, noJobList, noJSON) {
 		this.state.showWorkflowDiagram=true;
     this.state.noJSON=noJSON || false;
@@ -70,23 +76,39 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
+  /*
+  ### Description
+  hide workflow diagram
+  */
 	hideWorkflowDiagram: function() {
 		this.state.showWorkflowDiagram=false;
 		JobsActions.hideFile();
 		this.complete();
 	},
 
+  /*
+  ### Description
+  call setWorkflow to retrieve workflow and show metadata
+  */
 	showWorkflowMetadata: function(wfId) {
 		this.state.showWorkflowMetadata=true;
 		this.setWorkflow(wfId, undefined, undefined, undefined, true);
 		this.complete();
 	},
 
+  /*
+  ### Description
+  hide metadata
+  */
 	hideWorkflowMetadata: function() {
 		this.state.showWorkflowMetadata=false;
 		this.complete();
 	},
 
+  /*
+  ### Description
+  call setWorkflow to retrieve workflow data and show workflow in main panel
+  */
 	showWorkflow: function(wfId, wfDetail, noJobList) {
 		let promise=Q(1);
 		if (wfId) {
@@ -100,11 +122,20 @@ const WorkflowStore=Reflux.createStore({
 		}.bind(this));
 	},
 
+
+  /*
+  ### Description
+  hide workflow in main panel
+  */
 	hideWorkflow: function() {
 		this.state.workflowDetail=undefined;
 		this.complete();
 	},
 
+  /*
+  ### Description
+  call web api to retrieve workflow list asynchronously and return it
+  */
 	listWorkflow: function(dataItem) {
     this.state.dataItem=dataItem;
     this.complete();
@@ -133,6 +164,13 @@ const WorkflowStore=Reflux.createStore({
 		.done();
 	},
 
+  /*
+  ### Description
+  call web api to retrieve workflow data
+  if addToList is true, workflow will be added to local js store if not found
+  if noSync is true, the active workflow will not be sync with wfDetail provided
+  if noJobList, the jobs in workflow will not be added to history panel
+  */
 	setWorkflow: function(wfId, wfDetail, addToList, noSync, noJobList) {
 		let setting=_config.setting;
 		if (wfDetail) {
@@ -178,6 +216,10 @@ const WorkflowStore=Reflux.createStore({
 		});
 	},
 
+  /*
+  ### Description
+  call web api to update workflow in database
+  */
 	updateWorkflow: function(wf) {
 		let formData=new FormData();
 		formData.append('workflow_name',  wf.name);
@@ -202,6 +244,11 @@ const WorkflowStore=Reflux.createStore({
 		.done();
 	},
 
+  /*
+  ### Description
+  call web api to save workflow in database
+  if noJSON is true, the workflow_json will not be updated in database
+  */
 	saveWorkflow: function(wf, noJSON) {
 		let setting=_config.setting;
 		let formData=new FormData();
@@ -231,6 +278,10 @@ const WorkflowStore=Reflux.createStore({
 		.done();
 	},
 
+  /*
+  ### Description
+  call web api to delete workflow in database
+  */
 	deleteWorkflow: function(wfId) {
 		let setting=_config.setting;
 		Q(axios.get('/workflow/' + wfId + '/delete', {
@@ -252,11 +303,19 @@ const WorkflowStore=Reflux.createStore({
 		.done();
 	},
 
+  /*
+  ### Description
+  call _workflowJobsReady to get all workflow data ready
+  */
 	workflowJobsReady: function(wfId, jobIds, jobDetailCache, jobOutputs) {
 		this._workflowJobsReady(wfId, jobIds, jobDetailCache, jobOutputs);
 		JobsActions.resetWorkflowJobs(wfId);
 	},
 
+  /*
+  ### Description
+  update workflow jobs in local js store
+  */
 	updateWorkflowJob: function(wfId, jobs) {
 		if (this.state.workflowDetail.id === wfId) {
 			this.state.workflowDetail.steps.forEach(function(v, i) {
@@ -268,6 +327,10 @@ const WorkflowStore=Reflux.createStore({
 		this.complete();
 	},
 
+  /*
+  ### Description
+  call web api to take workflow json or retrieve workflow json from remote asynchronously and return it as a promise
+  */
 	setRemoteWorkflow: function(value, type) {
 		let promise;
 		if ('json' === type) {
@@ -295,6 +358,10 @@ const WorkflowStore=Reflux.createStore({
 		return promise;
 	},
 
+  /*
+  ### Description
+  load workflow using remote workflow json
+  */
 	loadRemoteWorkflow: function() {
 		if (this.state.remoteWorkflowPromise) {
 			let promise=this.state.remoteWorkflowPromise;
@@ -307,6 +374,10 @@ const WorkflowStore=Reflux.createStore({
 		}
 	},
 
+  /*
+  ### Description
+  call web api to retrieve workflow metadata asynchronously
+  */
   setWorkflowMetadata : function(wfId) {
 		let promise;
     if (this.state.metadata[wfId]) {
@@ -334,6 +405,12 @@ const WorkflowStore=Reflux.createStore({
     }.bind(this));
   },
 
+  /*
+  ### Description
+  set update job data and apps data in each step of workflow
+  if noSync is true, active workflow in local js store will not be synced to workflow json provided
+  if noJobList is true, the jobs will not be added to history panel
+  */
 	setWorkflowSteps: function(wfDetail, noSync, noJobList) {
 		if (! noSync || this.state.workflowDetail && this.state.workflowDetail.workflow_id === wfDetail.workflow_id) {
 			this.state.workflowDetail=wfDetail;
@@ -349,6 +426,10 @@ const WorkflowStore=Reflux.createStore({
 		//this.complete();
 	},
 
+  /*
+  ### Description
+  set up data for building workflow
+  */
 	buildWorkflow: function(wid, wfName, wfDesc) {
 		if (wid && wfName) {
 			this.state.build[wid]={
@@ -374,6 +455,10 @@ const WorkflowStore=Reflux.createStore({
 		}
 	},
 
+  /*
+  ### Description
+  get jobs and job outputs data ready for building workflow
+  */
 	_workflowJobsReady: function(wid, jobIds, jobDetailCache, jobOutputs) {
 		let workflow=this.state.build[wid];
 		workflow.jobIds=jobIds;
@@ -384,6 +469,10 @@ const WorkflowStore=Reflux.createStore({
 		WorkflowActions.buildWorkflow(wid);
 	},
 
+  /*
+  ### Description
+  build step for workflow from job and apps data
+  */
 	_buildWfStep: function(wid, jobId) {
 		let wf=this.state.build[wid];
 		let sid=_.size(wf.steps);
@@ -407,6 +496,11 @@ const WorkflowStore=Reflux.createStore({
 		wf.steps.push(step);
 	},
 
+
+  /*
+  ### Description
+  call JobsActions.submitWorkflowJobs to submit workflow jobs asynchronously
+  */
 	submitWorkflow: function(formData) {
 		let wf=JSON.parse(formData.get('_workflow_json'));
 		JobsActions.submitWorkflowJobs(wf, formData);

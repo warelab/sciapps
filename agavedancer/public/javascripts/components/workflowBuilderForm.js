@@ -37,6 +37,10 @@ const WorkflowBuilderForm=React.createClass({
 
 	formName: 'workflowBuilderForm',
 
+  /*
+  ### Description
+  take formdata and the call buildWorkflow to build workflow
+  */
 	handleSubmit: function() {
 		let form=this.refs[this.formName], formData={};
 		formData['jobList']=form['jobList'];
@@ -51,6 +55,10 @@ const WorkflowBuilderForm=React.createClass({
 		this.setState({ formData: formData });
 	},
 
+  /*
+  ### Description
+  build workflow with provided data
+  */
 	buildWorkflow: function(wfid, wfName, wfDesc, jobsStore, appsStore) {
 		let setting=_config.setting;
 		let workflow={
@@ -79,6 +87,10 @@ const WorkflowBuilderForm=React.createClass({
 		return workflow;
 	},
 
+  /*
+  ### Description
+  build workflow step 
+  */
 	_buildWfStep: function(job, index, outputs) {
 		let step={
 			id: index+1,
@@ -105,10 +117,18 @@ const WorkflowBuilderForm=React.createClass({
 		return step;
 	},
 
+  /*
+  ### Description
+  select all jobs from history panel and added them to workflow builder widget
+  */
 	handleSelectAll: function() {
 		JobsActions.addWorkflowBuilderJobIndex();
 	},
 
+  /*
+  ### Description
+  validate requirement fulfilled or setup warning
+  */
 	handleReset: function() {
 		JobsActions.removeWorkflowBuilderJobIndex();
 		this.setState({wfid: undefined});

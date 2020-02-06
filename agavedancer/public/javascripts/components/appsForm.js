@@ -34,6 +34,10 @@ const AppsForm=React.createClass({
 		Dialog.resetOptions();
 	},
 
+  /*
+  ### Description
+  handling apps submission
+  */
 	handleSubmit: function() {
 		dsActions.clearDataStoreItem();
 		this.setState({onSubmit: true, onValidate: true, update: false});

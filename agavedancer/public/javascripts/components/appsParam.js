@@ -6,6 +6,11 @@ import BaseInput from './baseInput.js';
 import AppsBoolParam from './appsBoolParam.js';
 
 const AppsParam=React.createClass({
+
+  /*
+  ### Description
+  building dropdown menu selection widget
+  */
 	buildAgaveAppsSelectOption: function(option) {
 		let optionChild, optionValue;
 		if (_.isString(option)) {
@@ -22,6 +27,10 @@ const AppsParam=React.createClass({
 		};
 	},
 
+  /*
+  ### Description
+  building parameter widget
+  */
 	buildAgaveAppsParam: function(param) {
 		let options, isSelect=false;
 		let props={

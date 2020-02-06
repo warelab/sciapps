@@ -39,6 +39,10 @@ const App=React.createClass({
 		UserActions.setUser(undefined, true);
 	},
 
+  /*
+  ### Description
+  after component mounted, loading different component according to wf_id/app_id/page_id, setup user data, setup check jobs in history panel
+  */
 	componentDidMount: function () {
 		let app_id=_config.app_id, wf_id=_config.wf_id, page_id=_config.page_id || 'welcome';
 		if (wf_id) {

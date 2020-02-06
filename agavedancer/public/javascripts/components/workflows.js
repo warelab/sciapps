@@ -15,14 +15,18 @@ var workflowItems = [
 	{ workflow_id: 2, name: "Assembly", description: "Small genome assembly, quality assessment, and annotation with JBrowse view" },
 	{ workflow_id: 3, name: "Association", description: "A GWAS workflow for performing mixed model analysis with three different algorithms" },
 	{ workflow_id: 4, name: "RNA-Seq", description: "Gene level differential expression analysis with STAR, RSEM, and Ebseq" },
-        { workflow_id: 5, name: "RNA-Seq2", description: "Isoform level differential expression analysis with STAR, StringTie, and Ballgown" },
-        { workflow_id: 6, name: "RNA-Seq3", description: "Isoform level differential expression analysis with HISAT2, StringTie, and Ballgown" },
+  { workflow_id: 5, name: "RNA-Seq2", description: "Isoform level differential expression analysis with STAR, StringTie, and Ballgown" },
+  { workflow_id: 6, name: "RNA-Seq3", description: "Isoform level differential expression analysis with HISAT2, StringTie, and Ballgown" },
 	{ workflow_id: 7, name: "Methyl-Seq", description: "Differential methylation analysis with Bismark and Bisukit" },
 	{ workflow_id: 8, name: "BSA-Seq", description: "Bulked Segregant Analysis with next generation sequencing data" },
 ];
 
 const publicWorkflows=React.createClass({
 
+  /*
+  ### Description
+  reload workflow to main panel for resubmission w/o loading jobs to history panel
+  */
 	handleReLaunch: function(e) {
 		let table=this.refs.table;
 		let wfid=table.store.selected[0];
@@ -32,6 +36,10 @@ const publicWorkflows=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  load workflow jobs to history panel only
+  */
 	handleLoad: function(e) {
 		let table=this.refs.table;
 		let wfid=table.store.selected[0];
@@ -60,7 +68,6 @@ const publicWorkflows=React.createClass({
 	},
 
 	render: function() {
-
 		let selectRowProp={
 			mode: 'radio'
 		};

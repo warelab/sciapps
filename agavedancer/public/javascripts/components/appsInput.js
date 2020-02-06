@@ -38,6 +38,10 @@ const AppsInput=React.createClass({
 		};
 	},
 
+  /*
+  ### Description
+  fill the value according to reload property; if it is 'resubmit', using job value; if it is 'default', using default value
+  */
 	componentWillReceiveProps: function(nextProps) {
 		//let reload=this.props.reload;
 		let reload=nextProps.reload;
@@ -64,6 +68,10 @@ const AppsInput=React.createClass({
 		this.setState({count: 1, value: this.props.data.value.default});
 	},
 
+  /*
+  ### Description
+  handling select item in datastore and set value
+  */
 	handleDsStoreChange: function(dsStore) {
 		let setting=_config.setting;
 		let dsItemUrl;
@@ -84,6 +92,10 @@ const AppsInput=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  handling text input and set value
+  */
 	handleTextChange: function(event) {
 		let match=event.target.id.match(/_(\d+)$/);
 		let value=this.state.value;
@@ -93,6 +105,10 @@ const AppsInput=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  handling open datastore modal and setup target for datastore
+  */
 	handleDataStore: function(event) {
 		let match=event.target.id.match(/^btn_(.*_(\d+))$/);
 		if (match !== null) {	
@@ -102,23 +118,39 @@ const AppsInput=React.createClass({
 		}
 	},
 
+  /*
+  ### Description
+  adding more input widget for multiple value inputs
+  */
 	handleInsertInput: function(event) {
 		if (this.state.count < this.props.data.semantics.maxCardinality) {
 			this.setState({count: this.state.count + 1});
 		}
 	},
 
+  /*
+  ### Description
+  remove input widget for multiple value inputs
+  */
 	handleRemoveInput: function(event) {
 		if (this.state.count > 1) {
 			this.setState({count: this.state.count - 1});
 		}
 	},
 
+  /*
+  ### Description
+  validate requirement fulfilled or setup warning
+  */
 	validateState: function() {
 		if (this.props.data.value.required && ! this.state.value.length) return 'warning';
 		else return undefined;
 	},
 
+  /*
+  ### Description
+  build input widget
+  */
 	buildAgaveAppsInput: function() {
 		let setting=_config.setting;
 		let data=this.props.data;
@@ -168,6 +200,7 @@ const AppsInput=React.createClass({
 		}
 		return markup;
 	},
+
 	render: function() {
 		let markup=this.buildAgaveAppsInput();
 		return markup;

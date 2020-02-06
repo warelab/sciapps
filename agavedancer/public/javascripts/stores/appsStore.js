@@ -45,6 +45,10 @@ const AppsStore=Reflux.createStore({
 		};
 	},
 
+  /*
+  ### Description
+  call _listApps to retrieve apps list asynchronously and set up searchString to filter apps
+  */
 	listApps: function(searchString, mode) {
 		this.state.searchString=searchString;
 		let promise=this._listApps(mode);
@@ -53,6 +57,11 @@ const AppsStore=Reflux.createStore({
 		}.bind(this));
 	},
 
+  /*
+  ### Description
+  call web api to retrieve apps list asynchronously and set up searchString to filter apps
+  mode will ask web service to retrieve apps list from local stored apps json or from agave remotely
+  */
 	_listApps: function(mode) {
 		let apps=this.state.appsCache;
 		let setting=_config.setting;
@@ -92,6 +101,10 @@ const AppsStore=Reflux.createStore({
 		});
 	},
 
+  /*
+  ### Description
+  filter apps by name according to searchString
+  */
 	filterApps: function() {
 		let searchString=this.state.searchString;
 		let matched;
@@ -110,6 +123,10 @@ const AppsStore=Reflux.createStore({
 		}
 	},
 
+  /*
+  ### Description
+  call _setApp to retrieve apps json asynchronously and set up active workflow in local js store, and return it as a promise
+  */
 	setApps: function(appIds, wid) {
 		let funcs=appIds.map(function(appId) {
 			return function() {
@@ -130,10 +147,18 @@ const AppsStore=Reflux.createStore({
 		return promise;
 	},
 
+  /*
+  ### Description
+  unset the active workflow in local js store
+  */
 	resetWorkflowApps: function(wid) {
 		delete this.state.wid[wid];
 	},
 
+  /*
+  ### Description
+  call _setApp to retrieve apps json asynchronously and return it as a promise
+  */
 	setApp: function(appId) {
 		let appPromise=this._setApp(appId)
 		.then(function(app) {
@@ -142,6 +167,10 @@ const AppsStore=Reflux.createStore({
 		return appPromise;
 	},
 
+  /*
+  ### Description
+  call web api to retrieve apps json asynchronously and return it as a promise
+  */
 	_setApp: function(appId) {
 		let appDetail=this.state.appDetailCache[appId];
 		let setting= _config.setting;
@@ -170,6 +199,10 @@ const AppsStore=Reflux.createStore({
 		return appPromise;
 	},
 
+  /*
+  ### Description
+  show apps submission form in main panel and filled form with job data
+  */
 	showAppByJob: function(jobDetail) {
 		if (jobDetail.appId) {
 			this._setReload('resubmit');
@@ -177,11 +210,19 @@ const AppsStore=Reflux.createStore({
 		}
 	},
 
+  /*
+  ### Description
+  call _showApp to show apps submission form in main panel
+  */
 	showApp: function(appId, mode) {
 		this._setReload(mode);
 		this._showApp(appId);
 	},
 
+  /*
+  ### Description
+  show apps submission form in main panel and filled the form with job data if provided
+  */
 	_showApp: function(appId, jobDetail) {
 		let appPromise=this._setApp(appId);
 		appPromise.then(function(appDetail) {
@@ -199,17 +240,29 @@ const AppsStore=Reflux.createStore({
 		.done();
 	},
 
+  /*
+  ### Description
+  call _hideApp to hide apps form
+  */
 	hideApp: function() {
 		this._hideApp();
 		this.complete();
 	},
 
+  /*
+  ### Description
+  hide apps form by removing active apps data 
+  */
 	_hideApp: function() {
 		if (this.state.appDetail.id) {
 			this.state.appDetail={};
 		}
 	},
 
+  /*
+  ### Description
+  call _setReload to set how the apps form to be filled
+  */
 	setReload: function(value) {
 		if (value !== this.state.reload) {
 			this._setReload(value);
@@ -217,10 +270,18 @@ const AppsStore=Reflux.createStore({
 		}
 	},
 
+  /*
+  ### Description
+  set how the apps form to be filled
+  */
 	_setReload: function(value) {
 		this.state.reload=value;
 	},
 
+  /*
+  ### Description
+  show different content in main panel according to pageId
+  */
 	showPage: function(pageId) {
 		if (pageId !== this.state.pageId) {
 			this.state.pageId=pageId;

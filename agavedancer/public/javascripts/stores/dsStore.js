@@ -49,6 +49,10 @@ const DsStore=Reflux.createStore({
 		this.showDataStore(path);
 	},
 
+  /*
+  ### Description
+  setup datastore data and show datastore modal
+  */
 	showDataStore: function(showPath) {
 		let setting=_config.setting;
 		let path=showPath, type=this.state.type;
@@ -95,6 +99,10 @@ const DsStore=Reflux.createStore({
 		.done();
 	},
 
+  /*
+  ### Description
+  call web api to retrieve user datastore data aynchronously
+  */
 	setDataStore: function(type, path) {
 		let setting=_config.setting;
 		let cachedPath=_.get(this.state.dsDetailCache, [type, path]);
@@ -132,6 +140,10 @@ const DsStore=Reflux.createStore({
 		return dataStorePromise;
 	},
 
+  /*
+  ### Description
+  hide datastore modal
+  */
 	hideDataStore: function() {
 		if (this.state.showDataStore) {
 			this.state.showDataStore=false;
@@ -139,6 +151,10 @@ const DsStore=Reflux.createStore({
 		}
 	},
 
+  /*
+  ### Description
+  set the input for take datastore item when selected
+  */
 	setDataStoreItemTarget: function(target) {
 		if (target !== this.state.target) {
 			this.state.target=target;
@@ -146,6 +162,10 @@ const DsStore=Reflux.createStore({
 		}
 	},
 
+  /*
+  ### Description
+  assign the item to the target input
+  */
 	selectDataStoreItem: function(item) {
 		let setting=_config.setting;
 		if (item) {
@@ -161,6 +181,10 @@ const DsStore=Reflux.createStore({
 		this.complete();
 	},
 
+  /*
+  ### Description
+  clear target input
+  */
 	clearDataStoreItem: function(target) {
 		if (target) {
 			delete this.state.dsItemPaths[target];
