@@ -979,7 +979,7 @@ get '/workflow' => sub {
   if (scalar @tokens) {
     foreach my $token (@tokens) {
       my $reg=qr/$token/i;
-      @result=grep {$_->{name}=~/$reg/ || $_->{description}=~/$reg/} @result;
+      @result=grep {my $name=$_->{name} || ''; my $desc=$_->{description} || ''; $name=~/$reg/ || $desc=~/$reg/} @result;
     }
   }
 
