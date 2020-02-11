@@ -141,7 +141,7 @@ const UserJobs=React.createClass({
 		};
 		return (
 			<Panel header="My Jobs">
-				<BootstrapTable ref='table' data={jobsItems} search={true} striped={true} hover={true} pagination={true} selectRow={selectRowProp} options={options}>
+				<BootstrapTable ref='table' data={jobsItems} search={true} multiColumnSearch={true} striped={true} hover={true} pagination={true} selectRow={selectRowProp} options={options}>
 					<TableHeaderColumn isKey={true} dataField="job_id" hidden={true}>ID</TableHeaderColumn>
 					<TableHeaderColumn dataField="agave_id" hidden={true}>Agave ID</TableHeaderColumn>
 					<TableHeaderColumn dataField="app_id" dataAlign="left" dataSort={true}>App Name</TableHeaderColumn>

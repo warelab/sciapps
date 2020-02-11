@@ -247,7 +247,7 @@ const UserWorkflows=React.createClass({
     let header=dataItem ? dataItem.replace(/_+/gi, ' ') : "My Workflows";
 		return (
 			<Panel header={header}>
-				<BootstrapTable ref='table' data={workflowItems} search={true} striped={true} hover={true} cellEdit={cellEditProp} pagination={true} selectRow={selectRowProp} options={options}>
+				<BootstrapTable ref='table' data={workflowItems} search={true} multiColumnSearch={true} striped={true} hover={true} cellEdit={cellEditProp} pagination={true} selectRow={selectRowProp} options={options}>
 					<TableHeaderColumn isKey={true} dataField="workflow_id" hidden={true}>ID</TableHeaderColumn>
 					<TableHeaderColumn dataField="name" dataAlign="left" width='250' dataSort={true}>Name</TableHeaderColumn>
 					<TableHeaderColumn dataField="description" dataAlign="left">Description</TableHeaderColumn>

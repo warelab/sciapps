@@ -951,20 +951,37 @@ sub retrieveWorkflowDB {
 }
 
 swagger_path {
+  parameters => [
+    dataItem => { description => 'data project prefix' },
+    searchTokens => { description => 'search tokens concatenated by "+"' },
+  ],
   responses => {
     default => { description => 'get workflows' }
   },
 },
 get '/workflow' => sub {
   my $data_item=param("dataItem");
+  my $search_tokens=param("searchTokens");
+  my @tokens=$search_tokens ? map {quotemeta} split /\+/, $search_tokens : ();
 	my @result;
 	my $username=$data_item ? setting('defaultUser') : var("username") or raise InvalidCredentials => 'no username';
   my $where={username => $username};
   if ($data_item) {
-    $where->{name}={like => setting('datamenu_item')->{$data_item} . "%"};
+    if (setting('datamenu_item')->{$data_item}) {
+      $where->{name}={like => setting('datamenu_item')->{$data_item} . "%"};
+    } else {
+      $where->{name}=undef;
+    }
   }
 
 	@result=map {delete $_->{username}; my $obj=$_->{json} ? from_json(delete $_->{json}) : undef; $obj and $_->{steps}=$obj->{steps}; $_;} reverse database->quick_select('user_workflow_view', $where);
+
+  if (scalar @tokens) {
+    foreach my $token (@tokens) {
+      my $reg=qr/$token/i;
+      @result=grep {$_->{name}=~/$reg/ || $_->{description}=~/$reg/} @result;
+    }
+  }
 
   content_type 'application/json';
 	return to_json({status => 'success', data => \@result});
