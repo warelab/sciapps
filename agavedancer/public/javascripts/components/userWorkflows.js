@@ -14,6 +14,12 @@ import utilities from '../libs/utilities.js';
 const UserWorkflows=React.createClass({
 	mixins: [Reflux.connect(WorkflowStore, 'workflowStore')],
 
+  getInitialState: function() {
+    return {
+      workflows: undefined
+    }
+  },
+
   /*
   ### Description
   reload workflow to main panel for resubmission w/o loading jobs to history panel
@@ -214,19 +220,67 @@ const UserWorkflows=React.createClass({
 		return buttonGroup;
 	},
 
-	render: function() {
+  getWorkflows: function(fromStore) {
 		let workflowStore=this.state.workflowStore;
-		let workflowItems;
     let dataItem=workflowStore.dataItem;
     let workflows=[];
-    if (dataItem) {
+    if (! fromStore && this.state.workflows) {
+      workflows=this.state.workflows;
+    } else if (dataItem) {
       if (workflowStore.dataWorkflows[dataItem]) {
         workflows=workflowStore.dataWorkflows[dataItem];
       }
     } else if (workflowStore.workflows.length) {
       workflows=workflowStore.workflows;
     }
-    if (workflows.length) {
+    return {
+      workflows: workflows,
+      dataItem: dataItem
+    }
+  },
+
+  onSearchChange: function(searchText, colInfos, multiColumnSearch) {
+    let tokens = searchText.trim().split(' ').filter(token => token.length > 0).map(token => token.toLowerCase());
+    let tokenCount = tokens.length;
+    if (tokenCount === 0) {
+      this.setState({
+        workflows: undefined
+      });
+      return;
+    }
+    let inputs=this.getWorkflows(true);
+    let workflows=inputs.workflows;
+    let filtered=workflows.filter((wf) => {
+      let valid=false;
+      _.values(wf).forEach(function(val) {
+        if (val == undefined || val == "") {
+          return;
+        } else if (_.isObject(val)) {
+          val=JSON.stringify(val);
+        }
+        for (let i = 0; i < tokenCount; i++) {
+          if (val.toString().toLowerCase().indexOf(tokens[i]) == -1) {
+            return;
+          }
+        }
+        valid=true;
+        return;
+      });
+      return valid;
+    });
+    this.setState({
+      workflows: filtered
+    });
+  },
+
+
+	render: function() {
+		let workflowItems=[];
+    let inputs=this.getWorkflows();
+    let workflows=inputs.workflows;
+    let dataItem=inputs.dataItem;
+
+    if (workflows && workflows.length) {
 			workflowItems=workflows.map(function(workflow, i) {
 				let item=_.pick(workflow, ['workflow_id', 'name', 'description']);
 				return item;
@@ -242,12 +296,14 @@ const UserWorkflows=React.createClass({
 			mode: 'radio'
 		};
 		let options={
+      searchDelayTime: 200,
+      onSearchChange: this.onSearchChange,
 			btnGroup: this.createCustomButtonGroup
 		};
     let header=dataItem ? dataItem.replace(/_+/gi, ' ') : "My Workflows";
 		return (
 			<Panel header={header}>
-				<BootstrapTable ref='table' data={workflowItems} search={true} multiColumnSearch={true} striped={true} hover={true} cellEdit={cellEditProp} pagination={true} selectRow={selectRowProp} options={options}>
+				<BootstrapTable ref='table' data={workflowItems} remote={true} search={true} multiColumnSearch={true} striped={true} hover={true} cellEdit={cellEditProp} pagination={true} selectRow={selectRowProp} options={options}>
 					<TableHeaderColumn isKey={true} dataField="workflow_id" hidden={true}>ID</TableHeaderColumn>
 					<TableHeaderColumn dataField="name" dataAlign="left" width='250' dataSort={true}>Name</TableHeaderColumn>
 					<TableHeaderColumn dataField="description" dataAlign="left">Description</TableHeaderColumn>

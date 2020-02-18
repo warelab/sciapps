@@ -976,11 +976,26 @@ get '/workflow' => sub {
 
 	@result=map {delete $_->{username}; my $obj=$_->{json} ? from_json(delete $_->{json}) : undef; $obj and $_->{steps}=$obj->{steps}; $_;} reverse database->quick_select('user_workflow_view', $where);
 
-  if (scalar @tokens) {
-    foreach my $token (@tokens) {
-      my $reg=qr/$token/i;
-      @result=grep {my $name=$_->{name} || ''; my $desc=$_->{description} || ''; $name=~/$reg/ || $desc=~/$reg/} @result;
-    }
+  my $token_num=scalar @tokens;
+
+  if ($token_num) {
+    @result=grep {
+      my $valid=0;
+      my $res=$_;
+      foreach my $val (values %$res) {
+        my $has_invalid=0;
+        my $targetVal=defined $val ? (ref($val) ? to_json($val) : $val) : "";
+        next unless length($targetVal) > 0;
+        foreach my $token (@tokens) {
+          unless($targetVal=~/$token/mi) {
+            $has_invalid=1;
+            last;
+          }
+        }
+        $valid=1 unless $has_invalid;
+      }
+      $valid;
+    } @result;
   }
 
   content_type 'application/json';
