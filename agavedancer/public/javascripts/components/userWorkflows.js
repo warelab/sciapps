@@ -240,7 +240,8 @@ const UserWorkflows=React.createClass({
   },
 
   onSearchChange: function(searchText, colInfos, multiColumnSearch) {
-    let tokens = searchText.trim().split(' ').filter(token => token.length > 0).map(token => token.toLowerCase());
+    const regex=/(\S*?"[^"]*"\S*)|\s+/;
+    let tokens=searchText.trim().split(regex).filter(token => token).map(token => token.replace(/"/g, "").toLowerCase());
     let tokenCount = tokens.length;
     if (tokenCount === 0) {
       this.setState({
@@ -248,18 +249,20 @@ const UserWorkflows=React.createClass({
       });
       return;
     }
-    let inputs=this.getWorkflows(true);
-    let workflows=inputs.workflows;
+
+    let workflows=this.getWorkflows(true).workflows;
     let filtered=workflows.filter((wf) => {
       let valid=false;
       _.values(wf).forEach(function(val) {
-        if (val == undefined || val == "") {
+        if (val == undefined || val === "") {
           return;
         } else if (_.isObject(val)) {
           val=JSON.stringify(val);
+        } else {
+          val=val.toString().toLowerCase();
         }
         for (let i = 0; i < tokenCount; i++) {
-          if (val.toString().toLowerCase().indexOf(tokens[i]) == -1) {
+          if (val.indexOf(tokens[i]) == -1) {
             return;
           }
         }

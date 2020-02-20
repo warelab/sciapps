@@ -137,6 +137,7 @@ const UserJobs=React.createClass({
 			mode: 'checkbox'
 		};
 		let options={
+      searchDelayTime: 200,
 			btnGroup: this.createCustomButtonGroup
 		};
 		return (

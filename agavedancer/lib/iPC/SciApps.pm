@@ -962,7 +962,7 @@ swagger_path {
 get '/workflow' => sub {
   my $data_item=param("dataItem");
   my $search_tokens=param("searchTokens");
-  my @tokens=$search_tokens ? map {quotemeta} split /\+/, $search_tokens : ();
+  my @tokens=$search_tokens ? map {quotemeta} split /\++/, $search_tokens : ();
 	my @result;
 	my $username=$data_item ? setting('defaultUser') : var("username") or raise InvalidCredentials => 'no username';
   my $where={username => $username};
