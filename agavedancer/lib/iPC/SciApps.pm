@@ -1158,13 +1158,13 @@ swagger_path {
 get '/job/:id/delete' => sub {
 	my $username=var("username") or raise InvalidCredentials => 'no username';
 	my $job_id = param("id");
-	if ($username eq setting("defaultUser")) {
+	if ($username eq setting("adminUser")) {
 		try {
-			database->quick_delete('job', {job_id => $job_id, username => setting("defaultUser")});
+			database->quick_delete('job', {job_id => $job_id, username => setting("adminUser")});
 		};
 	} else {
 		try {
-			database->quick_update('job', {job_id => $job_id}, {username => setting("defaultUser")});
+			database->quick_update('job', {job_id => $job_id}, {username => setting("adminUser")});
 		} catch {
 			my ($e)=@_;
 			raise InvalidRequest => 'can not delete job';

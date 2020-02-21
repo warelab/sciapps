@@ -31,6 +31,7 @@ email: 'noreply@sciapps.org'
 wf_step_prefix: 'wf_step_'
 maxRunTime: "47:50:00"
 defaultUser: 'maizecode'
+adminUser: 'sciapps'
 datastore:
   __home__: 
     system: 'data.iplantcollaborative.org'
