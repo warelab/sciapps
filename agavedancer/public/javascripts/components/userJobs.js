@@ -12,6 +12,12 @@ import utilities from '../libs/utilities.js';
 
 const UserJobs=React.createClass({
 	mixins: [Reflux.connect(JobsStore, 'jobsStore')],
+
+  getInitialState: function() {
+    return {
+      jobs: undefined
+    }
+  },
 	
   /*
   ### Description
@@ -118,12 +124,69 @@ const UserJobs=React.createClass({
 		);
 	},
 
-	render: function() {
+  getJobs: function(fromStore) {
 		let jobsStore=this.state.jobsStore;
-		let jobsItems;
+    let jobs=[];
+    if (! fromStore && this.state.jobs) {
+      jobs=this.state.jobs;
+    } else if (jobsStore.joblist.length) {
+			jobs=jobsStore.joblist;
+    }
+    return {
+      jobs: jobs
+    }
+  },
+
+  onSearchChange: function(searchText, colInfos, multiColumnSearch) {
+    const regex=/(\S*?"[^"]*"\S*)|\s+/;
+    let tokens=searchText.trim().split(regex).filter(token => token).map(token => token.replace(/"/g, "").toLowerCase());
+    let tokenCount = tokens.length;
+    if (tokenCount === 0) {
+      this.setState({
+        jobs: undefined
+      });
+      return;
+    }
+
+    let jobs=this.getJobs(true).jobs;
+    let filtered=jobs.filter((job) => {
+      let valid=false;
+      _.values(job).forEach(function(val) {
+        if (val == undefined || val === "") {
+          return;
+        } else if (_.isObject(val)) {
+          val=JSON.stringify(val);
+        } else {
+          val=val.toString().toLowerCase();
+        }
+        for (let i = 0; i < tokenCount; i++) {
+          if (val.indexOf(tokens[i]) == -1) {
+            return;
+          }
+        }
+        valid=true;
+        return;
+      });
+      return valid;
+    });
+    this.setState({
+      jobs: filtered
+    });
+  },
+
+  remote: function(remoteObj) {
+    remoteObj.search=true;
+    return remoteObj;
+  },
+
+	render: function() {
+		let jobsItems=[];
+    let inputs=this.getJobs();
+    let jobs=inputs.jobs;
     let headers=['remoteSubmitted', 'remoteEnded'];
-		if (jobsStore.joblist.length) {
-			jobsItems=jobsStore.joblist.map(function(job, i) {
+    
+		if (jobs && jobs.length) {
+			jobsItems=jobs.map(function(job, i) {
         let j=_.clone(job);
         headers.forEach(function(h) {
           if (j[h]) {
@@ -133,16 +196,18 @@ const UserJobs=React.createClass({
 				return j;
 			});
 		}
+
 		let selectRowProp={
 			mode: 'checkbox'
 		};
 		let options={
       searchDelayTime: 200,
+      onSearchChange: this.onSearchChange,
 			btnGroup: this.createCustomButtonGroup
 		};
 		return (
 			<Panel header="My Jobs">
-				<BootstrapTable ref='table' data={jobsItems} search={true} multiColumnSearch={true} striped={true} hover={true} pagination={true} selectRow={selectRowProp} options={options}>
+				<BootstrapTable ref='table' data={jobsItems} remote={this.remote} search={true} striped={true} hover={true} pagination={true} selectRow={selectRowProp} options={options}>
 					<TableHeaderColumn isKey={true} dataField="job_id" hidden={true}>ID</TableHeaderColumn>
 					<TableHeaderColumn dataField="agave_id" hidden={true}>Agave ID</TableHeaderColumn>
 					<TableHeaderColumn dataField="app_id" dataAlign="left" dataSort={true}>App Name</TableHeaderColumn>

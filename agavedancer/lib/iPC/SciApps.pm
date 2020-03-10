@@ -1129,13 +1129,20 @@ post '/job/new/:id' => sub {
 };
 
 swagger_path {
+  parameters => [
+    searchTokens => { description => 'search tokens concatenated by "+"' },
+  ],
   responses => {
     default => { description => 'get jobs' }
   },
 },
 get '/job' => sub {
+  my $search_tokens=param("searchTokens");
+  my @tokens=$search_tokens ? map {quotemeta} split /\++/, $search_tokens : ();
+	my @result;
 	my $username=var("username") or raise InvalidCredentials => 'no username';
-	my @result=database->quick_select('job', {username => $username}, {columns =>[qw/job_id agave_id app_id status agave_json/], order_by => {desc => 'id'}});
+  my $where={username => $username};
+	@result=database->quick_select('job', $where, {columns =>[qw/job_id agave_id app_id status agave_json/], order_by => {desc => 'id'}});
 	foreach (@result) {
 		if (my $json=delete $_->{agave_json}) {
 			my $job=from_json($json);
@@ -1143,6 +1150,29 @@ get '/job' => sub {
       $_->{remoteEnded}=$job->{endTime} || $job->{remoteEnded} || '';
 		}
 	}
+
+  my $token_num=scalar @tokens;
+
+  if ($token_num) {
+    @result=grep {
+      my $valid=0;
+      my $res=$_;
+      foreach my $val (values %$res) {
+        my $has_invalid=0;
+        my $targetVal=defined $val ? (ref($val) ? to_json($val) : $val) : "";
+        next unless length($targetVal) > 0;
+        foreach my $token (@tokens) {
+          unless($targetVal=~/$token/mi) {
+            $has_invalid=1;
+            last;
+          }
+        }
+        $valid=1 unless $has_invalid;
+      }
+      $valid;
+    } @result;
+  }
+
   content_type 'application/json';
 	return to_json({status => 'success', data => \@result});
 };
