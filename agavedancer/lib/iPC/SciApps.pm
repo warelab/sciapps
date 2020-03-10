@@ -1144,7 +1144,7 @@ get '/job' => sub {
   my $where={username => $username};
 	@result=database->quick_select('job', $where, {columns =>[qw/job_id agave_id app_id status agave_json/], order_by => {desc => 'id'}});
 	foreach (@result) {
-		if (my $json=delete $_->{agave_json}) {
+		if (my $json=$_->{agave_json}) {
 			my $job=from_json($json);
       $_->{remoteSubmitted}=$job->{submitTime} || $job->{remoteSubmitted} || '';
       $_->{remoteEnded}=$job->{endTime} || $job->{remoteEnded} || '';
