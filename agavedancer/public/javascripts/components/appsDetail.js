@@ -17,6 +17,7 @@ import WorkflowBuilder from './workflowBuilder.js';
 import WorkflowLoader from './workflowLoader.js';
 import WorkflowRunner from './workflowRunner.js';
 import Help from './help.js';
+import BSA from './bsa.js';
 
 const AppsDetail=React.createClass({
 	mixins: [Reflux.connect(AppsStore, 'appsStore')],
@@ -77,6 +78,9 @@ const AppsDetail=React.createClass({
 					break;
 				case 'help':
 					markup=<Help />
+					break;
+				case 'bsa':
+					markup=<BSA />
 					break;
 				default:
 					markup=<div />

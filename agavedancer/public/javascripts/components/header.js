@@ -45,6 +45,22 @@ const Header=React.createClass({
 	},
 
   /*
+ *   ### Description
+ *     show BSA page in main panel
+ *       */
+        showBSA: function() {
+                AppsActions.showPage('bsa');
+                let title="The BSA workflow";
+                let url="/?page_id=bsa";
+                if (typeof (history.pushState) != "undefined") {
+                        let obj = { Title: title, Url: url };
+                        history.pushState(obj, obj.Title, obj.Url);
+                } else {
+                        alert("Browser does not support HTML5.");
+                }
+        },
+
+  /*
   ### Description
   show workflow builder widget in main panel
   */
@@ -251,7 +267,8 @@ const Header=React.createClass({
     }
     let toolsMenuItem=[
       <MenuItem key='Jbrowse' eventKey='Jbrowse' onSelect={this.handleJBrowse}><Glyphicon glyph='globe' /> JBrowse</MenuItem>,
-      <MenuItem key='swagger' eventKey='swagger' onSelect={this.handleSwagger}><Glyphicon glyph='wrench' /> API</MenuItem>
+      <MenuItem key='swagger' eventKey='swagger' onSelect={this.handleSwagger}><Glyphicon glyph='wrench' /> API</MenuItem>,
+      <MenuItem key='bsa' eventKey='bsa' onSelect={this.showBSA}><Glyphicon glyph='link' /> BSA</MenuItem>
     ];
 		if (user.authenticated) {
       if (! user.datastore_verified) {
