@@ -290,6 +290,15 @@ const JobsStore=Reflux.createStore({
   */
 	_setJob: function(jobId, check, noJobList) {
 		let jobDetail=this.state.jobDetailCache[jobId];
+    let job=_.find(this.state.joblist, 'job_id', jobId);
+    let from_joblist=false;
+    if (! jobDetail && job && job.agave_json) {
+      try {
+        jobDetail=JSON.parse(job.agave_json);
+        from_joblist=true;
+      } catch(err) {
+      };
+    }
 		let setting=_config.setting;
 		let jobPromise;
 		if (jobDetail && _.includes(['FINISHED','FAILED'], jobDetail.status)) {
@@ -305,9 +314,6 @@ const JobsStore=Reflux.createStore({
 					return;
 				} else {
 					let data=res.data.data;
-					if (data.appId) {
-						AppsActions.setApp(data.appId);
-					}
 					return data;
 				}
 			}.bind(this))
@@ -316,6 +322,9 @@ const JobsStore=Reflux.createStore({
 			});
     }
     return jobPromise.then(function(data) {
+			if (data.appId) {
+				AppsActions.setApp(data.appId);
+			}
       let i=_.findIndex(this.state.jobs, 'job_id', data.job_id);
       let j=_.findIndex(this.state.joblist, 'job_id', data.job_id);
       if (this.isChanged(data) || ! noJobList && (i < 0 || j < 0)) {
@@ -326,6 +335,9 @@ const JobsStore=Reflux.createStore({
         if ('FINISHED' === data.status) {
           this.setJobOutputs(data.job_id, true);
         }
+      }
+      if (from_joblist === true && ! _.includes(['FINISHED','FAILED'], data.status)) {
+        this.setJob(data.job_id, check, noJobList);
       }
       return data;
     }.bind(this));

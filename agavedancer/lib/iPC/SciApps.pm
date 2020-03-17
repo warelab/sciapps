@@ -1146,8 +1146,10 @@ get '/job' => sub {
 	foreach (@result) {
 		if (my $json=$_->{agave_json}) {
 			my $job=from_json($json);
-      $_->{remoteSubmitted}=$job->{submitTime} || $job->{remoteSubmitted} || '';
-      $_->{remoteEnded}=$job->{endTime} || $job->{remoteEnded} || '';
+      $_->{remoteSubmitted}=$job->{remoteSubmitted}||=$job->{submitTime} || '';
+      $_->{remoteStarted}=$job->{remoteStarted}||=$job->{startTime} || '';
+      $_->{remoteEnded}=$job->{remoteEnded}||=$job->{endTime} || '';
+      $_->{agave_json}=to_json($job);
 		}
 	}
 
