@@ -8,7 +8,7 @@ const Help=React.createClass({
 			<div className="welcome">
 			<div className="section">
 			<div>
-				<b>SciApps</b> is a free, public, internet accessible platform for building, running, and sharing scientific workflows. To get started, check the <a href="https://cyverse-sciapps-guide.readthedocs-hosted.com"  target="_blank">SciApps platform guide</a>. For questions or suggestions, please contact support@SciApps.org.
+				<b>SciApps</b> is a free, public, internet accessible platform for building, running, and sharing scientific workflows. To get started, check the <a href="https://cyverse-sciapps-guide.readthedocs-hosted.com/en/latest/index.html"  target="_blank">SciApps platform guide</a>. For questions or suggestions, please contact support@SciApps.org.
 			</div>
 			</div>
 			</div>
