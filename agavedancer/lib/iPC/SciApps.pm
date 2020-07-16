@@ -68,7 +68,7 @@ sub _agave_login {
 	my $api;
   my $token;
 	if ($ah and $api=$ah->api and $api->token) {
-    my $user=_get_user($args->{username}, $api->token);
+    my $user=_get_user_by_token($args->{username}, $api->token);
     _set_user_var($user);
 		_store_auth_session($api->auth);
     $token=$api->token;
@@ -78,16 +78,32 @@ sub _agave_login {
   $token;
 }
 
-sub _get_user {
+sub _get_user_by_token {
 	my ($username, $token)=@_;
   my ($user, $default);
   $default=defined $token ? iPC::User->search({username => setting('defaultUser'), token => $token}) : undef;
-  if (! $token) {
+  if (! defined $token) {
     $user=defined $username ? iPC::User->search({username => $username}) : undef;
   } elsif ($default) {
     $user=$default;
   }
   $user;
+}
+
+sub _get_user_by_password {
+  my ($username, $password)=@_;
+  _auth_by_password($username, $password) ? iPC::User->search({username => setting('defaultUser')}) : undef;
+}
+
+sub _auth_by_password {
+  my ($username, $password)=@_;
+  my $result;
+  my $cmd="curl -su $username:$password https://de.cyverse.org/terrain/token";
+  try {
+    my $return=from_json(`$cmd`);
+    $result=1 if $return->{access_token} && ! $return->{error}
+  };
+  $result;
 }
 
 sub _set_user_var {
@@ -108,7 +124,7 @@ sub _store_auth_session {
     session 'refresh_token' => $auth->{refresh_token};
     session 'token_expires_in' => $auth->token_expiration_in;
     session 'token_expires_at' => $auth->token_expiration_at;
-		print STDERR "Delta: ", $auth->token_expiration_in, $/;
+		info "Delta: " . $auth->token_expiration_in;
 	};
 }
 
@@ -134,7 +150,7 @@ sub agave_refresh {
 		};
 		if ($new_token) {
 			my $auth=$apio->auth;
-      my $user=_get_user($username, $new_token);
+      my $user=_get_user_by_token($username, $new_token);
       _set_user_var($user);
 			_store_auth_session($auth);
 		}
@@ -158,32 +174,37 @@ sub getAgaveClient {
 	) : undef;
 }
 
-hook on_route_exception => sub {
-	my $e = shift;
-  my $dt=DateTime->now->datetime;
-	if ($e->can('does') && ($e->does('InvalidCredentials') || $e->does('InvalidRequest'))) {
-		error("Error [$dt]: " . $e->message() . "\n");
-    content_type 'application/json';
-		halt(to_json({status => 'error', error => $e->message()}));
-	} elsif ($e->can('rethrow')) {
-		$e->rethrow;
-	} else {
-		error("Error [$dt]: " . $e . "\n");
-		raise 'SystemError' => $e;
-	}
-};
-
-hook 'before' => sub {
+sub _authenticate {
   my $username=request->header('user') || request->header('username') || (session('cas_user') ? session('cas_user')->{username} : undef);
   my $token=request->header('Authorization') || session('token');
-  if ($username && $token) {
-    $token=~s/^Bearer\s+//;
-    if (my $user=_get_user($username, $token)) {
-      _set_user_var($user);
-      var username => $username;
+  my $password=request->header('pass') || request->header('password');
+  my $user;
+  if (defined $username) {
+    if (defined $token) {
+      $token=~s/^Bearer\s+//;
+      $user=_get_user_by_token($username, $token);
+    } elsif (defined $password) {
+      $user=_get_user_by_password($username, $password);
     }
   }
+  if ($user) {
+    _set_user_var($user);
+    var username => $username;
+  }
+}
 
+sub _reject_authenticated {
+	my $path=request->path;
+	if ($path=~m#^/(job|workflowJob)/new/?# && ! check_agave_login()) {
+		if (request->is_ajax) {
+      raise InvalidCredentials => 'no username';
+		} else {
+			request->path('/');
+		}
+	}
+}
+
+sub _preprocess_user_params {
 	my $params = params();
   my $upload=request->upload(setting('upload_file_input'));
   my $inputs=delete $params->{setting('user_params_input')};
@@ -204,15 +225,27 @@ hook 'before' => sub {
       }
     }
   }
+}
 
-	my $path=request->path;
-	if ($path=~m#^/(job|workflowJob)/new/?# && ! check_agave_login()) {
-		if (request->is_ajax) {
-      raise InvalidCredentials => 'no username';
-		} else {
-			request->path('/');
-		}
+hook on_route_exception => sub {
+	my $e = shift;
+  my $dt=DateTime->now->datetime;
+	if ($e->can('does') && ($e->does('InvalidCredentials') || $e->does('InvalidRequest'))) {
+		error("Error [$dt]: " . $e->message() . "\n");
+    content_type 'application/json';
+		halt(to_json({status => 'error', error => $e->message()}));
+	} elsif ($e->can('rethrow')) {
+		$e->rethrow;
+	} else {
+		error("Error [$dt]: " . $e . "\n");
+		raise 'SystemError' => $e;
 	}
+};
+
+hook 'before' => sub {
+  _authenticate();
+  _preprocess_user_params();
+  _reject_authenticated();
 };
 
 sub _index {
@@ -270,7 +303,7 @@ get '/logout' => sub {
 };
 
 get '/user' => sub {
-	my $username=var("username") or raise InvalidCredentials => 'no username';
+	my $username=var("username") or raise InvalidCredentials => 'no matches';
   my $user=database->quick_select('user', {username => $username});
   if ($user) {
     $user->{authenticated}=1;
@@ -1643,7 +1676,7 @@ sub _updatePrevJob {
 sub _submitNextJob {
 	my ($next_job)=@_;
 	my $job_form=from_json($next_job->{job_json});
-	my $user=_get_user($next_job->{username});
+	my $user=_get_user_by_token($next_job->{username});
 	my $apif = var("agave_client");
 	my $apps = $apif->apps;
 	my $job_ep = $apif->job;
